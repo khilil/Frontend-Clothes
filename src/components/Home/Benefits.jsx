@@ -4,49 +4,51 @@ import "./Benefits.css";
 
 const benefitItems = [
     {
-        icon: <Truck size={32} />,
-        title: "GLOBAL SHIPPING",
-        description: "Express delivery to over 150 countries worldwide."
+        icon: "lock_open",
+        title: "SECURE ARCHIVE",
+        description: "ENCRYPTED TRANSACTIONS / PROTECTED DATA FLOW"
     },
     {
-        icon: <ShieldCheck size={32} />,
-        title: "SECURE PAYMENTS",
-        description: "Encryption protocols protecting every transaction."
+        icon: "local_shipping",
+        title: "GLOBAL DISPATCH",
+        description: "EXPRESS LOGISTICS TO OVER 150 TERRITORIES"
     },
     {
-        icon: <RefreshCcw size={32} />,
-        title: "MODERN RETURNS",
-        description: "Seamless 30-day return policy for peace of mind."
+        icon: "refresh",
+        title: "ATELIER RETURNS",
+        description: "SEAMLESS 30-DAY EXCHANGE & RETURN PRIVILEGE"
     },
     {
-        icon: <Headset size={32} />,
-        title: "24/7 SUPPORT",
-        description: "Our concierge team is available around the clock."
+        icon: "support_agent",
+        title: "CONCIERGE 24/7",
+        description: "DEDICATED SUPPORT FOR THE MODERN ICON"
     }
 ];
 
 function Benefits() {
     return (
-        <section className="benefits-section">
-            <div className="benefits-container">
-                {benefitItems.map((item, index) => (
-                    <motion.div
-                        key={index}
-                        className="benefit-card"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1, duration: 0.6 }}
-                    >
-                        <div className="benefit-icon">
-                            {item.icon}
-                        </div>
-                        <div className="benefit-info">
-                            <h3>{item.title}</h3>
-                            <p>{item.description}</p>
-                        </div>
-                    </motion.div>
-                ))}
+        <section className="benefits-premium">
+            <div className="container-wide">
+                <div className="benefits-grid">
+                    {benefitItems.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            className="benefit-item-luxury"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                            <div className="benefit-icon-wrap">
+                                <span className="material-symbols-outlined">{item.icon}</span>
+                            </div>
+                            <div className="benefit-content">
+                                <h3 className="benefit-title">{item.title}</h3>
+                                <p className="benefit-desc">{item.description}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section>
     );

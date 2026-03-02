@@ -7,6 +7,7 @@ import Newsletter from "../../components/Home/Newsletter";
 import InstagramFeed from "../../components/Home/InstagramFeed";
 import CollectiveFooter from "../../components/common/CollectiveFooter/CollectiveFooter";
 import Header from "../../components/common/Header/Header";
+import HomeInfiniteScroll from "../../components/Home/HomeInfiniteScroll";
 import './Home.css'
 
 function Home() {
@@ -16,8 +17,9 @@ function Home() {
       <Hero />
       <Benefits />
       <Categories />
+      <HomeInfiniteScroll />
       <FeaturedProducts />
-      <BrandStory />
+      {/* <BrandStory /> */}
       <InstagramFeed />
       <Newsletter />
       <CollectiveFooter />

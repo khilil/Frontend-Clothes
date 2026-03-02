@@ -4,6 +4,7 @@ import { store } from "./app/store";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchCurrentUser } from "./features/auth/authSlice";
+import SmoothScroll from "./components/common/SmoothScroll";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   return (
     <>
       <CartProvider>
+        <SmoothScroll />
         <AppRoutes />
       </CartProvider>
     </>

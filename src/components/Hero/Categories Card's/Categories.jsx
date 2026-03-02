@@ -39,46 +39,69 @@ function Categories() {
   const navigate = useNavigate();
 
   return (
-    <section className="categories-section">
-      <div className="section-header">
-        <motion.span
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="section-tag"
-        >
-          COLLECTIONS
-        </motion.span>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="section-title"
-        >
-          SHOP BY CATEGORY
-        </motion.h2>
-      </div>
-
-      <div className="categories-grid">
-        {categoryItems.map((item, index) => (
+    <section className="categories-premium">
+      <div className="container-wide">
+        <div className="categories-header">
           <motion.div
-            key={index}
-            className={`category-card ${item.size}`}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.6 }}
-            onClick={() => navigate(`/category/${item.slug}`)}
+            className="header-left"
           >
-            <img src={item.image} alt={item.title} />
-            <div className="category-overlay"></div>
-            <div className="category-content">
-              <h3>{item.title}</h3>
-              <span className="shop-link">EXPLORE NOW</span>
-            </div>
+            <span className="premium-tag">ATELIER COLLECTIONS</span>
+            <h2 className="premium-title">ARCHIVE <br /> <span className="title-thin">SERIES / 24</span></h2>
           </motion.div>
-        ))}
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="header-right"
+          >
+            <p className="premium-desc">
+              Meticulously engineered garments designed for the modern urban landscape.
+              Explore our curated archives of Fenrir and utility.
+            </p>
+          </motion.div>
+        </div>
+
+        <div className="categories-editorial-grid">
+          {categoryItems.map((item, index) => (
+            <motion.div
+              key={index}
+              className={`editorial-card card-${index + 1}`}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.15,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              onClick={() => navigate(`/category/${item.slug}`)}
+            >
+              <div className="editorial-visual">
+                <img src={item.image} alt={item.title} className="editorial-img" />
+                <div className="editorial-overlay"></div>
+
+                <div className="editorial-content">
+                  <div className="content-top">
+                    <span className="item-count">0{index + 1}</span>
+                    <span className="item-series">SPRING / SUMMER</span>
+                  </div>
+
+                  <div className="content-bottom">
+                    <h3 className="item-title">{item.title}</h3>
+                    <div className="item-explore">
+                      <span>THE ARCHIVE</span>
+                      <div className="explore-line"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

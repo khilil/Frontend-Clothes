@@ -33,55 +33,44 @@ const feedItems = [
 function InstagramFeed() {
     const navigate = useNavigate();
     return (
-        <section className="instagram-section">
-            <div className="section-header">
-                <motion.span
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="section-tag"
-                >
-                    COMMUNITY
-                </motion.span>
-                <motion.h2
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                    className="section-title"
-                >
-                    SHOP THE LOOK
-                </motion.h2>
-                <motion.p
-                    className="insta-handle"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.5 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                >
-                    @GENZ_CLOTHS_OFFICIAL
-                </motion.p>
-            </div>
-
-            <div className="insta-grid">
-                {feedItems.map((item, index) => (
+        <section className="instagram-premium">
+            <div className="container-wide">
+                <div className="insta-header-luxury">
                     <motion.div
-                        key={index}
-                        className="insta-card"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="header-content"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: index * 0.05, duration: 0.5 }}
-                        onClick={() => navigate("/category/all")}
-                        style={{ cursor: 'pointer' }}
                     >
-                        <img src={item.image} alt="Social Feed" />
-                        <div className="insta-overlay">
-                            <Instagram size={24} />
-                            <span>SHOP NOW</span>
-                        </div>
+                        <span className="premium-tag">SOCIAL ARCHIVE</span>
+                        <h2 className="premium-title-main">SHOP THE LOOK</h2>
+                        <p className="insta-handle-luxury">@GENZ_CLOTHS_OFFICIAL</p>
                     </motion.div>
-                ))}
+                </div>
+
+                <div className="insta-editorial-grid">
+                    {feedItems.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            className={`insta-box box-${index + 1}`}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1, duration: 0.8 }}
+                            onClick={() => navigate("/category/all")}
+                        >
+                            <div className="insta-visual-wrap">
+                                <img src={item.image} alt="Social Feed" className="insta-img" />
+                                <div className="insta-overlay-premium">
+                                    <div className="overlay-content">
+                                        <Instagram size={20} color="#d4c4b1" />
+                                        <span className="shop-tag">VIEW ARCHIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section>
     );

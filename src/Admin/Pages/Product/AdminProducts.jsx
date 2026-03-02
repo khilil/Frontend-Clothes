@@ -61,7 +61,7 @@ export default function AdminProducts() {
             setIsLoading(true);
             try {
                 const [productData, categoryData] = await Promise.all([
-                    getProducts(controller.signal, true),
+                    getProducts({ isAdmin: true }, controller.signal),
                     getAllCategories()
                 ]);
 

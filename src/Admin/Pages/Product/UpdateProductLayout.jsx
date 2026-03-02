@@ -60,6 +60,7 @@ function UpdateProductLayout() {
         isNewArrival: true,
         isBestSeller: false,
         isOnSale: false,
+        isSeasonalSale: false,
         isCustomizable: false,
         metaTitle: '',
         metaDescription: '',
@@ -126,6 +127,7 @@ function UpdateProductLayout() {
                     isNewArrival: product.isNewArrival ?? true,
                     isBestSeller: product.isBestSeller ?? false,
                     isOnSale: product.isOnSale ?? false,
+                    isSeasonalSale: product.isSeasonalSale ?? false,
                     isCustomizable: product.isCustomizable ?? false,
                     metaTitle: product.metaTitle || '',
                     metaDescription: product.metaDescription || '',
@@ -359,7 +361,10 @@ function UpdateProductLayout() {
 
             // Map variants for partial update
             const variantsMetadata = variants.map(v => {
-                const newImages = v.images?.filter(img => !img.existing && img.file) || [];
+                // Sort images: primary image first
+                const sortedImages = [...(v.images || [])].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+                const newImages = sortedImages.filter(img => !img.existing && img.file) || [];
+
                 return {
                     id: v._id || v.id,
                     size: v.size,
@@ -371,15 +376,16 @@ function UpdateProductLayout() {
                     lowStockThreshold: v.lowStockThreshold,
                     allowBackorder: v.allowBackorder,
                     measurements: v.measurements,
-                    existingImages: v.images?.filter(img => img.existing).map(img => ({ url: (img.url || img.preview), isPrimary: img.isPrimary })) || [],
+                    existingImages: sortedImages.filter(img => img.existing).map(img => ({ url: (img.url || img.preview), isPrimary: img.isPrimary })) || [],
                     newImageCount: newImages.length
                 };
             });
             formData.append('variants', JSON.stringify(variantsMetadata));
 
-            // Append new variant images
+            // Append new variant images in sorted order
             variants.forEach(v => {
-                v.images?.forEach(img => {
+                const sortedImages = [...(v.images || [])].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+                sortedImages.forEach(img => {
                     if (!img.existing && img.file) {
                         formData.append('variantImages', img.file);
                     }

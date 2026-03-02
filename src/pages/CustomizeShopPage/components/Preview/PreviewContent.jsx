@@ -34,7 +34,7 @@ export default function PreviewContent() {
             console.log("⚠ location.state missing → fetching again");
             getProductBySlug(slug)
                 .then(res => {
-                    const data = res.data;
+                    const data = res;
                     const images = [];
                     data.variants?.forEach(v => {
                         v.images?.forEach(img => {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchProducts } from "../../../api/products.api";
+import ProductCard from "../../../components/product/ProductCard/ProductCard";
 
 export const ProductSuggestions = ({ product }) => {
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -16,9 +17,10 @@ export const ProductSuggestions = ({ product }) => {
 
     const categorySlug = product.category?.slug || product.category;
 
-    fetchProducts(categorySlug)
+    fetchProducts({ category: categorySlug })
       .then(data => {
-        const filtered = data.filter(p => p._id !== product._id);
+        const productsList = data.products || [];
+        const filtered = productsList.filter(p => p._id !== product._id);
 
         if (isInitial) {
           setRelatedProducts(filtered.slice(0, 8));
@@ -61,11 +63,6 @@ export const ProductSuggestions = ({ product }) => {
     return () => observer.disconnect();
   }, [hasMore, loading, page]);
 
-  const handleProductClick = (slug) => {
-    navigate(`/product/${slug}`);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-
   if (!loading && !relatedProducts.length) return null;
 
   return (
@@ -84,10 +81,10 @@ export const ProductSuggestions = ({ product }) => {
           >
             <div className="flex items-center gap-4">
               <span className="w-12 h-[1px] bg-accent"></span>
-              <span className="text-[10px] md:text-[12px] font-black uppercase tracking-[0.5em] text-accent">Style Discovery</span>
+              <span className="text-[10px] md:text-[12px] font-black uppercase tracking-[0.5em] text-accent">FOR YOU</span>
             </div>
             <h2 className="text-6xl md:text-[8rem] lg:text-[10rem] font-impact tracking-tighter uppercase leading-[0.8] mb-4">
-              YOU MAY <br /> <span className="text-white/10" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}>ALSO LIKE</span>
+              EXPLORE <br /> <span className="text-white/10" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}>COLLECTION</span>
             </h2>
             <p className="text-[11px] md:text-[13px] font-bold uppercase tracking-[0.3em] text-white/40 max-w-xl leading-relaxed">
               Meticulously curated by our creative studio, these selections are engineered to elevate your wardrobe architecture. Explore the discovery feed.
@@ -96,60 +93,11 @@ export const ProductSuggestions = ({ product }) => {
         </header>
 
         {/* Vertical Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-10 md:gap-y-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
           <AnimatePresence>
-            {relatedProducts.map((item, idx) => {
-              const firstImg = item.variants?.[0]?.images?.[0]?.url || item.images?.[0]?.url || "https://placehold.co/600x800/121212/white?text=No+Image";
-              const discount = item.compareAtPrice > item.price
-                ? Math.round(((item.compareAtPrice - item.price) / item.compareAtPrice) * 100)
-                : 0;
-
-              return (
-                <motion.div
-                  key={item._id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="group cursor-pointer"
-                  onClick={() => handleProductClick(item.slug)}
-                >
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[#0d0d0d] mb-6 border border-white/5">
-                    <img
-                      src={firstImg}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110"
-                    />
-
-                    {/* Discount Tag */}
-                    {discount > 0 && (
-                      <div className="absolute top-0 right-0 bg-accent text-black px-3 py-1.5 text-[10px] font-black uppercase tracking-tighter shadow-xl">
-                        -{discount}%
-                      </div>
-                    )}
-
-                    {/* Quick View Interface */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6">
-                      <button className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        Discover Item
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h3 className="text-[11px] md:text-[13px] font-black uppercase tracking-[0.1em] text-white/90 group-hover:text-accent transition-colors truncate">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-baseline gap-4 pt-1">
-                      <span className="text-xl md:text-3xl font-impact tracking-tighter text-white">₹{item.price}</span>
-                      {item.compareAtPrice > item.price && (
-                        <span className="text-sm md:text-lg font-impact tracking-tight text-white/20 line-through">₹{item.compareAtPrice}</span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {relatedProducts.map((item) => (
+              <ProductCard key={item._id} product={item} />
+            ))}
           </AnimatePresence>
         </div>
 
@@ -162,7 +110,7 @@ export const ProductSuggestions = ({ product }) => {
             </>
           ) : (
             <div className="text-center space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Curated Selections Complete</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Discovery Feed Complete</span>
               <div className="w-24 h-[1px] bg-white/5 mx-auto"></div>
             </div>
           )}

@@ -23,63 +23,76 @@ function BrandStory() {
                 <div className="story-overlay"></div>
             </motion.div>
 
-            <div className="story-content" style={{ opacity }}>
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1 }}
-                >
-                    <span className="story-tag">OUR PHILOSOPHY</span>
-                    <h2 className="story-title">
-                        DECODING THE <br />
-                        <span>URBAN NARRATIVE</span>
-                    </h2>
-                </motion.div>
+            <div className="story-content-premium">
+                <div className="story-main-wrap">
+                    <motion.div
+                        className="story-header"
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <span className="premium-tag">THE PHILOSOPHY</span>
+                        <h2 className="story-title-heavy">
+                            ENGINEERING <br />
+                            <span className="title-hollow">FENRIR</span>
+                        </h2>
+                    </motion.div>
+
+                    <div className="story-body-grid">
+                        <motion.div
+                            className="story-visual-side"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                            <img src="https://images.unsplash.com/photo-1550928431-ee0ec6db30d3?q=80&w=1974&auto=format&fit=crop" alt="Craftsmanship" className="story-main-img" />
+                        </motion.div>
+
+                        <motion.div
+                            className="story-text-side"
+                            initial={{ opacity: 0, x: 30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.4, duration: 1 }}
+                        >
+                            <p className="story-lead">
+                                We bridge the gap between utilitarian durability and high-street aesthetics.
+                                Every garment is a statement of intent, engineered to survive trends and the test of time.
+                            </p>
+                            <p className="story-sub">
+                                Born in 2024, Fenrir represents the fusion of urban aesthetics and utility.
+                                We believe in the legacy of detail and the power of uncompromising craftsmanship.
+                            </p>
+                            <button onClick={() => navigate("/about")} className="btn-story-explore">
+                                DISCOVER THE CRAFT
+                                <div className="btn-line"></div>
+                            </button>
+                        </motion.div>
+                    </div>
+                </div>
 
                 <motion.div
-                    className="story-text-grid"
+                    className="story-stats-premium"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3, duration: 1 }}
+                    transition={{ delay: 0.8, duration: 1 }}
                 >
-                    <div className="text-column">
-                        <p>
-                            We don’t just make clothes; we engineer armor for the modern icon.
-                            Genz-Cloths was born from a desire to bridge the gap between
-                            utilitarian durability and high-street aesthetics.
-                        </p>
+                    <div className="stat-box">
+                        <span className="stat-num">100%</span>
+                        <span className="stat-label">ORIGINAL ARCHIVE</span>
                     </div>
-                    <div className="text-column">
-                        <p>
-                            Every stitch is a statement of intent. Every fabric is chosen for
-                            its ability to survive trends and the test of time. We believe in
-                            the legacy of detail and the power of raw character.
-                        </p>
-                        <button onClick={() => navigate("/about")} className="story-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                            DISCOVER OUR CRAFT
-                            <span className="arrow">→</span>
-                        </button>
+                    <div className="stat-box">
+                        <span className="stat-num">EST.</span>
+                        <span className="stat-label">2024 / MUMBAI</span>
+                    </div>
+                    <div className="stat-box">
+                        <span className="stat-num">GLOBAL</span>
+                        <span className="stat-label">DISPATCH AVAILABLE</span>
                     </div>
                 </motion.div>
-            </div>
-
-            <div className="story-footer-stats">
-                <div className="stat-item">
-                    <span className="stat-value">100%</span>
-                    <span className="stat-label">ORIGINAL DESIGN</span>
-                </div>
-                <div className="divider"></div>
-                <div className="stat-item">
-                    <span className="stat-value">EST.</span>
-                    <span className="stat-label">2024 / LONDON</span>
-                </div>
-                <div className="divider"></div>
-                <div className="stat-item">
-                    <span className="stat-value">GLOBAL</span>
-                    <span className="stat-label">DISTRIBUTION</span>
-                </div>
             </div>
         </section>
     );

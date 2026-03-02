@@ -27,13 +27,13 @@ const Inventory = () => {
     try {
       // For a comprehensive inventory we fetch all products
       const [allProductsRes, lowStockRes] = await Promise.all([
-        getProducts(null, true),
+        getProducts({ isAdmin: true }),
         getLowStockProducts()
       ]);
 
       // Flatten products to SKUs/Variants
       const flattened = [];
-      allProductsRes.data.forEach(p => {
+      allProductsRes.products.forEach(p => {
         p.variants.forEach(v => {
           flattened.push({
             productId: p._id,

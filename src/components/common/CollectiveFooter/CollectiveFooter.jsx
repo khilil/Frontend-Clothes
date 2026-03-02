@@ -16,10 +16,10 @@ function CollectiveFooter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h3 className="brand-title">GENZ <br /> <span>CLOTHES</span></h3>
+          <h3 className="brand-title">FENRIR</h3>
           <p className="brand-mission">
             WE ENGINEER ARMOR FOR THE MODERN ICON. <br />
-            HIGH-STREET UTILITY / RAW CHARACTER.
+            HIGH-STREET UTILITY / FENRIR.
           </p>
 
           <div className="footer-social-premium">
@@ -77,7 +77,7 @@ function CollectiveFooter() {
             VISIT OUR ATELIER <br />
             EST. 2024 / LONDON <br />
             UNITED KINGDOM <br /><br />
-            CONTACT: HELLO@GENZCLOTHES.COM
+            CONTACT: HELLO@FENRIR.COM
           </p>
         </motion.div>
       </div>
@@ -85,7 +85,7 @@ function CollectiveFooter() {
       {/* BOTTOM BAR */}
       <div className="footer-bottom-premium">
         <div className="bottom-left">
-          <span>© 2024 GENZ CLOTHES. ALL RIGHTS RESERVED.</span>
+          <span>© 2024 FENRIR. ALL RIGHTS RESERVED.</span>
           <div className="bottom-links">
             <button onClick={() => navigate("/privacy")}>Privacy</button>
             <button onClick={() => navigate("/terms")}>Terms</button>

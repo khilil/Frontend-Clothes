@@ -66,11 +66,11 @@ export default function ProductDetailPage() {
         setIsLoading(true);
         getProductBySlug(slug)
             .then(res => {
-                if (!res || !res.data) {
+                if (!res) {
                     setIsLoading(false);
                     return;
                 }
-                const fetchedProduct = res.data;
+                const fetchedProduct = res;
                 setProduct(fetchedProduct);
 
                 if (fetchedProduct.variants?.length > 0) {
@@ -167,31 +167,44 @@ export default function ProductDetailPage() {
     };
 
     const images = useMemo(() => {
-        if (!product || !selectedColor) {
-            if (!product) return ["https://placehold.co/600x800/121212/white?text=No+Image"];
-            const allImgs = [];
+        if (!product) return ["https://placehold.co/600x800/121212/white?text=No+Image"];
+
+        let relevantImages = [];
+
+        if (!selectedColor) {
+            // Collect all images from all variants if no color selected
+            const allImgsMap = new Map();
             product.variants?.forEach(v => {
                 v.images?.forEach(img => {
-                    if (img.url && !allImgs.includes(img.url)) {
-                        allImgs.push(img.url);
+                    if (img.url && !allImgsMap.has(img.url)) {
+                        allImgsMap.set(img.url, img);
                     }
                 });
             });
-            return allImgs.length > 0 ? allImgs : ["https://placehold.co/600x800/121212/white?text=No+Image"];
+            relevantImages = Array.from(allImgsMap.values());
+        } else {
+            // Collect images only for the selected color
+            const colorImgsMap = new Map();
+            product.variants?.forEach(v => {
+                if ((v.color?._id || v.color?.name) === (selectedColor._id || selectedColor.name)) {
+                    v.images?.forEach(img => {
+                        if (img.url && !colorImgsMap.has(img.url)) {
+                            colorImgsMap.set(img.url, img);
+                        }
+                    });
+                }
+            });
+            relevantImages = Array.from(colorImgsMap.values());
         }
 
-        const colorImgs = [];
-        product.variants?.forEach(v => {
-            if ((v.color?._id || v.color?.name) === (selectedColor._id || selectedColor.name)) {
-                v.images?.forEach(img => {
-                    if (img.url && !colorImgs.includes(img.url)) {
-                        colorImgs.push(img.url);
-                    }
-                });
-            }
-        });
+        if (relevantImages.length === 0) {
+            return ["https://placehold.co/600x800/121212/white?text=No+Image"];
+        }
 
-        return colorImgs.length > 0 ? colorImgs : ["https://placehold.co/600x800/121212/white?text=No+Image"];
+        // Sort images: primary image first
+        return relevantImages
+            .sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0))
+            .map(img => img.url);
     }, [product, selectedColor]);
 
     const uniqueColors = useMemo(() => {
@@ -575,6 +588,8 @@ export default function ProductDetailPage() {
                 </div>
             </div>
 
+            <ProductSuggestions product={product} />
+
             {/* Sticky Mobile Actions Bar */}
             <AnimatePresence>
                 {showStickyBar && (
@@ -624,7 +639,6 @@ export default function ProductDetailPage() {
 
             {/* Bottom Sections */}
             <div className="mt-20 border-t border-white/5">
-                <ProductSuggestions product={product} />
                 <Reviews />
                 <CollectiveFooter />
             </div>

@@ -29,15 +29,25 @@ function Hero() {
   };
 
   return (
-    <section className="hero" style={{ position: 'relative' }}>
+    <section className="hero">
       {/* Background with subtle zoom effect */}
       <motion.div
         className="hero-bg"
-        initial={{ scale: 1.1 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 10, ease: "easeOut" }}
+        initial={{ scale: 1.2, filter: "brightness(0.8)" }}
+        animate={{ scale: 1, filter: "brightness(1)" }}
+        transition={{ duration: 8, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="hero-overlay"></div>
+      </motion.div>
+
+      {/* Discover Label */}
+      <motion.div
+        className="hero-discover-label"
+        initial={{ opacity: 0, x: -20, rotate: -90 }}
+        animate={{ opacity: 0.5, x: 0, rotate: -90 }}
+        transition={{ delay: 1, duration: 1 }}
+      >
+        <span>DISCOVER FENRIR</span>
       </motion.div>
 
       {/* Content Wrapped in Motion for Staggered Entrance */}
@@ -47,48 +57,57 @@ function Hero() {
         initial="hidden"
         animate="visible"
       >
-        <motion.span className="hero-subtitle" variants={itemVariants}>
-          AUTUMN / WINTER ATELIER 2024
-        </motion.span>
+        <motion.div className="hero-badge-wrap" variants={itemVariants}>
+          <span className="hero-badge">NEW COLLECTION</span>
+          <span className="hero-subtitle">URBAN STRIKE COLLECTION 2024</span>
+        </motion.div>
 
         <motion.h1 className="hero-title" variants={itemVariants}>
-          RAW <br /> CHARACTER
+          FENRIR
         </motion.h1>
 
         <motion.div className="hero-actions" variants={itemVariants}>
-          <button className="btn-primary" onClick={() => navigate("/category/all")}>
-            SHOP COLLECTION
+          <button className="btn-luxury" onClick={() => navigate("/category/all")}>
+            EXPLORE COLLECTION
+            <div className="btn-line"></div>
           </button>
-          <button className="btn-secondary" onClick={() => navigate("/about")}>
-            VIEW LOOKBOOK
+          <button className="btn-ghost" onClick={() => navigate("/about")}>
+            THE LOOKBOOK
           </button>
         </motion.div>
       </motion.div>
 
       {/* Floating element for premium feel */}
       <motion.div
-        className="hero-footer"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 0.4, x: 0 }}
+        className="hero-footer-stats"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 1 }}
       >
-        GLOBAL DISPATCH AVAILABLE / EST. 2024
+        <div className="stat-pill">
+          <span className="dot"></span>
+          <span>GLOBAL DISPATCH</span>
+        </div>
+        <div className="stat-pill">
+          <span className="dot"></span>
+          <span>LIMITED EDITION</span>
+        </div>
       </motion.div>
 
       <motion.div
-        className="scroll-indicator"
+        className="hero-scroll-wrap"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
+        transition={{ delay: 2.2, duration: 1 }}
       >
-        <div className="mouse">
+        <div className="scroll-icon">
           <motion.div
-            className="wheel"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
+            className="scroll-dot"
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           />
         </div>
-        <span>SCROLL</span>
+        <span className="scroll-text">EVOLVE</span>
       </motion.div>
     </section>
   );

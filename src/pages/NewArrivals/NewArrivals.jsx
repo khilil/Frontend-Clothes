@@ -16,7 +16,7 @@ function NewArrivals() {
             try {
                 const response = await getProducts();
                 // Filter for new arrivals
-                const newArrivals = (response.data || []).filter(p => p.isNewArrival);
+                const newArrivals = (response.products || []).filter(p => p.isNewArrival);
                 setProducts(newArrivals);
             } catch (error) {
                 console.error("Error fetching new arrivals:", error);

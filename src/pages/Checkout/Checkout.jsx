@@ -4,6 +4,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser, addUserAddress } from "../../features/auth/authSlice";
 import * as orderService from "../../services/orderService";
+import { motion, AnimatePresence } from "framer-motion";
 
 import * as paymentService from "../../services/paymentService";
 
@@ -41,17 +42,7 @@ export default function Checkout() {
     city: "",
     state: "",
     pincode: "",
-    paymentMethod: "COD"
-  });
-
-  // 🔄 New Card & Payment State
-  const [cardData, setCardData] = useState({
-    cardNumber: "",
-    cardName: "",
-    expiry: "",
-    cvv: "",
-    upiId: "",
-    billingSameAsShipping: true
+    paymentMethod: "ONLINE"
   });
 
   // 🔄 Auto-fetch profile
@@ -81,6 +72,16 @@ export default function Checkout() {
     }
   }, [selectedAddressId, user?.addresses]);
 
+  // 🏁 Handle Redirection after "Done" animation
+  useEffect(() => {
+    if (checkoutStep === "done") {
+      const timer = setTimeout(() => {
+        navigate("/account/orders", { state: { orderSuccess: true } });
+      }, 3500); // Wait for animation to complete
+      return () => clearTimeout(timer);
+    }
+  }, [checkoutStep, navigate]);
+
   // Calculate Summary
   const checkoutItems = useMemo(() => {
     if (directBuy) {
@@ -103,10 +104,6 @@ export default function Checkout() {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleCardInputChange = (e) => {
-    setCardData({ ...cardData, [e.target.name]: e.target.value });
   };
 
   const goToPayment = () => {
@@ -214,7 +211,7 @@ export default function Checkout() {
               // Verify Signature in Backend
               await paymentService.verifyRazorpayPayment(verificationData);
               if (!directBuy) clearCart();
-              navigate("/account/orders", { state: { orderSuccess: true } });
+              setCheckoutStep("done");
             } catch (error) {
               console.error("Payment Verification Failed:", error);
               alert("Payment verification failed. Please contact support.");
@@ -243,7 +240,7 @@ export default function Checkout() {
       } else {
         // Cash on Delivery flow
         if (!directBuy) clearCart();
-        navigate("/account/orders", { state: { orderSuccess: true } });
+        setCheckoutStep("done");
       }
 
     } catch (error) {
@@ -261,390 +258,453 @@ export default function Checkout() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-12">
         {/* PROGRESS STEPPER */}
-        <div className="hidden md:flex items-center justify-center mb-16 max-w-2xl mx-auto">
-          <div className="flex items-center gap-4 group">
-            <span className={`text-[10px] font-black uppercase tracking-widest ${checkoutStep === 'shipping' ? 'text-black' : 'text-gray-400'}`}>Cart</span>
-            <div className="w-12 md:w-16 h-[2px] bg-black"></div>
-          </div>
-          <div className="flex items-center gap-4 px-4">
-            <span className={`text-[10px] font-black uppercase tracking-widest ${checkoutStep === 'shipping' ? 'text-black' : 'text-gray-400'}`}>Shipping</span>
-            <div className={`w-12 md:w-16 h-[2px] ${checkoutStep === 'payment' ? 'bg-black' : 'bg-gray-200'}`}></div>
-          </div>
-          <div className="flex items-center gap-4 px-4">
-            <span className={`text-[10px] font-black uppercase tracking-widest ${checkoutStep === 'payment' ? 'text-black' : 'text-gray-400'}`}>Payment</span>
-            <div className="w-12 md:w-16 h-[2px] bg-gray-200"></div>
-          </div>
-          <div className="flex items-center gap-4 opacity-30">
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Done</span>
-          </div>
+        <div className="flex items-center justify-center mb-12 sm:mb-20 max-w-3xl mx-auto px-4">
+          <StepperItem
+            label="Cart"
+            active={true}
+            completed={true}
+            showLine={true}
+            lineActive={true}
+          />
+          <StepperItem
+            label="Shipping"
+            active={checkoutStep === 'shipping'}
+            completed={checkoutStep === 'payment' || checkoutStep === 'done'}
+            showLine={true}
+            lineActive={checkoutStep === 'payment' || checkoutStep === 'done'}
+          />
+          <StepperItem
+            label="Payment"
+            active={checkoutStep === 'payment'}
+            completed={checkoutStep === 'done'}
+            showLine={true}
+            lineActive={checkoutStep === 'done'}
+          />
+          <StepperItem
+            label="Done"
+            active={checkoutStep === 'done'}
+            completed={checkoutStep === 'done'}
+            showLine={false}
+            lineActive={false}
+          />
         </div>
 
         <form onSubmit={handlePlaceOrder} className="flex flex-col lg:flex-row gap-20">
-          <div className="flex-1 space-y-12">
-            {checkoutStep === "shipping" ? (
-              /* SHIPPING SECTION */
-              <section className="relative">
-                <div className="flex justify-between items-end mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none">
-                  <h2 className="text-2xl font-[Oswald] uppercase tracking-tight">Shipping Interface</h2>
+          <div className="flex-1">
+            <AnimatePresence mode="wait">
+              {checkoutStep === "shipping" ? (
+                <motion.div
+                  key="ship-header"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex justify-between items-center mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none"
+                >
+                  <h2 className="text-xl md:text-2xl font-[Oswald] uppercase tracking-tight leading-none">Shipping Interface</h2>
                   {user?.addresses?.length > 0 && (
                     <button
                       type="button"
                       onClick={() => setShowNewAddressForm(!showNewAddressForm)}
-                      className="text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] hover:text-black transition-colors"
+                      className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] hover:text-black transition-all hover:bg-gray-50 px-3 py-2 rounded-lg"
                     >
                       {showNewAddressForm ? "Select Existing" : "+ Add New Address"}
                     </button>
                   )}
-                </div>
+                </motion.div>
+              ) : checkoutStep === "payment" ? (
+                <motion.h2
+                  key="pay-header"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="text-2xl font-[Oswald] uppercase tracking-tight mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none"
+                >
+                  Payment Methodology
+                </motion.h2>
+              ) : null}
+            </AnimatePresence>
 
-                {!showNewAddressForm && user?.addresses?.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {user.addresses.map((addr) => (
-                      <div
-                        key={addr._id}
-                        onClick={() => setSelectedAddressId(addr._id)}
-                        className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group ${selectedAddressId === addr._id ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-200'}`}
-                      >
-                        <div className="flex justify-between items-start mb-4">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-black">{addr.fullName}</p>
-                          {selectedAddressId === addr._id && (
-                            <span className="material-symbols-outlined text-black text-lg">check_circle</span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-500 leading-relaxed uppercase tracking-wider">
-                          {addr.streetAddress},<br />
-                          {addr.city}, {addr.state} - {addr.pinCode}
-                        </p>
-                        <p className="mt-4 text-[10px] font-black text-gray-400 tracking-widest">PHONE: {addr.phone}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/30 p-8 rounded-3xl border border-dashed border-gray-200">
-                    <div className="space-y-2 md:col-span-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">First Name</label>
-                      <input
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="James"
-                        type="text"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Last Name</label>
-                      <input
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="Stirling"
-                        type="text"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Digital Contact</label>
-                      <input
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="+91 XXXXX XXXXX"
-                        type="tel"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Street Domain</label>
-                      <input
-                        name="addressLine"
-                        value={formData.addressLine}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="245 Fifth Avenue, Apartment 4B"
-                        type="text"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Urban City</label>
-                      <input
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="New York"
-                        type="text"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Regional State</label>
-                      <input
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="New York"
-                        type="text"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Zip Protocol</label>
-                      <input
-                        name="pincode"
-                        value={formData.pincode}
-                        onChange={handleInputChange}
-                        required={showNewAddressForm}
-                        className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
-                        placeholder="100116"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                )}
-                <div className="mt-12 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={goToPayment}
-                    className="h-16 px-12 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-xl shadow-xl shadow-black/10"
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait">
+                {checkoutStep === "shipping" ? (
+                  /* SHIPPING SECTION */
+                  <motion.section
+                    key="shipping"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative"
                   >
-                    Continue to Payment
-                  </button>
-                </div>
-              </section>
-            ) : (
-              /* PAYMENT SECTION */
-              <div className="space-y-12">
-                {/* REVIEW CARD */}
-                <section className="bg-gray-50/50 p-8 rounded-2xl border border-gray-100 relative">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-[Oswald] uppercase tracking-tight">Review & Pay</h2>
-                    <button
-                      type="button"
-                      onClick={() => setCheckoutStep("shipping")}
-                      className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-all border-b border-gray-200 hover:border-black"
-                    >
-                      Edit Address
-                    </button>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <span className="material-symbols-outlined text-gray-400 text-xl">location_on</span>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping To</p>
-                      <p className="text-sm font-bold uppercase">{selectedAddress?.fullName}</p>
-                      <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">
-                        {selectedAddress?.streetAddress}, {selectedAddress?.city}, {selectedAddress?.state} - {selectedAddress?.pinCode}, IN
-                      </p>
-                    </div>
-                  </div>
-                </section>
 
-                <section className="relative">
-                  <h2 className="text-2xl font-[Oswald] uppercase tracking-tight mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none">Payment Methodology</h2>
-
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <PaymentOption
-                        id="ONLINE"
-                        title="Card"
-                        desc="Safe & Secure"
-                        icon="credit_card"
-                        active={formData.paymentMethod === "ONLINE"}
-                        onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
-                      />
-                      <PaymentOption
-                        id="UPI"
-                        title="UPI / QR"
-                        desc="Instant Transfer"
-                        icon="qr_code_2"
-                        active={formData.paymentMethod === "UPI"}
-                        onClick={() => setFormData({ ...formData, paymentMethod: "UPI" })}
-                      />
-                      <PaymentOption
-                        id="COD"
-                        title="Cash"
-                        desc="Pay on arrival"
-                        icon="payments"
-                        active={formData.paymentMethod === "COD"}
-                        onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
-                      />
-                    </div>
-
-                    {formData.paymentMethod === "UPI" && (
-                      <div className="bg-gray-50/30 p-8 rounded-3xl border border-dashed border-gray-200">
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">UPI Identifier (VPA)</label>
-                          <div className="relative">
-                            <input
-                              className="w-full border-gray-100 rounded-xl py-4 px-5 text-sm tracking-widest"
-                              placeholder="username@bank"
-                              name="upiId"
-                              value={cardData.upiId}
-                              onChange={handleCardInputChange}
-                              type="text"
-                            />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                              <span className="material-symbols-outlined text-gray-400 opacity-50">alternate_email</span>
+                    {!showNewAddressForm && user?.addresses?.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {user.addresses.map((addr) => (
+                          <div
+                            key={addr._id}
+                            onClick={() => setSelectedAddressId(addr._id)}
+                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group ${selectedAddressId === addr._id ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-200'}`}
+                          >
+                            <div className="flex justify-between items-start mb-4">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-black">{addr.fullName}</p>
+                              {selectedAddressId === addr._id && (
+                                <span className="material-symbols-outlined text-black text-lg">check_circle</span>
+                              )}
                             </div>
+                            <p className="text-xs text-gray-500 leading-relaxed uppercase tracking-wider">
+                              {addr.streetAddress},<br />
+                              {addr.city}, {addr.state} - {addr.pinCode}
+                            </p>
+                            <p className="mt-4 text-[10px] font-black text-gray-400 tracking-widest">PHONE: {addr.phone}</p>
                           </div>
-                          <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-2 px-1">You will receive a request on your UPI app</p>
-                        </div>
+                        ))}
                       </div>
-                    )}
-
-                    {formData.paymentMethod === "ONLINE" && (
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-gray-50/30 p-8 rounded-3xl border border-dashed border-gray-200">
-                        <div className="space-y-2 md:col-span-4">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Card Number</label>
-                          <div className="relative">
-                            <input
-                              className="w-full border-gray-100 rounded-xl py-4 px-5 text-sm tracking-[0.2em]"
-                              placeholder="0000 0000 0000 0000"
-                              name="cardNumber"
-                              value={cardData.cardNumber}
-                              onChange={handleCardInputChange}
-                              type="text"
-                            />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-                              <span className="material-symbols-outlined text-gray-400 opacity-50">credit_card</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="space-y-2 md:col-span-4">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Name on Card</label>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/30 p-8 rounded-3xl border border-dashed border-gray-200">
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">First Name</label>
                           <input
-                            className="w-full border-gray-100 rounded-xl py-4 px-5 text-sm uppercase font-bold"
-                            placeholder="JAMES STIRLING"
-                            name="cardName"
-                            value={cardData.cardName}
-                            onChange={handleCardInputChange}
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="James"
+                            type="text"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Last Name</label>
+                          <input
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="Stirling"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Expiration Date</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Digital Contact</label>
                           <input
-                            className="w-full border-gray-100 rounded-xl py-4 px-5 text-sm"
-                            placeholder="MM / YY"
-                            name="expiry"
-                            value={cardData.expiry}
-                            onChange={handleCardInputChange}
-                            type="text"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="+91 XXXXX XXXXX"
+                            type="tel"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">CVV Protection</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Street Domain</label>
                           <input
-                            className="w-full border-gray-100 rounded-xl py-4 px-5 text-sm"
-                            placeholder="***"
-                            name="cvv"
-                            value={cardData.cvv}
-                            onChange={handleCardInputChange}
-                            type="password"
+                            name="addressLine"
+                            value={formData.addressLine}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="245 Fifth Avenue, Apartment 4B"
+                            type="text"
                           />
                         </div>
-                        <div className="md:col-span-4 pt-2">
-                          <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                              type="checkbox"
-                              className="w-5 h-5 rounded border-gray-200 text-black focus:ring-black transition-all"
-                              checked={cardData.billingSameAsShipping}
-                              onChange={(e) => setCardData({ ...cardData, billingSameAsShipping: e.target.checked })}
-                            />
-                            <span className="text-[11px] font-black uppercase tracking-widest text-gray-400 group-hover:text-black">Billing address same as shipping</span>
-                          </label>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Urban City</label>
+                          <input
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="New York"
+                            type="text"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Regional State</label>
+                          <input
+                            name="state"
+                            value={formData.state}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="New York"
+                            type="text"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Zip Protocol</label>
+                          <input
+                            name="pincode"
+                            value={formData.pincode}
+                            onChange={handleInputChange}
+                            required={showNewAddressForm}
+                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            placeholder="100116"
+                            type="text"
+                          />
                         </div>
                       </div>
                     )}
-                  </div>
-                </section>
-              </div>
-            )}
+                    <div className="mt-12 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={goToPayment}
+                        className="h-16 px-12 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-xl shadow-xl shadow-black/10"
+                      >
+                        Continue to Payment
+                      </button>
+                    </div>
+                  </motion.section>
+                ) : checkoutStep === "payment" ? (
+                  /* PAYMENT SECTION */
+                  <motion.div
+                    key="payment"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="space-y-12"
+                  >
+                    {/* REVIEW CARD */}
+                    <section className="bg-gray-50/50 p-8 rounded-2xl border border-gray-100 relative">
+                      <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-[Oswald] uppercase tracking-tight">Review & Pay</h2>
+                        <button
+                          type="button"
+                          onClick={() => setCheckoutStep("shipping")}
+                          className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-all border-b border-gray-200 hover:border-black"
+                        >
+                          Edit Address
+                        </button>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <span className="material-symbols-outlined text-gray-400 text-xl">location_on</span>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping To</p>
+                          <p className="text-sm font-bold uppercase">{selectedAddress?.fullName}</p>
+                          <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">
+                            {selectedAddress?.streetAddress}, {selectedAddress?.city}, {selectedAddress?.state} - {selectedAddress?.pinCode}, IN
+                          </p>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section className="relative">
+                      <div className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <PaymentOption
+                            id="ONLINE"
+                            title="Online Payment"
+                            desc="UPI, Card, NetBanking"
+                            icon="payments"
+                            active={formData.paymentMethod === "ONLINE"}
+                            onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
+                          />
+                          <PaymentOption
+                            id="COD"
+                            title="Cash"
+                            desc="Pay on arrival"
+                            icon="local_shipping"
+                            active={formData.paymentMethod === "COD"}
+                            onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
+                          />
+                        </div>
+                      </div>
+                    </section>
+                  </motion.div>
+                ) : (
+                  /* SUCCESS SECTION */
+                  <motion.div
+                    key="done"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex flex-col items-center justify-center py-12 md:py-24 text-center space-y-8 min-h-[50vh]"
+                  >
+                    <div className="relative">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 260,
+                          damping: 20,
+                          delay: 0.2
+                        }}
+                        className="w-24 h-24 md:w-32 md:h-32 bg-black rounded-full flex items-center justify-center shadow-2xl relative z-10"
+                      >
+                        <motion.span
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 0.8, delay: 0.5 }}
+                          className="material-symbols-outlined text-white text-4xl md:text-6xl font-bold"
+                        >
+                          check
+                        </motion.span>
+                      </motion.div>
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1.5, opacity: 0 }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="absolute inset-0 border-2 border-black rounded-full"
+                      />
+                    </div>
+                    <div className="space-y-4 px-6">
+                      <h2 className="text-3xl md:text-5xl font-[Oswald] uppercase tracking-tighter leading-none">Order Captured</h2>
+                      <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-gray-400">Synchronizing with account history...</p>
+                    </div>
+                    <div className="w-40 md:w-64 h-[1px] bg-gray-100">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 3 }}
+                        className="h-full bg-black shadow-[0_0_10px_rgba(0,0,0,0.2)]"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* SUMMARY SIDEBAR */}
-          <div className="lg:w-[450px]">
-            <div className="sticky top-32 bg-gray-50 border border-gray-100 p-8 md:p-10 rounded-3xl space-y-10 shadow-sm">
-              <h3 className="text-2xl font-[Oswald] uppercase tracking-tight">Order Synopsis</h3>
+          <AnimatePresence>
+            {checkoutStep !== "done" && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="lg:w-[450px]"
+              >
+                <div className="sticky top-32 bg-gray-50 border border-gray-100 p-8 md:p-10 rounded-3xl space-y-10 shadow-sm">
+                  <h3 className="text-2xl font-[Oswald] uppercase tracking-tight">Order Synopsis</h3>
 
-              <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                {checkoutItems.map((item, idx) => (
-                  <div key={idx} className="flex gap-4 group">
-                    <div className="w-20 aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 relative">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-all duration-700"
-                      />
+                  <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {checkoutItems.map((item, idx) => (
+                      <div key={idx} className="flex gap-4 group">
+                        <div className="w-20 aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 relative">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover transition-all duration-700"
+                          />
+                        </div>
+                        <div className="flex-1 py-1">
+                          <p className="text-[11px] font-black uppercase tracking-widest truncate">{item.title}</p>
+                          <p className="text-[10px] text-gray-500 uppercase mt-1 tracking-widest">Qty: {item.qty || 1} | Size: {item.size}</p>
+                          <p className="text-lg font-[Oswald] tracking-tight mt-2 italic">₹{(item.price * (item.qty || 1)).toLocaleString()}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4 pt-8 border-t border-gray-200">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                      <span>Subtotal</span>
+                      <span className="text-black">₹{subtotal.toLocaleString()}</span>
                     </div>
-                    <div className="flex-1 py-1">
-                      <p className="text-[11px] font-black uppercase tracking-widest truncate">{item.title}</p>
-                      <p className="text-[10px] text-gray-500 uppercase mt-1 tracking-widest">Qty: {item.qty || 1} | Size: {item.size}</p>
-                      <p className="text-lg font-[Oswald] tracking-tight mt-2 italic">₹{(item.price * (item.qty || 1)).toLocaleString()}</p>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                      <span>Shipping</span>
+                      <span className="text-emerald-600 font-bold uppercase">Free</span>
+                    </div>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                      <span>VAT Estimation</span>
+                      <span className="text-black">₹{tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="pt-8 border-t border-gray-200 flex justify-between items-end">
+                      <span className="text-lg font-[Oswald] uppercase tracking-tighter">Total Due</span>
+                      <span className="text-4xl font-[Oswald] tracking-tight">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>
-                ))}
-              </div>
 
-              <div className="space-y-4 pt-8 border-t border-gray-200">
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                  <span>Subtotal</span>
-                  <span className="text-black">₹{subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                  <span>Shipping</span>
-                  <span className="text-emerald-600 font-bold uppercase">Free</span>
-                </div>
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                  <span>VAT Estimation</span>
-                  <span className="text-black">₹{tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-                <div className="pt-8 border-t border-gray-200 flex justify-between items-end">
-                  <span className="text-lg font-[Oswald] uppercase tracking-tighter">Total Due</span>
-                  <span className="text-4xl font-[Oswald] tracking-tight">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-              </div>
+                  {checkoutStep === "shipping" ? (
+                    <button
+                      type="button"
+                      onClick={goToPayment}
+                      className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3"
+                    >
+                      Continue to Payment
+                      <span className="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={isProcessing}
+                      className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3 disabled:opacity-50"
+                    >
+                      {isProcessing ? "Validating..." : "Complete Order"}
+                      {!isProcessing && <span className="material-symbols-outlined">shield</span>}
+                    </button>
+                  )}
 
-              {checkoutStep === "shipping" ? (
-                <button
-                  type="button"
-                  onClick={goToPayment}
-                  className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3"
-                >
-                  Continue to Payment
-                  <span className="material-symbols-outlined">arrow_forward</span>
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3 disabled:opacity-50"
-                >
-                  {isProcessing ? "Validating..." : "Complete Order"}
-                  {!isProcessing && <span className="material-symbols-outlined">shield</span>}
-                </button>
-              )}
-
-              <div className="grid grid-cols-2 gap-4 mt-8">
-                <div className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
-                  <span className="material-symbols-outlined text-[#d4c4b1] text-lg">verified_user</span>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-center text-gray-400">Secure SSL</span>
+                  <div className="grid grid-cols-2 gap-4 mt-8">
+                    <div className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
+                      <span className="material-symbols-outlined text-[#d4c4b1] text-lg">verified_user</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-center text-gray-400">Secure SSL</span>
+                    </div>
+                    <div className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
+                      <span className="material-symbols-outlined text-[#d4c4b1] text-lg">public</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-center text-gray-400">Global Node</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
-                  <span className="material-symbols-outlined text-[#d4c4b1] text-lg">public</span>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-center text-gray-400">Global Node</span>
-                </div>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </form>
       </main>
 
+    </div >
+  );
+}
+
+function StepperItem({ label, active, completed, showLine, lineActive }) {
+  return (
+    <div className={`flex flex-1 items-center gap-4 ${!showLine ? 'flex-none' : ''}`}>
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative">
+          <motion.div
+            initial={false}
+            animate={{
+              scale: active ? 1.2 : 1,
+              backgroundColor: completed ? "#000000" : active ? "#000000" : "#F3F4F6",
+            }}
+            className={`w-4 h-4 rounded-full flex items-center justify-center`}
+          >
+            {completed && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="material-symbols-outlined text-[10px] text-white font-bold"
+              >
+                check
+              </motion.span>
+            )}
+          </motion.div>
+          {active && (
+            <motion.div
+              layoutId="stepper-ring"
+              className="absolute -inset-1 border border-black rounded-full"
+              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+            />
+          )}
+        </div>
+        <span className={`text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${active || completed ? 'text-black' : 'text-gray-300'}`}>
+          {label}
+        </span>
+      </div>
+      {showLine && (
+        <div className="flex-1 h-[2px] bg-gray-100 mb-6 relative overflow-hidden">
+          <motion.div
+            initial={{ width: "0%" }}
+            animate={{ width: lineActive ? "100%" : "0%" }}
+            className="absolute inset-0 bg-black"
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -653,18 +713,32 @@ function PaymentOption({ id, title, desc, icon, active, onClick }) {
   return (
     <label
       onClick={onClick}
-      className={`flex items-center justify-between p-6 border-2 rounded-2xl cursor-pointer transition-all duration-500 ${active ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-300'}`}
+      className={`flex items-center justify-between p-6 border-2 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden group/opt
+        ${active ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-200'}
+      `}
     >
-      <div className="flex items-center gap-4">
-        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${active ? 'border-primary' : 'border-gray-200'}`}>
-          {active && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
+      {active && (
+        <motion.div
+          layoutId="payment-active-bg"
+          className="absolute inset-0 bg-black/5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        />
+      )}
+      <div className="flex items-center gap-4 relative z-10">
+        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300
+          ${active ? 'border-black bg-black' : 'border-gray-200'}
+        `}>
+          {active && <span className="material-symbols-outlined text-white text-[14px] font-bold">check</span>}
         </div>
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest">{title}</p>
+          <p className={`text-sm font-black uppercase tracking-widest transition-colors ${active ? 'text-black' : 'text-gray-400 group-hover/opt:text-gray-600'}`}>{title}</p>
           <p className="text-[10px] text-gray-500 uppercase mt-1 tracking-wider">{desc}</p>
         </div>
       </div>
-      <span className={`material-symbols-outlined ${active ? 'text-black' : 'text-gray-300'}`}>{icon}</span>
+      <span className={`material-symbols-outlined transition-all duration-300 relative z-10 
+        ${active ? 'text-black scale-110' : 'text-gray-200 group-hover/opt:text-gray-400'}
+      `}>{icon}</span>
     </label>
   );
 }

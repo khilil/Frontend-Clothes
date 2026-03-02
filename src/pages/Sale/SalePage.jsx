@@ -14,10 +14,9 @@ function SalePage() {
         const fetchSaleProducts = async () => {
             setIsLoading(true);
             try {
-                const response = await getProducts();
-                // Filter for products on sale
-                const saleProducts = (response.data || []).filter(p => p.isOnSale);
-                setProducts(saleProducts);
+                // Fetch products that are ON SALE
+                const data = await getProducts({ isOnSale: true, isSeasonalSale: true });
+                setProducts(data.products || []);
             } catch (error) {
                 console.error("Error fetching sale products:", error);
             } finally {
@@ -30,65 +29,87 @@ function SalePage() {
     }, []);
 
     return (
-        <div className="sale-page">
+        <div className="sale-page bg-black min-h-screen text-white">
             <Header />
 
-            <section className="sale-hero">
+            <section className="sale-hero relative h-[90vh] flex items-center justify-center overflow-hidden">
                 <motion.div
-                    className="sale-hero-bg"
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 10 }}
-                />
-                <div className="sale-hero-overlay"></div>
+                    className="absolute inset-0 z-0"
+                    initial={{ scale: 1.2, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 0.6 }}
+                    transition={{ duration: 2, ease: "easeOut" }}
+                >
+                    <img
+                        src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop"
+                        alt="Sale Hero"
+                        className="w-full h-full object-cover grayscale"
+                    />
+                </motion.div>
 
-                <div className="sale-hero-content">
-                    <motion.span
-                        className="sale-tag"
-                        initial={{ opacity: 0, y: 20 }}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black z-10"></div>
+
+                <div className="relative z-20 text-center px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        LIMITED TIME OFFER
-                    </motion.span>
-                    <motion.h1
-                        className="sale-title"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.8 }}
-                    >
-                        SEASONAL <br /> SALE
-                    </motion.h1>
-                    <motion.p
-                        className="sale-subtitle"
+                        <span className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full text-[10px] font-black tracking-[0.4em] uppercase bg-white/5 backdrop-blur-md">
+                            Exclusive Archive Sale
+                        </span>
+                        <h1 className="text-7xl md:text-9xl font-impact tracking-tighter leading-none mb-6">
+                            SEASONAL<br />
+                            <span className="text-accent italic">SALE</span>
+                        </h1>
+                        <p className="max-w-xl mx-auto text-white/60 text-sm md:text-base leading-relaxed tracking-wide font-light">
+                            DISCOVER A CURATED SELECTION OF PREVIOUS COLLECTIONS AND ICONIC ARCHIVES.
+                            REDEFINED ESSENTIALS AT REDUCED PRICES.
+                        </p>
+                    </motion.div>
+
+                    <motion.div
+                        className="mt-12"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5, duration: 1 }}
                     >
-                        UP TO 50% OFF ON SELECTED ARCHIVES / MODERN ESSENTIALS
-                    </motion.p>
+                        <div className="inline-flex items-center gap-2 text-[10px] font-black tracking-[0.5em] uppercase text-accent animate-pulse">
+                            Scroll to Explore
+                            <div className="w-px h-12 bg-accent/30 mx-auto mt-4"></div>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
-            <div className="sale-container">
-                <div className="sale-header-info">
-                    <motion.span
-                        className="products-count"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                    >
-                        {isLoading ? "LOADING..." : `${products.length} ITEMS ON SALE`}
-                    </motion.span>
-
-                    {!isLoading && products.length === 0 && (
-                        <div className="no-sale-products">
-                            <p>No products are currently on sale. Check back soon!</p>
+            <div className="sale-container relative z-30 px-6 md:px-12 py-20">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+                    <div>
+                        <h2 className="text-4xl font-impact tracking-tight mb-2 uppercase">The Sale Collection</h2>
+                        <div className="flex items-center gap-4">
+                            <span className="h-px w-12 bg-accent"></span>
+                            <span className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">
+                                {isLoading ? "Synchronizing..." : `${products.length} Masterpieces Found`}
+                            </span>
                         </div>
-                    )}
+                    </div>
                 </div>
 
-                <ProductSection products={products} />
+                {isLoading ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        {[1, 2, 3, 4].map(i => (
+                            <div key={i} className="aspect-[3/4] bg-white/5 animate-pulse rounded-2xl"></div>
+                        ))}
+                    </div>
+                ) : products.length > 0 ? (
+                    <div className="product-grid-container">
+                        <ProductSection products={products} />
+                    </div>
+                ) : (
+                    <div className="py-40 text-center border border-white/5 rounded-[3rem] bg-white/[0.02]">
+                        <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-white/20">The Archive is Empty</h3>
+                        <p className="text-white/40 text-sm tracking-widest uppercase">New Items Arriving Shortly</p>
+                    </div>
+                )}
             </div>
 
             <CollectiveFooter />

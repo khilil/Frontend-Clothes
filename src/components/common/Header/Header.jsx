@@ -74,7 +74,7 @@ export default function Header() {
 
           {/* LOGO */}
           <div className={`z-[110] transition-all duration-500 ${isMobileMenuOpen ? 'md:opacity-100' : 'opacity-100'}`}>
-            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white hover:text-accent transition-colors" to="/" onClick={() => setIsMobileMenuOpen(false)}>F e n r i r</Link>
+            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white hover:text-accent transition-colors" to="/" onClick={() => setIsMobileMenuOpen(false)}>FENRIR</Link>
           </div>
 
           {/* DESKTOP NAV */}

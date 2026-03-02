@@ -60,6 +60,7 @@ function AddProductLayout() {
         isNewArrival: true,
         isBestSeller: false,
         isOnSale: false,
+        isSeasonalSale: false,
         isCustomizable: false,
         metaTitle: '',
         metaDescription: '',
@@ -294,24 +295,30 @@ function AddProductLayout() {
             });
 
             // Append variants as a JSON string
-            const variantsMetadata = variants.map(v => ({
-                id: v.id,
-                size: v.size,
-                color: v.color,
-                sku: v.sku,
-                stock: v.stock,
-                price: v.price,
-                reservedStock: v.reservedStock,
-                lowStockThreshold: v.lowStockThreshold,
-                allowBackorder: v.allowBackorder,
-                measurements: v.measurements,
-                newImageCount: v.images?.filter(img => img.file).length || 0
-            }));
+            const variantsMetadata = variants.map(v => {
+                // Sort images: primary image first
+                const sortedImages = [...(v.images || [])].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+
+                return {
+                    id: v.id,
+                    size: v.size,
+                    color: v.color,
+                    sku: v.sku,
+                    stock: v.stock,
+                    price: v.price,
+                    reservedStock: v.reservedStock,
+                    lowStockThreshold: v.lowStockThreshold,
+                    allowBackorder: v.allowBackorder,
+                    measurements: v.measurements,
+                    newImageCount: sortedImages.filter(img => img.file).length || 0
+                };
+            });
             formData.append('variants', JSON.stringify(variantsMetadata));
 
-            // Append variant-specific images
+            // Append variant-specific images in sorted order
             variants.forEach(v => {
-                v.images.forEach(img => {
+                const sortedImages = [...(v.images || [])].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+                sortedImages.forEach(img => {
                     if (img.file) {
                         formData.append('variantImages', img.file);
                     }

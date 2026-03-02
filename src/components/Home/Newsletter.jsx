@@ -4,52 +4,45 @@ import "./Newsletter.css";
 
 function Newsletter() {
     return (
-        <section className="newsletter-section">
-            <div className="newsletter-bg"></div>
+        <section className="newsletter-premium">
+            <div className="container-wide">
+                <div className="newsletter-inner-wrap">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="newsletter-content-luxury"
+                    >
+                        <span className="premium-tag">ATELIER UPDATES</span>
+                        <h2 className="premium-title-main">STAY AHEAD <br /> <span className="title-thin">OF THE CURVE</span></h2>
+                        <p className="newsletter-lead">
+                            Subscribe to receive early access to seasonal drops, exclusive lookbooks,
+                            and our world of Fenrir. No spam, only pure intent.
+                        </p>
 
-            <div className="newsletter-content">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="newsletter-text"
-                >
-                    <span className="newsletter-tag">JOIN THE INNER CIRCLE</span>
-                    <h2 className="newsletter-title">
-                        STAY AHEAD OF <br /> <span>THE CURVE</span>
-                    </h2>
-                    <p className="newsletter-desc">
-                        Subscribe to receive early access to drops, exclusive lookbooks,
-                        and the latest atelier updates. No spam, just pure intent.
-                    </p>
-                </motion.div>
-
-                <motion.form
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="newsletter-form"
-                    onSubmit={(e) => e.preventDefault()}
-                >
-                    <div className="input-group">
-                        <input
-                            type="email"
-                            placeholder="YOUR EMAIL ADDRESS"
-                            required
-                        />
-                        <button type="submit" className="submit-btn" aria-label="Subscribe">
-                            <ArrowRight size={20} />
-                        </button>
-                    </div>
-                    <div className="form-footer">
-                        <label className="checkbox-container">
-                            <input type="checkbox" required />
-                            <span className="checkmark"></span>
-                            <span className="label-text">I AGREE TO THE PRIVACY POLICY & TERMS OF SERVICE</span>
-                        </label>
-                    </div>
-                </motion.form>
+                        <form className="newsletter-form-luxury" onSubmit={(e) => e.preventDefault()}>
+                            <div className="input-field-wrap">
+                                <input
+                                    type="email"
+                                    placeholder="EMAIL@ADDRESS.COM"
+                                    required
+                                    className="luxury-input"
+                                />
+                                <button type="submit" className="btn-join-archive">
+                                    JOIN ARCHIVE
+                                    <ArrowRight size={14} />
+                                </button>
+                            </div>
+                            <div className="checkbox-wrap-premium">
+                                <label className="luxury-checkbox">
+                                    <input type="checkbox" required />
+                                    <span className="check-mark"></span>
+                                    <span className="privacy-text">I AGREE TO THE PRIVACY POLICY & TERMS</span>
+                                </label>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
