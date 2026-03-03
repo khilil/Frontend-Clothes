@@ -39,8 +39,10 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import AddProductLayout from "../Admin/Pages/Product/AddProductLayout";
 import UpdateProductLayout from "../Admin/Pages/Product/UpdateProductLayout";
 import AttributeManagement from "../Admin/Pages/Attributes/AttributeManagement";
+import CustomizationManagement from "../Admin/Pages/Customization/CustomizationManagement";
 import NewArrivals from "../pages/NewArrivals/NewArrivals";
 import SalePage from "../pages/Sale/SalePage";
+import PrintQueue from "../Admin/Pages/Production/PrintQueue";
 
 
 export default function AppRoutes() {
@@ -62,8 +64,10 @@ export default function AppRoutes() {
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="attributes" element={<AttributeManagement />} />
+                <Route path="customization" element={<CustomizationManagement />} />
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="production" element={<PrintQueue />} />
             </Route>
 
             <Route path="/admin/orders/:orderId" element={
@@ -113,9 +117,6 @@ export default function AppRoutes() {
                 {/* <Route path="/customize/:slug" element={<CustomizePage />} /> */}
                 <Route path="/customize/:slug" element={<CustomizeEditorLayout />}>
                     <Route index element={<CustomizePage />} />
-                    <Route path="text" element={<TextEditorPage />} />
-                    <Route path="shapes" element={<ShapeEditorPage />} />
-                    <Route path="graphics" element={<GraphicsEditorPage />} />
                     <Route path="preview" element={<PreviewPage />} />
                 </Route>
 

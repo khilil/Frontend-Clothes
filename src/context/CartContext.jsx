@@ -14,23 +14,37 @@ export function CartProvider({ children }) {
         const res = await cartService.getCart();
         const formattedItems = res.data.items.map(item => {
           const product = item.product;
-          // Find the active variant to get size/color names
           const variant = product.variants?.find(v =>
             v._id?.toString() === item.variantId?.toString() ||
             v.id === item.variantId?.toString() ||
             v.sku === item.variantId?.toString()
           );
 
+          // 💰 Calculate Total Price for Customized Items
+          const basePrice = product.price || 0;
+          let customizationCost = 0;
+          if (item.customizations) {
+            // 1. Add Printing Method Price
+            customizationCost += Number(item.customizations.printingMethod?.price || 0);
+
+            // 2. Add Element Prices (from Technical Report)
+            if (item.customizations.technicalReport) {
+              customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+            }
+          }
+
           return {
-            cartItemId: item._id, // Use for removal
+            cartItemId: item._id,
             id: product._id,
             title: product.title,
-            price: product.price,
-            image: variant?.images?.[0]?.url || product.images?.[0]?.url,
+            basePrice: basePrice,
+            price: basePrice + customizationCost, // The final price shown to user
+            image: item.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url,
             qty: item.quantity,
             variantId: item.variantId,
             size: variant?.size?.name || "N/A",
-            color: variant?.color?.name || "N/A"
+            color: variant?.color?.name || "N/A",
+            customizations: item.customizations || {}
           };
         });
         setCart(formattedItems);
@@ -45,9 +59,15 @@ export function CartProvider({ children }) {
   }, []);
 
   /* ➕ ADD TO CART */
-  const addToCart = async (product, options = {}) => {
+  const addToCart = async (product, options = {}, customizations = {}) => {
+    const productId = product._id || product.id;
+    const variantId = options.variantId;
+    const qty = 1;
+
+    console.log("☎️ Calling CartService.addToCart:", { productId, variantId, qty, customizations });
+
     try {
-      const res = await cartService.addToCart(product._id || product.id, options.variantId, 1);
+      const res = await cartService.addToCart(productId, variantId, qty, customizations);
 
       // Full refresh of cart state from backend response for absolute accuracy
       const formattedItems = res.data.items.map(item => {
@@ -55,22 +75,33 @@ export function CartProvider({ children }) {
         const searchId = (product._id || product.id).toString();
 
         const prod = prodId === searchId ? product : (item.product);
-        // Find variant by ID or SKU (res.data.items[].variantId might be the ID resolved by backend)
         const variant = prod.variants?.find(v =>
           v._id === item.variantId ||
           v.sku === item.variantId
         );
 
+        // 💰 Calculate Total Price for Customized Items
+        const basePrice = prod.price || 0;
+        let customizationCost = 0;
+        if (item.customizations) {
+          customizationCost += Number(item.customizations.printingMethod?.price || 0);
+          if (item.customizations.technicalReport) {
+            customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+          }
+        }
+
         return {
           cartItemId: item._id,
           id: prod._id,
           title: prod.title,
-          price: prod.price,
-          image: variant?.images?.[0]?.url || prod.images?.[0]?.url,
+          basePrice: basePrice,
+          price: basePrice + customizationCost,
+          image: item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.images?.[0]?.url,
           qty: item.quantity,
-          variantId: item.variantId, // The backend likely stored the _id here
+          variantId: item.variantId,
           size: variant?.size?.name || options.size || "N/A",
-          color: variant?.color?.name || options.color || "N/A"
+          color: variant?.color?.name || options.color || "N/A",
+          customizations: item.customizations || {}
         };
       });
       setCart(formattedItems);

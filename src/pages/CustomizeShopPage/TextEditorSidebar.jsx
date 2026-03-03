@@ -2,17 +2,19 @@ import { useState } from "react";
 import { useFabric } from "../../context/FabricContext";
 import ElementLibrary from "./components/ElementLibrary";
 import { FONT_FAMILIES } from "./fabric/fontRegistry";
-import { addOrUpdateText, applyFontFamily } from "./fabric/textActions";
+import { addOrUpdateText, applyFontFamily, applyTextKerning } from "./fabric/textActions";
 import { waitForFont } from "./fabric/fontUtils";
 import { useNavigate } from "react-router-dom";
 import { applyTextAlignment } from "./fabric/textActions";
 import LayersPanel from "./components/LayersPanel";
 import PreviewButton from "./components/Preview/PreviewButton";
+import { FiArrowLeft } from "react-icons/fi";
 
 export default function TextEditorSidebar() {
     const navigate = useNavigate();
     const { fabricCanvas, activeTextRef, printAreaRef } = useFabric();
     const [fontFamily, setFontFamily] = useState("Oswald");
+    const [kerning, setKerning] = useState(20);
 
     async function handleFontChange(fontFamily) {
         if (!fabricCanvas.current || !activeTextRef.current) return;
@@ -21,13 +23,22 @@ export default function TextEditorSidebar() {
 
         activeTextRef.current.set({
             fontFamily,
-            width: printAreaRef.current.width - 40,
         });
 
         activeTextRef.current.initDimensions();
         activeTextRef.current.setCoords();
         fabricCanvas.current.requestRenderAll();
     }
+
+    const handleKerning = (e) => {
+        const value = Number(e.target.value);
+        setKerning(value);
+        if (!fabricCanvas.current || !activeTextRef.current) return;
+
+        // Fabric.js charSpacing: 1000 units = 1em
+        // Slider value 0-100 corresponds to 0-1em
+        applyTextKerning(fabricCanvas.current, activeTextRef.current, value * 10);
+    };
 
     const handleTextChange = (e) => {
         addOrUpdateText(
@@ -61,166 +72,156 @@ export default function TextEditorSidebar() {
     }
 
     return (
+        <div className="space-y-12 pb-10">
+            {/* BACK BUTTON */}
+            <button
+                onClick={() => navigate(-1)}
+                className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-[#d4c4b1] transition-all duration-300"
+            >
+                <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center group-hover:border-[#d4c4b1]/30 transition-colors">
+                    <FiArrowLeft size={14} />
+                </div>
+                Back to Studio
+            </button>
 
-        <>
-            <div className="h-full overflow-y-auto bg-[#151518] px-4 md:px-10">
+            {/* 01. ELEMENT LIBRARY */}
+            <ElementLibrary />
 
-                <div className="pt-10 space-y-12 pb-48">
+            {/* 02. TEXT STYLING */}
+            <section className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-70">
+                        02. Text Styling
+                    </h4>
+                    <div className="h-px flex-1 bg-white/5 ml-4"></div>
+                </div>
 
-                    {/* BACK BUTTON */}
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#9a9a9a] hover:text-[#d4c4b1] transition-colors duration-300 mb-6"
-                    >
-                        <span className="material-symbols-outlined text-sm">
-                            arrow_back
-                        </span>
-                        Back
-                    </button>
+                <div className="space-y-6">
+                    {/* TEXT INPUT */}
+                    <div className="space-y-3">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                            Custom Text Input
+                        </label>
+                        <input
+                            type="text"
+                            defaultValue="Studio Edit"
+                            onChange={handleTextChange}
+                            className="w-full bg-[#1a1a1a]/50 border border-white/5 p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-white focus:ring-1 focus:ring-[#d4c4b1]/50 focus:border-[#d4c4b1]/50 transition-all outline-none"
+                        />
+                    </div>
 
-                    {/* 01. TEXT STYLING */}
-                    <section className="space-y-6">
-                        {/* 02. ELEMENT LIBRARY */}
-                        <section className="space-y-6">
-                            <ElementLibrary />
-                        </section>
+                    {/* FONT FAMILY */}
+                    <div className="space-y-3">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                            Typography Style
+                        </label>
 
-                        <div className="flex items-center justify-between">
-                            <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">
-                                02. Text Styling
-                            </h4>
-                            <span className="material-symbols-outlined text-[#d4c4b1] text-sm">
-                                text_fields
+                        <div className="relative group">
+                            <select
+                                value={fontFamily}
+                                onChange={(e) => {
+                                    const selectedFont = e.target.value;
+                                    setFontFamily(selectedFont);
+                                    handleFontChange(selectedFont);
+                                }}
+                                className="w-full bg-[#1a1a1a]/50 border border-white/5 p-4 rounded-xl text-xs font-bold tracking-widest text-white appearance-none focus:ring-1 focus:ring-[#d4c4b1]/50 focus:border-[#d4c4b1]/50 transition-all outline-none cursor-pointer"
+                            >
+                                {FONT_FAMILIES.map((font) => (
+                                    <option key={font.value} value={font.value} className="bg-[#121212]">
+                                        {font.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 group-hover:text-[#d4c4b1] transition-colors">
+                                expand_more
                             </span>
                         </div>
+                    </div>
 
-                        <div className="space-y-6">
-
-                            {/* TEXT INPUT */}
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-[#9a9a9a]">
-                                    Enter Text
-                                </label>
-                                <input
-                                    type="text"
-                                    defaultValue="Studio Edit"
-                                    onChange={handleTextChange}
-                                    className="w-full bg-[#1a1a1d] border border-white/[0.06] p-4 text-xs font-bold tracking-widest uppercase text-[#f5f5f5] focus:ring-0 focus:border-[#d4c4b1] transition-colors duration-300"
-                                />
-                            </div>
-
-                            {/* FONT FAMILY */}
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-[#9a9a9a]">
-                                    Font Family
-                                </label>
-
-                                <div className="relative">
-                                    <select
-                                        value={fontFamily}
-                                        onChange={(e) => {
-                                            const selectedFont = e.target.value;
-                                            setFontFamily(selectedFont);
-                                            handleFontChange(selectedFont);
-                                        }}
-                                        className="w-full bg-[#1a1a1d] border border-white/[0.06] p-4 text-xs font-bold tracking-widest text-[#f5f5f5] appearance-none focus:ring-0 focus:border-[#d4c4b1] cursor-pointer"
+                    {/* ALIGNMENT + KERNING */}
+                    <div className="grid grid-cols-2 gap-6">
+                        {/* ALIGNMENT */}
+                        <div className="space-y-3">
+                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                                Alignment
+                            </label>
+                            <div className="flex bg-[#1a1a1a]/50 border border-white/5 rounded-xl overflow-hidden h-12">
+                                {["left", "center", "right"].map((align, i) => (
+                                    <button
+                                        key={align}
+                                        onClick={() => handleAlignment(align)}
+                                        className={`flex-1 flex items-center justify-center hover:bg-white/10 hover:text-[#d4c4b1] transition-all duration-300 ${i !== 2 ? "border-r border-white/5" : ""}`}
                                     >
-                                        {FONT_FAMILIES.map((font) => (
-                                            <option key={font.value} value={font.value}>
-                                                {font.label}
-                                            </option>
-                                        ))}
-                                    </select>
-
-                                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#9a9a9a]">
-                                        expand_more
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* ALIGNMENT + KERNING */}
-                            <div className="grid grid-cols-2 gap-6 pt-2">
-
-                                {/* ALIGNMENT */}
-                                <div className="flex border border-white/[0.06] h-12 bg-[#1a1a1d]">
-                                    {["left", "center", "right"].map((align, i) => (
-                                        <button
-                                            key={align}
-                                            onClick={() => handleAlignment(align)}
-                                            className={`flex-1 flex items-center justify-center ${i !== 2 ? "border-r border-white/[0.06]" : ""
-                                                } hover:bg-[#1f1f23] hover:text-[#f5f5f5] transition-all duration-300`}
-                                        >
-                                            <span className="material-symbols-outlined text-lg">
-                                                {`format_align_${align}`}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* KERNING */}
-                                <div className="space-y-2">
-                                    <label className="text-[9px] font-bold uppercase tracking-widest text-[#9a9a9a]">
-                                        Kerning
-                                    </label>
-
-                                    <div className="flex items-center h-12 gap-3 px-2 bg-[#1a1a1d] border border-white/[0.06]">
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            defaultValue="20"
-                                            className="flex-1 h-[2px] bg-white/[0.08] appearance-none accent-[#d4c4b1]"
-                                        />
-                                        <span className="text-[9px] font-mono font-bold text-[#b3b3b3]">
-                                            0.2em
-                                        </span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            {/* TEXT COLORS */}
-                            <div className="space-y-4 pt-4">
-                                <label className="text-[9px] font-bold uppercase tracking-widest text-[#9a9a9a]">
-                                    Text Color Selection
-                                </label>
-
-                                <div className="flex gap-4 my-4">
-                                    {[
-                                        "#000",
-                                        "#fff",
-                                        "#800000",
-                                        "#d4c4b1",
-                                        "#E93562"
-                                    ].map((color) => (
-                                        <button
-                                            key={color}
-                                            onClick={() => handleColor(color)}
-                                            className="w-8 h-8 rounded-full transition-all duration-300 ease-in-out hover:scale-110 hover:ring-2 hover:ring-white/[0.15]"
-                                            style={{ backgroundColor: color }}
-                                        />
-                                    ))}
-
-                                    <button className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center hover:bg-[#1f1f23] transition-all duration-300">
-                                        <span className="material-symbols-outlined text-sm text-[#9a9a9a]">
-                                            add
+                                        <span className="material-symbols-outlined text-lg">
+                                            {`format_align_${align}`}
                                         </span>
                                     </button>
-                                </div>
+                                ))}
                             </div>
-
                         </div>
-                    </section>
 
+                        {/* KERNING */}
+                        <div className="space-y-3">
+                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                                Kerning
+                            </label>
+                            <div className="flex items-center h-12 gap-3 px-3 bg-[#1a1a1a]/50 border border-white/5 rounded-xl">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={kerning}
+                                    onChange={handleKerning}
+                                    className="flex-1 h-1 bg-white/10 appearance-none accent-[#d4c4b1] rounded-lg cursor-pointer"
+                                />
+                                <span className="text-[10px] font-mono text-[#d4c4b1] bg-[#d4c4b1]/10 px-1.5 py-0.5 rounded">
+                                    {(kerning / 100).toFixed(1)}em
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
+                    {/* TEXT COLORS */}
+                    <div className="space-y-4">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                            Color Palette
+                        </label>
 
-                    {/* 03. LAYERS */}
-                    <section className="space-y-6">
-                        <LayersPanel />
-                    </section>
+                        <div className="flex gap-4">
+                            {[
+                                "#000",
+                                "#fff",
+                                "#800000",
+                                "#d4c4b1",
+                                "#E93562"
+                            ].map((color) => (
+                                <button
+                                    key={color}
+                                    onClick={() => handleColor(color)}
+                                    className="group relative w-10 h-10 rounded-full border border-white/10 p-1 hover:border-[#d4c4b1]/50 transition-all duration-300"
+                                >
+                                    <div
+                                        className="w-full h-full rounded-full border border-white/5 shadow-inner transition-transform group-hover:scale-90 duration-300"
+                                        style={{ backgroundColor: color }}
+                                    />
+                                </button>
+                            ))}
 
+                            <button className="w-10 h-10 rounded-full border border-dashed border-white/20 flex items-center justify-center hover:bg-white/5 hover:border-white/40 transition-all duration-300 text-white/20 hover:text-white">
+                                <span className="material-symbols-outlined text-sm">
+                                    add
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </>
+            </section>
+
+            {/* 03. LAYERS */}
+            <LayersPanel />
+
+            {/* 04. PREVIEW DESIGN */}
+            <PreviewButton />
+        </div>
     );
 }

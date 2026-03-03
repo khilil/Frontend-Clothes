@@ -90,9 +90,9 @@ const AdminOrderDetails = () => {
                         <div className="flex flex-wrap items-center gap-4">
                             <h1 className="text-3xl font-bold tracking-tight uppercase">Order #{order._id.slice(-8)}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${order.orderStatus === 'placed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                    order.orderStatus === 'shipped' ? 'bg-amber-100 text-amber-700 border-amber-200' :
-                                        order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                            'bg-red-100 text-red-700 border-red-200'
+                                order.orderStatus === 'shipped' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                    order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                        'bg-red-100 text-red-700 border-red-200'
                                 }`}>
                                 {order.orderStatus.toUpperCase()}
                             </span>
@@ -170,29 +170,205 @@ const AdminOrderDetails = () => {
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                         {order.items?.map((item, idx) => (
-                                            <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
-                                                <td className="px-6 py-5">
-                                                    <div className="flex items-center gap-4">
-                                                        <img
-                                                            src={item.imageURL || item.product?.images?.[0]?.url}
-                                                            alt={item.title}
-                                                            className="w-14 h-14 rounded-lg object-cover border border-slate-200 dark:border-slate-600 shadow-sm"
-                                                        />
-                                                        <div className="space-y-1">
-                                                            <p className="font-bold text-sm leading-none">{item.title || item.product?.title}</p>
-                                                            <p className="text-xs text-slate-500 font-medium">
-                                                                Size: {item.size} | Color: {item.color}
-                                                            </p>
-                                                            <p className="text-[10px] font-mono text-slate-400 bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded w-fit">
-                                                                SKU: {item.variantId}
-                                                            </p>
+                                            <React.Fragment key={idx}>
+                                                <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                                                    <td className="px-6 py-5">
+                                                        <div className="flex items-center gap-4">
+                                                            <img
+                                                                src={item.imageURL || item.product?.images?.[0]?.url}
+                                                                alt={item.title}
+                                                                className="w-14 h-14 rounded-lg object-cover border border-slate-200 dark:border-slate-600 shadow-sm"
+                                                            />
+                                                            <div className="space-y-1">
+                                                                <p className="font-bold text-sm leading-none flex items-center gap-2">
+                                                                    {item.title || item.product?.title}
+                                                                    {item.customizations?.previews && (
+                                                                        <span className="bg-accent/10 text-accent text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest">Custom</span>
+                                                                    )}
+                                                                </p>
+                                                                <p className="text-xs text-slate-500 font-medium">
+                                                                    Size: {item.size} | Color: {item.color}
+                                                                </p>
+                                                                <p className="text-[10px] font-mono text-slate-400 bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded w-fit">
+                                                                    SKU: {item.variantId}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-4 py-5 text-center text-sm font-bold text-slate-500">{item.quantity}</td>
-                                                <td className="px-4 py-5 text-right text-sm font-medium text-slate-600 dark:text-slate-400">₹{item.priceAtPurchase || item.product?.price}</td>
-                                                <td className="px-6 py-5 text-right text-sm font-black text-slate-900 dark:text-white">₹{(item.quantity * (item.priceAtPurchase || item.product?.price)).toLocaleString()}</td>
-                                            </tr>
+                                                    </td>
+                                                    <td className="px-4 py-5 text-center text-sm font-bold text-slate-500">{item.quantity}</td>
+                                                    <td className="px-4 py-5 text-right text-sm font-medium text-slate-600 dark:text-slate-400">₹{item.priceAtPurchase || item.product?.price}</td>
+                                                    <td className="px-6 py-5 text-right text-sm font-black text-slate-900 dark:text-white">₹{(item.quantity * (item.priceAtPurchase || item.product?.price)).toLocaleString()}</td>
+                                                </tr>
+                                                {/* 🎨 Customization Row */}
+                                                {item.customizations?.previews && (
+                                                    <tr className="bg-slate-50/20 dark:bg-slate-900/10">
+                                                        <td colSpan="4" className="px-6 py-4">
+                                                            <div className="flex flex-col md:flex-row gap-6 items-start">
+                                                                <div className="flex gap-3">
+                                                                    {item.customizations.previews.front && (
+                                                                        <div className="space-y-1">
+                                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Front View</p>
+                                                                            <img
+                                                                                src={item.customizations.previews.front}
+                                                                                className="w-24 h-32 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-contain p-1"
+                                                                                alt="Front Preview"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                    {item.customizations.previews.back && (
+                                                                        <div className="space-y-1">
+                                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Back View</p>
+                                                                            <img
+                                                                                src={item.customizations.previews.back}
+                                                                                className="w-24 h-32 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-contain p-1"
+                                                                                alt="Back Preview"
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="space-y-4 flex-1">
+                                                                    <div>
+                                                                        <p className="text-[10px] font-black text-[#1152d4] uppercase tracking-widest mb-2 flex items-center gap-1">
+                                                                            <span className="material-icons text-[14px]">precision_manufacturing</span> Production Assets
+                                                                        </p>
+                                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                                            {/* High-Res Downloads */}
+                                                                            {item.customizations?.printFiles?.front && (
+                                                                                <button
+                                                                                    onClick={() => {
+                                                                                        const link = document.createElement('a');
+                                                                                        link.href = item.customizations.printFiles.front;
+                                                                                        link.download = `Front_Print_Ready_${order._id.slice(-6)}.png`;
+                                                                                        link.click();
+                                                                                    }}
+                                                                                    className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
+                                                                                >
+                                                                                    <span className="material-icons text-sm group-hover:scale-110 transition-transform">download</span>
+                                                                                    Front (Transparent PNG)
+                                                                                </button>
+                                                                            )}
+                                                                            {item.customizations?.printFiles?.back && (
+                                                                                <button
+                                                                                    onClick={() => {
+                                                                                        const link = document.createElement('a');
+                                                                                        link.href = item.customizations.printFiles.back;
+                                                                                        link.download = `Back_Print_Ready_${order._id.slice(-6)}.png`;
+                                                                                        link.click();
+                                                                                    }}
+                                                                                    className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
+                                                                                >
+                                                                                    <span className="material-icons text-sm group-hover:scale-110 transition-transform">download</span>
+                                                                                    Back (Transparent PNG)
+                                                                                </button>
+                                                                            )}
+
+                                                                            {/* Full Mockup Download */}
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    const link = document.createElement('a');
+                                                                                    link.href = item.customizations.previews?.front || item.imageURL;
+                                                                                    link.download = `Full_Mockup_${order._id.slice(-6)}.png`;
+                                                                                    link.click();
+                                                                                }}
+                                                                                className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-900 border border-transparent rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-all text-[11px] font-bold shadow-sm group col-span-full"
+                                                                            >
+                                                                                <span className="material-icons text-sm">image</span>
+                                                                                Download Full Mockup
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* 🧩 Technical Quality Report (Production Ready) */}
+                                                                    {item.designReference && (
+                                                                        <div className="bg-slate-900/5 dark:bg-black/20 rounded-xl p-4 border border-dashed border-slate-200 dark:border-slate-700 mt-4">
+                                                                            <div className="flex items-center justify-between mb-3">
+                                                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                                                                                    <span className="material-icons text-[14px]">query_stats</span> Technical Audit
+                                                                                </p>
+                                                                                {item.designReference.qualityStatus?.isLowQuality ? (
+                                                                                    <span className="bg-red-500/10 text-red-500 text-[8px] font-black px-2 py-0.5 rounded border border-red-500/20 uppercase tracking-widest">LOW QUALITY WARNING</span>
+                                                                                ) : (
+                                                                                    <span className="bg-emerald-500/10 text-emerald-500 text-[8px] font-black px-2 py-0.5 rounded border border-emerald-500/20 uppercase tracking-widest">PRODUCTION READY</span>
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                                                                <div className="space-y-0.5">
+                                                                                    <p className="text-[8px] text-slate-400 font-bold uppercase">Resolution</p>
+                                                                                    <p className={`text-xs font-black ${item.designReference.metadata?.width < 4500 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-200'}`}>
+                                                                                        {item.designReference.metadata?.width} x {item.designReference.metadata?.height}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div className="space-y-0.5">
+                                                                                    <p className="text-[8px] text-slate-400 font-bold uppercase">Estimated DPI</p>
+                                                                                    <p className="text-xs font-black text-slate-700 dark:text-slate-200">
+                                                                                        {Math.round(item.designReference.metadata?.width / 15)} DPI
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div className="space-y-0.5">
+                                                                                    <p className="text-[8px] text-slate-400 font-bold uppercase">Has Alpha</p>
+                                                                                    <p className="text-xs font-black text-slate-700 dark:text-slate-200">
+                                                                                        {item.designReference.metadata?.hasAlpha ? "✅ YES" : "❌ NO"}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div className="space-y-0.5">
+                                                                                    <p className="text-[8px] text-slate-400 font-bold uppercase">Format</p>
+                                                                                    <p className="text-xs font-black text-slate-700 dark:text-slate-200 uppercase">
+                                                                                        {item.designReference.printType}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            {item.designReference.qualityStatus?.warnings?.length > 0 && (
+                                                                                <div className="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+                                                                                    {item.designReference.qualityStatus.warnings.map((w, wi) => (
+                                                                                        <p key={wi} className="text-[9px] text-rose-500 flex items-center gap-1">
+                                                                                            <span className="material-icons text-[12px]">warning</span> {w}
+                                                                                        </p>
+                                                                                    ))}
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+
+                                                                    <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                                                        <div>
+                                                                            <p className="text-[10px] font-black text-[#1152d4] uppercase tracking-widest mb-1">Printing Method</p>
+                                                                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 flex items-center gap-2 shadow-sm">
+                                                                                <span className="material-icons text-accent text-sm">print</span>
+                                                                                <div>
+                                                                                    <p className="text-xs font-bold leading-none">{item.customizations.printingMethod?.label || "Standard"}</p>
+                                                                                    <p className="text-[9px] text-slate-500 mt-0.5">{item.customizations.printingMethod?.description}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="flex flex-col justify-end gap-2">
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    const json = JSON.stringify(item.customizations, null, 2);
+                                                                                    navigator.clipboard.writeText(json);
+                                                                                    alert("Design JSON copied to clipboard!");
+                                                                                }}
+                                                                                className="text-[10px] font-bold text-slate-400 hover:text-accent transition-colors flex items-center gap-1 uppercase tracking-widest"
+                                                                            >
+                                                                                <span className="material-icons text-xs">content_copy</span> Copy Design JSON
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => {
+                                                                                    const win = window.open("", "_blank");
+                                                                                    win.document.write(`<pre style="background:#111; color:#eee; padding:20px;">${JSON.stringify(item.customizations, null, 2)}</pre>`);
+                                                                                }}
+                                                                                className="text-[10px] font-bold text-slate-400 hover:text-accent transition-colors flex items-center gap-1 uppercase tracking-widest"
+                                                                            >
+                                                                                <span className="material-icons text-xs">code</span> Technical View
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
                                         ))}
                                     </tbody>
                                 </table>

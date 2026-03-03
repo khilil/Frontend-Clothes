@@ -602,19 +602,25 @@ export default function Checkout() {
 
                   <div className="space-y-4 pt-8 border-t border-gray-200">
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <span>Subtotal</span>
-                      <span className="text-black">₹{subtotal.toLocaleString()}</span>
+                      <span>Base Subtotal</span>
+                      <span className="text-black">₹{(subtotal - checkoutItems.reduce((acc, item) => acc + (item.price - (item.basePrice || item.price)) * (item.qty || 1), 0)).toLocaleString()}</span>
                     </div>
+                    {checkoutItems.some(item => (item.price - (item.basePrice || item.price)) > 0) && (
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] drop-shadow-[0_0_10px_rgba(212,196,177,0.2)]">
+                        <span>Customization Architecture</span>
+                        <span className="font-bold">+₹{checkoutItems.reduce((acc, item) => acc + (item.price - (item.basePrice || item.price)) * (item.qty || 1), 0).toLocaleString()}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <span>Shipping</span>
-                      <span className="text-emerald-600 font-bold uppercase">Free</span>
+                      <span>Shipping Architecture</span>
+                      <span className="text-emerald-600 font-bold uppercase">Complimentary</span>
                     </div>
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
                       <span>VAT Estimation</span>
                       <span className="text-black">₹{tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="pt-8 border-t border-gray-200 flex justify-between items-end">
-                      <span className="text-lg font-[Oswald] uppercase tracking-tighter">Total Due</span>
+                      <span className="text-lg font-[Oswald] uppercase tracking-tighter italic">Total Due</span>
                       <span className="text-4xl font-[Oswald] tracking-tight">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>

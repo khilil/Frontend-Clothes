@@ -1,9 +1,10 @@
-import * as fabric  from "fabric";
+import * as fabric from "fabric";
 
 export const addSVGToCanvas = async (
     canvas,
     svgPath,
-    printArea
+    printArea,
+    price = 0
 ) => {
     if (!canvas) return;
 
@@ -23,7 +24,8 @@ export const addSVGToCanvas = async (
             left: printArea.left + printArea.width / 2,
             top: printArea.top + printArea.height / 2,
             originX: "center",
-            originY: "center"
+            originY: "center",
+            price: price // Attach price to object
         });
 
         canvas.add(svg);

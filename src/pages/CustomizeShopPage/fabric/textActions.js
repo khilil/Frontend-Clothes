@@ -23,10 +23,7 @@ export function addOrUpdateText(canvas, activeTextRef, options, printArea) {
             text: options.text ?? activeTextRef.current.text,
             fontFamily: options.fontFamily ?? activeTextRef.current.fontFamily,
             fill: options.fill ?? activeTextRef.current.fill,
-            width: maxWidth,
         });
-
-
 
         activeTextRef.current.initDimensions();
         activeTextRef.current.setCoords();
@@ -42,7 +39,7 @@ export function addOrUpdateText(canvas, activeTextRef, options, printArea) {
         originY: "center",
         fontFamily: options.fontFamily || "Oswald",
         fontSize: 64,
-        fill: options.fill || "#000",
+        fill: options.fill || "#000000",
         textAlign: "center",
 
         selectable: true,
@@ -97,7 +94,7 @@ export function applyFontFamily(canvas, activeTextRef, fontFamily) {
         originY: "center",
         fontFamily,
         fontSize: 64,
-        fill: "#000",
+        fill: "#000000",
         textAlign: "center",
     });
 
@@ -137,6 +134,17 @@ export function applyTextAlignment(canvas, text, alignment, printArea) {
             left: rightX,
         });
     }
+
+    text.setCoords();
+    canvas.requestRenderAll();
+}
+
+export function applyTextKerning(canvas, text, kerningValue) {
+    if (!canvas || !text) return;
+
+    text.set({
+        charSpacing: kerningValue,
+    });
 
     text.setCoords();
     canvas.requestRenderAll();

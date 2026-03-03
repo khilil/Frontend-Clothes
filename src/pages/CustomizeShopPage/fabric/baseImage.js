@@ -7,10 +7,13 @@ export async function addBaseImage(canvas, imageURL) {
     crossOrigin: "anonymous",
   });
 
+  // Determine a scale multiplier based on canvas width for better mobile fit
+  const scaleMultiplier = canvas.width < 400 ? 0.8 : 0.9;
+
   const scale = Math.min(
     canvas.width / img.width,
     canvas.height / img.height
-  ) * 1.5;
+  ) * scaleMultiplier;
 
   img.scale(scale);
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFabric } from "../../../context/FabricContext";
-
+import { Reorder, useDragControls } from "framer-motion"; // 🔥 install: npm install framer-motion
+import { FiEye, FiEyeOff, FiLock, FiUnlock, FiTrash2, FiMenu } from "react-icons/fi";
 
 export default function LayersPanel() {
     const { fabricCanvas, activeTextRef } = useFabric();
@@ -13,8 +14,11 @@ export default function LayersPanel() {
 
         const updateLayers = () => {
             const objects = canvas.getObjects();
-            // top-most layer first
-            setLayers([...objects].reverse());
+            // Filter out base layer and reverse for visual order (top-most first)
+            const editableLayers = objects
+                .filter(o => o.layerType !== "base" && !o.excludeFromExport)
+                .reverse();
+            setLayers(editableLayers);
         };
 
         updateLayers();
@@ -55,8 +59,6 @@ export default function LayersPanel() {
 
     // 🔒 Toggle lock
     const toggleLock = (obj) => {
-        if (obj.layerType === "base") return;
-
         obj.selectable = !obj.selectable;
         obj.evented = obj.selectable;
         fabricCanvas.current.discardActiveObject();
@@ -66,10 +68,30 @@ export default function LayersPanel() {
 
     // 🗑 Delete layer
     const deleteLayer = (obj) => {
-        if (obj.layerType === "base") return;
-
         fabricCanvas.current.remove(obj);
         fabricCanvas.current.requestRenderAll();
+    };
+
+    // 📦 Handle Reorder (UI Only - No Lag)
+    const handleReorder = (newOrder) => {
+        setLayers(newOrder);
+    };
+
+    // 🔄 Sync Fabric Canvas Order (Only on Drag End)
+    const syncCanvasOrder = () => {
+        const canvas = fabricCanvas.current;
+        if (!canvas) return;
+
+        // Base layer is at index 0. 
+        // Our layers array is [top, ..., bottom]
+        // We need to move them to indices [n, ..., 1]
+        const totalEditable = layers.length;
+        layers.forEach((obj, idx) => {
+            const newPos = totalEditable - idx;
+            canvas.moveObjectTo(obj, newPos);
+        });
+
+        canvas.requestRenderAll();
     };
 
     function getLayerLabel(obj) {
@@ -81,7 +103,6 @@ export default function LayersPanel() {
     }
 
     function renderIcon(obj) {
-        // 🖼 Image thumbnail
         if (obj.type === "image") {
             return (
                 <img
@@ -92,122 +113,108 @@ export default function LayersPanel() {
             );
         }
 
-        // 🔤 Text
         if (obj.type === "textbox") {
-            return (
-                <span className="material-symbols-outlined text-sm">
-                    text_fields
-                </span>
-            );
+            return <span className="text-[12px] font-bold text-white/50 italic">Abc</span>;
         }
 
-        // ⬛ Shape
-        return (
-            <span className="material-symbols-outlined text-sm">
-                category
-            </span>
-        );
+        return <div className="w-4 h-4 rounded-sm border-2 border-white/20" />;
     }
 
     return (
         <section className="space-y-6">
-            <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">
-                03. Layers
-            </h4>
-
-            <div className="space-y-2">
-                {layers.map((obj, index) => {
-                    const isActive =
-                        fabricCanvas.current?.getActiveObject() === obj;
-
-                    return (
-                        <div
-                            key={index}
-                            onClick={() => selectLayer(obj)}
-                            className={`flex items-center gap-3 p-3 border cursor-pointer transition
-                ${isActive ? "bg-white/10 border-white/30" : "border-white/10"}
-                ${!obj.visible ? "opacity-40" : ""}
-              `}
-                        >
-                            <button
-                                key={index}
-                                onClick={() => selectLayer(obj)}
-                                className={`w-full flex items-center gap-4 p-3 border text-left transition
-                                ${isActive
-                                        ? "bg-white/10 border-white"
-                                        : "border-white/10 hover:bg-white/5"
-                                    }
-                            `}
-                            >
-                                {renderIcon(obj)}
-
-                                <span className="text-[10px] uppercase tracking-widest flex-1">
-                                    {getLayerLabel(obj)}
-                                </span>
-
-                                {obj.lockMovementX && (
-                                    <span className="material-symbols-outlined text-sm text-white/40">
-                                        lock
-                                    </span>
-                                )}
-                            </button>
-                            {/* ICON */}
-                            <span className="material-symbols-outlined text-sm">
-                                {obj.layerType === "text" && "text_fields"}
-                                {obj.layerType === "shape" && "category"}
-                                {obj.layerType === "image" && "image"}
-                                {obj.layerType === "base" && "checkroom"}
-                            </span>
-
-                            {/* NAME */}
-                            <span className="text-[10px] uppercase flex-1 truncate">
-                                {obj.name || obj.layerType}
-                            </span>
-
-                            {/* 👁 VISIBILITY */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleVisibility(obj);
-                                }}
-                                className="text-white/60 hover:text-white"
-                            >
-                                <span className="material-symbols-outlined text-sm">
-                                    {obj.visible ? "visibility" : "visibility_off"}
-                                </span>
-                            </button>
-
-                            {/* 🔒 LOCK */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleLock(obj);
-                                }}
-                                className={`text-white/60 hover:text-white ${obj.layerType === "base" ? "opacity-30 pointer-events-none" : ""
-                                    }`}
-                            >
-                                <span className="material-symbols-outlined text-sm">
-                                    {obj.selectable ? "lock_open" : "lock"}
-                                </span>
-                            </button>
-
-                            {/* 🗑 DELETE */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    deleteLayer(obj);
-                                }}
-                                className={`text-red-400 hover:text-red-600 ${obj.layerType === "base" ? "opacity-30 pointer-events-none" : ""
-                                    }`}
-                            >
-                                <span className="material-symbols-outlined text-sm">
-                                    delete
-                                </span>
-                            </button>
-                        </div>
-                    );
-                })}
+            <div className="flex items-center justify-between">
+                <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-70">
+                    03. Layers
+                </h4>
+                <div className="h-px flex-1 bg-white/5 ml-4"></div>
             </div>
+
+            <Reorder.Group
+                axis="y"
+                values={layers}
+                onReorder={handleReorder}
+                className="space-y-3"
+            >
+                {layers.length === 0 ? (
+                    <p className="text-[9px] text-white/20 italic text-center py-4 uppercase tracking-widest">
+                        No elements on canvas
+                    </p>
+                ) : (
+                    layers.map((obj, index) => {
+                        const isActive = fabricCanvas.current?.getActiveObject() === obj;
+
+                        return (
+                            <Reorder.Item
+                                key={obj.id}
+                                value={obj}
+                                onDragEnd={syncCanvasOrder}
+                                onClick={() => selectLayer(obj)}
+                                className={`group relative flex items-center gap-4 p-3 rounded-xl border transition-all duration-300 cursor-grab active:cursor-grabbing
+                                    ${isActive
+                                        ? "bg-white/10 border-[#d4c4b1]/50 shadow-[0_0_20px_rgba(212,196,177,0.1)]"
+                                        : "bg-white/[0.02] border-white/5 hover:border-white/20 hover:bg-white/[0.05]"
+                                    }
+                                    ${!obj.visible ? "opacity-30" : "opacity-100"}
+                                `}
+                            >
+                                {/* Drag Handle */}
+                                <div className="opacity-20 group-hover:opacity-40 transition-opacity">
+                                    <FiMenu size={14} />
+                                </div>
+
+                                {/* Icon Display */}
+                                <div className="w-10 h-10 flex items-center justify-center bg-black/40 rounded-lg border border-white/5 overflow-hidden">
+                                    {renderIcon(obj)}
+                                </div>
+
+                                {/* Label & Info */}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-[10px] font-black uppercase tracking-widest truncate ${isActive ? 'text-[#d4c4b1]' : 'text-white/70'}`}>
+                                        {obj.name || getLayerLabel(obj)}
+                                    </p>
+                                    <p className="text-[8px] text-white/30 uppercase tracking-[0.2em] mt-0.5">
+                                        Layer {layers.length - index}
+                                    </p>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleVisibility(obj);
+                                        }}
+                                        className={`p-2 rounded-lg transition-colors hover:bg-white/10 ${obj.visible ? 'text-white/60' : 'text-[#d4c4b1]'}`}
+                                    >
+                                        {obj.visible ? <FiEye size={14} /> : <FiEyeOff size={14} />}
+                                    </button>
+
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleLock(obj);
+                                        }}
+                                        className={`p-2 rounded-lg transition-colors hover:bg-white/10 
+                                            ${obj.selectable ? 'text-white/30' : 'text-[#d4c4b1]'}`}
+                                    >
+                                        {obj.selectable ? <FiUnlock size={14} /> : <FiLock size={14} />}
+                                    </button>
+
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteLayer(obj);
+                                        }}
+                                        className={`p-2 rounded-lg transition-colors hover:bg-red-500/10 text-white/20 hover:text-red-400`}
+                                    >
+                                        <FiTrash2 size={14} />
+                                    </button>
+                                </div>
+                            </Reorder.Item>
+                        );
+                    })
+                )}
+            </Reorder.Group>
         </section>
     );
 }

@@ -22,23 +22,13 @@ export function initFabric(
     printAreaRef.current = printArea;
     canvas.printArea = printArea;
 
-    canvas.on("object:scaling", (e) => {
+    canvas.on("object:added", (e) => {
         const obj = e.target;
-        if (!obj) return;
-        if (!printAreaRef.current) return;
-        if (obj !== activeTextRef?.current) return;
-
-        obj.set({
-            width: printAreaRef.current.width - 40,
-            scaleX: 1,
-        });
-
-        obj.initDimensions();
-        obj.setCoords();
-        canvas.requestRenderAll();
+        if (obj && !obj.id) {
+            obj.id = `obj-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        }
+        syncLayers && syncLayers(canvas);
     });
-
-    canvas.on("object:added", () => syncLayers && syncLayers(canvas));
     canvas.on("object:removed", () => syncLayers && syncLayers(canvas));
     canvas.on("object:modified", () => syncLayers && syncLayers(canvas));
 

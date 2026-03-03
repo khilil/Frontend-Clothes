@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CartPage() {
     const { cart, updateQty, removeItem, isLoading } = useCart();
+    const [selectedItemForPreview, setSelectedItemForPreview] = useState(null);
+    const [previewSide, setPreviewSide] = useState("front");
 
     const subtotal = cart.reduce((acc, item) => acc + (item.price || 0) * (item.qty || 0), 0);
     const estimatedTax = subtotal * 0.08; // Example 8% tax
@@ -66,12 +70,25 @@ export default function CartPage() {
 
                             {cart.map((item) => (
                                 <div key={item.cartItemId} className="flex flex-col sm:flex-row gap-4 md:gap-8 py-8 border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors p-4 rounded-3xl group">
-                                    <div className="w-full sm:w-40 aspect-[3/4] bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 relative">
+                                    <div
+                                        className="w-full sm:w-40 aspect-[3/4] bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 relative cursor-zoom-in group"
+                                        onClick={() => {
+                                            if (item.customizations?.previews) {
+                                                setSelectedItemForPreview(item);
+                                                setPreviewSide("front");
+                                            }
+                                        }}
+                                    >
                                         <img
                                             alt={item.title}
                                             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                                             src={item.image}
                                         />
+                                        {item.customizations?.previews && (
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <span className="material-symbols-outlined text-white text-3xl">zoom_in</span>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="flex flex-col flex-1">
                                         <div className="flex justify-between items-start">
@@ -88,7 +105,39 @@ export default function CartPage() {
                                                 {item.color && item.color !== "N/A" && (
                                                     <p>Color: <span className="text-gray-400 font-medium">{item.color}</span></p>
                                                 )}
+                                                {item.customizations?.printingMethod && (
+                                                    <p className="text-accent flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-sm">print</span>
+                                                        {item.customizations.printingMethod.label}
+                                                    </p>
+                                                )}
                                             </div>
+
+                                            {item.customizations?.previews && (
+                                                <div className="flex gap-2 mt-2">
+                                                    {['front', 'back'].map(side => (
+                                                        item.customizations.previews[side] && (
+                                                            <div
+                                                                key={side}
+                                                                className="w-12 h-16 rounded-md border border-gray-100 bg-gray-50 p-1 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
+                                                                onClick={() => {
+                                                                    setSelectedItemForPreview(item);
+                                                                    setPreviewSide(side);
+                                                                }}
+                                                            >
+                                                                <img
+                                                                    src={item.customizations.previews[side]}
+                                                                    className="w-full h-full object-contain"
+                                                                    alt={side}
+                                                                />
+                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
+                                                                    <span className="text-[6px] text-white font-black uppercase">{side}</span>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            )}
 
                                             <div className="flex items-center gap-4">
                                                 <span className="text-[11px] font-black uppercase tracking-widest">Quantity:</span>
@@ -201,6 +250,67 @@ export default function CartPage() {
                 </div>
             )}
 
+            {/* FULL SCREEN PREVIEW MODAL */}
+            <AnimatePresence>
+                {selectedItemForPreview && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-4 md:p-12"
+                    >
+                        {/* Close Button */}
+                        <button
+                            onClick={() => setSelectedItemForPreview(null)}
+                            className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all z-20 group"
+                        >
+                            <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">close</span>
+                        </button>
+
+                        {/* Side Toggle */}
+                        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex bg-white/5 backdrop-blur-md rounded-full p-2 border border-white/10">
+                            {['front', 'back'].map(side => (
+                                <button
+                                    key={side}
+                                    onClick={() => setPreviewSide(side)}
+                                    className={`px-10 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all ${previewSide === side ? 'bg-white text-black shadow-2xl' : 'text-white/40 hover:text-white'}`}
+                                >
+                                    {side}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Design Display */}
+                        <div className="relative w-full h-full max-w-5xl flex items-center justify-center">
+                            <motion.div
+                                key={previewSide}
+                                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                className="w-full h-full flex items-center justify-center"
+                            >
+                                {selectedItemForPreview.customizations?.previews?.[previewSide] ? (
+                                    <img
+                                        src={selectedItemForPreview.customizations.previews[previewSide]}
+                                        className="max-w-full max-h-full object-contain rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/5"
+                                        alt={`${previewSide} view`}
+                                    />
+                                ) : (
+                                    <div className="text-center text-white/10">
+                                        <span className="material-symbols-outlined text-8xl mb-6">image_not_supported</span>
+                                        <p className="text-xs uppercase font-black tracking-[0.5em]">Design state not available</p>
+                                    </div>
+                                )}
+                            </motion.div>
+                        </div>
+
+                        {/* Info Header */}
+                        <div className="absolute top-10 left-10 text-left">
+                            <p className="text-[#d4c4b1] text-[9px] font-black uppercase tracking-[0.5em] mb-2">Item Inspection</p>
+                            <h3 className="text-white font-[Oswald] uppercase tracking-tighter text-3xl leading-none">{selectedItemForPreview.title}</h3>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

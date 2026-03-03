@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getProductBySlug } from "../../../../services/productService";
 import { useFabric } from "../../../../context/FabricContext";
+import { useCart } from "../../../../context/CartContext";
 import * as fabric from 'fabric'
 
 export default function PreviewContent() {
@@ -11,12 +12,78 @@ export default function PreviewContent() {
     const backImage = location.state?.backImage;
     const { slug } = useParams();
 
-    const { fabricCanvas, frontDesignRef, backDesignRef } = useFabric();
+    const {
+        fabricCanvas,
+        frontDesignRef,
+        backDesignRef,
+        customizationPrice,
+        printingMethods,
+        printingType,
+        uploadedAssetsMetadataRef,
+        pricingSettings
+    } = useFabric();
+    const { addToCart } = useCart();
+    const [addingToCart, setAddingToCart] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [productData, setProductData] = useState(null);
     const [selectedSize, setSelectedSize] = useState("L");
     const [baseColor, setBaseColor] = useState("white");
     const [viewSide, setViewSide] = useState("front");
+
+    const garmentBasePrice = productData?.price || 1700;
+    const currentType = printingMethods?.find(t => t.id === (printingType || 'dtf'));
+    const grandTotal = garmentBasePrice + customizationPrice;
+
+    const generateTechnicalReport = () => {
+        const report = [];
+        const metadataMap = uploadedAssetsMetadataRef.current || {};
+        const scanSide = (json) => {
+            if (!json || !json.objects) return;
+            json.objects.forEach(obj => {
+                const assetKey = obj.src || obj.id;
+                if (assetKey) {
+                    const meta = metadataMap[assetKey] || {
+                        name: obj.type === 'textbox' ? 'Text Element' : 'Library Graphic',
+                        width: 5000, height: 5000, fileSize: 0, hasAlpha: true
+                    };
+                    const elementPrice = obj.type === 'textbox'
+                        ? (pricingSettings?.textPricePerElement || 20)
+                        : (Number(obj.price) || 0);
+
+                    report.push({ ...meta, price: elementPrice });
+                }
+            });
+        };
+        scanSide(frontDesignRef.current);
+        scanSide(backDesignRef.current);
+        return report;
+    };
+
+    const handleAddToBag = async () => {
+        if (!productData) return;
+        setAddingToCart(true);
+        try {
+            const customizations = {
+                frontDesign: frontDesignRef.current,
+                backDesign: backDesignRef.current,
+                printingMethod: currentType,
+                technicalReport: generateTechnicalReport(),
+                previews: { front: previewImage } // Simplification for now
+            };
+
+            // Note: In a real app we'd need high-res print files here too.
+            // For now, let's just make the price flow work.
+
+            await addToCart({ _id: (location.state?.productId || slug), ...productData }, { variantId: selectedSize }, customizations);
+            alert("Added to bag!");
+            navigate("/cart");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to add to bag");
+        } finally {
+            setAddingToCart(false);
+        }
+    };
 
 
 
@@ -86,8 +153,13 @@ export default function PreviewContent() {
                 height: 500
             });
 
-            // 1️⃣ Load base image
-            const img = await fabric.Image.fromURL(baseImageURL);
+            // 1️⃣ Load design JSON FIRST (it clears the canvas)
+            if (savedDesign) {
+                await tempCanvas.loadFromJSON(savedDesign);
+            }
+
+            // 2️⃣ Load base image AFTER design load
+            const img = await fabric.Image.fromURL(baseImageURL, { crossOrigin: 'anonymous' });
 
             const scale = Math.min(
                 tempCanvas.width / img.width,
@@ -102,16 +174,12 @@ export default function PreviewContent() {
                 originX: "center",
                 originY: "center",
                 selectable: false,
-                evented: false
+                evented: false,
+                excludeFromExport: true
             });
 
             tempCanvas.add(img);
             tempCanvas.sendObjectToBack(img);
-
-            // 2️⃣ Load design JSON
-            if (savedDesign) {
-                await tempCanvas.loadFromJSON(savedDesign);
-            }
 
             tempCanvas.renderAll();
 
@@ -204,7 +272,7 @@ export default function PreviewContent() {
 
                     <div className="flex flex-col">
                         <span className="text-[9px] font-bold uppercase tracking-widest text-white/40 mb-1">Premium Total</span>
-                        <span className="text-3xl font-impact tracking-tighter text-white">$210.00</span>
+                        <span className="text-3xl font-impact tracking-tighter text-white">₹{grandTotal.toLocaleString()}</span>
                     </div>
 
                     <div className="space-y-4">
@@ -240,10 +308,17 @@ export default function PreviewContent() {
                 </div>
 
                 <div className="space-y-3 mt-10">
-                    <button className="w-full h-16 bg-white text-black text-[11px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] transition-colors flex items-center justify-center gap-3">
-                        ADD TO BAG <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                    <button
+                        onClick={handleAddToBag}
+                        disabled={addingToCart}
+                        className="w-full h-16 bg-white text-black text-[11px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
+                    >
+                        {addingToCart ? "ADDING..." : "ADD TO BAG"} <span className="material-symbols-outlined text-lg">shopping_bag</span>
                     </button>
-                    <button className="w-full h-16 bg-transparent border-2 border-white text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white/5 transition-colors flex items-center justify-center gap-3">
+                    <button
+                        onClick={() => { handleAddToBag(); }}
+                        className="w-full h-16 bg-transparent border-2 border-white text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white/5 transition-colors flex items-center justify-center gap-3"
+                    >
                         BUY NOW <span className="material-symbols-outlined text-lg">bolt</span>
                     </button>
                     <p className="text-[8px] text-center text-white/30 uppercase tracking-widest mt-4 italic">

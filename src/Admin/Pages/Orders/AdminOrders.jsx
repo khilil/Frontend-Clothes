@@ -37,7 +37,14 @@ const AdminOrders = () => {
     };
 
     const filteredOrders = orders.filter(order => {
-        const matchesTab = activeTab === 'all' || order.orderStatus === activeTab;
+        let matchesTab = activeTab === 'all' || order.orderStatus === activeTab;
+
+        // Custom filter logic
+        const hasCustomItems = order.items?.some(item => item.customizations && Object.keys(item.customizations).length > 0);
+        if (activeTab === 'custom') {
+            matchesTab = hasCustomItems;
+        }
+
         const matchesSearch = order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
             order.user?.fullName?.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesTab && matchesSearch;
@@ -84,7 +91,7 @@ const AdminOrders = () => {
 
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <div className="flex border-b border-slate-200 dark:border-slate-800 px-6 overflow-x-auto no-scrollbar">
-                    {['all', 'placed', 'shipped', 'delivered', 'cancelled'].map((tab) => (
+                    {['all', 'custom', 'placed', 'shipped', 'delivered', 'cancelled'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -93,7 +100,7 @@ const AdminOrders = () => {
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                                 }`}
                         >
-                            {tab}
+                            {tab === 'custom' ? '🎨 Custom Designs' : tab}
                         </button>
                     ))}
                 </div>
@@ -111,43 +118,55 @@ const AdminOrders = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                            {filteredOrders.map((order) => (
-                                <tr key={order._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
-                                    <td className="px-6 py-4 font-bold text-accent">
-                                        #{order._id.slice(-8).toUpperCase()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm">{order.user?.fullName || "Anonymous"}</span>
-                                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">{order.user?.email || "No Email"}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                        {new Date(order.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <select
-                                            value={order.orderStatus}
-                                            onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
-                                            className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border-none focus:ring-0 cursor-pointer ${getStatusStyles(order.orderStatus)}`}
-                                        >
-                                            <option value="placed">Placed</option>
-                                            <option value="shipped">Shipped</option>
-                                            <option value="delivered">Delivered</option>
-                                            <option value="cancelled">Cancelled</option>
-                                        </select>
-                                    </td>
-                                    <td className="px-6 py-4 font-bold text-sm">₹{order.totalAmount}</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <Link
-                                            to={`/admin/orders/${order._id}`}
-                                            className="p-2 hover:bg-accent/10 hover:text-accent rounded-lg text-slate-400 transition-all inline-block"
-                                        >
-                                            <span className="material-symbols-outlined !text-xl">visibility</span>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
+                            {filteredOrders.map((order) => {
+                                const isCustom = order.items?.some(item => item.customizations && Object.keys(item.customizations).length > 0);
+                                return (
+                                    <tr key={order._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+                                        <td className="px-6 py-4 font-bold text-accent">
+                                            #{order._id.slice(-8).toUpperCase()}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-sm">{order.user?.fullName || "Anonymous"}</span>
+                                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">{order.user?.email || "No Email"}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                            {new Date(order.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <select
+                                                value={order.orderStatus}
+                                                onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
+                                                className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border-none focus:ring-0 cursor-pointer ${getStatusStyles(order.orderStatus)}`}
+                                            >
+                                                <option value="placed">Placed</option>
+                                                <option value="shipped">Shipped</option>
+                                                <option value="delivered">Delivered</option>
+                                                <option value="cancelled">Cancelled</option>
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col items-start gap-1">
+                                                <span className="font-bold text-sm">₹{order.totalAmount}</span>
+                                                {isCustom && (
+                                                    <span className="bg-accent/10 text-accent text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest">
+                                                        Contains Custom
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Link
+                                                to={`/admin/orders/${order._id}`}
+                                                className="p-2 hover:bg-accent/10 hover:text-accent rounded-lg text-slate-400 transition-all inline-block"
+                                            >
+                                                <span className="material-symbols-outlined !text-xl">visibility</span>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
