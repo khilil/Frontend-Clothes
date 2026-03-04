@@ -157,7 +157,7 @@ export default function Header() {
                 </div>
               </div>
 
-              <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em]" to="/collections">Collections</Link>
+              {/* <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em]" to="/collections">Collections</Link> */}
               <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em] text-accent" to="/sale">Sale</Link>
             </nav>
           )}

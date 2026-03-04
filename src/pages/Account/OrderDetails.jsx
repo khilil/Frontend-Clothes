@@ -46,7 +46,7 @@ const OrderDetails = () => {
     }
 
     const getStatusIndex = (status) => {
-        const sequence = ['placed', 'processing', 'shipped', 'delivered'];
+        const sequence = ['placed', 'processing', 'in-production', 'ready-to-ship', 'shipped', 'delivered'];
         return sequence.indexOf(status?.toLowerCase());
     };
 
@@ -81,18 +81,19 @@ const OrderDetails = () => {
             <div className="bg-white border border-gray-100 rounded-2xl p-8 md:p-12 mb-8 shadow-sm">
                 <div className="relative flex justify-between">
                     <div className="absolute top-2 left-0 w-full h-0.5 bg-gray-100 -z-0"></div>
-                    {['Placed', 'Processing', 'Shipped', 'Delivered'].map((step, idx) => {
+                    {['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Delivered'].map((step, idx) => {
+                        const sequence = ['placed', 'processing', 'in-production', 'ready-to-ship', 'shipped', 'delivered'];
+                        const internalStatus = sequence[idx];
                         const isComplete = idx < currentIdx;
                         const isActive = idx === currentIdx;
+
                         return (
                             <div key={step} className={`relative z-10 flex flex-col items-center gap-4 ${isActive ? 'text-black font-bold' : isComplete ? 'text-black' : 'text-muted'}`}>
-                                <div className={`w-4 h-4 rounded-full ring-4 ring-white ${isActive ? 'bg-black scale-125 border-4 border-white ring-1 ring-black' : isComplete ? 'bg-black' : 'bg-gray-100'}`}></div>
+                                <div className={`w-4 h-4 rounded-full ring-4 ring-white transition-all duration-500 ${isActive ? 'bg-black scale-125 border-4 border-white ring-1 ring-black' : isComplete ? 'bg-black' : 'bg-gray-100'}`}></div>
                                 <div className="text-center">
-                                    <p className="text-[10px] font-black uppercase tracking-widest">{step}</p>
-                                    {(isComplete || isActive) && (
-                                        <p className="text-[9px] text-muted font-medium mt-1">
-                                            {new Date(order.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-                                        </p>
+                                    <p className="text-[9px] font-black uppercase tracking-tighter sm:tracking-widest whitespace-nowrap">{step}</p>
+                                    {isActive && (
+                                        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-2 h-2 bg-black rounded-full animate-bounce"></div>
                                     )}
                                 </div>
                             </div>
@@ -100,6 +101,30 @@ const OrderDetails = () => {
                     })}
                 </div>
             </div>
+
+            {/* TRACKING INFO (If Shipped) */}
+            {order.trackingNumber && (
+                <div className="bg-black text-white rounded-2xl p-8 mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-6">
+                        <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                            <span className="material-symbols-outlined text-accent text-2xl">local_shipping</span>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#d4c4b1] mb-1">Active Shipment Trace</p>
+                            <h3 className="text-xl font-impact tracking-tight uppercase">{order.courierService || "Express Logistics"}</h3>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Waybill Number</p>
+                        <div className="flex items-center gap-3">
+                            <span className="text-lg font-mono font-bold tracking-tighter underline underline-offset-4 decoration-[#d4c4b1]">{order.trackingNumber}</span>
+                            <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                                <span className="material-symbols-outlined text-sm">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* ITEMS LIST */}
@@ -114,20 +139,25 @@ const OrderDetails = () => {
                                     <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
                                         <img
                                             alt={item.title}
-                                            className="w-full h-full object-cover grayscale"
-                                            src={item.imageURL || "https://placeholder.com/100"}
+                                            className="w-full h-full object-cover"
+                                            src={item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
                                         />
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div>
-                                            <h4 className="text-sm font-bold uppercase tracking-tight mb-1">{item.title}</h4>
+                                            <div className="flex justify-between items-start">
+                                                <h4 className="text-sm font-bold uppercase tracking-tight mb-1">{item.title}</h4>
+                                                {item.designReference && (
+                                                    <span className="text-[8px] font-black bg-black text-white px-2 py-0.5 rounded tracking-widest uppercase">Customized</span>
+                                                )}
+                                            </div>
                                             <p className="text-[10px] text-muted uppercase tracking-widest mb-3">
                                                 {item.size && `Size: ${item.size}`} {item.color && ` / Color: ${item.color}`}
                                             </p>
                                             <p className="text-[10px] font-black uppercase tracking-widest">Qty: {item.quantity}</p>
                                         </div>
                                         <div className="flex justify-between items-end">
-                                            <p className="text-sm font-impact tracking-tight">₹{(item.price * item.quantity).toLocaleString()}</p>
+                                            <p className="text-sm font-impact tracking-tight">₹{(item.priceAtPurchase || item.price * item.quantity).toLocaleString()}</p>
                                             <button className="text-[9px] font-black uppercase tracking-widest text-muted hover:text-black underline underline-offset-4">Write a Review</button>
                                         </div>
                                     </div>
@@ -189,11 +219,13 @@ const OrderDetails = () => {
                         <div className="p-8">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-8 bg-black rounded-md flex items-center justify-center text-white text-[8px] font-black uppercase tracking-tighter">
-                                    VISA
+                                    {order.paymentMethod === 'COD' ? 'CASH' : 'VISA'}
                                 </div>
                                 <div>
-                                    <p className="text-[11px] font-black uppercase tracking-widest">Visa Ending in 4242</p>
-                                    <p className="text-[9px] text-muted uppercase tracking-widest mt-1">Expiry 12/26</p>
+                                    <p className="text-[11px] font-black uppercase tracking-widest">
+                                        {order.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Online Payment'}
+                                    </p>
+                                    <p className="text-[9px] text-muted uppercase tracking-widest mt-1">Status: {order.paymentStatus}</p>
                                 </div>
                             </div>
                         </div>

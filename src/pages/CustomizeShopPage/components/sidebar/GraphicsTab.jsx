@@ -164,23 +164,20 @@ export default function GraphicsTab() {
             )}
 
             {/* PLACEHOLDER FOR UPLOADS */}
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                accept=".png,.svg"
-                hidden
-            />
             <div
-                onClick={() => fileInputRef.current?.click()}
-                className="mt-8 p-6 border-2 border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center gap-3 group hover:border-[#d4c4b1]/20 transition-all cursor-pointer"
+                className="mt-8 p-6 border-2 border-dashed border-white/[0.03] bg-white/[0.01] rounded-2xl flex flex-col items-center justify-center gap-3 cursor-not-allowed group opacity-50"
             >
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:text-[#d4c4b1] group-hover:bg-[#d4c4b1]/10 transition-all">
-                    <span className="material-symbols-outlined text-[20px]">upload</span>
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/10 group-hover:text-amber-500/40 group-hover:bg-amber-500/5 transition-all">
+                    <span className="material-symbols-outlined text-[20px]">lock</span>
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/20 group-hover:text-white transition-colors">
-                    Upload Professional Asset
-                </span>
+                <div className="text-center">
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/20 block mb-1">
+                        Professional Assets Upload
+                    </span>
+                    <span className="text-[7px] font-black uppercase tracking-[0.4em] text-amber-500/40">
+                        Protocol Coming Soon
+                    </span>
+                </div>
             </div>
         </div>
     );

@@ -19,10 +19,6 @@ export default function StudioNavbar() {
 
     return (
         <nav className="w-full md:w-20 bg-[#0a0a0a] border-t md:border-t-0 md:border-r border-white/5 flex md:flex-col items-center justify-around md:justify-start py-2 md:py-6 md:gap-8 z-50">
-            {/* LOGO or STUDIO ICON - Hidden on mobile to save space */}
-            <div className="hidden md:flex w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4c4b1] to-[#a89988] items-center justify-center shadow-lg shadow-[#d4c4b1]/10">
-                <FiSettings className="text-black text-xl" />
-            </div>
 
             <div className="flex md:flex-col gap-2 md:gap-4 w-full px-2 justify-around md:justify-start">
                 {TABS.map((tab) => {

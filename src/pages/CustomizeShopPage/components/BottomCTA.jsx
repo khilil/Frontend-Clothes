@@ -30,7 +30,7 @@ export default function BottomCTA() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
                 <button
                     onClick={handlePreview}
                     className="h-12 md:h-16 border border-white/10 rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all group"
@@ -40,12 +40,12 @@ export default function BottomCTA() {
                     </span>
                 </button>
 
-                <button className="group relative h-12 md:h-16 bg-white overflow-hidden rounded-xl transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                {/* <button className="group relative h-12 md:h-16 bg-white overflow-hidden rounded-xl transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]">
                     <div className="absolute inset-0 bg-[#d4c4b1] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                     <span className="relative z-10 text-black font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px]">
                         Add to Bag
                     </span>
-                </button>
+                </button> */}
             </div>
 
             <p className="hidden md:block text-[8px] text-white/20 uppercase tracking-[0.3em] text-center">

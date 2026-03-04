@@ -12,7 +12,9 @@ export const addImageToCanvas = async (
     if (!canvas) return;
 
     try {
-        const img = await fabric.FabricImage.fromURL(imageURL);
+        const img = await fabric.FabricImage.fromURL(imageURL, {
+            crossOrigin: "anonymous",
+        });
 
         // Scale inside print area (max 60% width)
         const maxWidth = printArea.width * 0.6;

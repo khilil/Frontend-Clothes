@@ -44,10 +44,10 @@ const AccountLayout = () => {
 
         <div className="flex items-center gap-4 mb-10 pb-10 border-b border-white/10 text-white">
           <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-black font-impact text-xl">
-            {user?.name?.charAt(0) || user?.fullName?.charAt(0) || 'U'}
+            {user?.name?.charAt(0) || 'U'}
           </div>
           <div>
-            <p className="text-white text-sm font-bold tracking-tight">{user?.name || user?.fullName || 'User'}</p>
+            <p className="text-white text-sm font-bold tracking-tight">{user?.name || 'User'}</p>
             <p className="text-white/40 text-[10px] uppercase tracking-widest">Premium Member</p>
           </div>
         </div>

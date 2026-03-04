@@ -137,6 +137,10 @@ export function FabricProvider({ children }) {
     const frontDesignRef = useRef(null);
     const backDesignRef = useRef(null);
 
+    const initialVariantIdRef = useRef(null);
+    const initialSizeRef = useRef(null);
+    const initialColorRef = useRef(null);
+
     const layersRef = useRef([]);
     const designStateRef = useRef(null);
     const viewSideRef = useRef("front");
@@ -184,6 +188,10 @@ export function FabricProvider({ children }) {
                 updatePrice,
                 pricingSettings,
                 printingMethods: pricingSettings.printingMethods,
+                // Initial Selection Preservation
+                initialVariantIdRef,
+                initialSizeRef,
+                initialColorRef,
                 // Production Metadata
                 uploadedAssetsMetadataRef
             }}

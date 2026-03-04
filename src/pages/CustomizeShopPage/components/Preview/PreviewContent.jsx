@@ -185,7 +185,7 @@ export default function PreviewContent() {
 
             const dataURL = tempCanvas.toDataURL({
                 format: "png",
-                multiplier: 2
+                multiplier: 3
             });
 
             setPreviewImage(dataURL);

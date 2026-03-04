@@ -20,20 +20,25 @@ export default function StudioSidebar() {
             default:
                 return (
                     <div className="space-y-8 animate-slideUp">
-                        <div className="space-y-2">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
-                                Product Customization
+                        <div className="relative pl-4 border-l-2 border-[#d4c4b1]/30 py-1">
+                            <span className="absolute -left-[2px] top-0 w-[2px] h-4 bg-[#d4c4b1] animate-pulse" />
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-[#d4c4b1]">
+                                Design Protocol
                             </h3>
-                            <p className="text-[9px] text-white/40 uppercase tracking-widest leading-relaxed">
-                                Select and customize the base fabric of your garment.
+                            <p className="text-[9px] text-white/30 uppercase tracking-[0.2em] mt-2 font-medium">
+                                Configure the base architecture of your custom garment.
                             </p>
                         </div>
                         <FabricColorPicker />
                         <div className="h-px bg-white/5" />
-                        <div className="p-6 bg-gradient-to-br from-[#d4c4b1]/10 to-transparent border border-[#d4c4b1]/20 rounded-2xl">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] mb-2 block">Pro Tip</span>
-                            <p className="text-[9px] text-white/60 leading-relaxed uppercase tracking-widest">
-                                Use the layers panel to organize your design elements and manage visibility.
+                        <div className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-[#d4c4b1]/5 blur-2xl rounded-full -mr-8 -mt-8 transition-all group-hover:bg-[#d4c4b1]/10" />
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="w-1.5 h-1.5 bg-[#d4c4b1] rounded-full shadow-[0_0_8px_#d4c4b1]" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#d4c4b1]">System Insight</span>
+                            </div>
+                            <p className="text-[9px] text-white/40 leading-relaxed uppercase tracking-[0.15em] font-medium">
+                                Utilize the <span className="text-white/70">Layers Panel</span> to orchestrate complex design architectures and toggle element visibility.
                             </p>
                         </div>
                     </div>

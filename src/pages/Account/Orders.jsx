@@ -166,8 +166,8 @@ const Orders = () => {
                       <div key={idx} className="w-20 h-28 sm:w-24 sm:h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
                         <img
                           alt="Item"
-                          className="w-full h-full object-cover grayscale"
-                          src={item.imageURL || "https://placeholder.com/100"}
+                          className="w-full h-full object-cover"
+                          src={item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
                         />
                       </div>
                     ))}

@@ -9,7 +9,9 @@ export const addSVGToCanvas = async (
     if (!canvas) return;
 
     try {
-        const { objects, options } = await fabric.loadSVGFromURL(svgPath);
+        const { objects, options } = await fabric.loadSVGFromURL(svgPath, {
+            crossOrigin: "anonymous",
+        });
 
         const svg = fabric.util.groupSVGElements(objects, options);
 

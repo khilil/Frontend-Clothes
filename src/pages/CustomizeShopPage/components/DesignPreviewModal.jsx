@@ -24,7 +24,10 @@ export default function DesignPreviewModal() {
         customizationPrice,
         pricingSettings,
         printingMethods,
-        uploadedAssetsMetadataRef
+        uploadedAssetsMetadataRef,
+        initialVariantIdRef,
+        initialSizeRef,
+        initialColorRef
     } = useFabric();
 
     const { addToCart } = useCart();
@@ -77,8 +80,8 @@ export default function DesignPreviewModal() {
 
         // A. Capture Mockup (with shirt, no stroke)
         if (activePrintArea) activePrintArea.set({ stroke: 'transparent' });
-        results[activeSide] = mainCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1.5 });
-        thumbnails[activeSide] = mainCanvas.toDataURL({ format: 'jpeg', quality: 0.5, multiplier: 0.3 });
+        results[activeSide] = mainCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 2.5 });
+        thumbnails[activeSide] = mainCanvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 0.6 });
 
         // B. Capture Print File (no shirt, high-res)
         if (activeBaseImg) activeBaseImg.set({ visible: false });
@@ -114,8 +117,8 @@ export default function DesignPreviewModal() {
                 const sPrintArea = hiddenCanvas.getObjects().find(o => o.excludeFromExport && o.type === 'rect');
                 if (sPrintArea) sPrintArea.set({ stroke: 'transparent' });
 
-                results[side] = hiddenCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 1.5 });
-                thumbnails[side] = hiddenCanvas.toDataURL({ format: 'jpeg', quality: 0.5, multiplier: 0.3 });
+                results[side] = hiddenCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 2.5 });
+                thumbnails[side] = hiddenCanvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 0.6 });
 
                 hiddenCanvas.dispose();
             }
@@ -183,24 +186,31 @@ export default function DesignPreviewModal() {
             const customizations = {
                 frontDesign: frontDesignRef.current,
                 backDesign: backDesignRef.current,
-                previews: previews.thumbnails, // thumbnails for cart/admin list
+                previews: previews, // Using full res mockups for cart/admin list (formerly thumbnails)
                 printFiles: previews.printFiles, // high-res for printing
                 printingMethod: currentType,
                 technicalReport: generateTechnicalReport()
             };
 
             // Find a default variant if none selected
+            // ✅ USE PRESERVED SELECTION IF AVAILABLE
             const product = productDataRef.current;
-            const variant = product.variants?.[0];
-            const variantId = variant?._id || variant?.id || variant?.sku;
+            const finalVariantId = initialVariantIdRef.current || (product.variants?.length > 0 ? (product.variants[0].sku || product.variants[0]._id) : null);
+            const finalSize = initialSizeRef.current || (product.variants?.length > 0 ? product.variants[0].size?.name : "N/A");
+            const finalColor = initialColorRef.current || (product.variants?.length > 0 ? product.variants[0].color?.name : "N/A");
 
-            console.log("🆔 Resolved IDs:", { productId: product._id, variantId });
-
-            if (!product._id || !variantId) {
-                throw new Error(`Technical Error: Missing IDs (PID: ${product._id}, VID: ${variantId})`);
+            if (!finalVariantId) {
+                console.error("❌ No variant found to add to bag");
+                return;
             }
 
-            await addToCart(product, { variantId }, customizations);
+            console.log("🆔 Resolved IDs:", { productId: product._id, variantId: finalVariantId });
+
+            await addToCart(product, {
+                variantId: finalVariantId,
+                size: finalSize,
+                color: finalColor
+            }, customizations);
 
             setSuccess(true);
             setTimeout(() => {

@@ -21,7 +21,10 @@ export default function CanvasArea() {
         productDataRef,
         setSelectedObject,
         saveHistory,
-        updatePrice
+        updatePrice,
+        initialVariantIdRef,
+        initialSizeRef,
+        initialColorRef
     } = useFabric();
 
     const location = useLocation();
@@ -44,6 +47,17 @@ export default function CanvasArea() {
             };
             setProductData(data);
             productDataRef.current = data;
+
+            // ✅ CAPTURE INITIAL SELECTION (Preserved for Add to Bag)
+            if (location.state.variantId) initialVariantIdRef.current = location.state.variantId;
+            if (location.state.size) initialSizeRef.current = location.state.size;
+            if (location.state.color) initialColorRef.current = location.state.color;
+
+            console.log("📍 Captured Initial Selection:", {
+                variantId: initialVariantIdRef.current,
+                size: initialSizeRef.current,
+                color: initialColorRef.current
+            });
         }
 
         // 2. Always fetch full document for metadata (_id, variants, etc)

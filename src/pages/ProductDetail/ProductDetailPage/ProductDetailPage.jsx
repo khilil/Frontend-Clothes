@@ -52,6 +52,9 @@ export default function ProductDetailPage() {
         navigate(`/customize/${product.slug}`, {
             state: {
                 productId: product._id,
+                variantId: selectedVariant?.sku || selectedVariant?._id,
+                size: selectedSize,
+                color: selectedColor?.name,
                 title: product.title,
                 frontImage: images[0],
                 backImage: images[1] || images[0],

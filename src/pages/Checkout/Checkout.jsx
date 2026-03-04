@@ -100,7 +100,7 @@ export default function Checkout() {
 
   const subtotal = checkoutItems.reduce((acc, item) => acc + (item.price || 0) * (item.qty || item.quantity || 1), 0);
   const tax = subtotal * 0.082; // 8.2% estimated tax like in mockup
-  const total = subtotal + tax;
+  const total = Math.round(subtotal + tax);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -147,7 +147,14 @@ export default function Checkout() {
           pinCode: formData.pincode
         };
         await dispatch(addUserAddress(newAddrData)).unwrap();
-        shippingAddress = newAddrData;
+        shippingAddress = {
+          fullName: newAddrData.fullName,
+          phone: newAddrData.phone,
+          addressLine: newAddrData.streetAddress,
+          city: newAddrData.city,
+          state: newAddrData.state,
+          pincode: newAddrData.pinCode
+        };
       } else {
         const selectedAddr = user.addresses.find(a => a._id === selectedAddressId);
         shippingAddress = {

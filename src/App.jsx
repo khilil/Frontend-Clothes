@@ -1,4 +1,5 @@
 import { CartProvider } from "./context/CartContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import AppRoutes from "./routes/AppRoutes";
 import { store } from "./app/store";
 import { useDispatch } from "react-redux";
@@ -18,8 +19,10 @@ function App() {
   return (
     <>
       <CartProvider>
-        <SmoothScroll />
-        <AppRoutes />
+        <WishlistProvider>
+          <SmoothScroll />
+          <AppRoutes />
+        </WishlistProvider>
       </CartProvider>
     </>
   );

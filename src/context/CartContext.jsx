@@ -42,8 +42,8 @@ export function CartProvider({ children }) {
             image: item.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url,
             qty: item.quantity,
             variantId: item.variantId,
-            size: variant?.size?.name || "N/A",
-            color: variant?.color?.name || "N/A",
+            size: variant?.size?.name || product.size?.name || "N/A",
+            color: variant?.color?.name || product.color?.name || "N/A",
             customizations: item.customizations || {}
           };
         });
@@ -90,6 +90,9 @@ export function CartProvider({ children }) {
           }
         }
 
+        // CRITICAL: Only use options.size if this specific item is the one we just added
+        const isNewItem = item.variantId === variantId;
+
         return {
           cartItemId: item._id,
           id: prod._id,
@@ -99,8 +102,8 @@ export function CartProvider({ children }) {
           image: item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.images?.[0]?.url,
           qty: item.quantity,
           variantId: item.variantId,
-          size: variant?.size?.name || options.size || "N/A",
-          color: variant?.color?.name || options.color || "N/A",
+          size: variant?.size?.name || (isNewItem ? (options.size || prod.size?.name || "N/A") : prod.size?.name || "N/A"),
+          color: variant?.color?.name || (isNewItem ? (options.color || prod.color?.name || "N/A") : prod.color?.name || "N/A"),
           customizations: item.customizations || {}
         };
       });

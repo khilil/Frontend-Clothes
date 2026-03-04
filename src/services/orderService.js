@@ -63,9 +63,9 @@ export const getAllAdminOrders = async () => {
 /**
  * 👑 Admin: Update Order Status
  */
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async (orderId, updateData) => {
     try {
-        const response = await api.put(`/orders/admin/status/${orderId}`, { status });
+        const response = await api.put(`/orders/admin/status/${orderId}`, updateData);
         return response.data;
     } catch (error) {
         throw error.response?.data || error;

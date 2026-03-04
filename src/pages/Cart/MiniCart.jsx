@@ -37,9 +37,9 @@ export default function MiniCart({ open, onClose }) {
         {open && (
           <div className="mini-cart-root">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               className="mini-cart-overlay"
               onClick={onClose}
             />
@@ -47,7 +47,7 @@ export default function MiniCart({ open, onClose }) {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
               className="mini-cart"
             >
               {/* HEADER */}

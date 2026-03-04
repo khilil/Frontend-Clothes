@@ -31,6 +31,10 @@ export default function AdminProducts() {
     const [selectedProducts, setSelectedProducts] = useState(new Set());
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [limit, setLimit] = useState(12);
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, productId: null, productName: '' });
@@ -60,17 +64,29 @@ export default function AdminProducts() {
         const fetchData = async () => {
             setIsLoading(true);
             try {
+                const params = {
+                    isAdmin: true,
+                    page: currentPage,
+                    limit: limit,
+                    search: searchTerm,
+                    category: filters.category !== 'All' ? filters.category : undefined,
+                    gender: filters.gender !== 'All' ? filters.gender : undefined,
+                    productType: filters.productType !== 'All' ? filters.productType : undefined,
+                    minPrice: filters.priceMin || undefined,
+                    maxPrice: filters.priceMax || undefined
+                };
+
                 const [productData, categoryData] = await Promise.all([
-                    getProducts({ isAdmin: true }, controller.signal),
+                    getProducts(params, controller.signal),
                     getAllCategories()
                 ]);
 
-                // Parse Products
-                let productList = [];
-                if (Array.isArray(productData)) productList = productData;
-                else if (productData?.data) productList = productData.data;
-                else if (productData?.products) productList = productData.products;
-                setProducts(productList);
+                // Parse Products and Pagination
+                if (productData) {
+                    setProducts(productData.products || []);
+                    setTotalPages(productData.totalPages || 1);
+                    setTotalProducts(productData.totalProducts || 0);
+                }
 
                 // Parse Categories
                 let catList = [];
@@ -85,14 +101,18 @@ export default function AdminProducts() {
                     setError("Failed to load catalog data.");
                 }
             } finally {
-                setIsLoading(true); // Temporary to avoid flicker if needed, but let's set to false
                 setIsLoading(false);
             }
         };
 
         fetchData();
         return () => controller.abort();
-    }, []);
+    }, [currentPage, searchTerm, filters, limit]);
+
+    // Reset page when search or filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filters]);
 
     const handleSort = (key) => {
         let direction = 'asc';
@@ -102,42 +122,9 @@ export default function AdminProducts() {
         setSortConfig({ key, direction });
     };
 
-    const filteredProducts = useMemo(() => {
-        if (!Array.isArray(products)) return [];
-
-        return products.filter(p => {
-            if (!p) return false;
-
-            // Search Filter
-            const nameMatch = (p.title || p.name || '').toLowerCase().includes(searchTerm.toLowerCase());
-            const idMatch = (p._id || p.id || '').toLowerCase().includes(searchTerm.toLowerCase());
-            const skuMatch = p.variants?.some(v => v.sku?.toLowerCase().includes(searchTerm.toLowerCase()));
-            if (searchTerm && !nameMatch && !idMatch && !skuMatch) return false;
-
-            // Category Filter
-            const pCategory = typeof p.category === 'object' ? p.category?.name : (p.category || (Array.isArray(p.categories) ? p.categories[0] : ''));
-            if (filters.category !== 'All' && pCategory !== filters.category) return false;
-
-            // Gender Filter
-            if (filters.gender !== 'All' && p.gender?.toLowerCase() !== filters.gender.toLowerCase()) return false;
-
-            // Product Type Filter
-            if (filters.productType !== 'All' && p.productType !== filters.productType) return false;
-
-            // Price Filter
-            const price = parseFloat(p.price) || 0;
-            if (filters.priceMin && price < parseFloat(filters.priceMin)) return false;
-            if (filters.priceMax && price > parseFloat(filters.priceMax)) return false;
-
-            // Stock Status Filter
-            const totalStock = p.variants?.reduce((sum, v) => sum + (v.stock || 0), 0) || 0;
-            if (filters.stockStatus === 'In Stock' && totalStock <= 0) return false;
-            if (filters.stockStatus === 'Low Stock' && (totalStock <= 0 || totalStock > 10)) return false;
-            if (filters.stockStatus === 'Out of Stock' && totalStock > 0) return false;
-
-            return true;
-        });
-    }, [products, searchTerm, filters]);
+    // Note: Since we are using server-side pagination, filteredProducts is 
+    // now just the products from the current page.
+    const filteredProducts = products;
 
     const sortedProducts = useMemo(() => {
         const items = [...filteredProducts];
@@ -478,17 +465,33 @@ export default function AdminProducts() {
                     {/* Pagination Section */}
                     <div className="flex items-center justify-between border-t border-slate-800 bg-slate-900/50 px-6 py-4">
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                            Showing <span className="text-slate-200">1</span> to{" "}
-                            <span className="text-slate-200">{sortedProducts.length}</span> of{" "}
-                            <span className="text-slate-200">{sortedProducts.length}</span> results
+                            Showing <span className="text-slate-200">{(currentPage - 1) * limit + 1}</span> to{" "}
+                            <span className="text-slate-200">{Math.min(currentPage * limit, totalProducts)}</span> of{" "}
+                            <span className="text-slate-200">{totalProducts}</span> results
                         </p>
 
                         <div className="flex items-center gap-2">
-                            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 text-slate-500 transition-all hover:bg-slate-800 hover:text-white disabled:opacity-30" disabled>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                disabled={currentPage === 1 || isLoading}
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 text-slate-500 transition-all hover:bg-slate-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
                                 <ChevronLeft size={18} />
                             </button>
-                            <button className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-xs font-black text-white shadow-lg shadow-indigo-600/20">1</button>
-                            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 text-slate-400 transition-all hover:bg-slate-800 hover:text-white">
+
+                            <div className="flex items-center gap-1.5 px-2">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Page</span>
+                                <span className="flex h-9 min-w-[36px] items-center justify-center rounded-xl bg-indigo-600 px-2 text-xs font-black text-white shadow-lg shadow-indigo-600/20">
+                                    {currentPage}
+                                </span>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">of {totalPages}</span>
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                disabled={currentPage === totalPages || isLoading}
+                                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 text-slate-400 transition-all hover:bg-slate-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
                                 <ChevronRight size={18} />
                             </button>
                         </div>

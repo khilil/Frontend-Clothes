@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useWishlist } from '../../../context/WishlistContext';
 import './ProductCard.css';
 
 const ProductCard = React.memo(({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { toggleItem, isInWishlist } = useWishlist();
+  const isLiked = isInWishlist(product._id || product.id);
 
   // Extract unique colors and sizes from variants
   const { colors, sizes } = React.useMemo(() => {
@@ -84,13 +87,22 @@ const ProductCard = React.memo(({ product }) => {
 
           {/* Wishlist Icon */}
           <button
-            className="wishlist-btn-luxury"
+            className={`wishlist-btn-luxury ${isLiked ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              // Add to wishlist logic here
+              e.stopPropagation();
+              toggleItem(product);
             }}
           >
-            <span className="material-symbols-outlined">favorite</span>
+            <motion.span
+              className="material-symbols-outlined"
+              animate={isLiked ? { scale: [1, 1.3, 1], color: '#ff4b4b' } : { scale: 1, color: 'rgba(255,255,255,0.4)' }}
+              whileTap={{ scale: 0.8 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ fontVariationSettings: isLiked ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              favorite
+            </motion.span>
           </button>
 
           {/* Product Images */}

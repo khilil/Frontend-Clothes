@@ -2,14 +2,15 @@ import "./Dashboard.css";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useWishlist } from "../../../context/WishlistContext";
 import * as orderService from "../../../services/orderService";
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
+  const { wishlist } = useWishlist();
   const [stats, setStats] = useState({
     totalOrders: 0,
     activeOrders: 0,
-    wishlistItems: 0,
   });
   const [recentOrder, setRecentOrder] = useState(null);
 
@@ -25,7 +26,6 @@ const Dashboard = () => {
       setStats({
         totalOrders: orders.length,
         activeOrders: orders.filter(o => o.orderStatus !== 'delivered' && o.orderStatus !== 'cancelled').length,
-        wishlistItems: 8, // Using mockup value or fetch actual
       });
 
       if (orders.length > 0) {
@@ -39,7 +39,7 @@ const Dashboard = () => {
   return (
     <div className="flex-1 space-y-12 pb-20">
       <header>
-        <h1 className="text-4xl font-impact tracking-tight mb-2">Welcome back, {user?.fullName?.split(" ")[0] || "Vikram"}!</h1>
+        <h1 className="text-4xl font-impact tracking-tight mb-2">Welcome back, {user?.name?.split(" ")[0] || "Friend"}!</h1>
         <p className="text-sm text-muted">Here's an overview of your recent activity and account status.</p>
       </header>
 
@@ -68,7 +68,7 @@ const Dashboard = () => {
             <span className="material-symbols-outlined text-3xl text-accent">favorite_border</span>
             <span className="text-[10px] font-black uppercase tracking-widest text-muted">New</span>
           </div>
-          <p className="text-3xl font-impact tracking-tight">{stats.wishlistItems.toString().padStart(2, '0')}</p>
+          <p className="text-3xl font-impact tracking-tight">{(wishlist?.length || 0).toString().padStart(2, '0')}</p>
           <p className="text-[10px] font-black uppercase tracking-widest text-muted mt-1">Wishlist Items</p>
         </div>
       </div>
@@ -91,9 +91,9 @@ const Dashboard = () => {
               <div className="flex items-center gap-6">
                 <div className="w-20 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
                   <img
-                    src={recentOrder.items?.[0]?.imageURL || "https://placeholder.com/100"}
+                    src={recentOrder.items?.[0]?.customizations?.previews?.front || recentOrder.items?.[0]?.imageURL || "https://placeholder.com/100"}
                     alt="Product"
-                    className="w-full h-full object-cover grayscale"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="space-y-1">

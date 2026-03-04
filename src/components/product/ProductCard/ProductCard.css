@@ -98,13 +98,24 @@
 }
 
 .wishlist-btn-luxury:hover {
-  background: #fff;
-  color: #000;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ff4b4b;
+  border-color: #ff4b4b;
+}
+
+.wishlist-btn-luxury.active {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #ff4b4b;
 }
 
 .wishlist-btn-luxury span {
   font-size: 16px;
   font-variation-settings: 'FILL' 0, 'wght' 300;
+  transition: all 0.3s ease;
+}
+
+.wishlist-btn-luxury.active span {
+  font-variation-settings: 'FILL' 1, 'wght' 300;
 }
 
 /* INFO CONTAINER */

@@ -15,7 +15,7 @@ const Profile = () => {
   };
 
   const initialProfile = {
-    fullName: user?.fullName || "Not Provided",
+    fullName: user?.name || "Not Provided",
     email: user?.email || "Not Provided",
     mobile: user?.phone || "+91 XXXXX XXXXX",
     password: "••••••••••••",

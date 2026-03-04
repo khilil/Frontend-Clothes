@@ -17,6 +17,8 @@ const AdminOrderDetails = () => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [note, setNote] = useState('');
     const [isQualityChecked, setIsQualityChecked] = useState(false);
+    const [trackingNumber, setTrackingNumber] = useState('');
+    const [courierService, setCourierService] = useState('');
 
     useEffect(() => {
         if (orderId) {
@@ -36,13 +38,40 @@ const AdminOrderDetails = () => {
         }
     };
 
-    const handleStatusUpdate = async (newStatus) => {
+    useEffect(() => {
+        if (order) {
+            setTrackingNumber(order.trackingNumber || '');
+            setCourierService(order.courierService || '');
+        }
+    }, [order]);
+
+    const handleStatusUpdate = async (newStatus, extraData = {}) => {
         try {
             setIsUpdating(true);
-            await orderService.updateOrderStatus(orderId, newStatus);
+            await orderService.updateOrderStatus(orderId, {
+                status: newStatus,
+                ...extraData
+            });
             fetchOrderDetails(); // refresh
         } catch (error) {
             alert(error.message || "Failed to update status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleSaveLogistics = async () => {
+        try {
+            setIsUpdating(true);
+            await orderService.updateOrderStatus(orderId, {
+                status: order.orderStatus,
+                trackingNumber,
+                courierService
+            });
+            fetchOrderDetails();
+            alert("Logistics updated successfully");
+        } catch (error) {
+            alert("Failed to save logistics");
         } finally {
             setIsUpdating(false);
         }
@@ -66,10 +95,9 @@ const AdminOrderDetails = () => {
     }
 
     const timelineSteps = [
-        { label: 'Ordered', icon: 'check', date: new Date(order.createdAt).toLocaleString(), completed: true },
-        { label: 'Payment', icon: 'payments', date: order.paymentStatus, active: order.paymentStatus === 'Pending', completed: order.paymentStatus === 'Paid' },
-        { label: 'Production', icon: 'precision_manufacturing', date: order.orderStatus === 'placed' ? 'In Queue' : 'Processed', active: order.orderStatus === 'placed' },
-        { label: 'Shipped', icon: 'local_shipping', date: order.orderStatus === 'shipped' ? 'On the Way' : 'Pending', completed: order.orderStatus === 'delivered' || order.orderStatus === 'shipped', active: order.orderStatus === 'shipped' },
+        { label: 'Placed', icon: 'check', date: new Date(order.createdAt).toLocaleDateString(), completed: true },
+        { label: 'Production', icon: 'precision_manufacturing', date: order.orderStatus, active: ['in-production', 'ready-to-ship'].includes(order.orderStatus), completed: ['shipped', 'delivered'].includes(order.orderStatus) },
+        { label: 'Shipped', icon: 'local_shipping', date: order.trackingNumber || 'Pending', completed: order.orderStatus === 'delivered' || order.orderStatus === 'shipped', active: order.orderStatus === 'shipped' },
         { label: 'Delivered', icon: 'done_all', date: order.orderStatus === 'delivered' ? 'Completed' : 'Pending', completed: order.orderStatus === 'delivered' },
     ];
 
@@ -90,9 +118,10 @@ const AdminOrderDetails = () => {
                         <div className="flex flex-wrap items-center gap-4">
                             <h1 className="text-3xl font-bold tracking-tight uppercase">Order #{order._id.slice(-8)}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${order.orderStatus === 'placed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                                order.orderStatus === 'shipped' ? 'bg-amber-100 text-amber-700 border-amber-200' :
-                                    order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                        'bg-red-100 text-red-700 border-red-200'
+                                ['in-production', 'processing'].includes(order.orderStatus) ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                    order.orderStatus === 'shipped' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                                        order.orderStatus === 'delivered' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                            'bg-red-100 text-red-700 border-red-200'
                                 }`}>
                                 {order.orderStatus.toUpperCase()}
                             </span>
@@ -110,6 +139,9 @@ const AdminOrderDetails = () => {
                             className="px-4 py-2.5 bg-[#1152d4] text-white rounded-lg hover:bg-[#1152d4]/90 transition-all font-semibold text-sm shadow-md outline-none cursor-pointer disabled:opacity-50"
                         >
                             <option value="placed">Mark as Placed</option>
+                            <option value="processing">Mark as Processing</option>
+                            <option value="in-production">Mark as In-Production</option>
+                            <option value="ready-to-ship">Mark as Ready-to-Ship</option>
                             <option value="shipped">Mark as Shipped</option>
                             <option value="delivered">Mark as Delivered</option>
                             <option value="cancelled">Mark as Cancelled</option>
@@ -119,7 +151,7 @@ const AdminOrderDetails = () => {
 
                 {/* --- ORDER TIMELINE --- */}
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 mb-8 overflow-x-auto">
-                    <div className="min-w-[600px] relative flex items-center justify-between">
+                    <div className="min-w-[500px] relative flex items-center justify-between mx-10">
                         {/* Timeline Line Background */}
                         <div className="absolute left-0 top-5 w-full h-1 bg-slate-100 dark:bg-slate-700 z-0"></div>
 
@@ -129,13 +161,12 @@ const AdminOrderDetails = () => {
                                     step.active ? 'bg-[#1152d4] text-white ring-4 ring-[#1152d4]/20 border-2 border-white dark:border-slate-800 scale-110' :
                                         'bg-slate-100 dark:bg-slate-700 text-slate-400'
                                     }`}>
-                                    <span className="material-icons text-lg">{step.completed ? 'check' : step.icon}</span>
+                                    <span className="material-icons text-lg font-bold">{step.completed ? 'check' : step.icon}</span>
                                 </div>
                                 <div className="space-y-0.5">
-                                    <p className={`text-[11px] font-black uppercase tracking-widest ${step.active || step.completed ? 'text-[#1152d4]' : 'text-slate-500 dark:text-slate-400'}`}>
+                                    <p className={`text-[10px] font-black uppercase tracking-widest ${step.active || step.completed ? 'text-[#1152d4]' : 'text-slate-400'}`}>
                                         {step.label}
                                     </p>
-                                    <p className="text-[10px] text-slate-400 font-medium uppercase">{step.date}</p>
                                 </div>
                             </div>
                         ))}
@@ -147,6 +178,48 @@ const AdminOrderDetails = () => {
 
                     {/* LEFT COLUMN */}
                     <div className="lg:col-span-2 space-y-8">
+                        {/* Fulfillment & Logistics */}
+                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                            <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-6">
+                                <span className="material-icons text-accent">local_shipping</span> Fulfillment & Logistics
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Courier Service</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. BlueDart, Delhivery"
+                                        value={courierService}
+                                        onChange={(e) => setCourierService(e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Tracking Number</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter AWB or tracking ID"
+                                        value={trackingNumber}
+                                        onChange={(e) => setTrackingNumber(e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
+                                    />
+                                </div>
+                            </div>
+                            <div className="mt-6 flex justify-end gap-3">
+                                <button
+                                    onClick={() => handleStatusUpdate('shipped', { trackingNumber, courierService })}
+                                    className="px-6 py-2 bg-black text-white rounded-lg text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-black transition-all"
+                                >
+                                    Mark as Shipped & Notify
+                                </button>
+                                <button
+                                    onClick={handleSaveLogistics}
+                                    className="px-6 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all font-bold"
+                                >
+                                    Save Info Only
+                                </button>
+                            </div>
+                        </div>
 
                         {/* Order Items Card */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
