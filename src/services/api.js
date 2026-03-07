@@ -34,13 +34,8 @@ api.interceptors.response.use(
             if (originalRequest.url?.includes("/users/refresh-token")) {
                 isRefreshing = false;
                 processQueue(error, null);
-                // Clear state and redirect to login if we're in the browser and not already on an auth page
                 if (typeof window !== "undefined") {
-                    const publicPaths = ["/login", "/forgot-password", "/reset-password"];
-                    const isPublicPath = publicPaths.some(path => window.location.pathname.startsWith(path));
-                    if (!isPublicPath) {
-                        window.location.href = "/login";
-                    }
+                    console.log("Session expired or invalid. Staying on current page for discovery.");
                 }
                 return Promise.reject(error);
             }
@@ -73,13 +68,8 @@ api.interceptors.response.use(
                     })
                     .catch((err) => {
                         processQueue(err, null);
-                        // Redirect to login on refresh token failure if not already on an auth page
                         if (typeof window !== "undefined") {
-                            const publicPaths = ["/login", "/forgot-password", "/reset-password"];
-                            const isPublicPath = publicPaths.some(path => window.location.pathname.startsWith(path));
-                            if (!isPublicPath) {
-                                window.location.href = "/login";
-                            }
+                            console.log("Authentication failed. Use login to access protected features.");
                         }
                         reject(err);
                     })

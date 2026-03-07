@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import * as cartService from "../services/cartService";
 import { ensureAbsoluteUrl } from "../utils/urlUtils";
 
@@ -7,143 +8,261 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, loading: authLoading } = useSelector((state) => state.auth);
 
-  /* 🔄 INITIAL FETCH FROM BACKEND */
+  /* 🔄 HELPERS */
+  const getGuestCart = () => {
+    const saved = localStorage.getItem("guest_cart");
+    return saved ? JSON.parse(saved) : [];
+  };
+
+  const setGuestCart = (newCart) => {
+    localStorage.setItem("guest_cart", JSON.stringify(newCart));
+    setCart(newCart);
+  };
+
+  /* 🔄 INITIAL FETCH */
   useEffect(() => {
     const fetchCart = async () => {
-      try {
-        const res = await cartService.getCart();
-        const formattedItems = res.data.items.map(item => {
-          const product = item.product;
-          const variant = product.variants?.find(v =>
-            v._id?.toString() === item.variantId?.toString() ||
-            v.id === item.variantId?.toString() ||
-            v.sku === item.variantId?.toString()
-          );
+      if (authLoading) return;
 
-          // 💰 Calculate Total Price for Customized Items
-          const basePrice = product.price || 0;
-          let customizationCost = 0;
-          if (item.customizations) {
-            // 1. Add Printing Method Price
-            customizationCost += Number(item.customizations.printingMethod?.price || 0);
+      if (user) {
+        try {
+          const res = await cartService.getCart();
+          const formattedItems = res.data.items.map(item => {
+            const product = item.product;
+            const variant = product.variants?.find(v =>
+              v._id?.toString() === item.variantId?.toString() ||
+              v.id === item.variantId?.toString() ||
+              v.sku === item.variantId?.toString()
+            );
 
-            // 2. Add Element Prices (from Technical Report)
-            if (item.customizations.technicalReport) {
-              customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+            // 💰 Calculate Total Price for Customized Items
+            const basePrice = product.price || 0;
+            let customizationCost = 0;
+            if (item.customizations) {
+              customizationCost += Number(item.customizations.printingMethod?.price || 0);
+              if (item.customizations.technicalReport) {
+                customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+              }
             }
-          }
 
-          const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url;
+            const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url;
 
-          return {
-            cartItemId: item._id,
-            id: product._id,
-            title: product.title,
-            basePrice: basePrice,
-            price: basePrice + customizationCost, // The final price shown to user
-            image: ensureAbsoluteUrl(rawImage),
-            qty: item.quantity,
-            variantId: item.variantId,
-            size: variant?.size?.name || product.size?.name || "N/A",
-            color: variant?.color?.name || product.color?.name || "N/A",
-            customizations: item.customizations || {}
-          };
-        });
-        setCart(formattedItems);
-      } catch (error) {
-        console.error("Failed to fetch cart:", error);
-      } finally {
+            return {
+              cartItemId: item._id,
+              id: product._id,
+              title: product.title,
+              basePrice: basePrice,
+              price: basePrice + customizationCost,
+              image: ensureAbsoluteUrl(rawImage),
+              qty: item.quantity,
+              variantId: item.variantId,
+              size: variant?.size?.name || product.size?.name || "N/A",
+              color: variant?.color?.name || product.color?.name || "N/A",
+              customizations: item.customizations || {}
+            };
+          });
+          setCart(formattedItems);
+        } catch (error) {
+          console.error("Failed to fetch cart:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // Guest Cart
+        setCart(getGuestCart());
         setIsLoading(false);
       }
     };
 
     fetchCart();
-  }, []);
+  }, [user, authLoading]);
+
+  /* 🔄 MERGE GUEST CART ON LOGIN */
+  useEffect(() => {
+    const mergeCarts = async () => {
+      if (!authLoading && user) {
+        const localCart = getGuestCart();
+        if (localCart.length > 0) {
+          console.log("🛒 Merging guest cart items into user account...");
+          try {
+            // Merge items sequentially or in parallel?
+            // Sequentially is safer for state management if the service returns full cart.
+            for (const item of localCart) {
+              await cartService.addToCart(
+                item.id,
+                item.variantId,
+                item.qty,
+                item.customizations
+              );
+            }
+            // Clear local cart
+            localStorage.removeItem("guest_cart");
+            // Refresh final cart state from backend
+            const res = await cartService.getCart();
+            const formattedItems = res.data.items.map(mappedItem => {
+              const product = mappedItem.product;
+              const variant = product.variants?.find(v =>
+                v._id?.toString() === mappedItem.variantId?.toString() ||
+                v.sku === mappedItem.variantId?.toString()
+              );
+              const basePrice = product.price || 0;
+              let customizationCost = 0;
+              if (mappedItem.customizations) {
+                customizationCost += Number(mappedItem.customizations.printingMethod?.price || 0);
+                if (mappedItem.customizations.technicalReport) {
+                  customizationCost += mappedItem.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+                }
+              }
+              const rawImage = mappedItem.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url;
+              return {
+                cartItemId: mappedItem._id,
+                id: product._id,
+                title: product.title,
+                basePrice,
+                price: basePrice + customizationCost,
+                image: ensureAbsoluteUrl(rawImage),
+                qty: mappedItem.quantity,
+                variantId: mappedItem.variantId,
+                size: variant?.size?.name || product.size?.name || "N/A",
+                color: variant?.color?.name || product.color?.name || "N/A",
+                customizations: mappedItem.customizations || {}
+              };
+            });
+            setCart(formattedItems);
+            console.log("✅ Cart merging complete.");
+          } catch (error) {
+            console.error("❌ Failed to merge carts:", error);
+          }
+        }
+      }
+    };
+
+    mergeCarts();
+  }, [user, authLoading]);
 
   /* ➕ ADD TO CART */
   const addToCart = async (product, options = {}, customizations = {}) => {
-    const productId = product._id || product.id;
-    const variantId = options.variantId;
-    const qty = 1;
+    if (user) {
+      // LOGGED IN USER FLOW
+      const productId = product._id || product.id;
+      const variantId = options.variantId;
+      const qty = 1;
 
-    console.log("☎️ Calling CartService.addToCart:", { productId, variantId, qty, customizations });
+      try {
+        const res = await cartService.addToCart(productId, variantId, qty, customizations);
+        const formattedItems = res.data.items.map(item => {
+          const prodId = item.product._id ? item.product._id.toString() : item.product.toString();
+          const searchId = (product._id || product.id).toString();
+          const prod = prodId === searchId ? product : (item.product);
+          const variant = prod.variants?.find(v => v._id === item.variantId || v.sku === item.variantId);
 
-    try {
-      const res = await cartService.addToCart(productId, variantId, qty, customizations);
-
-      // Full refresh of cart state from backend response for absolute accuracy
-      const formattedItems = res.data.items.map(item => {
-        const prodId = item.product._id ? item.product._id.toString() : item.product.toString();
-        const searchId = (product._id || product.id).toString();
-
-        const prod = prodId === searchId ? product : (item.product);
-        const variant = prod.variants?.find(v =>
-          v._id === item.variantId ||
-          v.sku === item.variantId
-        );
-
-        // 💰 Calculate Total Price for Customized Items
-        const basePrice = prod.price || 0;
-        let customizationCost = 0;
-        if (item.customizations) {
-          customizationCost += Number(item.customizations.printingMethod?.price || 0);
-          if (item.customizations.technicalReport) {
-            customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+          const basePrice = prod.price || 0;
+          let customizationCost = 0;
+          if (item.customizations) {
+            customizationCost += Number(item.customizations.printingMethod?.price || 0);
+            if (item.customizations.technicalReport) {
+              customizationCost += item.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+            }
           }
-        }
 
-        // CRITICAL: Only use options.size if this specific item is the one we just added
-        const isNewItem = item.variantId === variantId;
-        const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.images?.[0]?.url;
+          const isNewItem = item.variantId === variantId;
+          const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.images?.[0]?.url;
 
-        return {
-          cartItemId: item._id,
-          id: prod._id,
-          title: prod.title,
+          return {
+            cartItemId: item._id,
+            id: prod._id,
+            title: prod.title,
+            basePrice: basePrice,
+            price: basePrice + customizationCost,
+            image: ensureAbsoluteUrl(rawImage),
+            qty: item.quantity,
+            variantId: item.variantId,
+            size: variant?.size?.name || (isNewItem ? (options.size || prod.size?.name || "N/A") : prod.size?.name || "N/A"),
+            color: variant?.color?.name || (isNewItem ? (options.color || prod.color?.name || "N/A") : prod.color?.name || "N/A"),
+            customizations: item.customizations || {}
+          };
+        });
+        setCart(formattedItems);
+      } catch (error) {
+        console.error("Add to cart failed:", error);
+        throw error;
+      }
+    } else {
+      // GUEST FLOW
+      const localCart = getGuestCart();
+      const variantId = options.variantId;
+
+      const existingItem = localCart.find(item => item.variantId === variantId && JSON.stringify(item.customizations) === JSON.stringify(customizations));
+
+      if (existingItem) {
+        setGuestCart(localCart.map(item =>
+          item.variantId === variantId ? { ...item, qty: item.qty + 1 } : item
+        ));
+      } else {
+        const basePrice = product.price || 0;
+        let customizationCost = 0;
+        if (customizations.printingMethod) customizationCost += Number(customizations.printingMethod.price || 0);
+        if (customizations.technicalReport) customizationCost += customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
+
+        const newItem = {
+          cartItemId: `guest_${Date.now()}`,
+          id: product._id || product.id,
+          title: product.title,
           basePrice: basePrice,
           price: basePrice + customizationCost,
-          image: ensureAbsoluteUrl(rawImage),
-          qty: item.quantity,
-          variantId: item.variantId,
-          size: variant?.size?.name || (isNewItem ? (options.size || prod.size?.name || "N/A") : prod.size?.name || "N/A"),
-          color: variant?.color?.name || (isNewItem ? (options.color || prod.color?.name || "N/A") : prod.color?.name || "N/A"),
-          customizations: item.customizations || {}
+          image: ensureAbsoluteUrl(customizations?.previews?.front || product.images?.[0]?.url),
+          qty: 1,
+          variantId: variantId,
+          size: options.size || "N/A",
+          color: options.color || "N/A",
+          customizations: customizations
         };
-      });
-      setCart(formattedItems);
-    } catch (error) {
-      console.error("Add to cart failed:", error);
-      throw error;
+        setGuestCart([...localCart, newItem]);
+      }
     }
   };
 
   /* ➕➖ UPDATE QTY */
   const updateQty = async (productId, variantId, newQty) => {
     if (newQty < 1) return;
-    try {
-      await cartService.updateCartItem(productId, variantId, newQty);
-      setCart(prev => prev.map(item =>
+    if (user) {
+      try {
+        await cartService.updateCartItem(productId, variantId, newQty);
+        setCart(prev => prev.map(item =>
+          item.variantId === variantId ? { ...item, qty: newQty } : item
+        ));
+      } catch (error) {
+        console.error("Update qty failed:", error);
+        throw error;
+      }
+    } else {
+      const localCart = getGuestCart();
+      setGuestCart(localCart.map(item =>
         item.variantId === variantId ? { ...item, qty: newQty } : item
       ));
-    } catch (error) {
-      console.error("Update qty failed:", error);
-      throw error;
     }
   };
 
   /* ❌ REMOVE ITEM */
   const removeItem = async (cartItemId) => {
-    try {
-      await cartService.removeFromCart(cartItemId);
-      setCart(prev => prev.filter(item => item.cartItemId !== cartItemId));
-    } catch (error) {
-      console.error("Remove item failed:", error);
+    if (user) {
+      try {
+        await cartService.removeFromCart(cartItemId);
+        setCart(prev => prev.filter(item => item.cartItemId !== cartItemId));
+      } catch (error) {
+        console.error("Remove item failed:", error);
+      }
+    } else {
+      const localCart = getGuestCart();
+      setGuestCart(localCart.filter(item => item.cartItemId !== cartItemId));
     }
   };
 
   /* 🧹 CLEAR CART */
   const clearCart = () => {
+    if (!user) localStorage.removeItem("guest_cart");
     setCart([]);
   };
 

@@ -103,14 +103,9 @@ const Inventory = () => {
   };
 
   const filteredItems = items.filter(item => {
-    const sku = item.sku || '';
-    const name = item.name || '';
-    const color = item.color || '';
-    const q = searchQuery.toLowerCase();
-
-    const matchesSearch = sku.toLowerCase().includes(q) ||
-      name.toLowerCase().includes(q) ||
-      color.toLowerCase().includes(q);
+    const matchesSearch = item.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.color.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
     const matchesSize = sizeFilter === 'All' || item.size === sizeFilter;

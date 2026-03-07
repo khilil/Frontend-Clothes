@@ -31,6 +31,21 @@ export default function LoginAuth() {
         if (error) setError(""); // Clear error when typing
     };
 
+    // 🔥 Handle Auth Navigation
+    const handleAuthNavigation = (role) => {
+        if (role === "admin") {
+            navigate("/admin");
+            return;
+        }
+
+        const guestCart = JSON.parse(localStorage.getItem("guest_cart") || "[]");
+        if (guestCart.length > 0) {
+            navigate("/cart");
+        } else {
+            navigate("/");
+        }
+    };
+
     // 🔥 Handle Submit Logic
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,12 +62,7 @@ export default function LoginAuth() {
                 );
 
                 if (result.meta.requestStatus === "fulfilled") {
-                    const role = result.payload.data.role;
-                    if (role === "admin") {
-                        navigate("/admin");
-                    } else {
-                        navigate("/account/dashboard");
-                    }
+                    handleAuthNavigation(result.payload.data.role);
                 } else {
                     setError(result.payload?.message || "Authentication failed. Please verify your credentials.");
                 }
@@ -66,7 +76,8 @@ export default function LoginAuth() {
                 );
 
                 if (result.meta.requestStatus === "fulfilled") {
-                    navigate("/account/dashboard");
+                    // Registration typically creates a customer account
+                    handleAuthNavigation("customer");
                 } else {
                     setError(result.payload?.message || "Registration failed. Please try again.");
                 }
@@ -292,8 +303,7 @@ export default function LoginAuth() {
                                         onSuccess={async (credentialResponse) => {
                                             const result = await dispatch(googleLoginUser(credentialResponse.credential));
                                             if (result.meta.requestStatus === "fulfilled") {
-                                                const role = result.payload.data.role;
-                                                navigate(role === "admin" ? "/admin" : "/account/dashboard");
+                                                handleAuthNavigation(result.payload.data.role);
                                             }
                                         }}
                                         onError={() => setError("Google login failed.")}

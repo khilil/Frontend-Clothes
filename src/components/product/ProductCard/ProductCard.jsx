@@ -7,8 +7,6 @@ import './ProductCard.css';
 const ProductCard = React.memo(({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { toggleItem, isInWishlist } = useWishlist();
-  if (!product) return null;
-
   const isLiked = isInWishlist(product._id || product.id);
 
   // Extract unique colors and sizes from variants
@@ -61,8 +59,8 @@ const ProductCard = React.memo(({ product }) => {
     }
 
     return {
-      primaryImage: (primary && typeof primary === 'string' && primary.trim() !== "") ? primary : "https://via.placeholder.com/400x533?text=No+Image",
-      secondaryImage: (secondary && typeof secondary === 'string' && secondary.trim() !== "") ? secondary : (primary && primary.trim() !== "" ? primary : "https://via.placeholder.com/400x533?text=No+Image")
+      primaryImage: primary || "https://via.placeholder.com/400x533?text=No+Image",
+      secondaryImage: secondary || primary || "https://via.placeholder.com/400x533?text=No+Image"
     };
   }, [product]);
 

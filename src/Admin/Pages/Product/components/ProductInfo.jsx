@@ -35,10 +35,9 @@ const ProductInfo = ({ data, onChange }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const filteredCategories = categories.filter(cat => {
-        const name = cat?.name || '';
-        return name.toLowerCase().includes(searchTerm.toLowerCase());
-    });
+    const filteredCategories = categories.filter(cat =>
+        cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const handleCategoryToggle = (categoryName) => {
         const currentCategories = Array.isArray(data.categories) ? data.categories : [];

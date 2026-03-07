@@ -36,7 +36,7 @@ const AccountLayout = () => {
       {/* MOBILE DRAWER */}
       <aside className={`fixed top-0 left-0 h-full w-[300px] bg-white z-[130] flex flex-col p-8 transition-transform duration-500 ease-out border-r border-black/5 shadow-2xl ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex justify-between items-center mb-12">
-          <span className="text-black text-xl font-impact tracking-tighter">FENRIR</span>
+          <span className="text-black text-xl font-impact tracking-tighter">FENRIR ERA</span>
           <button className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-black/40 hover:bg-black/10 hover:text-black transition-colors" onClick={() => setIsDrawerOpen(false)}>
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>

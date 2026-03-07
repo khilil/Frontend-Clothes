@@ -114,8 +114,16 @@ export default function AppRoutes() {
                 <Route path="/new-arrivals" element={<NewArrivals />} />
                 <Route path="/sale" element={<SalePage />} />
                 <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/checkout/details" element={<CheckoutDetails />} />
+                <Route path="/checkout" element={
+                    <ProtectedRoute allowedRole="customer">
+                        <Checkout />
+                    </ProtectedRoute>
+                } />
+                <Route path="/checkout/details" element={
+                    <ProtectedRoute allowedRole="customer">
+                        <CheckoutDetails />
+                    </ProtectedRoute>
+                } />
                 <Route path="/about" element={<About />} />
 
                 {/* <Route path="/customize/:slug" element={<CustomizePage />} /> */}

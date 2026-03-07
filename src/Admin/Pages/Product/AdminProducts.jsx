@@ -84,8 +84,8 @@ export default function AdminProducts() {
                 // Parse Products and Pagination
                 if (productData) {
                     setProducts(productData.products || []);
-                    setTotalPages(productData.pagination?.totalPages || 1);
-                    setTotalProducts(productData.pagination?.totalProducts || 0);
+                    setTotalPages(productData.totalPages || 1);
+                    setTotalProducts(productData.totalProducts || 0);
                 }
 
                 // Parse Categories
@@ -571,7 +571,7 @@ function ProductRow({ product, isSelected, onToggle, onView, onEdit, onDelete })
 
     const displayName = title || name || "Untitled Product";
     const displayId = _id || id || "N/A";
-    const displayImage = product.listImage || images?.[0]?.url || images?.[0] || "https://premium-clothing.com/placeholder.jpg";
+    const displayImage = images?.[0]?.url || images?.[0] || "https://premium-clothing.com/placeholder.jpg";
     const variantCount = Array.isArray(variants) ? variants.length : (variants || 0);
     const totalStock = Array.isArray(variants) ? variants.reduce((sum, v) => sum + (v.stock || 0), 0) : 0;
 
