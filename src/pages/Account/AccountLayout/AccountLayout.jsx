@@ -80,7 +80,7 @@ const AccountLayout = () => {
       </aside>
 
       {/* MOBILE NAVIGATION PILLS */}
-      <div className="lg:hidden sticky top-20 z-40 bg-white/80 backdrop-blur-2xl border-b border-black/[0.03] overflow-x-auto no-scrollbar">
+      <div className="lg:hidden sticky top-[64px] z-40 bg-white/80 backdrop-blur-2xl border-b border-black/[0.03] overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-3 px-6 py-5 whitespace-nowrap min-w-max">
           {navLinks.map((link) => (
             <NavLink
@@ -100,7 +100,7 @@ const AccountLayout = () => {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <main className="max-w-[1920px] mx-auto px-6 md:px-12 py-10 lg:py-20">
+      <main className="max-w-[1920px] mx-auto px-4 sm:px-6 md:px-12 py-6 lg:py-20">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
           <Sidebar />
           <section className="flex-1 w-full animate-fadeIn">

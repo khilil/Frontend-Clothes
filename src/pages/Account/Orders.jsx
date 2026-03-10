@@ -96,8 +96,8 @@ const Orders = () => {
       {/* HEADER & FILTERS */}
       <header className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mb-16">
         <div>
-          <h2 className="text-4xl md:text-5xl font-impact tracking-tight mb-3 text-black">Order History</h2>
-          <p className="text-black/30 text-[10px] uppercase tracking-[0.4em] font-black">Archive Trace: Tracking your luxury acquisitions</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-impact tracking-tight mb-3 text-black">Order History</h2>
+          <p className="text-black/30 text-[9px] sm:text-[10px] uppercase tracking-[0.4em] font-black">Archive Trace: Tracking your luxury acquisitions</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="relative group flex-1 min-w-[200px]">
@@ -136,8 +136,8 @@ const Orders = () => {
             return (
               <div key={order._id} className="bg-white border border-black/[0.03] rounded-[2.5rem] overflow-hidden transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)] group">
                 {/* CARD HEADER */}
-                <div className="p-8 md:p-12 bg-black/[0.01] border-b border-black/[0.03] flex flex-col md:flex-row md:items-center justify-between gap-10">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-20">
+                <div className="p-6 md:p-12 bg-black/[0.01] border-b border-black/[0.03] flex flex-col md:flex-row md:items-center justify-between gap-8 md:gap-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 md:gap-20">
                     <div>
                       <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-2">Cycle Log</p>
                       <p className="text-[13px] font-black uppercase text-black">{new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
@@ -160,10 +160,10 @@ const Orders = () => {
                 </div>
 
                 {/* CARD BODY */}
-                <div className="p-8 md:p-12 flex flex-col lg:flex-row gap-12 items-center">
-                  <div className="flex gap-6 flex-shrink-0 w-full lg:w-auto justify-center lg:justify-start">
+                <div className="p-6 md:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12">
+                  <div className="flex gap-4 sm:gap-6 flex-shrink-0 w-full lg:w-auto justify-center lg:justify-start">
                     {order.items.slice(0, 2).map((item, idx) => (
-                      <div key={idx} className="w-24 h-32 sm:w-32 sm:h-44 bg-black/[0.02] rounded-[2rem] overflow-hidden border border-black/5 group-hover:border-black/10 transition-all duration-700 p-2">
+                      <div key={idx} className="w-20 h-28 sm:w-32 sm:h-44 bg-black/[0.02] rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden border border-black/5 group-hover:border-black/10 transition-all duration-700 p-2">
                         <img
                           alt="Item"
                           className="w-full h-full object-cover rounded-3xl grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
@@ -172,7 +172,7 @@ const Orders = () => {
                       </div>
                     ))}
                     {order.items.length > 2 && (
-                      <div className="w-24 h-32 sm:w-32 sm:h-44 bg-black/[0.01] rounded-[2rem] border border-dashed border-black/5 flex items-center justify-center">
+                      <div className="w-20 h-28 sm:w-32 sm:h-44 bg-black/[0.01] rounded-[1.5rem] sm:rounded-[2.5rem] border border-dashed border-black/5 flex items-center justify-center">
                         <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.3em]">+{order.items.length - 2} Units</p>
                       </div>
                     )}

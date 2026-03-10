@@ -44,8 +44,8 @@ const Dashboard = () => {
       </header>
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-white border border-black/[0.03] p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="bg-white border border-black/[0.03] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
           <div className="flex justify-between items-start mb-6">
             <span className="material-symbols-outlined text-4xl text-[#8b7e6d] group-hover:scale-110 transition-transform">package_2</span>
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/20">Lifetime</span>
@@ -54,7 +54,7 @@ const Dashboard = () => {
           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/30 mt-2">Total Orders</p>
         </div>
 
-        <div className="bg-white border border-black/[0.03] p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
+        <div className="bg-white border border-black/[0.03] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
           <div className="flex justify-between items-start mb-6">
             <span className="material-symbols-outlined text-4xl text-[#8b7e6d] group-hover:scale-110 transition-transform">local_shipping</span>
             <div className="h-2 w-2 rounded-full bg-[#8b7e6d] animate-pulse shadow-[0_0_15px_rgba(139,126,109,0.5)]"></div>
@@ -63,7 +63,7 @@ const Dashboard = () => {
           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/30 mt-2">Active Orders</p>
         </div>
 
-        <div className="bg-white border border-black/[0.03] p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
+        <div className="bg-white border border-black/[0.03] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] transition-all duration-700 group">
           <div className="flex justify-between items-start mb-6">
             <span className="material-symbols-outlined text-4xl text-[#8b7e6d] group-hover:scale-110 transition-transform">favorite_border</span>
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#8b7e6d]">Archive</span>
@@ -87,9 +87,9 @@ const Dashboard = () => {
 
         <div className="space-y-6">
           {recentOrder ? (
-            <div className="bg-white border border-black/[0.03] p-10 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-10 shadow-[0_20px_50px_rgba(0,0,0,0.02)] transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)]">
-              <div className="flex items-center gap-10">
-                <div className="w-24 h-32 bg-black/[0.02] rounded-3xl overflow-hidden flex-shrink-0 border border-black/5 p-2">
+            <div className="bg-white border border-black/[0.03] p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 md:gap-10 shadow-[0_20px_50px_rgba(0,0,0,0.02)] transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)]">
+              <div className="flex items-center gap-6 sm:gap-10 w-full md:w-auto">
+                <div className="w-20 h-28 sm:w-24 sm:h-32 bg-black/[0.02] rounded-2xl sm:rounded-3xl overflow-hidden flex-shrink-0 border border-black/5 p-2">
                   <img
                     src={recentOrder.items?.[0]?.customizations?.previews?.front || recentOrder.items?.[0]?.imageURL || "https://placeholder.com/100"}
                     alt="Product"
@@ -113,7 +113,7 @@ const Dashboard = () => {
                 </div>
                 <Link
                   to="/account/orders"
-                  className={`px-10 py-5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 ${recentOrder.orderStatus === 'delivered' ? 'border border-black/10 text-black hover:bg-black hover:text-white' : 'bg-black text-white hover:bg-[#8b7e6d]'}`}
+                  className={`flex-1 md:flex-none text-center px-10 py-5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 ${recentOrder.orderStatus === 'delivered' ? 'border border-black/10 text-black hover:bg-black hover:text-white' : 'bg-black text-white hover:bg-[#8b7e6d]'}`}
                 >
                   {recentOrder.orderStatus === 'delivered' ? 'Review Log' : 'Trace Order'}
                 </Link>
