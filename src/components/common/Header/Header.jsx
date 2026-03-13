@@ -7,6 +7,54 @@ import MiniCart from "../../../pages/Cart/MiniCart";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Header.css";
 
+const CLOTHING_MENU = [
+  {
+    title: "Topwear",
+    slug: "topwear",
+    items: [
+      { name: "Blazers", slug: "blazers" },
+      { name: "Hoodies", slug: "hoodies" },
+      { name: "Jackets", slug: "jackets" },
+      { name: "Shirts", slug: "shirts" },
+      { name: "Sweaters", slug: "sweaters" },
+      { name: "T-Shirts", slug: "t-shirts" },
+      { name: "All Topwear", slug: "topwear" }
+    ]
+  },
+  {
+    title: "Bottomwear",
+    slug: "bottomwear",
+    items: [
+      { name: "All Bottomwear", slug: "bottomwear" },
+      { name: "Cargo", slug: "cargo" },
+      { name: "Jeans", slug: "jeans" },
+      { name: "Joggers", slug: "joggers" },
+      { name: "Shorts", slug: "shorts" },
+      { name: "Trousers", slug: "trousers" }
+    ]
+  },
+  {
+    title: "Occasion",
+    slug: "occasion",
+    items: [
+      { name: "Formal", slug: "formal" },
+      { name: "Casual", slug: "casual" },
+      { name: "Office", slug: "office" },
+      { name: "Streetwear", slug: "streetwear" }
+    ]
+  },
+  {
+    title: "Featured",
+    slug: "featured",
+    items: [
+      { name: "Best Sellers", slug: "best-sellers" },
+      { name: "New This Week", slug: "new-arrivals" },
+      { name: "Premium Collection", slug: "premium" },
+      { name: "Trending", slug: "trending" }
+    ]
+  }
+];
+
 export default function Header({ forceSolid = false }) {
   const location = useLocation();
   const isAccountPage = location.pathname.startsWith("/account");
@@ -17,6 +65,7 @@ export default function Header({ forceSolid = false }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -53,8 +102,8 @@ export default function Header({ forceSolid = false }) {
     })).slice(0, 4);
   }, [categories]);
 
-  const headerBgClass = isMobileMenuOpen
-    ? 'bg-black'
+  const headerBgClass = isMobileMenuOpen || isMegaMenuOpen
+    ? `bg-[#0a0a0a] border-white/5 ${scrolled ? 'h-16' : 'h-24'}` 
     : (scrolled || forceSolid)
       ? 'bg-black/80 backdrop-blur-3xl h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
       : 'bg-transparent h-24';
@@ -90,6 +139,86 @@ export default function Header({ forceSolid = false }) {
               <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em] opacity-70 hover:opacity-100 transition-opacity" to="/new-arrivals">
                 New Arrivals
               </Link>
+
+              {/* CLOTHING MEGA MENU TRIGGER */}
+              <div 
+                className="mega-menu-trigger h-full flex items-center"
+                onMouseEnter={() => setIsMegaMenuOpen(true)}
+                onMouseLeave={() => setIsMegaMenuOpen(false)}
+              >
+                <span className={`nav-link text-[10px] font-black uppercase tracking-[0.3em] cursor-default transition-opacity ${isMegaMenuOpen ? 'opacity-100 text-accent' : 'opacity-70 group-hover:opacity-100'}`}>
+                  Clothing
+                </span>
+
+                {/* MEGA MENU */}
+                <AnimatePresence>
+                  {isMegaMenuOpen && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -15 }}
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                      className="mega-menu"
+                    >
+                      <div className="max-w-[1920px] mx-auto grid grid-cols-5 gap-0 min-h-[500px] border-t border-white/[0.03]">
+                        {CLOTHING_MENU.map((group, idx) => (
+                          <motion.div 
+                            key={idx} 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.05 + idx * 0.03 }}
+                            className="p-12 border-r border-white/5 flex flex-col hover:bg-white/[0.02] transition-colors group/col"
+                          >
+                            <h4 className="text-accent text-[11px] font-black uppercase tracking-[0.4em] mb-8 group-hover/col:translate-x-1 transition-transform">
+                            <Link 
+                              to={`/category/${group.slug}`} 
+                              className="hover:text-white transition-colors"
+                              onClick={() => setIsMegaMenuOpen(false)}
+                            >
+                              {group.title}
+                            </Link>
+                          </h4>
+                          <ul className="space-y-4">
+                            {group.items.map((item, itemIdx) => (
+                              <li key={itemIdx}>
+                                <Link 
+                                  className="text-[13px] text-white/40 hover:text-white hover:translate-x-1 inline-block transition-all" 
+                                  to={`/category/${item.slug}`}
+                                  onClick={() => setIsMegaMenuOpen(false)}
+                                >
+                                  {item.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                          </motion.div>
+                        ))}
+
+                        {/* PROMO BOX */}
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 1.05 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.8, ease: "easeOut" }}
+                          className="relative overflow-hidden group/promo"
+                        >
+                          <img alt="Model in Atelier" className="w-full h-full object-cover grayscale brightness-50 group-hover/promo:scale-110 group-hover/promo:grayscale-0 group-hover/promo:brightness-100 transition-all duration-[2s] ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCDaHXAgfnZZMJ5PJyJlJu2htQPWM6diBOxWwEZCVgRqK2NioQJtdBpkA898DJ8jaVUX8zXqiqMulmIS-p9A6Vvw60YVvk7uOoV_7doTOJ1sNlbE0RcmuvhwJ2LrbI9PBFadnFpLV-RUa4tq9StHqLjSSOJHeeWnbhzilO_f0RDPVlLJFH-Gjgj2ltfyvxQ9Enril9a9C-hcpECVdFnYR7c4QcBOmkqdxTf4IDpIVmtgWbA9rPF_OT7g9mJuNlKudYCzeL9_ieJpz" />
+                          <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-8 backdrop-blur-[2px] group-hover/promo:backdrop-blur-0 transition-all duration-1000">
+                            <p className="text-[9px] font-black uppercase tracking-[0.5em] mb-4 text-white/60">The Atelier Series</p>
+                            <h5 className="text-3xl font-impact tracking-tighter mb-8 text-white scale-90 group-hover/promo:scale-100 transition-transform duration-1000">SS24<br />EDITORIAL</h5>
+                          <Link 
+                            className="px-10 py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-accent transition-all hover:px-12" 
+                            to="/shop"
+                            onClick={() => setIsMegaMenuOpen(false)}
+                          >
+                            Explore
+                          </Link>
+                        </div>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em] text-white/70 hover:text-white" to="/sale">Sale</Link>
             </nav>
@@ -178,7 +307,7 @@ export default function Header({ forceSolid = false }) {
                     >
                       <Link
                         className={`text-2xl font-impact uppercase tracking-wider transition-colors hover:text-accent ${item === 'Sale' ? 'text-accent' : 'text-white'}`}
-                        to={`/${item.toLowerCase().replace(' ', '-')}`}
+                        to={item === 'Collections' ? '/shop' : `/${item.toLowerCase().replace(' ', '-')}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item}

@@ -109,6 +109,7 @@ export default function AppRoutes() {
                 {/* NORMAL ROUTES */}
                 <Route path="/" element={<Home />} />
                 <Route path="/category/:slug" element={<CategoryPage />} />
+                <Route path="/shop" element={<Navigate to="/shop/all" replace />} />
                 <Route path="/shop/:category" element={<ProductListing />} />
                 <Route path="/product/:slug" element={<ProductDetailPage />} />
                 <Route path="/new-arrivals" element={<NewArrivals />} />

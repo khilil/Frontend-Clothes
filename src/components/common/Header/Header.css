@@ -13,12 +13,14 @@
 header {
   backdrop-filter: blur(0px) saturate(100%);
   background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  transform: translate3d(0,0,0); /* Hardware acceleration */
 }
 
 header.bg-black\/80 {
   backdrop-filter: blur(40px) saturate(180%);
   background-color: rgba(0, 0, 0, 0.75) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: background-color 0.3s, height 0.3s, border-color 0.3s, backdrop-filter 0.3s;
 }
 
 header::before {
@@ -49,32 +51,18 @@ a:hover .material-symbols-outlined {
   transform: translateY(-1px) scale(1.1);
 }
 
-/* Mega Menu Visibility */
-.mega-menu-trigger:hover .mega-menu {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) !important;
-}
+/* Mega Menu Visibility (Handled by Framer Motion) */
 
 .mega-menu {
   position: absolute;
   top: 100%;
-  /* Aligns with header bottom */
   left: 0;
   width: 100vw;
-  background-color: rgba(7, 7, 7, 0.98);
-  backdrop-filter: blur(50px) saturate(150%);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-8px) scaleY(0.98);
-  transform-origin: top;
-  transition:
-    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0.4s;
+  background-color: rgba(10, 10, 10, 0.99);
   z-index: 999;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  pointer-events: none;
+  pointer-events: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 /* Forgiving Bridge - Prevents menu from closing if mouse moves quickly between trigger and menu */
@@ -88,18 +76,7 @@ a:hover .material-symbols-outlined {
   background: transparent;
 }
 
-.mega-menu-trigger:hover .mega-menu {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) scaleY(1) !important;
-  pointer-events: auto;
-  transition-delay: 0s;
-}
-
-/* Delays closing slightly to handle accidental mouse slips */
-.mega-menu-trigger .mega-menu {
-  transition-delay: 0.1s;
-}
+/* Staggered entry (Handled by Framer Motion) */
 
 /* Mega Menu Column Highlighting */
 .group\/col {

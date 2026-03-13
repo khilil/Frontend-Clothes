@@ -269,3 +269,36 @@
     padding: 24px;
   }
 }
+
+
+.editorial-content {
+  padding: 24px;
+}
+
+.item-title {
+  font-size: 24px;
+}
+
+.content-top {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.item-explore {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.explore-line {
+  width: 30px;
+}
+
+@media (max-width: 480px) {
+  .categories-premium {
+    padding: 80px 0;
+  }
+
+  .premium-tag {
+    margin-bottom: 12px;
+  }
+}
