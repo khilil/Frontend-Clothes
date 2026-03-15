@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  --color-accent: #d4c4b1;
+  --color-charcoal: #121212;
+  --color-primary: #000000;
+  --color-muted: #717171;
+  
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Bodoni Moda", serif;
+  --font-impact: "Oswald", sans-serif;
+}
+
 @layer utilities {
     @keyframes slideUp {
         from {
@@ -17,6 +28,11 @@
         animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    @keyframes loading-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
@@ -32,6 +48,92 @@
 
     .font-oswald {
         font-family: 'Oswald', sans-serif;
+    }
+
+    /* Header Component Styles converted from Header.css */
+    .header-base {
+        @apply backdrop-blur-none saturate-100;
+        background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+        transform: translate3d(0, 0, 0);
+    }
+    
+    .header-scrolled {
+        @apply backdrop-blur-[40px] saturate-[180%] bg-black/75 border-b border-white/5;
+        transition: background-color 0.3s, height 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+    }
+
+    .header-noise::before {
+        content: '';
+        @apply absolute inset-0 opacity-[0.02] pointer-events-none -z-10;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .mega-menu {
+        @apply absolute top-[100%] left-0 w-screen bg-[#0a0a0a]/[0.99] z-[999] shadow-[0_40px_100px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.03)] border-t border-white/[0.03] pointer-events-auto;
+    }
+    .mega-menu::before {
+        content: '';
+        @apply absolute -top-[20px] left-0 right-0 h-[20px] bg-transparent;
+    }
+
+    .mega-menu-col {
+        @apply border-r border-white/5 relative;
+    }
+    .mega-menu-col::after {
+        content: '';
+        @apply absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-[0.4s] ease-in;
+        background: linear-gradient(to bottom, rgba(212, 196, 177, 0.03), transparent);
+    }
+    .mega-menu-col:hover::after {
+        @apply opacity-100;
+    }
+
+    .account-avatar {
+        @apply bg-white text-black font-black w-[28px] h-[28px] rounded-full flex items-center justify-center border border-white/10 transition-all duration-300;
+    }
+    .account-avatar:hover {
+        @apply bg-accent shadow-[0_0_15px_rgba(197,160,89,0.4)];
+    }
+
+    .menu-toggle {
+        @apply w-[40px] h-[40px] flex items-center justify-center relative bg-transparent border-none cursor-pointer;
+    }
+    
+    .burger-icon {
+        @apply w-[24px] h-[14px] relative;
+    }
+    
+    .burger-icon span {
+        @apply absolute w-full h-[1px] bg-accent transition-all duration-[0.4s] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_10px_rgba(197,160,89,0.3)];
+    }
+    
+    .burger-icon span:nth-child(1) { top: 0; }
+    .burger-icon span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .burger-icon span:nth-child(3) { bottom: 0; }
+    
+    .menu-toggle.active .burger-icon span:nth-child(1) {
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        @apply bg-white;
+    }
+    .menu-toggle.active .burger-icon span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    .menu-toggle.active .burger-icon span:nth-child(3) {
+        bottom: 50%;
+        transform: translateY(50%) rotate(-45deg);
+        @apply bg-white;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 2px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(197, 160, 89, 0.2);
     }
 }
 

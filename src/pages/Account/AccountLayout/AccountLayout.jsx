@@ -3,7 +3,6 @@ import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Sidebar from "../Sidebar";
 import { logoutUser } from "../../../features/auth/authSlice";
-import "./AccountLayout.css";
 
 const AccountLayout = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

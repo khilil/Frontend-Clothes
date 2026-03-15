@@ -4,8 +4,6 @@ import { getProducts } from "../../services/productService";
 import { useCart } from "../../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../product/ProductCard/ProductCard";
-import "./FeaturedProducts.css";
-
 function FeaturedProducts() {
     const [activeTab, setActiveTab] = useState("NEW ARRIVALS");
     const [products, setProducts] = useState([]);
@@ -35,21 +33,20 @@ function FeaturedProducts() {
     }).slice(0, 8); // Limits to 8 products for the home page
 
     return (
-        <section className="featured-premium">
+        <section className="py-[80px] md:py-[120px] bg-[#0a0a0a] text-white">
             <div className="container-wide">
-                <div className="featured-header-wrap">
+                <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-end mb-[60px] gap-8 lg:gap-10">
                     <motion.div
-                        className="header-left"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <span className="premium-tag">CURATED SELECTION</span>
-                        <h2 className="premium-title-main">THE EDIT</h2>
+                        <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-3 block">CURATED SELECTION</span>
+                        <h2 className="font-oswald text-[48px] md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.04em] uppercase font-black">THE EDIT</h2>
                     </motion.div>
 
                     <motion.div
-                        className="featured-tabs-luxury"
+                        className="flex gap-6 lg:gap-10 pb-3 overflow-x-auto w-full lg:w-auto"
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
@@ -58,14 +55,14 @@ function FeaturedProducts() {
                         {["NEW ARRIVALS", "BEST SELLERS", "TRENDING"].map((tab) => (
                             <button
                                 key={tab}
-                                className={`tab-btn-minimal ${activeTab === tab ? 'active' : ''}`}
+                                className={`relative bg-transparent border-none text-[11px] font-black tracking-[0.3em] uppercase cursor-pointer py-3 transition-colors duration-300 whitespace-nowrap ${activeTab === tab ? 'text-white' : 'text-white/30'}`}
                                 onClick={() => setActiveTab(tab)}
                             >
                                 {tab}
                                 {activeTab === tab && (
                                     <motion.div
                                         layoutId="activeTabLine"
-                                        className="tab-line-premium"
+                                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent"
                                     />
                                 )}
                             </button>
@@ -73,7 +70,7 @@ function FeaturedProducts() {
                     </motion.div>
                 </div>
 
-                <div className="featured-grid-premium">
+                <div className="mt-8">
                     <AnimatePresence mode="wait">
                         {isLoading ? (
                             <motion.div
@@ -81,12 +78,10 @@ function FeaturedProducts() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="grid-sub-wrap"
+                                className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-8"
                             >
                                 {Array(4).fill(0).map((_, i) => (
-                                    <div key={i} className="product-skeleton-premium">
-                                        <div className="skeleton-visual"></div>
-                                        <div className="skeleton-info"></div>
+                                    <div key={i} className="bg-[#111] aspect-[4/5] relative overflow-hidden after:absolute after:inset-0 after:-left-full after:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] after:animate-[loading-shimmer_1.5s_infinite]">
                                     </div>
                                 ))}
                             </motion.div>
@@ -97,7 +92,7 @@ function FeaturedProducts() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                                className="grid-sub-wrap"
+                                className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-8"
                             >
                                 {filteredProducts.map((product) => (
                                     <ProductCard key={product._id} product={product} />
@@ -110,14 +105,14 @@ function FeaturedProducts() {
                 </div>
 
                 <motion.div
-                    className="featured-footer"
+                    className="mt-[80px] flex justify-center"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                 >
-                    <button onClick={() => navigate("/category/all")} className="btn-view-all-premium">
+                    <button onClick={() => navigate("/category/all")} className="bg-transparent border-none text-white text-[11px] font-black tracking-[0.5em] uppercase cursor-pointer flex flex-col items-center gap-3 group">
                         VIEW ALL PRODUCTS
-                        <span className="line"></span>
+                        <span className="w-10 h-[1px] bg-accent transition-[width] duration-400 ease group-hover:w-[100px]"></span>
                     </button>
                 </motion.div>
             </div>

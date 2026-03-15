@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./FiltersSidebar.css";
-
 export default function FiltersSidebar({
   filters,
   onSizeChange,
@@ -57,7 +55,7 @@ export default function FiltersSidebar({
 
       {/* CATEGORY FILTER */}
       {onCategoryChange && (
-        <div className="filter-section border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
           <button
             onClick={() => toggleSection('category')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -102,7 +100,7 @@ export default function FiltersSidebar({
 
       {/* BRAND FILTER */}
       {onBrandChange && (
-        <div className="filter-section border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
           <button
             onClick={() => toggleSection('brand')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -146,7 +144,7 @@ export default function FiltersSidebar({
 
       {/* FIT FILTER */}
       {onFitChange && availableFits.length > 0 && (
-        <div className="filter-section border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
           <button
             onClick={() => toggleSection('fit')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -190,7 +188,7 @@ export default function FiltersSidebar({
 
       {/* COLOR FILTER */}
       {onColorChange && availableColors.length > 0 && (
-        <div className="filter-section border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
           <button
             onClick={() => toggleSection('color')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -229,7 +227,7 @@ export default function FiltersSidebar({
       )}
 
       {/* SIZE FILTER */}
-      <div className="filter-section border-b border-white/5 pb-8">
+      <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
         <button
           onClick={() => toggleSection('size')}
           className="w-full flex items-center justify-between mb-6 group"
@@ -258,7 +256,7 @@ export default function FiltersSidebar({
 
       {/* SORT FILTER */}
       {onSortChange && (
-        <div className="filter-section border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
           <button
             onClick={() => toggleSection('sort')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -284,7 +282,7 @@ export default function FiltersSidebar({
       )}
 
       {/* PRICE RANGE */}
-      <div className="filter-section">
+      <div className="transition-all duration-300 ease mb-6 last:border-b-0">
         <button
           onClick={() => toggleSection('price')}
           className="w-full flex items-center justify-between mb-8 group"
@@ -318,7 +316,7 @@ export default function FiltersSidebar({
                   max={maxPrice}
                   value={filters?.price || maxPrice}
                   onChange={(e) => onPriceChange(Number(e.target.value))}
-                  className="absolute top-0 left-0 w-full h-1 bg-transparent appearance-none cursor-pointer range-accent"
+                  className="absolute top-0 left-0 w-full h-1 bg-transparent appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(197,160,89,0.4)] [&::-webkit-slider-thumb]:-mt-1.5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-accent [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-[0_0_10px_rgba(197,160,89,0.4)]"
                 />
               </div>
 

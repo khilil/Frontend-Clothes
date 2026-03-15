@@ -1,4 +1,3 @@
-import "./Dashboard.css";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";

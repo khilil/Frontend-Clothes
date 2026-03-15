@@ -8,11 +8,16 @@ import InstagramFeed from "../../components/Home/InstagramFeed";
 import CollectiveFooter from "../../components/common/CollectiveFooter/CollectiveFooter";
 import Header from "../../components/common/Header/Header";
 import HomeInfiniteScroll from "../../components/Home/HomeInfiniteScroll";
-import './Home.css'
+import { motion } from "framer-motion";
 
 function Home() {
   return (
-    <main className="home-page pt-16 md:pt-24">
+    <motion.main 
+      className="bg-black text-white w-full overflow-x-hidden selection:bg-white/90 selection:text-black pt-16 md:pt-24"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+    >
       <Hero />
       <Benefits />
       <Categories />
@@ -22,7 +27,7 @@ function Home() {
       <InstagramFeed />
       <Newsletter />
       <CollectiveFooter />
-    </main>
+    </motion.main>
   );
 }
 

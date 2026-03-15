@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../../features/auth/authSlice";
-import "./Profile.css";
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
@@ -44,9 +43,9 @@ const Profile = () => {
   };
 
   return (
-    <section className="profile-page">
+    <section className="w-full text-[#1a1a1a]">
       {/* 🏛️ HEADER */}
-      <div className="profile-page-header border-b border-black/[0.03] pb-10 mb-16">
+      <div className="mb-10 md:mb-[60px] border-b border-black/[0.03] pb-10">
         <h2 className="text-5xl font-impact tracking-tight mb-3 text-black">Identity Registry</h2>
         <p className="text-black/30 text-[10px] uppercase tracking-[0.4em] font-black">
           {isEditing
@@ -56,14 +55,14 @@ const Profile = () => {
       </div>
 
       {/* 📑 DATA CARD */}
-      <div className="profile-card rounded-[2.5rem] p-10 md:p-14 relative overflow-hidden group/card">
+      <div className="relative bg-white border border-black/[0.03] shadow-[0_40px_100px_rgba(0,0,0,0.03)] rounded-[2.5rem] p-6 sm:p-10 md:p-14 overflow-hidden group/card before:content-[''] before:absolute before:top-0 before:left-0 before:w-[2px] before:h-full before:bg-[#8b7e6d] before:shadow-[0_0_20px_rgba(139,126,109,0.2)] before:opacity-30">
         <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black">Registry Level 01</div>
         <h3 className="text-2xl font-impact tracking-tight text-black mb-12 uppercase">Principal Parameters</h3>
 
         {!isEditing ? (
           /* ================= VIEW MODE ================= */
           <>
-            <div className="profile-grid grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 md:gap-x-20 gap-y-8 md:gap-y-10">
               <ViewField label="Identity Index" value={profile.fullName} />
               <ViewField label="Communication Node" value={profile.email} />
               <ViewField label="Mobile Signal" value={profile.mobile} />
@@ -79,7 +78,7 @@ const Profile = () => {
               <ViewField label="Genetic Trait" value={profile.gender} />
             </div>
 
-            <div className="profile-actions-view mt-14 pt-10 border-t border-black/[0.03] flex flex-wrap gap-10">
+            <div className="mt-14 pt-10 border-t border-black/[0.03] flex flex-wrap gap-10">
               <button
                 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#8b7e6d] hover:text-black transition-all group/btn"
                 onClick={() => setIsEditing(true)}
@@ -103,7 +102,7 @@ const Profile = () => {
         ) : (
           /* ================= EDIT MODE ================= */
           <form onSubmit={handleSave}>
-            <div className="profile-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 md:gap-x-20 gap-y-8 md:gap-y-10">
               <EditField
                 label="Identity Index"
                 name="fullName"
@@ -139,12 +138,13 @@ const Profile = () => {
                 onChange={handleChange}
               />
 
-              <div className="profile-field">
-                <label>Genetic Trait</label>
+              <div className="flex flex-col gap-4">
+                <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Genetic Trait</label>
                 <select
                   name="gender"
                   value={draft.gender}
                   onChange={handleChange}
+                  className="appearance-none w-full bg-black/[0.02] border border-black/5 text-black px-6 py-4 rounded-2xl text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-300 focus:outline-none focus:border-[#8b7e6d] focus:bg-black/[0.04]"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -154,13 +154,13 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="profile-actions">
-              <button type="submit" className="profile-save-btn">
+            <div className="mt-8 md:mt-[60px] pt-10 border-t border-black/[0.03] flex flex-col md:flex-row items-center gap-5 md:gap-8">
+              <button type="submit" className="w-full md:w-auto bg-black text-white px-12 py-4.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] cursor-pointer shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-all duration-500 hover:bg-[#8b7e6d] hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(139,126,109,0.3)]">
                 SYNCHRONIZE
               </button>
               <button
                 type="button"
-                className="profile-cancel-btn"
+                className="w-full md:w-auto bg-transparent border border-black/10 text-black/40 px-12 py-4.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] cursor-pointer transition-all duration-300 hover:border-black hover:text-black hover:bg-black/[0.02]"
                 onClick={handleCancel}
               >
                 ABORT
@@ -172,33 +172,33 @@ const Profile = () => {
 
       {/* 🔐 OPTIONS */}
       {!isEditing && (
-        <div className="profile-options">
-          <div className="option-card">
-            <div className="option-head">
-              <div className="option-icon">
+        <div className="mt-10 md:mt-[60px] grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
+          <div className="bg-white border border-black/[0.03] rounded-3xl md:rounded-[32px] p-8 md:p-10 relative overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.02)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] hover:border-black/[0.06] group/opt">
+            <div className="flex items-center gap-5 mb-6">
+              <div className="w-[52px] h-[52px] bg-black/[0.02] border border-black/[0.03] rounded-xl flex items-center justify-center text-[#8b7e6d] transition-all duration-500 group-hover/opt:bg-black group-hover/opt:border-black group-hover/opt:text-white group-hover/opt:rotate-12">
                 <span className="material-symbols-outlined">alternate_email</span>
               </div>
-              <h4>Signal Preferences</h4>
+              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Signal Preferences</h4>
             </div>
 
-            <p>
+            <p className="text-[11px] text-black/30 leading-[1.8] mb-8 uppercase font-bold tracking-[0.1em]">
               Control incoming data regarding marketing synchronizations and transaction alerts.
             </p>
-            <a href="#">Configure Signals</a>
+            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Configure Signals</a>
           </div>
 
-          <div className="option-card">
-            <div className="option-head">
-              <div className="option-icon">
+          <div className="bg-white border border-black/[0.03] rounded-3xl md:rounded-[32px] p-8 md:p-10 relative overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.02)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] hover:border-black/[0.06] group/opt">
+            <div className="flex items-center gap-5 mb-6">
+              <div className="w-[52px] h-[52px] bg-black/[0.02] border border-black/[0.03] rounded-xl flex items-center justify-center text-[#8b7e6d] transition-all duration-500 group-hover/opt:bg-black group-hover/opt:border-black group-hover/opt:text-white group-hover/opt:rotate-12">
                 <span className="material-symbols-outlined">fingerprint</span>
               </div>
-              <h4>Biometric Security</h4>
+              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Biometric Security</h4>
             </div>
 
-            <p>
+            <p className="text-[11px] text-black/30 leading-[1.8] mb-8 uppercase font-bold tracking-[0.1em]">
               Multi-factor authentication and management of active session traces across nodes.
             </p>
-            <a href="#">Verify Identity</a>
+            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Verify Identity</a>
           </div>
         </div>
       )}
@@ -209,14 +209,14 @@ const Profile = () => {
 /* ================= HELPERS ================= */
 
 const ViewField = ({ label, value }) => (
-  <div className="profile-field flex flex-col gap-3">
+  <div className="flex flex-col gap-3">
     <span className="text-[9px] font-black uppercase tracking-[0.4em] text-black/20">{label}</span>
     <span className="text-xl font-impact tracking-tight text-black uppercase leading-none">{value}</span>
   </div>
 );
 
 const EditField = ({ label, ...props }) => (
-  <div className="profile-field flex flex-col gap-4">
+  <div className="flex flex-col gap-4">
     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">{label}</label>
     <input {...props} className="bg-black/[0.02] border border-black/10 rounded-2xl px-8 py-5 text-black text-[12px] font-bold tracking-[0.1em] focus:border-[#8b7e6d] focus:bg-black/[0.04] transition-all outline-none" />
   </div>

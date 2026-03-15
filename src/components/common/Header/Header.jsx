@@ -5,7 +5,6 @@ import { getAllCategories } from "../../../services/categoryService";
 import { useCart } from "../../../context/CartContext";
 import MiniCart from "../../../pages/Cart/MiniCart";
 import { motion, AnimatePresence } from "framer-motion";
-import "./Header.css";
 
 const CLOTHING_MENU = [
   {
@@ -103,14 +102,14 @@ export default function Header({ forceSolid = false }) {
   }, [categories]);
 
   const headerBgClass = isMobileMenuOpen || isMegaMenuOpen
-    ? `bg-[#0a0a0a] border-white/5 ${scrolled ? 'h-16' : 'h-24'}` 
+    ? `bg-[#0a0a0a] border-white/5 ${scrolled ? 'h-16' : 'h-24'}`
     : (scrolled || forceSolid)
-      ? 'bg-black/80 backdrop-blur-3xl h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+      ? 'header-scrolled h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
       : 'bg-transparent h-24';
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${headerBgClass} border-b border-white/[0.03]`}>
+      <header className={`header-base header-noise fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${headerBgClass} border-b border-white/[0.03]`}>
         <div className="max-w-[1920px] mx-auto h-full px-6 md:px-12 flex items-center justify-between relative">
 
           {/* MOBILE BURGER */}
@@ -130,30 +129,30 @@ export default function Header({ forceSolid = false }) {
 
           {/* LOGO */}
           <div className={`z-[110] transition-all duration-500`}>
-            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white hover:text-accent transition-all hover:scale-105 active:scale-95" to="/" onClick={() => setIsMobileMenuOpen(false)}>FENRIR</Link>
+            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white transition-all hover:scale-105 active:scale-95" to="/" onClick={() => setIsMobileMenuOpen(false)}>F E N R I R</Link>
           </div>
 
           {/* DESKTOP NAV */}
           {!isAccountPage && (
             <nav className="hidden lg:flex items-center gap-10 h-full">
-              <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em] opacity-70 hover:opacity-100 transition-opacity" to="/new-arrivals">
+              <Link className="relative text-white no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] opacity-70 hover:opacity-100 hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/new-arrivals">
                 New Arrivals
               </Link>
 
               {/* CLOTHING MEGA MENU TRIGGER */}
-              <div 
+              <div
                 className="mega-menu-trigger h-full flex items-center"
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
                 onMouseLeave={() => setIsMegaMenuOpen(false)}
               >
-                <span className={`nav-link text-[10px] font-black uppercase tracking-[0.3em] cursor-default transition-opacity ${isMegaMenuOpen ? 'opacity-100 text-accent' : 'opacity-70 group-hover:opacity-100'}`}>
+                <span className={`relative text-white no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] cursor-default after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4 ${isMegaMenuOpen ? 'opacity-100 text-accent after:w-4' : 'opacity-70 group-hover:opacity-100 hover:text-accent'}`}>
                   Clothing
                 </span>
 
                 {/* MEGA MENU */}
                 <AnimatePresence>
                   {isMegaMenuOpen && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -15 }}
@@ -162,40 +161,40 @@ export default function Header({ forceSolid = false }) {
                     >
                       <div className="max-w-[1920px] mx-auto grid grid-cols-5 gap-0 min-h-[500px] border-t border-white/[0.03]">
                         {CLOTHING_MENU.map((group, idx) => (
-                          <motion.div 
-                            key={idx} 
+                          <motion.div
+                            key={idx}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.05 + idx * 0.03 }}
-                            className="p-12 border-r border-white/5 flex flex-col hover:bg-white/[0.02] transition-colors group/col"
+                            className="p-12 flex flex-col hover:bg-white/[0.02] transition-colors mega-menu-col group/col"
                           >
-                            <h4 className="text-accent text-[11px] font-black uppercase tracking-[0.4em] mb-8 group-hover/col:translate-x-1 transition-transform">
-                            <Link 
-                              to={`/category/${group.slug}`} 
-                              className="hover:text-white transition-colors"
-                              onClick={() => setIsMegaMenuOpen(false)}
-                            >
-                              {group.title}
-                            </Link>
-                          </h4>
-                          <ul className="space-y-4">
-                            {group.items.map((item, itemIdx) => (
-                              <li key={itemIdx}>
-                                <Link 
-                                  className="text-[13px] text-white/40 hover:text-white hover:translate-x-1 inline-block transition-all" 
-                                  to={`/category/${item.slug}`}
-                                  onClick={() => setIsMegaMenuOpen(false)}
-                                >
-                                  {item.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
+                            <h4 className="text-accent text-[11px] font-black uppercase tracking-[0.4em] mb-8 group-hover/col:translate-x-1 transition-transform relative z-10">
+                              <Link
+                                to={`/category/${group.slug}`}
+                                className="hover:text-white transition-colors"
+                                onClick={() => setIsMegaMenuOpen(false)}
+                              >
+                                {group.title}
+                              </Link>
+                            </h4>
+                            <ul className="space-y-4">
+                              {group.items.map((item, itemIdx) => (
+                                <li key={itemIdx} className="relative z-10">
+                                  <Link
+                                    className="text-[13px] text-white/40 hover:text-white hover:translate-x-1 inline-block transition-all"
+                                    to={`/category/${item.slug}`}
+                                    onClick={() => setIsMegaMenuOpen(false)}
+                                  >
+                                    {item.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
                           </motion.div>
                         ))}
 
                         {/* PROMO BOX */}
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, scale: 1.05 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -205,14 +204,14 @@ export default function Header({ forceSolid = false }) {
                           <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-8 backdrop-blur-[2px] group-hover/promo:backdrop-blur-0 transition-all duration-1000">
                             <p className="text-[9px] font-black uppercase tracking-[0.5em] mb-4 text-white/60">The Atelier Series</p>
                             <h5 className="text-3xl font-impact tracking-tighter mb-8 text-white scale-90 group-hover/promo:scale-100 transition-transform duration-1000">SS24<br />EDITORIAL</h5>
-                          <Link 
-                            className="px-10 py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-accent transition-all hover:px-12" 
-                            to="/shop"
-                            onClick={() => setIsMegaMenuOpen(false)}
-                          >
-                            Explore
-                          </Link>
-                        </div>
+                            <Link
+                              className="px-10 py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-accent transition-all hover:px-12"
+                              to="/shop"
+                              onClick={() => setIsMegaMenuOpen(false)}
+                            >
+                              Explore
+                            </Link>
+                          </div>
                         </motion.div>
                       </div>
                     </motion.div>
@@ -220,14 +219,14 @@ export default function Header({ forceSolid = false }) {
                 </AnimatePresence>
               </div>
 
-              <Link className="nav-link text-[10px] font-black uppercase tracking-[0.3em] text-white/70 hover:text-white" to="/sale">Sale</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-white/70 hover:text-accent no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/sale">Sale</Link>
             </nav>
           )}
 
           {/* ACTIONS */}
-          <div className="flex items-center gap-2 md:gap-4 z-50">
+          <div className="flex items-center gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:opacity-40 [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-400 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
             <button className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">search</span>
+              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">search</span>
             </button>
 
             {user ? (
@@ -238,7 +237,7 @@ export default function Header({ forceSolid = false }) {
               </Link>
             ) : (
               <Link to="/login" className="hidden md:flex w-10 h-10 items-center justify-center hover:bg-white/5 rounded-full transition-colors group">
-                <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">person</span>
+                <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">person</span>
               </Link>
             )}
 
@@ -246,7 +245,7 @@ export default function Header({ forceSolid = false }) {
               className="relative w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group"
               onClick={() => setCartOpen(true)}
             >
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">shopping_cart</span>
+              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">shopping_cart</span>
               {cart.length > 0 && (
                 <span id="cart-count" className="absolute top-2 right-2 bg-accent text-black text-[7px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(197,160,89,0.5)]">
                   {cart.length}

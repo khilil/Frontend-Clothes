@@ -1,7 +1,0 @@
-/* Dashboard layout is primarily handled by Tailwind CSS classes in Dashboard.jsx. 
-   This file is kept for any custom overrides or complex animations not easily handled by Tailwind. */
-
-.font-impact {
-    font-family: 'Oswald', sans-serif;
-    text-transform: uppercase;
-}

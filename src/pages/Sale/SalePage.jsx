@@ -4,8 +4,6 @@ import { getProducts } from "../../services/productService";
 import ProductSection from "../ProductDetail/ProductSection/ProductSection";
 import Header from "../../components/common/Header/Header";
 import CollectiveFooter from "../../components/common/CollectiveFooter/CollectiveFooter";
-import "./SalePage.css";
-
 function SalePage() {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,9 +27,9 @@ function SalePage() {
     }, []);
 
     return (
-        <div className="sale-page bg-black min-h-screen text-white">
+        <div className="bg-black min-h-screen text-white">
 
-            <section className="sale-hero relative h-[90vh] flex items-center justify-center overflow-hidden">
+            <section className="relative h-[60vh] md:h-[80vh] bg-black flex items-center justify-center overflow-hidden text-center">
                 <motion.div
                     className="absolute inset-0 z-0"
                     initial={{ scale: 1.2, opacity: 0 }}
@@ -80,13 +78,13 @@ function SalePage() {
                 </div>
             </section>
 
-            <div className="sale-container relative z-30 px-6 md:px-12 py-20">
+            <div className="max-w-[1920px] mx-auto px-6 md:px-12 object-cover py-10 md:py-20 relative z-30">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
                     <div>
-                        <h2 className="text-4xl font-impact tracking-tight mb-2 uppercase">The Sale Collection</h2>
+                        <h2 className="text-[80px] md:text-4xl font-impact tracking-tight mb-2 uppercase">The Sale Collection</h2>
                         <div className="flex items-center gap-4">
                             <span className="h-px w-12 bg-accent"></span>
-                            <span className="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">
+                            <span className="font-[Inter] text-[10px] font-black tracking-[0.5em] text-white/20 uppercase">
                                 {isLoading ? "Synchronizing..." : `${products.length} Masterpieces Found`}
                             </span>
                         </div>
@@ -100,13 +98,13 @@ function SalePage() {
                         ))}
                     </div>
                 ) : products.length > 0 ? (
-                    <div className="product-grid-container">
+                    <div>
                         <ProductSection products={products} />
                     </div>
                 ) : (
-                    <div className="py-40 text-center border border-white/5 rounded-[3rem] bg-white/[0.02]">
+                    <div className="py-20 md:py-40 text-center border border-white/5 rounded-[3rem] bg-white/[0.02] mt-10 md:mt-20">
                         <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-white/20">The Archive is Empty</h3>
-                        <p className="text-white/40 text-sm tracking-widest uppercase">New Items Arriving Shortly</p>
+                        <p className="font-[Inter] text-white/50 text-[14px] tracking-[0.1em]">New Items Arriving Shortly</p>
                     </div>
                 )}
             </div>

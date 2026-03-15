@@ -5,7 +5,6 @@ import ProductListing from "../pages/ProductDetail/ProductListing";
 import Checkout from "../pages/Checkout/Checkout";
 import CheckoutDetails from "../pages/Checkout/CheckoutDetails";
 import CartPage from "../pages/Cart/CartPage";
-
 import AccountLayout from "../pages/Account/AccountLayout/AccountLayout";
 import Orders from "../pages/Account/Orders";
 import Dashboard from "../pages/Account/Dashboard/Dashboard";

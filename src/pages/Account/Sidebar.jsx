@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import "./Sidebar.css";
 import { logoutUser } from "../../features/auth/authSlice";
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -22,10 +21,10 @@ const Sidebar = ({ isOpen, onClose }) => {
     ];
 
     return (
-        <aside className="sidebar hidden lg:block w-72 flex-shrink-0 sticky top-40">
-            <div className="sidebar-inner space-y-2">
+        <aside className="hidden lg:block w-72 flex-shrink-0 sticky top-40 h-fit">
+            <div className="border-r border-black/[0.03] pr-5 space-y-2">
                 <div className="px-6 mb-8">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Management Protocol</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30 animate-pulse">Management Protocol</h3>
                 </div>
 
                 {navLinks.map((link) => (
@@ -34,14 +33,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                         to={link.to}
                         onClick={onClose}
                         className={({ isActive }) =>
-                            `sidebar-link group flex items-center justify-between px-8 py-4 rounded-2xl transition-all duration-500 ${isActive
-                                ? "bg-[#8b7e6d]/10 text-[#8b7e6d] active-link shadow-[0_10px_30px_rgba(0,0,0,0.05)]"
-                                : "text-black/40 hover:text-black hover:bg-black/5"
+                            `group flex items-center justify-between px-8 py-4 rounded-2xl transition-all duration-500 relative overflow-hidden border ${isActive
+                                ? "bg-[#d4c4b1]/12 border-[#d4c4b1]/10 text-[#8b7e6d] shadow-[0_10px_30px_rgba(0,0,0,0.05)] before:content-[''] before:absolute before:left-0 before:top-1/4 before:h-2/4 before:w-[2px] before:bg-[#8b7e6d] before:shadow-[0_0_10px_rgba(139,126,109,0.2)]"
+                                : "border-transparent text-black/40 hover:text-black hover:bg-black/5"
                             }`
                         }
                     >
                         <div className="flex items-center gap-5">
-                            <span className="material-symbols-outlined text-[22px] transition-all duration-500 group-hover:scale-110 group-hover:text-[#8b7e6d]">
+                            <span className="material-symbols-outlined text-[22px] transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-px group-hover:text-[#8b7e6d] group-hover:drop-shadow-[0_0_4px_rgba(139,126,109,0.2)]">
                                 {link.icon}
                             </span>
                             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{link.label}</span>

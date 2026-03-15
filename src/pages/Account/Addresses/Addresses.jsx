@@ -1,5 +1,4 @@
-import AddAddressModal from "./AddAddressModal";
-import "./Addresses.css";
+
 import { useState, useEffect } from "react";
 import {
     getAddressesAPI,
@@ -38,7 +37,7 @@ const Addresses = () => {
     };
 
     return (
-        <div className="addresses">
+        <div className="w-full text-white">
 
             {/* 📍 ARCHIVES: GEOLOCATION REGISTRY */}
             <header className="mb-16 border-b border-black/[0.03] pb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -56,11 +55,11 @@ const Addresses = () => {
                 </div>
             </header>
 
-            <div className="addresses-grid grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
 
                 {/* ADD NEW */}
                 <button
-                    className="address-add bg-black/[0.01] border border-dashed border-black/10 rounded-[2.5rem] flex flex-col items-center justify-center gap-8 group hover:border-[#8b7e6d] hover:bg-black/[0.03] transition-all duration-700 min-h-[350px] shadow-[0_10px_30px_rgba(0,0,0,0.01)]"
+                    className="bg-black/[0.01] border border-dashed border-black/10 rounded-[2.5rem] flex flex-col items-center justify-center gap-8 group hover:border-[#8b7e6d] hover:bg-black/[0.03] transition-all duration-700 min-h-[350px] shadow-[0_10px_30px_rgba(0,0,0,0.01)]"
                     onClick={() => {
                         setEditingAddress(null); // 🔥 important
                         setOpen(true);
@@ -72,25 +71,24 @@ const Addresses = () => {
                     <span className="text-[11px] font-black uppercase tracking-[0.4em] text-black/30 group-hover:text-black transition-colors">Initialize New Node</span>
                 </button>
 
-                {/* ADDRESS CARDS */}
                 {addresses.map((addr) => (
                     <div
                         key={addr._id}
-                        className={`address-card bg-white border rounded-3xl p-10 relative overflow-hidden group hover:bg-white/[0.08] transition-all duration-700 ${addr.isDefault ? "border-[#d4c4b1] shadow-[0_0_30px_rgba(212,196,177,0.1)]" : "border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.05)]"}`}
+                        className={`bg-white border rounded-3xl p-10 relative overflow-hidden group hover:bg-white/[0.08] transition-all duration-700 ${addr.isDefault ? "border-[#d4c4b1] shadow-[0_0_30px_rgba(212,196,177,0.1)]" : "border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.05)]"}`}
                     >
                         {addr.isDefault && (
                             <span className="absolute top-6 right-6 bg-[#d4c4b1] text-black text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full shadow-lg">Primary Node</span>
                         )}
 
-                        <div className="address-content mb-10">
+                        <div className="mb-10">
                             <h3 className="text-xl font-impact tracking-tight text-black mb-8 uppercase opacity-60">Protocol Index</h3>
 
-                            <div className="address-field mb-6">
+                            <div className="mb-6">
                                 <label className="text-[8px] font-black uppercase tracking-[0.3em] text-black/30 mb-2 block">Identity Index</label>
                                 <p className="text-base font-impact tracking-tight text-black uppercase">{addr.fullName}</p>
                             </div>
 
-                            <div className="address-field">
+                            <div>
                                 <label className="text-[8px] font-black uppercase tracking-[0.3em] text-black/30 mb-2 block">Routing Coordinates</label>
                                 <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-black/60 leading-relaxed">
                                     {addr.streetAddress} <br />
@@ -99,7 +97,7 @@ const Addresses = () => {
                             </div>
                         </div>
 
-                        <div className="address-actions mt-auto pt-10 border-t border-black/[0.03] flex flex-wrap gap-8">
+                        <div className="mt-auto pt-10 border-t border-black/[0.03] flex flex-wrap gap-8">
                             <button
                                 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-black/30 hover:text-black transition-all group/btn"
                                 onClick={() => {

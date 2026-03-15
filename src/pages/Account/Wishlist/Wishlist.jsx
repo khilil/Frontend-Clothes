@@ -2,9 +2,8 @@ import React from "react";
 import { useWishlist } from "../../../context/WishlistContext";
 import { useCart } from "../../../context/CartContext";
 import ProductCard from "../../../components/product/ProductCard/ProductCard";
+// import { Link } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./Wishlist.css";
-
 const Wishlist = () => {
   const { wishlist, loading } = useWishlist();
   const { addToCart } = useCart();
@@ -33,7 +32,7 @@ const Wishlist = () => {
   }
 
   return (
-    <div className="wishlist-page">
+    <div className="w-full pt-8">
       {/* 🏛️ ARCHIVES: SAVED PROTOCOLS */}
       <div className="wishlist-header mb-12 md:mb-16 border-b border-black/[0.03] pb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
         <div className="pt-4 md:pt-0">
@@ -55,7 +54,7 @@ const Wishlist = () => {
       </div>
 
       {/* GRID */}
-      <div className="wishlist-grid grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
+      <div className="mt-5 grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 lg:gap-10">
         {wishlist.length > 0 ? (
           wishlist.map((product) => (
             <div key={product._id || product.id} className="group/card relative">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../../services/api";
 import { motion, AnimatePresence } from "framer-motion";
-import "./AddAddressModal.css";
 
 const AddAddressModal = ({
     open,
@@ -149,10 +148,10 @@ const AddAddressModal = ({
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="address-modal relative bg-white border border-black/5 rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.15)] z-10"
+                        className="relative bg-white border border-black/5 rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.15)] z-10"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <header className="address-modal-header px-10 py-10 border-b border-black/[0.03] flex justify-between items-center bg-black/[0.01]">
+                        <header className="px-10 py-10 border-b border-black/[0.03] flex justify-between items-center bg-black/[0.01]">
                             <div>
                                 <h2 className="text-3xl font-impact tracking-tight text-black uppercase">{addressId ? "Modify Shipping Node" : "Add Shipping Node"}</h2>
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 mt-1">Global Routing & Identity Protocol</p>
@@ -162,9 +161,9 @@ const AddAddressModal = ({
                             </button>
                         </header>
 
-                        <form className="address-modal-body p-10 md:p-14 space-y-10 max-h-[75vh] overflow-y-auto custom-scrollbar" onSubmit={handleSubmit}>
+                        <form className="p-10 md:p-14 space-y-10 max-h-[75vh] overflow-y-auto custom-scrollbar" onSubmit={handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <div className="field flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Full Name</label>
                                     <input
                                         name="name"
@@ -175,7 +174,7 @@ const AddAddressModal = ({
                                     {errors.name && <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{errors.name}</span>}
                                 </div>
 
-                                <div className="field flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Mobile Number</label>
                                     <input
                                         name="phone"
@@ -187,7 +186,7 @@ const AddAddressModal = ({
                                 </div>
                             </div>
 
-                            <div className="field flex flex-col gap-4">
+                            <div className="flex flex-col gap-4">
                                 <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">House / Flat No.</label>
                                 <input
                                     name="house"
@@ -198,7 +197,7 @@ const AddAddressModal = ({
                                 {errors.house && <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{errors.house}</span>}
                             </div>
 
-                            <div className="field flex flex-col gap-4">
+                            <div className="flex flex-col gap-4">
                                 <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Area / Street / Locality</label>
                                 <input
                                     name="area"
@@ -209,7 +208,7 @@ const AddAddressModal = ({
                                 {errors.area && <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{errors.area}</span>}
                             </div>
 
-                            <div className="field flex flex-col gap-4">
+                            <div className="flex flex-col gap-4">
                                 <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Landmark (Optional)</label>
                                 <input
                                     name="landmark"
@@ -220,7 +219,7 @@ const AddAddressModal = ({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                                <div className="field flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">City</label>
                                     <input
                                         name="city"
@@ -231,7 +230,7 @@ const AddAddressModal = ({
                                     {errors.city && <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{errors.city}</span>}
                                 </div>
 
-                                <div className="field flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">State</label>
                                     <input
                                         name="state"
@@ -242,7 +241,7 @@ const AddAddressModal = ({
                                     {errors.state && <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest">{errors.state}</span>}
                                 </div>
 
-                                <div className="field flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Pincode</label>
                                     <input
                                         name="pincode"
@@ -254,12 +253,12 @@ const AddAddressModal = ({
                                 </div>
                             </div>
 
-                            <div className="default-toggle flex items-center justify-between p-8 bg-black/[0.02] border border-black/[0.03] rounded-3xl group transition-all hover:bg-black/[0.04]">
+                            <div className="flex items-center justify-between p-8 bg-black/[0.02] border border-black/[0.03] rounded-3xl group transition-all hover:bg-black/[0.04]">
                                 <div>
                                     <p className="text-[11px] font-black uppercase tracking-[0.4em] text-black">Default Address</p>
                                     <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-black/20 mt-1">Set as primary node for all logistics</p>
                                 </div>
-                                <label className="switch relative inline-block w-14 h-7">
+                                <label className="relative inline-block w-14 h-7">
                                     <input
                                         type="checkbox"
                                         name="isDefault"
@@ -267,7 +266,7 @@ const AddAddressModal = ({
                                         onChange={handleChange}
                                         className="opacity-0 w-0 h-0 peer"
                                     />
-                                    <span className="slider absolute inset-0 bg-black/10 rounded-full transition-all peer-checked:bg-[#8b7e6d] before:content-[''] before:absolute before:h-5 before:w-5 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all peer-checked:before:translate-x-7 peer-checked:before:bg-white shadow-inner" />
+                                    <span className="absolute inset-0 bg-black/10 rounded-full transition-all peer-checked:bg-[#8b7e6d] before:content-[''] before:absolute before:h-5 before:w-5 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all peer-checked:before:translate-x-7 peer-checked:before:bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] peer-checked:shadow-[0_0_15px_rgba(212,196,177,0.4)]" />
                                 </label>
                             </div>
 

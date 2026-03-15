@@ -5,8 +5,6 @@ import { fetchProducts } from '../../api/products.api';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
 import FiltersSidebar from './Filters sidebar/FiltersSidebar';
 import SkeletonCards from '../../components/product/Skeleton/SkeletonCards';
-import './ProductListing.css';
-
 const ProductListing = () => {
   const { category: urlCategory } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -176,10 +174,10 @@ const ProductListing = () => {
   };
 
   return (
-    <div className="shop-page-container">
-      <main className="shop-main">
+    <div className="bg-[#0a0a0a] min-h-screen text-white pt-[80px] lg:pt-[100px]">
+      <main className="flex max-w-[1600px] mx-auto gap-5 lg:gap-10 px-5 lg:px-10">
         {/* Sidebar Filters */}
-        <aside className="shop-sidebar">
+        <aside className="hidden lg:block w-[300px] shrink-0 sticky top-[120px] h-[calc(100vh-150px)] overflow-y-auto pr-[15px] custom-scrollbar">
           <FiltersSidebar
             filters={filters}
             onCategoryChange={handleCategoryChange}
@@ -195,20 +193,20 @@ const ProductListing = () => {
         </aside>
 
         {/* Product Grid Area */}
-        <section className="shop-content">
-          <header className="shop-header">
-            <div className="results-count">
-              Showing <span>{products.length}</span> of {totalProducts} results
+        <section className="grow pb-[60px]">
+          <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-white/5">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-white/40">
+              Showing <span className="text-white">{products.length}</span> of {totalProducts} results
             </div>
             {/* Mobile Filter Trigger */}
             <button
-              className="mobile-filter-btn lg:hidden"
+              className="flex lg:hidden items-center gap-2.5 bg-white/5 border border-white/10 text-white py-2.5 px-5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.1em] cursor-pointer relative"
               onClick={() => setIsDrawerOpen(true)}
             >
               <span className="material-symbols-outlined">tune</span>
               Filters
               {(filters.brand.length > 0 || filters.size || filters.color || filters.price < 10000 || filters.sort !== 'newest') && (
-                <span className="filter-dot"></span>
+                <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
               )}
             </button>
           </header>
@@ -218,27 +216,27 @@ const ProductListing = () => {
             {isDrawerOpen && (
               <>
                 <motion.div
-                  className="drawer-overlay"
+                  className="fixed inset-0 bg-black/70 backdrop-blur-[4px] z-[1000]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setIsDrawerOpen(false)}
                 />
                 <motion.div
-                  className="drawer-content"
+                  className="fixed bottom-0 left-0 right-0 bg-[#0d0d0d] border-t border-white/10 rounded-t-[25px] z-[1001] max-h-[90vh] flex flex-col no-scrollbar"
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
                   exit={{ y: "100%" }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 >
-                  <div className="drawer-header">
-                    <div className="drawer-handle"></div>
-                    <h3>Filters</h3>
-                    <button onClick={() => setIsDrawerOpen(false)} className="close-drawer">
+                  <div className="p-4 px-6 flex justify-between items-center border-b border-white/5 relative">
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/10 rounded-full"></div>
+                    <h3 className="text-sm font-black uppercase tracking-[0.2em]">Filters</h3>
+                    <button onClick={() => setIsDrawerOpen(false)} className="bg-transparent border-none text-white cursor-pointer">
                       <span className="material-symbols-outlined">close</span>
                     </button>
                   </div>
-                  <div className="drawer-body">
+                  <div className="flex-1 overflow-y-auto pt-5 pb-5 px-6 no-scrollbar">
                     <FiltersSidebar
                       filters={filters}
                       onCategoryChange={handleCategoryChange}
@@ -253,8 +251,8 @@ const ProductListing = () => {
                       isMobile={true}
                     />
                   </div>
-                  <div className="drawer-footer">
-                    <button className="apply-btn" onClick={() => setIsDrawerOpen(false)}>
+                  <div className="p-5 px-6 pb-10 border-t border-white/5 bg-[#0d0d0d]">
+                    <button className="w-full bg-accent text-black border-none p-[18px] rounded-xl text-[13px] font-black uppercase tracking-[0.15em] cursor-pointer" onClick={() => setIsDrawerOpen(false)}>
                       Show {totalProducts} Results
                     </button>
                   </div>
@@ -266,7 +264,7 @@ const ProductListing = () => {
           {loading && page === 1 ? (
             <SkeletonCards count={8} />
           ) : products.length > 0 ? (
-            <div className="product-grid">
+            <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-[35px] gap-y-[30px] lg:gap-y-[50px]">
               {products.map((product, index) => {
                 if (products.length === index + 1) {
                   return (
@@ -280,31 +278,33 @@ const ProductListing = () => {
               })}
             </div>
           ) : (
-            <div className="empty-state">
+            <div className="flex justify-center items-center min-h-[400px]">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="empty-msg"
+                className="text-center flex flex-col items-center gap-[15px]"
               >
-                <span className="material-symbols-outlined">sentiment_dissatisfied</span>
-                <h3>No products found</h3>
-                <p>Try adjusting your filters or category.</p>
-                <button onClick={handleClearFilters}>Clear All Filters</button>
+                <span className="material-symbols-outlined text-[64px] text-white/10">sentiment_dissatisfied</span>
+                <h3 className="text-2xl font-black uppercase tracking-[0.1em]">No products found</h3>
+                <p className="text-white/50 text-sm">Try adjusting your filters or category.</p>
+                <button onClick={handleClearFilters} className="mt-[15px] bg-transparent border border-white text-white py-3 px-[30px] rounded-full text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 ease hover:bg-white hover:text-black">Clear All Filters</button>
               </motion.div>
             </div>
           )}
 
           {loadingMore && (
-            <div className="loading-more-wrap">
-              <div className="loader-dots">
-                <span></span><span></span><span></span>
+            <div className="flex justify-center py-[50px]">
+              <div className="flex gap-2">
+                <span className="w-2 h-2 bg-accent rounded-full animate-[bounce_0.6s_infinite_alternate]" style={{ animationDelay: '0s' }}></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-[bounce_0.6s_infinite_alternate]" style={{ animationDelay: '0.2s' }}></span>
+                <span className="w-2 h-2 bg-accent rounded-full animate-[bounce_0.6s_infinite_alternate]" style={{ animationDelay: '0.4s' }}></span>
               </div>
             </div>
           )}
 
           {!hasMore && products.length > 0 && (
-            <div className="end-msg">
-              <p>You've reached the end of the collection.</p>
+            <div className="text-center py-[80px] border-t border-white/5 mt-[50px]">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-white/20 font-extrabold">You've reached the end of the collection.</p>
             </div>
           )}
         </section>
@@ -317,7 +317,7 @@ const ProductListing = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="scroll-to-top"
+            className="fixed bottom-[40px] right-[40px] w-[50px] h-[50px] bg-accent text-black border-none rounded-full cursor-pointer flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-[100] transition-all duration-300 hover:-translate-y-[5px] hover:bg-white"
             onClick={scrollToTop}
           >
             <span className="material-symbols-outlined">arrow_upward</span>
