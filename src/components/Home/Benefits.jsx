@@ -31,19 +31,21 @@ function Benefits() {
                     {benefitItems.map((item, index) => (
                         <motion.div
                             key={index}
-                            className="flex items-start gap-6 p-3 sm:p-5 transition-transform duration-300 hover:-translate-y-1.5"
+                            className="group flex items-start gap-6 p-6 transition-all duration-500 hover:bg-white/[0.02] border border-transparent hover:border-white/5 relative overflow-hidden"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            <div className="shrink-0 w-11 h-11 flex items-center justify-center bg-accent/5 border border-accent/10 text-accent">
-                                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                            <div className="shrink-0 w-12 h-12 flex items-center justify-center bg-zinc-900 border border-white/5 text-accent transition-transform duration-500 group-hover:scale-110 group-hover:border-accent/20">
+                                <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <h3 className="text-[11px] font-black tracking-[0.2em] text-white uppercase">{item.title}</h3>
-                                <p className="text-[9px] leading-[1.6] font-medium tracking-[0.1em] text-white/30 uppercase max-w-[180px]">{item.description}</p>
+                            <div className="flex flex-col gap-2.5">
+                                <h3 className="text-[12px] font-black tracking-[0.25em] text-white uppercase group-hover:text-accent transition-colors duration-300">{item.title}</h3>
+                                <p className="text-[9px] leading-[1.7] font-medium tracking-[0.12em] text-white/30 uppercase max-w-[180px]">{item.description}</p>
                             </div>
+                            {/* Subtle line at bottom on hover */}
+                            <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-accent/30 transition-all duration-700 group-hover:w-full"></div>
                         </motion.div>
                     ))}
                 </div>

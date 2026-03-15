@@ -12,17 +12,17 @@ import { motion } from "framer-motion";
 
 function Home() {
   return (
-    <motion.main 
+    <motion.main
       className="bg-black text-white w-full overflow-x-hidden selection:bg-white/90 selection:text-black pt-16 md:pt-24"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: "easeOut" }}
     >
       <Hero />
-      <Benefits />
-      <Categories />
-      <HomeInfiniteScroll />
       <FeaturedProducts />
+      <Categories />
+      <Benefits />
+      <HomeInfiniteScroll />
       {/* <BrandStory /> */}
       <InstagramFeed />
       <Newsletter />

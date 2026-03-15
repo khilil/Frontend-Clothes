@@ -35,14 +35,17 @@ function FeaturedProducts() {
     return (
         <section className="py-[80px] md:py-[120px] bg-[#0a0a0a] text-white">
             <div className="container-wide">
-                <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-end mb-[60px] gap-8 lg:gap-10">
+                <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-end mb-[80px] gap-8 lg:gap-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        className="relative"
                     >
-                        <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-3 block">CURATED SELECTION</span>
-                        <h2 className="font-oswald text-[48px] md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.04em] uppercase font-black">THE EDIT</h2>
+                        <span className="text-[10px] font-black tracking-[0.6em] text-accent uppercase mb-4 block">CURATED SELECTION</span>
+                        <h2 className="font-oswald text-[56px] md:text-[80px] lg:text-[110px] leading-[0.85] tracking-[-0.04em] uppercase font-black">THE <br className="md:hidden" /> EDIT</h2>
+                        {/* Subtle background glow */}
+                        <div className="absolute -left-20 -top-20 w-[300px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
                     </motion.div>
 
                     <motion.div
