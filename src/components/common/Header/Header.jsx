@@ -102,18 +102,18 @@ export default function Header({ forceSolid = false }) {
   }, [categories]);
 
   const headerBgClass = isMobileMenuOpen || isMegaMenuOpen
-    ? `bg-[#0a0a0a] border-white/5 ${scrolled ? 'h-16' : 'h-24'}`
+    ? `bg-[#0a0a0a] border-white/5 ${scrolled ? 'h-14 md:h-16' : 'h-16 md:h-24'}`
     : (scrolled || forceSolid)
-      ? 'header-scrolled h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
-      : 'bg-transparent h-24';
+      ? 'header-scrolled h-14 md:h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+      : 'lg:bg-transparent bg-[#0a0a0a] h-16 md:h-24';
 
   return (
     <>
-      <header className={`header-base header-noise fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${headerBgClass} border-b border-white/[0.03]`}>
-        <div className="max-w-[1920px] mx-auto h-full px-6 md:px-12 flex items-center justify-between relative">
+      <header className={`header-base md:header-noise fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${headerBgClass} border-b border-white/[0.03]`}>
+        <div className="max-w-[1920px] mx-auto h-full px-4 md:px-12 flex items-center justify-between relative">
 
-          {/* MOBILE BURGER */}
-          <div className="lg:hidden z-[110]">
+          {/* MOBILE BURGER (Left on mobile, hidden on desktop) */}
+          <div className="lg:hidden z-[110] flex-1 flex items-center justify-start">
             <button
               className={`menu-toggle ${isMobileMenuOpen ? 'active' : ''}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -127,9 +127,9 @@ export default function Header({ forceSolid = false }) {
             </button>
           </div>
 
-          {/* LOGO */}
-          <div className={`z-[110] transition-all duration-500`}>
-            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white transition-all hover:scale-105 active:scale-95" to="/" onClick={() => setIsMobileMenuOpen(false)}>F E N R I R</Link>
+          {/* LOGO (Center absolutely on mobile, inline on desktop) */}
+          <div className={`z-[110] transition-all duration-500 absolute left-1/2 -translate-x-1/2 lg:static lg:transform-none`}>
+            <Link className="text-xl md:text-2xl font-impact tracking-tighter text-white transition-all hover:scale-105 active:scale-95 whitespace-nowrap" to="/" onClick={() => setIsMobileMenuOpen(false)}>F E N R I R</Link>
           </div>
 
           {/* DESKTOP NAV */}
@@ -223,8 +223,8 @@ export default function Header({ forceSolid = false }) {
             </nav>
           )}
 
-          {/* ACTIONS */}
-          <div className="flex items-center gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:opacity-40 [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-400 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
+          {/* ACTIONS (Right on mobile, Auto on desktop) */}
+          <div className="flex-1 lg:flex-none flex items-center justify-end gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:opacity-40 [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-400 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
             <button className="w-10 h-10 flex items-center justify-center hover:bg-white/5 rounded-full transition-colors group">
               <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">search</span>
             </button>
