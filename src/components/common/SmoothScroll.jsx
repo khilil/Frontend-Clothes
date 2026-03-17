@@ -16,6 +16,8 @@ const SmoothScroll = () => {
             infinite: false,
         });
 
+        window.lenis = lenis;
+
         // RAF Loop
         function raf(time) {
             lenis.raf(time);

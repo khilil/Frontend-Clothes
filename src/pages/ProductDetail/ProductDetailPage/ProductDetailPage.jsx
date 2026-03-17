@@ -9,12 +9,16 @@ import CustomizationModal from "./CustomizationPop_popModel";
 import { getProductBySlug } from "../../../services/productService";
 import { OffersSection } from "./OffersSection";
 import { getActiveOffers } from "../../../services/offerService";
+import SizeGuideModal from "./SizeGuideModal";
 
 export default function ProductDetailPage() {
     const { slug } = useParams();
     const [product, setProduct] = useState(null);
     const [offers, setOffers] = useState([]);
-    const [activeImage, setActiveImage] = useState(0);
+    const [page, setPage] = useState(0);
+    const [direction, setDirection] = useState(0);
+    const activeImage = page;
+
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedColor, setSelectedColor] = useState(null);
     const [pincode, setPincode] = useState("");
@@ -28,6 +32,12 @@ export default function ProductDetailPage() {
     const [isAdding, setIsAdding] = useState(false);
     const [isQuickBuying, setIsQuickBuying] = useState(false);
     const [showStickyBar, setShowStickyBar] = useState(false);
+    const [hasExplicitlySelectedSize, setHasExplicitlySelectedSize] = useState(false);
+    const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+
+
+
+
 
     // For Sticky Bar scroll logic
     const mainActionRef = useRef(null);
@@ -155,6 +165,7 @@ export default function ProductDetailPage() {
     };
 
     const handleSizeSelect = (v) => {
+        setHasExplicitlySelectedSize(true);
         setSelectedVariant(v);
         setSelectedSize(v.size?.name);
 
@@ -226,6 +237,44 @@ export default function ProductDetailPage() {
             .map(img => img.url);
     }, [product, selectedColor]);
 
+    const setActiveImage = (newIndex) => {
+        const normalizedIndex = (newIndex + images.length) % images.length;
+        if (normalizedIndex === page) return;
+
+        let newDirection = normalizedIndex > page ? 1 : -1;
+        
+        // Edge cases for wrap-around feeling
+        if (page === 0 && normalizedIndex === images.length - 1) newDirection = -1;
+        if (page === images.length - 1 && normalizedIndex === 0) newDirection = 1;
+
+        setDirection(newDirection);
+        setPage(normalizedIndex);
+    };
+
+
+    const variants = {
+        enter: (direction) => ({
+            x: direction > 0 ? '100%' : '-100%',
+            opacity: 0,
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1,
+        },
+        exit: (direction) => ({
+            zIndex: 0,
+            x: direction < 0 ? '100%' : '-100%',
+            opacity: 0,
+        })
+    };
+
+    const swipeConfidenceThreshold = 10000;
+    const swipePower = (offset, velocity) => {
+        return Math.abs(offset) * velocity;
+    };
+
+
     const uniqueColors = useMemo(() => {
         if (!product || !product.variants) return [];
         const colors = [];
@@ -294,57 +343,123 @@ export default function ProductDetailPage() {
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
 
                     {/* LEFT: MEDIA GALLERY */}
-                    <section className="w-full lg:w-[48%] space-y-6 lg:sticky lg:top-28">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="relative group"
-                        >
-                            <div className="relative aspect-[4/5] overflow-hidden bg-[#0d0d0d] border border-white/5 rounded-sm cursor-zoom-in">
-                                <motion.img
-                                    key={activeImage}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.5 }}
-                                    src={images[activeImage]}
-                                    alt={product.title}
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                />
+                    <section className="w-full lg:w-[55%] lg:sticky lg:top-28">
+                        <div className="flex flex-col lg:flex-row gap-4 h-full relative">
+                            {/* Thumbnails - Left Vertical on Desktop, Hidden on Mobile */}
+                            <div className="hidden lg:flex flex-col gap-3 overflow-y-auto no-scrollbar h-fit lg:max-h-[700px] snap-y snap-mandatory w-20 shrink-0">
+                                {images.map((img, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveImage(i)}
+                                        className={`relative flex-shrink-0 w-full aspect-[3/4] overflow-hidden transition-all snap-start rounded-sm border
+                                            ${i === activeImage ? "border-accent ring-1 ring-accent ring-offset-2 ring-offset-[#0a0a0a]" : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"}
+                                        `}
+                                    >
+                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                        {i === activeImage && (
+                                            <motion.div layoutId="thumb-active" className="absolute inset-0 bg-accent/5" />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
 
-                                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Scroll to Explore</span>
+                            {/* Main Gallery Area */}
+                            <div className="flex-1 relative group bg-[#0d0d0d] rounded-sm overflow-hidden border border-white/5">
+                                {/* Desktop/Mobile Main Stage */}
+                                <div 
+                                    className="relative aspect-[3/4] w-full"
+                                >
+                                    <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                                        <motion.img
+                                            key={page}
+                                            custom={direction}
+                                            variants={variants}
+                                            initial="enter"
+                                            animate="center"
+                                            exit="exit"
+                                            transition={{
+                                                x: { type: "spring", stiffness: 400, damping: 40 },
+                                                opacity: { duration: 0.2 },
+                                                scale: { duration: 0.3 }
+                                            }}
+                                            drag="x"
+                                            dragConstraints={{ left: 0, right: 0 }}
+                                            dragElastic={1}
+                                            onDragEnd={(e, { offset, velocity }) => {
+                                                const swipe = swipePower(offset.x, velocity.x);
+
+                                                if (swipe < -swipeConfidenceThreshold) {
+                                                    setActiveImage((activeImage + 1) % images.length);
+                                                } else if (swipe > swipeConfidenceThreshold) {
+                                                    setActiveImage((activeImage - 1 + images.length) % images.length);
+                                                }
+                                            }}
+                                            src={images[activeImage]}
+                                            alt={`${product.title} - ${activeImage + 1}`}
+                                            className="w-full h-full object-cover cursor-grab active:cursor-grabbing touch-pan-y"
+                                        />
+                                    </AnimatePresence>
+
+                                    {/* Desktop Navigation Arrows */}
+                                    <div className="absolute inset-y-0 left-0 right-0 hidden lg:flex items-center justify-between px-6 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                        <button
+                                            onClick={() => setActiveImage(activeImage - 1)}
+                                            className="w-12 h-12 bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-accent hover:text-black transition-all rounded-full pointer-events-auto shadow-2xl"
+                                        >
+                                            <span className="material-symbols-outlined !text-xl text-white group-hover:text-black">west</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveImage(activeImage + 1)}
+                                            className="w-12 h-12 bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-accent hover:text-black transition-all rounded-full pointer-events-auto shadow-2xl"
+                                        >
+                                            <span className="material-symbols-outlined !text-xl text-white group-hover:text-black">east</span>
+                                        </button>
+                                    </div>
+
+
+                                    {/* Premium Pagination Indicator */}
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0">
+                                        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/10 px-6 py-2.5 rounded-full shadow-2xl">
+                                            {/* Dot Indicators for Mobile (Visual only interaction is via arrows/swipe) */}
+                                            <div className="flex gap-1.5 lg:hidden mr-2">
+                                                {images.map((_, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        className={`w-1 h-1 rounded-full transition-all duration-300 ${i === activeImage ? 'w-4 bg-accent' : 'bg-white/20'}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <span className="text-[10px] font-black tracking-[0.3em] overflow-hidden">
+                                                <span className="text-accent">{String(activeImage + 1).padStart(2, '0')}</span>
+                                                <span className="text-white/20 mx-2">/</span>
+                                                <span className="text-white/40">{String(images.length).padStart(2, '0')}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Mobile Interaction Swipe Hint (Visible briefly or on focus) */}
+                                <div className="lg:hidden absolute top-6 right-6 opacity-0 animate-pulse pointer-events-none group-active:opacity-100 transition-opacity">
+                                    <div className="bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20">
+                                        <span className="material-symbols-outlined text-sm">swipe</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Gallery Navigation Buttons */}
-                            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    onClick={() => setActiveImage(i => (i === 0 ? images.length - 1 : i - 1))}
-                                    className="w-12 h-12 bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-accent hover:text-black transition-all"
-                                >
-                                    <span className="material-symbols-outlined">west</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveImage(i => (i === images.length - 1 ? 0 : i + 1))}
-                                    className="w-12 h-12 bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-accent hover:text-black transition-all"
-                                >
-                                    <span className="material-symbols-outlined">east</span>
-                                </button>
+                            {/* Mobile Horizontal Thumbnails (Optional, simplified for clean look) */}
+                            <div className="lg:hidden flex gap-2.5 overflow-x-auto no-scrollbar px-1 pb-2 h-20 snap-x snap-mandatory">
+                                {images.map((img, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveImage(i)}
+                                        className={`relative flex-shrink-0 w-16 aspect-[3/4] overflow-hidden transition-all snap-center rounded-sm border
+                                            ${i === activeImage ? "border-accent" : "border-white/5 opacity-50"}
+                                        `}
+                                    >
+                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                    </button>
+                                ))}
                             </div>
-                        </motion.div>
-
-                        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory">
-                            {images.map((img, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setActiveImage(i)}
-                                    className={`flex-shrink-0 w-20 md:w-28 aspect-[4/5] overflow-hidden transition-all snap-start border-2
-                                        ${i === activeImage ? "border-accent" : "border-transparent opacity-40 hover:opacity-100"}
-                                    `}
-                                >
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
-                                </button>
-                            ))}
                         </div>
                     </section>
 
@@ -426,7 +541,12 @@ export default function ProductDetailPage() {
                                         <h4 className="text-2xl font-impact uppercase tracking-tight text-white/90">Select Size</h4>
                                         <span className="text-[9px] font-bold uppercase tracking-widest text-[#d4c4b1]/50">• {selectedColor?.name}</span>
                                     </div>
-                                    <button className="text-[10px] font-bold uppercase tracking-widest text-accent/60 hover:text-accent border-b border-accent/20 transition-all">Sizing Guide</button>
+                                    <button 
+                                        onClick={() => setIsSizeGuideOpen(true)}
+                                        className="text-[10px] font-bold uppercase tracking-widest text-accent/60 hover:text-accent border-b border-accent/20 transition-all"
+                                    >
+                                        Sizing Guide
+                                    </button>
                                 </div>
                                 <div className="flex flex-wrap gap-3">
                                     {filteredVariants.map(v => (
@@ -435,7 +555,7 @@ export default function ProductDetailPage() {
                                             onClick={() => handleSizeSelect(v)}
                                             disabled={v.stock <= 0}
                                             className={`min-w-[70px] h-14 rounded-xl flex items-center justify-center transition-all duration-300 border relative group/size
-                                                ${selectedVariant?._id === v._id
+                                                ${hasExplicitlySelectedSize && selectedVariant?._id === v._id
                                                     ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.15)] z-10"
                                                     : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/20 hover:text-white"}
                                                 ${v.stock <= 0 ? "opacity-10 cursor-not-allowed filter grayscale pointer-events-none" : ""}
@@ -447,7 +567,7 @@ export default function ProductDetailPage() {
                                         </button>
                                     ))}
                                 </div>
-                                {selectedVariant?.measurements && (() => {
+                                {hasExplicitlySelectedSize && selectedVariant?.measurements && (() => {
                                     const type = selectedVariant.measurements.garmentType;
                                     const measData = selectedVariant.measurements[type] || {};
                                     const items = [];
@@ -487,17 +607,18 @@ export default function ProductDetailPage() {
                                     if (items.length === 0) return null;
 
                                     return (
-                                        <div className="pt-2 text-[11px] font-bold tracking-[0.05em] flex flex-wrap items-center gap-x-3 gap-y-2">
-                                            <span className="text-white/90 uppercase text-[10px] tracking-[0.2em] font-black">Garment (In Inches)</span>
-                                            {items.map((item, i) => (
-                                                <Fragment key={i}>
-                                                    <div className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded-md border border-white/5">
-                                                        <span className="text-white/30 uppercase font-black tracking-widest text-[9px]">{item.label} :</span>
-                                                        <span className="text-accent font-impact text-sm tracking-tight">{item.val}</span>
-                                                    </div>
-                                                    {i < items.length - 1 && <span className="text-white/10 hidden sm:block">|</span>}
-                                                </Fragment>
-                                            ))}
+                                        <div className="pt-2 flex flex-col gap-3">
+                                            <span className="text-white/40 uppercase text-[9px] tracking-[0.3em] font-black">Garment (In Inches)</span>
+                                            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+                                                {items.map((item, i) => (
+                                                    <Fragment key={i}>
+                                                        <div className="flex items-center gap-2 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
+                                                            <span className="text-white/30 uppercase font-black tracking-widest text-[8px] sm:text-[9px]">{item.label}</span>
+                                                            <span className="text-white font-impact text-sm sm:text-base leading-none tracking-tighter border-l border-white/10 pl-2 ml-auto">{item.val}</span>
+                                                        </div>
+                                                    </Fragment>
+                                                ))}
+                                            </div>
                                         </div>
                                     );
                                 })()}
@@ -740,6 +861,11 @@ export default function ProductDetailPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+            <SizeGuideModal 
+                isOpen={isSizeGuideOpen} 
+                onClose={() => setIsSizeGuideOpen(false)} 
+                garmentType={product?.variants?.[0]?.measurements?.garmentType || 'top'}
+            />
         </main>
     );
 }
