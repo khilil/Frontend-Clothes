@@ -107,8 +107,8 @@ export default function CartPage() {
     }
 
     return (
-        <div className="bg-background min-h-screen font-secondary text-textPrimary selection:bg-accent selection:text-primary">
-            {/* Header Area - Since the main layout might have its own header, we match the style */}
+        <div className="luxury-gradient-bg min-h-screen font-secondary text-textPrimary selection:bg-accent selection:text-primary">
+            {/* Header Area */}
             <main className="max-w-7xl mx-auto px-4 md:px-8 py-24 md:py-32">
                 {/* Progress Stepper */}
                 <div className="hidden md:flex items-center justify-center mb-16 max-w-2xl mx-auto">
@@ -168,7 +168,7 @@ export default function CartPage() {
                                     <div className="flex flex-col flex-1">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <h3 className="text-lg font-primary uppercase tracking-widest text-textPrimary">{item.title}</h3>
+                                                <h3 className="text-lg font-primary uppercase tracking-widest text-textPrimary group-hover:text-accent transition-colors duration-300">{item.title}</h3>
                                                 <p className="text-[10px] text-textSecondary font-bold uppercase tracking-widest mt-1">Ref: {item.variantId?.slice(-8).toUpperCase() || "MM-OX-001"}</p>
                                             </div>
                                             <p className="text-xl font-primary text-textPrimary">₹{item.price?.toLocaleString()}</p>
@@ -177,9 +177,7 @@ export default function CartPage() {
                                         <div className="mt-4 space-y-4">
                                             <div className="flex flex-wrap gap-4 text-[11px] font-black uppercase tracking-widest">
                                                 <p>Size: <span className="text-textSecondary font-medium">{item.size}</span></p>
-                                                {item.color && item.color !== "N/A" && (
-                                                    <p>Color: <span className="text-textSecondary font-medium">{item.color}</span></p>
-                                                )}
+                                                <p>Color: <span className="text-textSecondary font-medium">{item.color}</span></p>
                                                 {item.customizations?.printingMethod && (
                                                     <p className="text-accent flex items-center gap-1">
                                                         <span className="material-symbols-outlined text-sm">print</span>
@@ -194,7 +192,7 @@ export default function CartPage() {
                                                         item.customizations.previews[side] && (
                                                             <div
                                                                 key={side}
-                                                                className="w-12 h-16 rounded-md border border-textPrimary/5 bg-secondary p-1 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
+                                                                className="w-12 h-16 rounded-md border border-[#1f1f1f] bg-background p-1 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
                                                                 onClick={() => {
                                                                     setSelectedItemForPreview(item);
                                                                     setPreviewSide(side);
@@ -216,7 +214,7 @@ export default function CartPage() {
 
                                             <div className="flex items-center gap-4">
                                                 <span className="text-[11px] font-black uppercase tracking-widest text-textPrimary">Quantity:</span>
-                                                <div className="flex items-center border border-textPrimary/10 rounded-lg overflow-hidden bg-secondary">
+                                                <div className="flex items-center border border-[#1f1f1f] rounded-lg overflow-hidden bg-background shadow-inner">
                                                     <button
                                                         onClick={() => updateQty(item.id, item.variantId, item.qty - 1)}
                                                         className="px-3 py-1 hover:bg-textPrimary/10 transition-colors border-r border-textPrimary/10 disabled:opacity-30 text-textPrimary"
@@ -225,7 +223,7 @@ export default function CartPage() {
                                                     <span className="px-5 py-1 text-xs font-bold w-12 text-center text-textPrimary">{item.qty}</span>
                                                     <button
                                                         onClick={() => updateQty(item.id, item.variantId, item.qty + 1)}
-                                                        className="px-3 py-1 hover:bg-textPrimary/10 transition-colors border-l border-textPrimary/10 text-textPrimary"
+                                                        className="px-3 py-1 hover:bg-accent hover:text-primary transition-all border-l border-[#1f1f1f] text-textSecondary hover:text-primary"
                                                     >+</button>
                                                 </div>
                                             </div>
@@ -249,7 +247,7 @@ export default function CartPage() {
 
                         {/* Order Summary Sidebar */}
                         <div className="lg:w-[400px]">
-                            <div className="sticky top-32 bg-secondary/50 border border-textPrimary/5 p-8 rounded-2xl shadow-sm">
+                            <div className="sticky top-32 luxury-card p-8 rounded-2xl">
                                 <h3 className="text-2xl font-primary uppercase tracking-tight mb-8 text-textPrimary">Order Summary</h3>
 
                                 <div className="mb-8">
@@ -258,7 +256,7 @@ export default function CartPage() {
                                         <>
                                             <div className="flex gap-2">
                                                 <input
-                                                    className="flex-1 bg-secondary border border-textPrimary/10 rounded-xl py-3 px-4 text-xs text-textPrimary focus:ring-accent focus:border-accent outline-none"
+                                                    className="luxury-input flex-1"
                                                     placeholder="Enter code"
                                                     type="text"
                                                     value={promoCode}
@@ -267,7 +265,7 @@ export default function CartPage() {
                                                 <button 
                                                     onClick={handleApplyPromo}
                                                     disabled={isApplying}
-                                                    className="px-6 py-3 bg-textPrimary text-primary text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-accent hover:text-primary transition-all disabled:opacity-50"
+                                                    className="luxury-button px-6 text-[10px]"
                                                 >
                                                     {isApplying ? "..." : "Apply"}
                                                 </button>
@@ -275,9 +273,9 @@ export default function CartPage() {
                                             {error && <p className="text-[9px] text-danger font-bold uppercase mt-2 tracking-widest">{error}</p>}
                                         </>
                                     ) : (
-                                        <div className="flex items-center justify-between bg-textPrimary/5 p-4 rounded-xl border border-textPrimary/10">
+                                        <div className="flex items-center justify-between bg-primary/40 p-4 rounded-xl border border-[#1f1f1f]">
                                             <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-textPrimary flex items-center gap-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-accent flex items-center gap-2">
                                                     <span className="material-symbols-outlined text-sm">local_offer</span>
                                                     {appliedCoupon.code}
                                                 </p>
@@ -293,7 +291,7 @@ export default function CartPage() {
                                     )}
                                 </div>
 
-                                <div className="space-y-4 pt-6 border-t border-textPrimary/10">
+                                <div className="space-y-4 pt-6 border-t border-[#1f1f1f]">
                                     <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-textSecondary">
                                         <span>Subtotal</span>
                                         <span className="text-textPrimary">₹{(subtotal || 0).toLocaleString()}</span>
@@ -327,7 +325,7 @@ export default function CartPage() {
                                         <span className="text-textPrimary">₹{(estimatedTax || 0).toLocaleString()}</span>
                                     </div>
 
-                                    <div className="pt-6 border-t border-textPrimary/10 flex justify-between items-end">
+                                    <div className="pt-6 border-t border-[#1f1f1f] flex justify-between items-end">
                                         <span className="text-lg font-primary uppercase tracking-tighter text-textPrimary">Total</span>
                                         <span className="text-3xl font-primary uppercase tracking-tight text-textPrimary">₹{(total || 0).toLocaleString()}</span>
                                     </div>
@@ -335,7 +333,7 @@ export default function CartPage() {
 
                                 <Link
                                     to="/checkout"
-                                    className="block text-center w-full mt-10 h-16 bg-textPrimary text-primary text-[12px] font-black uppercase tracking-[0.3em] hover:bg-accent hover:text-primary transition-all rounded-xl shadow-xl shadow-primary/10 flex items-center justify-center no-underline"
+                                    className="luxury-button w-full mt-10 flex items-center justify-center no-underline shadow-accent/5"
                                 >
                                     Proceed to Checkout
                                 </Link>
@@ -359,14 +357,14 @@ export default function CartPage() {
             {/* Mobile Bottom Fixed Bar */}
             {cart.length > 0 && (
                 <div className="lg:hidden fixed bottom-0 left-0 w-full z-[60] animate-slideUp">
-                    <div className="bg-secondary border-t border-textPrimary/5 p-6 flex justify-between items-center shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+                    <div className="bg-secondary border-t border-[#1f1f1f] p-6 flex justify-between items-center shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
                         <div>
                             <p className="text-[9px] font-black uppercase tracking-widest text-textSecondary">Total Amount</p>
                             <span className="text-2xl font-primary text-textPrimary tracking-tighter">₹{total.toLocaleString()}</span>
                         </div>
                         <Link
                             to="/checkout"
-                            className="h-14 px-8 bg-textPrimary text-primary text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center rounded-xl active:scale-95 transition-all no-underline"
+                            className="luxury-button h-14 px-8 flex items-center justify-center no-underline text-[10px]"
                         >
                             Checkout
                         </Link>

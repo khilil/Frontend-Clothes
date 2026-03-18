@@ -90,7 +90,7 @@ const ProductCard = React.memo(({ product }) => {
 
   return (
     <motion.div
-      className="relative bg-secondary overflow-hidden transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] border border-textPrimary/5 h-full hover:border-accent/20 hover:-translate-y-[5px]"
+      className="luxury-card group h-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 20 }}
@@ -170,9 +170,9 @@ const ProductCard = React.memo(({ product }) => {
           </AnimatePresence>
         </div>
 
-        <div className="p-4 md:p-5 md:pb-6 bg-secondary grow flex flex-col gap-2">
+        <div className="p-4 md:p-5 md:pb-6 bg-secondary grow flex flex-col gap-2 border-t border-[#1f1f1f]">
           <div className="flex justify-between items-start">
-            <span className="text-[9px] font-black text-accent tracking-[0.3em] uppercase mt-1">{product.brand || "GEN-Z ARCHIVE"}</span>
+            <span className="text-[9px] font-black text-accent tracking-[0.3em] uppercase mt-1 leading-none">{product.brand || "GEN-Z ARCHIVE"}</span>
             <div className="flex flex-col items-end gap-[1px]">
               <span className="text-[14px] md:text-base font-[950] text-textPrimary tracking-[-0.01em]">₹{hasActiveOffer ? finalPrice : product.price}</span>
               {displayCompareAtPrice && (
@@ -185,10 +185,10 @@ const ProductCard = React.memo(({ product }) => {
             {activeOffer?.offerType === 'FLASH_SALE' && activeOffer.endDate && (
                 <FlashSaleTimer endDate={activeOffer.endDate} />
             )}
-            <h3 className="text-[12px] md:text-[13px] font-medium text-textPrimary/50 leading-[1.4] uppercase tracking-[0.05em] m-0 line-clamp-1">{product.title}</h3>
+            <h3 className="text-[12px] md:text-[13px] font-medium text-textSecondary leading-[1.4] uppercase tracking-[0.05em] m-0 line-clamp-1 group-hover:text-textPrimary transition-colors duration-300">{product.title}</h3>
           </div>
 
-          <div className="mt-auto pt-3 border-t border-textPrimary/5 flex justify-between items-center">
+          <div className="mt-auto pt-3 border-t border-[#1f1f1f] flex justify-between items-center">
             {colors.length > 0 && (
               <div className="flex gap-2">
                 {colors.map((color, i) => (
@@ -205,7 +205,7 @@ const ProductCard = React.memo(({ product }) => {
             {sizes.length > 0 && (
               <div className="flex gap-2.5">
                 {sizes.map(size => (
-                  <span key={size} className="text-[11px] font-black text-textPrimary/40 tracking-[0.05em] uppercase">{size}</span>
+                  <span key={size} className="text-[11px] font-black text-textSecondary tracking-[0.05em] uppercase hover:text-accent transition-colors cursor-default">{size}</span>
                 ))}
               </div>
             )}

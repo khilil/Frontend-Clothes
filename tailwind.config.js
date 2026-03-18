@@ -11,7 +11,7 @@ export default {
         accent: "#d4c4b1",
         background: "#0a0a0a",
         textPrimary: "#ffffff",
-        textSecondary: "#717171",
+        textSecondary: "#9ca3af",
         danger: "#ef4444",
         // Legacy aliases
         charcoal: "#121212",
