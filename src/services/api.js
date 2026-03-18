@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const USE_LIVE_API = true; // 🚀 Set to TRUE for Render, FALSE for Localhost
+const USE_LIVE_API = false; // 🚀 Set to TRUE for Render, FALSE for Localhost
 const LIVE_URL = "https://backend-clothes-1p7b.onrender.com";
 const LOCAL_URL = "http://localhost:5000";
 

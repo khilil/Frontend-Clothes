@@ -6,15 +6,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        accent: "#d4c4b1",
-        charcoal: "#121212",
         primary: "#000000",
+        secondary: "#121212",
+        accent: "#d4c4b1",
+        background: "#0a0a0a",
+        textPrimary: "#ffffff",
+        textSecondary: "#717171",
+        danger: "#ef4444",
+        // Legacy aliases
+        charcoal: "#121212",
         muted: "#717171",
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        primary: ["Oswald", "sans-serif"],
+        secondary: ["Inter", "sans-serif"],
         display: ["Bodoni Moda", "serif"],
-        impact: ["Oswald", "sans-serif"],
       },
     },
   },

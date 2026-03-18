@@ -90,7 +90,7 @@ const ProductCard = React.memo(({ product }) => {
 
   return (
     <motion.div
-      className="relative bg-[#0d0d0d] overflow-hidden transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] border border-white/5 h-full hover:border-[#d4c4b1]/20 hover:-translate-y-[5px]"
+      className="relative bg-secondary overflow-hidden transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] border border-textPrimary/5 h-full hover:border-accent/20 hover:-translate-y-[5px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 20 }}
@@ -98,12 +98,12 @@ const ProductCard = React.memo(({ product }) => {
       transition={{ duration: 0.5 }}
     >
       <Link to={`/product/${product.slug}`} className="no-underline text-inherit flex flex-col h-full">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#111]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
           {/* Badges */}
           <div className="absolute top-[15px] left-[15px] z-[10] flex flex-col gap-[6px]">
-            {product.isNewArrival && <span className="text-[8px] font-black tracking-[0.15em] py-[6px] px-[10px] uppercase backdrop-blur-[10px] border border-white/10 bg-white/90 text-black">NEW</span>}
+            {product.isNewArrival && <span className="text-[8px] font-black tracking-[0.15em] py-[6px] px-[10px] uppercase backdrop-blur-[10px] border border-textPrimary/10 bg-textPrimary/90 text-primary">NEW</span>}
             {(product.isOnSale || hasActiveOffer) && (
-                <span className="text-[8px] font-black tracking-[0.15em] py-[6px] px-[10px] uppercase backdrop-blur-[10px] border-[#d4c4b1]/20 bg-[#d4c4b1]/90 text-black">
+                <span className="text-[8px] font-black tracking-[0.15em] py-[6px] px-[10px] uppercase backdrop-blur-[10px] border-accent/20 bg-accent/90 text-primary">
                     {activeOffer?.offerType ? activeOffer.offerType.replace(/_/g, ' ') : 'SALE'}
                 </span>
             )}
@@ -112,7 +112,7 @@ const ProductCard = React.memo(({ product }) => {
 
           {/* Wishlist Icon */}
           <button
-            className={`absolute top-[15px] right-[15px] z-10 bg-black/20 backdrop-blur-[10px] border border-white/10 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-400 ease hover:bg-white/90 hover:text-[#ff4b4b] hover:border-[#ff4b4b] ${isLiked ? '!bg-white/90 !border-[#ff4b4b]' : ''}`}
+            className={`absolute top-[15px] right-[15px] z-10 bg-primary/20 backdrop-blur-[10px] border border-textPrimary/10 text-textPrimary w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-400 ease hover:bg-textPrimary/90 hover:text-[#ff4b4b] hover:border-[#ff4b4b] ${isLiked ? '!bg-textPrimary/90 !border-[#ff4b4b]' : ''}`}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -171,13 +171,13 @@ const ProductCard = React.memo(({ product }) => {
           </AnimatePresence>
         </div>
 
-        <div className="p-4 md:p-5 md:pb-6 bg-[#0d0d0d] grow flex flex-col gap-3">
+        <div className="p-4 md:p-5 md:pb-6 bg-secondary grow flex flex-col gap-3">
           <div className="flex justify-between items-start">
-            <span className="text-[9px] font-black text-[#d4c4b1] tracking-[0.3em] uppercase mt-1">{product.brand || "GEN-Z ARCHIVE"}</span>
+            <span className="text-[9px] font-black text-accent tracking-[0.3em] uppercase mt-1">{product.brand || "GEN-Z ARCHIVE"}</span>
             <div className="flex flex-col items-end gap-[2px]">
-              <span className="text-[14px] md:text-base font-[950] text-white tracking-[-0.01em]">₹{hasActiveOffer ? finalPrice : product.price}</span>
+              <span className="text-[14px] md:text-base font-[950] text-textPrimary tracking-[-0.01em]">₹{hasActiveOffer ? finalPrice : product.price}</span>
               {displayCompareAtPrice && (
-                <span className="text-[11px] text-white/20 line-through font-medium">₹{displayCompareAtPrice}</span>
+                <span className="text-[11px] text-textPrimary/20 line-through font-medium">₹{displayCompareAtPrice}</span>
               )}
             </div>
           </div>
@@ -186,10 +186,10 @@ const ProductCard = React.memo(({ product }) => {
             {activeOffer?.offerType === 'FLASH_SALE' && activeOffer.endDate && (
                 <FlashSaleTimer endDate={activeOffer.endDate} />
             )}
-            <h3 className="text-[12px] md:text-[13px] font-medium text-white/50 leading-[1.4] uppercase tracking-[0.05em] m-0 line-clamp-1">{product.title}</h3>
+            <h3 className="text-[12px] md:text-[13px] font-medium text-textPrimary/50 leading-[1.4] uppercase tracking-[0.05em] m-0 line-clamp-1">{product.title}</h3>
           </div>
 
-          <div className="mt-auto pt-3 border-t border-white/5 flex justify-between items-center">
+          <div className="mt-auto pt-3 border-t border-textPrimary/5 flex justify-between items-center">
             {colors.length > 0 && (
               <div className="flex gap-2">
                 {colors.map((color, i) => (
@@ -206,7 +206,7 @@ const ProductCard = React.memo(({ product }) => {
             {sizes.length > 0 && (
               <div className="flex gap-2.5">
                 {sizes.map(size => (
-                  <span key={size} className="text-[11px] font-black text-white/40 tracking-[0.05em] uppercase">{size}</span>
+                  <span key={size} className="text-[11px] font-black text-textPrimary/40 tracking-[0.05em] uppercase">{size}</span>
                 ))}
               </div>
             )}

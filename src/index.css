@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-accent: #d4c4b1;
-  --color-charcoal: #121212;
+  /* Brand Colors */
   --color-primary: #000000;
-  --color-muted: #717171;
+  --color-secondary: #121212;
+  --color-accent: #d4c4b1;
+  --color-background: #0a0a0a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #717171;
+  --color-danger: #ef4444;
+
+  /* Legacy aliases for compatibility */
+  --color-charcoal: var(--color-secondary);
+  --color-muted: var(--color-text-secondary);
   
-  --font-sans: "Inter", sans-serif;
+  /* Font Families */
+  --font-primary: "Oswald", sans-serif;
+  --font-secondary: "Inter", sans-serif;
   --font-display: "Bodoni Moda", serif;
-  --font-impact: "Oswald", sans-serif;
 }
 
 @layer utilities {
