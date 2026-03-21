@@ -26,7 +26,7 @@ import Inventory from "../Admin/Pages/Inventory/AdminInventory";
 import MainLayout from "../pages/MainLayout";
 import AdminProducts from "../Admin/Pages/Product/AdminProducts";
 import ProductDetailsPage from "../Admin/Pages/Product/ProductDetailsPage";
-import AdminOrders from "../Admin/Pages/Orders/AdminOrders";
+import OrderManagement from "../Admin/Pages/Orders/OrderManagement";
 import AdminOrderDetails from "../Admin/Pages/Orders/AdminOrderDetails";
 import AdminCustomers from "../Admin/Pages/Customer/AdminCustomers";
 import AdminCustomerDetail from "../Admin/Pages/Customer/AdminCustomerDetail";
@@ -63,7 +63,7 @@ export default function AppRoutes() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="inventory" element={<Inventory />} />
-                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orders" element={<OrderManagement />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="attributes" element={<AttributeManagement />} />
                 <Route path="customization" element={<CustomizationManagement />} />

@@ -19,7 +19,7 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             const res = await orderService.getAllAdminOrders();
-            setOrders(res.data);
+            setOrders(res.data.orders || []);
         } catch (error) {
             console.error("Admin: fetch orders failed", error);
         } finally {
@@ -91,7 +91,7 @@ const AdminOrders = () => {
 
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <div className="flex border-b border-slate-200 dark:border-slate-800 px-6 overflow-x-auto no-scrollbar">
-                    {['all', 'custom', 'placed', 'shipped', 'delivered', 'cancelled'].map((tab) => (
+                    {['all', 'custom', 'placed', 'ready-to-ship', 'shipped', 'delivered', 'cancelled'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -113,6 +113,7 @@ const AdminOrders = () => {
                                 <th className="px-6 py-4">Patron Details</th>
                                 <th className="px-6 py-4">Creation Date</th>
                                 <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4">Products</th>
                                 <th className="px-6 py-4">Transaction</th>
                                 <th className="px-6 py-4 text-right">Operational Actions</th>
                             </tr>
@@ -141,10 +142,28 @@ const AdminOrders = () => {
                                                 className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border-none focus:ring-0 cursor-pointer ${getStatusStyles(order.orderStatus)}`}
                                             >
                                                 <option value="placed">Placed</option>
+                                                <option value="ready-to-ship">Ready-to-Ship</option>
                                                 <option value="shipped">Shipped</option>
                                                 <option value="delivered">Delivered</option>
                                                 <option value="cancelled">Cancelled</option>
                                             </select>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[200px]">
+                                                    {order.items?.[0]?.title || "Generic Product"}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black">
+                                                        {order.items?.reduce((acc, item) => acc + (item.quantity || 0), 0)} TOTAL PIECES
+                                                    </span>
+                                                    {order.items?.length > 1 && (
+                                                        <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 text-[8px] px-1 rounded font-black">
+                                                            +{order.items.length - 1} MORE
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col items-start gap-1">

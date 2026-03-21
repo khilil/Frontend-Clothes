@@ -1,5 +1,7 @@
 import api from './api';
 
+// --- SHOP FACING METHODS (RESTORED) ---
+
 /**
  * 📦 Direct Buy (Buy Now)
  */
@@ -37,7 +39,7 @@ export const getMyOrders = async () => {
 };
 
 /**
- * ❌ Cancel Order
+ * ✅ Cancel Order
  */
 export const cancelOrder = async (orderId) => {
     try {
@@ -48,38 +50,47 @@ export const cancelOrder = async (orderId) => {
     }
 };
 
-/**
- * 👑 Admin: Get All Orders
- */
-export const getAllAdminOrders = async () => {
-    try {
-        const response = await api.get('/orders/admin/all');
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || error;
-    }
+// --- ADMIN DASHBOARD METHODS (NEW) ---
+
+export const getAllOrders = async (params) => {
+    const response = await api.get('/orders', { params });
+    return response.data;
 };
 
-/**
- * 👑 Admin: Update Order Status
- */
-export const updateOrderStatus = async (orderId, updateData) => {
-    try {
-        const response = await api.put(`/orders/admin/status/${orderId}`, updateData);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || error;
-    }
+// Aliased for backward compatibility if needed
+export const getAllAdminOrders = getAllOrders;
+
+export const getOrderById = async (id) => {
+    const response = await api.get(`/orders/${id}`);
+    return response.data;
 };
 
-/**
- * 🔍 Get Order By ID
- */
-export const getOrderById = async (orderId) => {
-    try {
-        const response = await api.get(`/orders/${orderId}`);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || error;
-    }
+export const updateOrderStatus = async (id, data) => {
+    const response = await api.patch(`/orders/${id}/status`, data);
+    return response.data;
+};
+
+export const markOrderQC = async (id) => {
+    const response = await api.patch(`/orders/${id}/qc`);
+    return response.data;
+};
+
+export const updateOrderPriority = async (id, priority) => {
+    const response = await api.patch(`/orders/${id}/priority`, { priority });
+    return response.data;
+};
+
+export const addOrderNote = async (id, note) => {
+    const response = await api.post(`/orders/${id}/notes`, { note });
+    return response.data;
+};
+
+export const addCustomerNote = async (id, note) => {
+    const response = await api.post(`/orders/${id}/customer-notes`, { note });
+    return response.data;
+};
+
+export const bulkUpdateOrders = async (orderIds, status) => {
+    const response = await api.patch('/orders/bulk/status', { orderIds, status });
+    return response.data;
 };
