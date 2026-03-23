@@ -43,6 +43,7 @@ function CollectiveFooter() {
             <li className="mb-4"><button className="bg-transparent border-none p-0 text-[10px] tracking-[0.15em] uppercase text-white/40 cursor-pointer transition-all duration-300 font-medium hover:text-white hover:pl-[5px]" onClick={() => navigate("/returns")}>Return Archive</button></li>
             <li className="mb-4"><button className="bg-transparent border-none p-0 text-[10px] tracking-[0.15em] uppercase text-white/40 cursor-pointer transition-all duration-300 font-medium hover:text-white hover:pl-[5px]" onClick={() => navigate("/care")}>Atelier Care</button></li>
             <li className="mb-4"><button className="bg-transparent border-none p-0 text-[10px] tracking-[0.15em] uppercase text-white/40 cursor-pointer transition-all duration-300 font-medium hover:text-white hover:pl-[5px]" onClick={() => navigate("/faq")}>FAQ</button></li>
+            <li className="mb-4"><button className="bg-transparent border-none p-0 text-[10px] tracking-[0.15em] uppercase text-white/40 cursor-pointer transition-all duration-300 font-medium hover:text-white hover:pl-[5px]" onClick={() => navigate("/contact")}>Contact Us</button></li>
           </ul>
         </motion.div>
 

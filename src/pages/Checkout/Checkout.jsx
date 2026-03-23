@@ -513,14 +513,6 @@ export default function Checkout() {
                             active={formData.paymentMethod === "ONLINE"}
                             onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
                           />
-                          <PaymentOption
-                            id="COD"
-                            title="Cash"
-                            desc="Pay on arrival"
-                            icon="local_shipping"
-                            active={formData.paymentMethod === "COD"}
-                            onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
-                          />
                         </div>
                       </div>
                     </section>

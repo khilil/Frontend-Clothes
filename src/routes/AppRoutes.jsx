@@ -13,6 +13,8 @@ import Addresses from "../pages/Account/Addresses/Addresses";
 import Profile from "../pages/Account/Profile/Profile";
 import OrderDetails from "../pages/Account/OrderDetails";
 import About from "../pages/About";
+import ContactUs from "../pages/ContactUs";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 import ProductDetailPage from "../pages/ProductDetail/ProductDetailPage/ProductDetailPage";
 import CustomizePage from "../pages/CustomizeShopPage/CustomizePage";
 import TextEditorPage from "../pages/CustomizeShopPage/TextEditorPage";
@@ -127,6 +129,8 @@ export default function AppRoutes() {
                     </ProtectedRoute>
                 } />
                 <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
 
                 {/* <Route path="/customize/:slug" element={<CustomizePage />} /> */}
                 <Route path="/customize/:slug" element={<CustomizeEditorLayout />}>

@@ -8,7 +8,8 @@ import {
   Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { getDashboardStats } from '../services/dashboardService';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDashboardData } from '../features/dashboard/dashboardSlice';
 import OrderHub from './components/OrderHub';
 import OrderDetailView from './Pages/OrderDetailView';
 
@@ -47,31 +48,89 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+const RevenueChartMemo = React.memo(({ revenueData }) => {
+  if (!revenueData) return null;
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
+            <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        <XAxis 
+          dataKey="name" 
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
+          dy={10}
+        />
+        <YAxis 
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
+          tickFormatter={(value) => `₹${value}`}
+          dx={-10}
+        />
+        <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
+        <RechartsTooltip content={<CustomTooltip />} cursor={{ stroke: '#4f46e5', strokeWidth: 2, strokeDasharray: '4 4' }} />
+        <Area 
+          type="monotone" 
+          dataKey="sales" 
+          stroke="#4f46e5" 
+          strokeWidth={3}
+          fillOpacity={1} 
+          fill="url(#colorSales)" 
+          activeDot={{ r: 6, fill: '#4f46e5', stroke: '#fff', strokeWidth: 2 }}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+});
+
+const PipelineChartMemo = React.memo(({ statusData }) => {
+  if (!statusData) return null;
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <Pie
+          data={statusData}
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={90}
+          paddingAngle={5}
+          dataKey="value"
+          stroke="none"
+        >
+          {statusData?.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <RechartsTooltip 
+          contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+          itemStyle={{ fontWeight: 800, color: '#1e293b' }}
+          formatter={(value, name) => [`${value} Orders`, name]}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+});
+
 // --- Main Dashboard Component ---
 export default function AdminDashboard() {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { data: dashboardData, loading, error } = useSelector((state) => state.dashboard);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
+  const { kpis, revenueData, statusData } = dashboardData || {};
+
   useEffect(() => {
-    fetchStats();
-  }, []);
+    dispatch(fetchDashboardData());
+  }, [dispatch]);
 
-  const fetchStats = async () => {
-    try {
-      setLoading(true);
-      const res = await getDashboardStats();
-      setDashboardData(res.data);
-    } catch (err) {
-      console.error("Error fetching dashboard stats:", err);
-      setError("Failed to load dashboard statistics.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (loading && !dashboardData) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex flex-col items-center gap-4">
@@ -88,13 +147,11 @@ export default function AdminDashboard() {
         order={selectedOrder} 
         onBack={() => {
           setSelectedOrder(null);
-          fetchStats(); // Refresh stats when coming back
+          dispatch(fetchDashboardData()); // Refresh stats when coming back
         }} 
       />
     );
   }
-
-  const { kpis, revenueData, statusData } = dashboardData || {};
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-12">
@@ -156,41 +213,7 @@ export default function AdminDashboard() {
             </div>
             
             <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
-                    dy={10}
-                  />
-                  <YAxis 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
-                    tickFormatter={(value) => `₹${value}`}
-                    dx={-10}
-                  />
-                  <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ stroke: '#4f46e5', strokeWidth: 2, strokeDasharray: '4 4' }} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#4f46e5" 
-                    strokeWidth={3}
-                    fillOpacity={1} 
-                    fill="url(#colorSales)" 
-                    activeDot={{ r: 6, fill: '#4f46e5', stroke: '#fff', strokeWidth: 2 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              <RevenueChartMemo revenueData={revenueData} />
             </div>
          </div>
 
@@ -202,29 +225,7 @@ export default function AdminDashboard() {
             </div>
             
             <div className="flex-1 min-h-[250px] flex items-center justify-center relative">
-               <ResponsiveContainer width="100%" height="100%">
-                 <PieChart>
-                   <Pie
-                     data={statusData}
-                     cx="50%"
-                     cy="50%"
-                     innerRadius={60}
-                     outerRadius={90}
-                     paddingAngle={5}
-                     dataKey="value"
-                     stroke="none"
-                   >
-                     {statusData?.map((entry, index) => (
-                       <Cell key={`cell-${index}`} fill={entry.color} />
-                     ))}
-                   </Pie>
-                   <RechartsTooltip 
-                     contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                     itemStyle={{ fontWeight: 800, color: '#1e293b' }}
-                     formatter={(value, name) => [`${value} Orders`, name]}
-                   />
-                 </PieChart>
-               </ResponsiveContainer>
+               <PipelineChartMemo statusData={statusData} />
                {/* Center Label */}
                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-2xl font-black text-slate-900 dark:text-white">{kpis?.totalOrders}</span>

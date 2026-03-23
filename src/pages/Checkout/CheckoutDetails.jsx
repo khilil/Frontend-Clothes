@@ -90,13 +90,6 @@ export default function CheckoutDetails() {
                             subtitle="Visa, Mastercard, RuPay"
                             icon="credit_card"
                         />
-                        <Payment
-                            active={payment === "cod"}
-                            onClick={() => setPayment("cod")}
-                            title="Cash on Delivery (COD)"
-                            subtitle="Pay with cash at your doorstep"
-                            badge
-                        />
                     </Section>
                 </div>
 

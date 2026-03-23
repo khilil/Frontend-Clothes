@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Download, Eye, ChevronRight, Clock, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Download, Eye, ChevronRight, Clock, CheckSquare, Square, Trash2, Calendar } from 'lucide-react';
 import { StatusBadge, PriorityBadge, CustomDesignBadge, SLABadge } from './OrderBadges';
 import { getAllOrders, bulkUpdateOrders } from '../../services/orderService';
 import { generateInvoiceHTML, generateBulkInvoiceHTML } from '../utils/invoiceUtils';
@@ -10,6 +10,9 @@ export default function OrderHub({ onSelectOrder }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('All');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [filters, setFilters] = useState({
@@ -20,23 +23,39 @@ export default function OrderHub({ onSelectOrder }) {
     isCustom: false,
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [dateRange, setDateRange] = useState({ label: 'All Time', startDate: null, endDate: null });
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
 
   const tabs = ['All', 'Custom Design 🎨', 'Pending', 'Shipped', 'Delivered'];
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset page on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
     fetchOrders();
-  }, [activeTab, filters, search]);
+  }, [activeTab, filters, debouncedSearch, page, dateRange]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const params = {
-        search,
+        search: debouncedSearch,
         status: filters.status,
         paymentStatus: filters.paymentStatus,
         paymentMethod: filters.paymentMethod,
         priority: filters.priority,
         isCustom: activeTab === 'Custom Design 🎨' ? true : filters.isCustom,
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        page,
+        limit: 10,
       };
       
       if (activeTab === 'Pending') params.status = 'placed';
@@ -45,6 +64,9 @@ export default function OrderHub({ onSelectOrder }) {
 
       const res = await getAllOrders(params);
       setOrders(res.data.orders);
+      if (res.data.pagination) {
+        setTotalPages(res.data.pagination.totalPages);
+      }
     } catch (err) {
       console.error("Failed to fetch orders:", err);
     } finally {
@@ -95,6 +117,108 @@ export default function OrderHub({ onSelectOrder }) {
     win.document.close();
   };
 
+  const getPreviousMonths = () => {
+    const months = [];
+    for (let i = 1; i <= 5; i++) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      months.push({
+        label: d.toLocaleString('default', { month: 'short', year: 'numeric' }),
+        value: `month-${i}`
+      });
+    }
+    return months;
+  };
+
+  const applyDatePreset = (preset) => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    
+    let start = new Date();
+    start.setHours(0, 0, 0, 0);
+
+    let label = '';
+
+    if (preset.startsWith('month-')) {
+      const offset = parseInt(preset.split('-')[1]);
+      const d = new Date();
+      d.setMonth(d.getMonth() - offset);
+      
+      start = new Date(d.getFullYear(), d.getMonth(), 1);
+      start.setHours(0, 0, 0, 0);
+
+      const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+      
+      setDateRange({
+         label: d.toLocaleString('default', { month: 'short', year: 'numeric' }),
+         startDate: start.toISOString(),
+         endDate: endOfMonth.toISOString()
+      });
+      setPage(1);
+      setShowDateFilter(false);
+      return;
+    }
+
+    switch (preset) {
+      case 'today':
+        label = 'Today';
+        break;
+      case '7days':
+        start.setDate(today.getDate() - 7);
+        label = 'Last 7 Days';
+        break;
+      case '30days':
+        start.setDate(today.getDate() - 30);
+        label = 'Last 30 Days';
+        break;
+      case 'thisMonth':
+        start.setDate(1);
+        label = 'This Month';
+        break;
+      default:
+        setDateRange({ label: 'All Time', startDate: null, endDate: null });
+        setPage(1);
+        setShowDateFilter(false);
+        return;
+    }
+
+    setDateRange({
+      label,
+      startDate: start.toISOString(),
+      endDate: today.toISOString()
+    });
+    setCustomStart('');
+    setCustomEnd('');
+    setPage(1);
+    setShowDateFilter(false);
+  };
+
+  const applyCustomDate = () => {
+    if (!customStart && !customEnd) return;
+    
+    let start = customStart ? new Date(customStart) : new Date();
+    let end = customEnd ? new Date(customEnd) : new Date();
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+
+    if (start > end) {
+      end = new Date(start.getTime() + 86400000);
+      setCustomEnd(end.toISOString().split('T')[0]);
+    }
+
+    const label = `${start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} - ${end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}`;
+
+    setDateRange({
+      label,
+      startDate: start.toISOString(),
+      endDate: end.toISOString()
+    });
+    setPage(1);
+    setShowDateFilter(false);
+  };
+
   return (
     <div className="space-y-6 relative">
       {/* 1. Header & Tabs */}
@@ -135,7 +259,71 @@ export default function OrderHub({ onSelectOrder }) {
           </div>
           <div className="relative">
             <button 
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => { setShowDateFilter(!showDateFilter); setShowFilters(false); }}
+              className={`p-2 bg-white dark:bg-slate-900 border ${showDateFilter || dateRange.startDate ? 'border-indigo-500 ring-2 ring-indigo-500/10' : 'border-slate-200 dark:border-slate-800'} rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2`}
+            >
+              <Calendar size={18} className={showDateFilter || dateRange.startDate ? 'text-indigo-500' : 'text-slate-500'} />
+              {dateRange.startDate && <span className="text-xs font-bold text-slate-700 dark:text-slate-300 hidden sm:block pl-1 pr-1">{dateRange.label}</span>}
+            </button>
+
+            {showDateFilter && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-[60] p-4 animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Timeframe</h3>
+                  <button onClick={() => applyDatePreset('all')} className="text-[10px] font-bold text-rose-500 hover:underline">Reset</button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <button onClick={() => applyDatePreset('today')} className={`text-left px-3 py-2 text-xs font-bold rounded-lg transition-all ${dateRange.label === 'Today' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-50 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}`}>Today</button>
+                  <button onClick={() => applyDatePreset('7days')} className={`text-left px-3 py-2 text-xs font-bold rounded-lg transition-all ${dateRange.label === 'Last 7 Days' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-50 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}`}>Last 7 Days</button>
+                  <button onClick={() => applyDatePreset('30days')} className={`text-left px-3 py-2 text-xs font-bold rounded-lg transition-all ${dateRange.label === 'Last 30 Days' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-50 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}`}>Last 30 Days</button>
+                  <button onClick={() => applyDatePreset('thisMonth')} className={`text-left px-3 py-2 text-xs font-bold rounded-lg transition-all ${dateRange.label === 'This Month' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-50 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}`}>This Month</button>
+                </div>
+
+                <div className="flex flex-col gap-1 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2 mb-1">Previous Months</h4>
+                  <div className="grid grid-cols-2 gap-1">
+                    {getPreviousMonths().map(m => (
+                      <button key={m.value} onClick={() => applyDatePreset(m.value)} className={`text-left px-2 py-1.5 text-[10px] font-bold rounded-lg transition-all ${dateRange.label === m.label ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'hover:bg-slate-50 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800'}`}>{m.label}</button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2 mb-2">Custom Range</h4>
+                  <div className="flex flex-col gap-2 px-2">
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-bold block mb-1">Start Date</label>
+                      <input 
+                        type="date" 
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/20 outline-none hover:border-indigo-500 transition-colors"
+                        value={customStart}
+                        onChange={(e) => setCustomStart(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-bold block mb-1">End Date</label>
+                      <input 
+                        type="date" 
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/20 outline-none hover:border-indigo-500 transition-colors"
+                        value={customEnd}
+                        onChange={(e) => setCustomEnd(e.target.value)}
+                      />
+                    </div>
+                    <button 
+                      onClick={applyCustomDate}
+                      className="w-full mt-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg transition-all"
+                    >
+                      Apply Filter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="relative">
+            <button 
+              onClick={() => { setShowFilters(!showFilters); setShowDateFilter(false); }}
               className={`p-2 bg-white dark:bg-slate-900 border ${showFilters ? 'border-indigo-500 ring-2 ring-indigo-500/10' : 'border-slate-200 dark:border-slate-800'} rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2`}
             >
               <Filter size={18} className={showFilters ? 'text-indigo-500' : 'text-slate-500'} />
@@ -385,6 +573,31 @@ export default function OrderHub({ onSelectOrder }) {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-between items-center mt-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mx-4">
+            Page {page} of {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${page === 1 ? 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-600' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 hover:border-indigo-500 hover:text-indigo-600 dark:text-slate-300 shadow-sm'}`}
+            >
+              Previous
+            </button>
+            <button 
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${page === totalPages ? 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-600' : 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700'}`}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

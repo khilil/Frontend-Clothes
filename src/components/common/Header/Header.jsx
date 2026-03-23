@@ -220,6 +220,8 @@ export default function Header({ forceSolid = false }) {
               </div>
 
               <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/sale">Sale</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/about">About</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/contact">Contact</Link>
             </nav>
           )}
 
@@ -297,7 +299,7 @@ export default function Header({ forceSolid = false }) {
                 </motion.div>
 
                 <nav className="flex flex-col gap-6">
-                  {['New Arrivals', 'Collections', 'Sale'].map((item, i) => (
+                  {['New Arrivals', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
