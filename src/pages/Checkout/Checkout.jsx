@@ -206,7 +206,7 @@ export default function Checkout() {
           key: "rzp_test_SKiQG78TfTVFU7", // Test Key ID
           amount: razorpayOrder.data.amount,
           currency: razorpayOrder.data.currency,
-          name: "GenZ Cloths",
+          name: "Fenrir Era",
           description: "Payment for Order #" + result.data._id,
           order_id: razorpayOrder.data.id,
           handler: async function (response) {
@@ -512,14 +512,6 @@ export default function Checkout() {
                             icon="payments"
                             active={formData.paymentMethod === "ONLINE"}
                             onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
-                          />
-                          <PaymentOption
-                            id="COD"
-                            title="Cash"
-                            desc="Pay on arrival"
-                            icon="local_shipping"
-                            active={formData.paymentMethod === "COD"}
-                            onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
                           />
                         </div>
                       </div>

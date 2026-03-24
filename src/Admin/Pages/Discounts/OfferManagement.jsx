@@ -25,6 +25,7 @@ export default function OfferManagement() {
     const [editingOffer, setEditingOffer] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, title: '' });
     const [activeTab, setActiveTab] = useState('IDENTITY');
+    const [filterStatus, setFilterStatus] = useState('ALL');
 
     // Form state
     const [formData, setFormData] = useState({
@@ -78,12 +79,24 @@ export default function OfferManagement() {
     }, []);
 
     const filteredOffers = useMemo(() => {
-        return offers.filter(o =>
-            o.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            o.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (o.description && o.description.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-    }, [offers, searchTerm]);
+        return offers.filter(o => {
+            const matchesSearch = o.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                o.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (o.description && o.description.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if (!matchesSearch) return false;
+
+            if (filterStatus === 'ALL') return true;
+
+            const isExpired = o.endDate && new Date(o.endDate) < new Date();
+            
+            if (filterStatus === 'EXPIRED') return isExpired;
+            if (filterStatus === 'ACTIVE') return o.isActive && !isExpired;
+            if (filterStatus === 'INACTIVE') return !o.isActive && !isExpired;
+
+            return true;
+        });
+    }, [offers, searchTerm, filterStatus]);
 
     const handleFormChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -222,17 +235,35 @@ export default function OfferManagement() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-8">
-                {/* Search Bar */}
-                <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-sm ring-1 ring-white/5">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                        <input
-                            className="w-full rounded-xl border border-slate-800 bg-slate-950 pl-11 pr-4 py-2.5 text-sm text-slate-200 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-600"
-                            placeholder="Search offers or codes..."
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                {/* Filters and Search Bar */}
+                <div className="mb-6 space-y-4">
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                        {['ALL', 'ACTIVE', 'INACTIVE', 'EXPIRED'].map((status) => (
+                            <button
+                                key={status}
+                                onClick={() => setFilterStatus(status)}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                                    filterStatus === status 
+                                    ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20' 
+                                    : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-700'
+                                }`}
+                            >
+                                {status}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-sm ring-1 ring-white/5">
+                        <div className="relative flex-1 max-w-md">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <input
+                                className="w-full rounded-xl border border-slate-800 bg-slate-950 pl-11 pr-4 py-2.5 text-sm text-slate-200 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-600"
+                                placeholder="Search offers or codes..."
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -300,7 +331,12 @@ export default function OfferManagement() {
                                                     </p>
                                                 </td>
                                                 <td className="px-6 py-5">
-                                                    {offer.isActive ? (
+                                                    {offer.endDate && new Date(offer.endDate) < new Date() ? (
+                                                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500/10 px-2.5 py-1 text-[10px] font-black uppercase text-rose-500 border border-rose-500/20">
+                                                            <div className="h-1 w-1 rounded-full bg-rose-500" />
+                                                            Expired
+                                                        </span>
+                                                    ) : offer.isActive ? (
                                                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-500 border border-emerald-500/20">
                                                             <div className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
                                                             Active

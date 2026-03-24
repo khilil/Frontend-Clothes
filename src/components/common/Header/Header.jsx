@@ -102,14 +102,14 @@ export default function Header({ forceSolid = false }) {
   }, [categories]);
 
   const headerBgClass = isMobileMenuOpen || isMegaMenuOpen
-    ? `bg-background border-textPrimary/5 ${scrolled ? 'h-14 md:h-16' : 'h-16 md:h-24'}`
+    ? `bg-background border-[#1f1f1f] ${scrolled ? 'h-14 md:h-16' : 'h-16 md:h-24'}`
     : (scrolled || forceSolid)
-      ? 'header-scrolled h-14 md:h-16 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+      ? 'header-scrolled h-14 md:h-16 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
       : 'lg:bg-transparent bg-background h-16 md:h-24';
 
   return (
     <>
-      <header className={`header-base md:header-noise fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${headerBgClass} border-b border-textPrimary/5`}>
+      <header className={`header-base md:header-noise fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${headerBgClass} border-b border-[#1f1f1f]`}>
         <div className="max-w-[1920px] mx-auto h-full px-4 md:px-12 flex items-center justify-between relative">
 
           {/* MOBILE BURGER (Left on mobile, hidden on desktop) */}
@@ -135,7 +135,7 @@ export default function Header({ forceSolid = false }) {
           {/* DESKTOP NAV */}
           {!isAccountPage && (
             <nav className="hidden lg:flex items-center gap-10 h-full">
-              <Link className="relative text-textPrimary no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] opacity-70 hover:opacity-100 hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/new-arrivals">
+              <Link className="relative text-textSecondary no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/new-arrivals">
                 New Arrivals
               </Link>
 
@@ -145,7 +145,7 @@ export default function Header({ forceSolid = false }) {
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
                 onMouseLeave={() => setIsMegaMenuOpen(false)}
               >
-                <span className={`relative text-textPrimary no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] cursor-default after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4 ${isMegaMenuOpen ? 'opacity-100 text-accent after:w-4' : 'opacity-70 group-hover:opacity-100 hover:text-accent'}`}>
+                <span className={`relative text-textSecondary no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] cursor-default after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4 ${isMegaMenuOpen ? 'text-accent after:w-4' : 'hover:text-accent'}`}>
                   Clothing
                 </span>
 
@@ -159,14 +159,14 @@ export default function Header({ forceSolid = false }) {
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className="mega-menu"
                     >
-                      <div className="max-w-[1920px] mx-auto grid grid-cols-5 gap-0 min-h-[500px] border-t border-textPrimary/5">
+                      <div className="max-w-[1920px] mx-auto grid grid-cols-5 gap-0 min-h-[500px] border-t border-[#1f1f1f]">
                         {CLOTHING_MENU.map((group, idx) => (
                           <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.05 + idx * 0.03 }}
-                            className="p-12 flex flex-col hover:bg-textPrimary/5 transition-colors mega-menu-col group/col"
+                            className="p-12 flex flex-col hover:bg-textPrimary/[0.02] border-r border-[#1f1f1f] transition-colors mega-menu-col group/col"
                           >
                             <h4 className="text-accent text-[11px] font-black uppercase tracking-[0.4em] mb-8 group-hover/col:translate-x-1 transition-transform relative z-10">
                               <Link
@@ -181,7 +181,7 @@ export default function Header({ forceSolid = false }) {
                               {group.items.map((item, itemIdx) => (
                                 <li key={itemIdx} className="relative z-10">
                                   <Link
-                                    className="text-[13px] text-textPrimary/40 hover:text-textPrimary hover:translate-x-1 inline-block transition-all"
+                                    className="text-[13px] text-textSecondary hover:text-textPrimary hover:translate-x-1 inline-block transition-all duration-300"
                                     to={`/category/${item.slug}`}
                                     onClick={() => setIsMegaMenuOpen(false)}
                                   >
@@ -219,12 +219,14 @@ export default function Header({ forceSolid = false }) {
                 </AnimatePresence>
               </div>
 
-              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textPrimary/70 hover:text-accent no-underline transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-400 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/sale">Sale</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/sale">Sale</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/about">About</Link>
+              <Link className="relative text-[10px] font-black uppercase tracking-[0.3em] text-textSecondary hover:text-accent no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/contact">Contact</Link>
             </nav>
           )}
 
           {/* ACTIONS (Right on mobile, Auto on desktop) */}
-          <div className="flex-1 lg:flex-none flex items-center justify-end gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:opacity-40 [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-400 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <div className="flex-1 lg:flex-none flex items-center justify-end gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:text-textSecondary [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-500 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
             <button className="w-10 h-10 flex items-center justify-center hover:bg-textPrimary/5 rounded-full transition-colors group">
               <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">search</span>
             </button>
@@ -276,8 +278,8 @@ export default function Header({ forceSolid = false }) {
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 w-full max-w-[320px] h-full bg-background z-[105] shadow-2xl lg:hidden flex flex-col border-r border-textPrimary/5"
+              transition={{ type: "spring", damping: 30, stiffness: 200 }}
+              className="fixed top-0 left-0 w-full max-w-[320px] h-full bg-background z-[105] shadow-[0_0_50px_rgba(0,0,0,0.8)] lg:hidden flex flex-col border-r border-[#1f1f1f]"
             >
               <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
 
@@ -297,7 +299,7 @@ export default function Header({ forceSolid = false }) {
                 </motion.div>
 
                 <nav className="flex flex-col gap-6">
-                  {['New Arrivals', 'Collections', 'Sale'].map((item, i) => (
+                  {['New Arrivals', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -319,7 +321,7 @@ export default function Header({ forceSolid = false }) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="space-y-4 pt-4 border-t border-textPrimary/5"
+                    className="space-y-4 pt-4 border-t border-[#1f1f1f]"
                   >
                     <span className="text-accent text-[11px] font-black uppercase tracking-[0.4em] block">Clothing</span>
                     <ul className="grid grid-cols-2 gap-x-4 gap-y-4">

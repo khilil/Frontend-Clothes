@@ -205,7 +205,7 @@ export default function CartPage() {
                                                                     className="w-full h-full object-contain"
                                                                     alt={side}
                                                                 />
-                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
+                                                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
                                                                     <span className="text-[6px] text-white font-black uppercase">{side}</span>
                                                                 </div>
                                                             </div>
@@ -222,7 +222,7 @@ export default function CartPage() {
                                                         className="px-3 py-1 hover:bg-textPrimary/5 transition-colors border-r border-textPrimary/10 disabled:opacity-30"
                                                         disabled={item.qty <= 1}
                                                     >-</button>
-                                                    <span className="px-5 py-1 text-xs font-bold w-12 text-center">{item.qty}</span>
+                                                    <span className="px-5 py-1 text-xs font-bold w-12 text-center text-black">{item.qty}</span>
                                                     <button
                                                         onClick={() => updateQty(item.id, item.variantId, item.qty + 1)}
                                                         className="px-3 py-1 hover:bg-textPrimary/10 transition-colors border-l border-textPrimary/10"
@@ -299,19 +299,19 @@ export default function CartPage() {
                                         <span className="text-textPrimary">₹{(subtotal || 0).toLocaleString()}</span>
                                     </div>
                                     {autoDiscountAmount > 0 && (
-                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-emerald-600">
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-green-500">
                                             <span>{autoDiscountLabel || 'Auto Discount'}</span>
                                             <span>-₹{(autoDiscountAmount || 0).toLocaleString()}</span>
                                         </div>
                                     )}
                                     {appliedCoupon && (
-                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-indigo-600">
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-blue-400">
                                             <span>Coupon: {appliedCoupon.code}</span>
                                             <span>-₹{(couponDiscountAmount || 0).toLocaleString()}</span>
                                         </div>
                                     )}
                                     {buyXGetYDiscount > 0 && (
-                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-amber-600">
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-accent">
                                             <span>BOGO Offer</span>
                                             <span>-₹{(buyXGetYDiscount || 0).toLocaleString()}</span>
                                         </div>

@@ -13,6 +13,8 @@ import Addresses from "../pages/Account/Addresses/Addresses";
 import Profile from "../pages/Account/Profile/Profile";
 import OrderDetails from "../pages/Account/OrderDetails";
 import About from "../pages/About";
+import ContactUs from "../pages/ContactUs";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 import ProductDetailPage from "../pages/ProductDetail/ProductDetailPage/ProductDetailPage";
 import CustomizePage from "../pages/CustomizeShopPage/CustomizePage";
 import TextEditorPage from "../pages/CustomizeShopPage/TextEditorPage";
@@ -26,7 +28,7 @@ import Inventory from "../Admin/Pages/Inventory/AdminInventory";
 import MainLayout from "../pages/MainLayout";
 import AdminProducts from "../Admin/Pages/Product/AdminProducts";
 import ProductDetailsPage from "../Admin/Pages/Product/ProductDetailsPage";
-import AdminOrders from "../Admin/Pages/Orders/AdminOrders";
+import OrderManagement from "../Admin/Pages/Orders/OrderManagement";
 import AdminOrderDetails from "../Admin/Pages/Orders/AdminOrderDetails";
 import AdminCustomers from "../Admin/Pages/Customer/AdminCustomers";
 import AdminCustomerDetail from "../Admin/Pages/Customer/AdminCustomerDetail";
@@ -63,7 +65,7 @@ export default function AppRoutes() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="inventory" element={<Inventory />} />
-                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orders" element={<OrderManagement />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="attributes" element={<AttributeManagement />} />
                 <Route path="customization" element={<CustomizationManagement />} />
@@ -127,6 +129,8 @@ export default function AppRoutes() {
                     </ProtectedRoute>
                 } />
                 <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
 
                 {/* <Route path="/customize/:slug" element={<CustomizePage />} /> */}
                 <Route path="/customize/:slug" element={<CustomizeEditorLayout />}>
