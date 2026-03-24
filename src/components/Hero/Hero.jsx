@@ -80,7 +80,7 @@ function Hero() {
 
   return (
     <section 
-      className="relative h-[75vh] md:h-screen w-full overflow-hidden bg-black flex items-center justify-center pt-16 md:pt-0"
+      className="relative h-[75vh] md:h-screen w-full overflow-hidden bg-background flex items-center justify-center pt-16 md:pt-0"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -89,7 +89,7 @@ function Hero() {
           key={currentSlide}
           className="absolute inset-0 z-1"
           initial={{ scale: 1.1, filter: "brightness(0.5)" }}
-          animate={{ scale: 1, filter: "brightness(0.8)" }}
+          animate={{ scale: 1, filter: "brightness(1)" }}
           exit={{ opacity: 0, transition: { duration: 1 } }}
           transition={{ duration: 7, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -98,7 +98,7 @@ function Hero() {
             alt={slides[currentSlide].heading}
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80 z-2"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/60 z-2"></div>
         </motion.div>
       </AnimatePresence>
 
@@ -109,11 +109,11 @@ function Hero() {
         animate={{ opacity: 0.4, x: 0, rotate: -90 }}
         transition={{ duration: 1.5 }}
       >
-        <span className="text-[10px] font-black tracking-[0.8em] uppercase text-white whitespace-nowrap">DISCOVER THE ARCHIVE</span>
+        <span className="text-[10px] font-black tracking-[0.8em] uppercase text-text-primary whitespace-nowrap">DISCOVER THE ARCHIVE</span>
       </motion.div>
 
       {/* Main Content */}
-      <div className="relative z-[5] w-full max-w-[1400px] px-6 md:px-10 flex flex-col items-center text-center text-white">
+      <div className="relative z-[5] w-full max-w-[1400px] px-6 md:px-10 flex flex-col items-center text-center text-text-primary">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -123,7 +123,7 @@ function Hero() {
             className="flex flex-col items-center"
           >
             <motion.div className="flex flex-col gap-4 mb-8" variants={itemVariants}>
-              <span className="text-[9px] font-black tracking-[0.4em] text-accent border border-accent/20 py-2.5 px-6 backdrop-blur-[12px] bg-black/5 w-fit mx-auto">
+              <span className="text-[9px] font-black tracking-[0.4em] text-accent border border-accent/20 py-2.5 px-6 backdrop-blur-[12px] bg-accent/5 w-fit mx-auto">
                 {slides[currentSlide].label}
               </span>
               <span className="text-[10px] md:text-[11px] font-medium tracking-[0.6em] md:tracking-[0.8em] uppercase opacity-50">
@@ -140,11 +140,11 @@ function Hero() {
 
             <motion.div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center w-full md:w-auto" variants={itemVariants}>
               <button 
-                className="relative bg-white text-black py-5 md:py-6 px-[64px] w-full md:w-auto text-[11px] font-black tracking-[0.3em] uppercase border-none cursor-pointer overflow-hidden transition-all duration-300 hover:bg-accent hover:text-black group" 
+                className="relative bg-text-primary text-primary py-5 md:py-6 px-[64px] w-full md:w-auto text-[11px] font-black tracking-[0.3em] uppercase border-none cursor-pointer overflow-hidden transition-all duration-300 hover:bg-accent hover:text-primary group" 
                 onClick={() => navigate(slides[currentSlide].link)}
               >
                 {slides[currentSlide].cta}
-                <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-black transition-[width] duration-300 group-hover:w-full"></div>
+                <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-primary transition-[width] duration-300 group-hover:w-full"></div>
               </button>
             </motion.div>
           </motion.div>
@@ -155,7 +155,7 @@ function Hero() {
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[10] flex items-center gap-12 sm:gap-20">
         <button 
           onClick={prevSlide}
-          className="text-white/30 hover:text-white transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
+          className="text-text-primary/30 hover:text-text-primary transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
         >
           <ChevronLeft size={24} strokeWidth={1} />
         </button>
@@ -166,7 +166,7 @@ function Hero() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className="relative w-[40px] md:w-[60px] h-[2px] bg-white/10 cursor-pointer border-none overflow-hidden"
+              className="relative w-[40px] md:w-[60px] h-[2px] bg-border-subtle cursor-pointer border-none overflow-hidden"
             >
               <div className={`absolute left-0 top-0 h-full bg-accent transition-all duration-300 ${currentSlide === index ? 'w-full' : 'w-0'}`}></div>
             </button>
@@ -175,7 +175,7 @@ function Hero() {
 
         <button 
           onClick={nextSlide}
-          className="text-white/30 hover:text-white transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
+          className="text-text-primary/30 hover:text-text-primary transition-colors duration-300 bg-transparent border-none cursor-pointer p-2"
         >
           <ChevronRight size={24} strokeWidth={1} />
         </button>
@@ -188,14 +188,14 @@ function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
       >
-        <div className="relative w-[1px] h-[120px] bg-white/10">
+        <div className="relative w-[1px] h-[120px] bg-border-subtle">
           <motion.div
             className="absolute top-0 -left-[1.5px] w-1 h-6 bg-accent"
             animate={{ y: [0, 94, 0] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
           />
         </div>
-        <span className="text-[9px] font-black tracking-[0.8em] text-white/30 uppercase [writing-mode:vertical-rl] select-none">SCROLL</span>
+        <span className="text-[9px] font-black tracking-[0.8em] text-text-primary/30 uppercase [writing-mode:vertical-rl] select-none">SCROLL</span>
       </motion.div>
     </section>
   );

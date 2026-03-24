@@ -308,10 +308,10 @@ export default function ProductDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-white">
+            <div className="min-h-screen bg-background flex items-center justify-center text-text-primary">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-                    <div className="animate-pulse font-[Oswald] tracking-widest uppercase text-accent text-xs">Loading Architecture…</div>
+                    <div className="animate-pulse font-[Oswald] tracking-widest uppercase text-accent-contrast text-xs">Loading Architecture…</div>
                 </div>
             </div>
         );
@@ -319,10 +319,10 @@ export default function ProductDetailPage() {
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-white">
+            <div className="min-h-screen bg-background flex items-center justify-center text-text-primary">
                 <div className="text-center space-y-4">
                     <h2 className="text-4xl font-impact">PRODUCT NOT FOUND</h2>
-                    <button onClick={() => navigate('/')} className="text-accent uppercase text-[10px] font-black tracking-widest border-b border-accent/30 p-2">Return Home</button>
+                    <button onClick={() => navigate('/')} className="text-accent-contrast uppercase text-[10px] font-black tracking-widest border-b border-accent/30 p-2">Return Home</button>
                 </div>
             </div>
         );
@@ -338,7 +338,7 @@ export default function ProductDetailPage() {
     ];
 
     return (
-        <main className="pt-20 bg-[#0a0a0a] text-white selection:bg-[#d4c4b1] selection:text-black overflow-x-hidden">
+        <main className="pt-20 bg-background text-text-primary selection:bg-accent selection:text-white overflow-x-hidden">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-6 md:py-12">
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
 
@@ -364,7 +364,7 @@ export default function ProductDetailPage() {
                             </div>
 
                             {/* Main Gallery Area */}
-                            <div className="flex-1 relative group bg-[#0d0d0d] rounded-sm overflow-hidden border border-white/5">
+                            <div className="flex-1 relative group bg-secondary rounded-sm overflow-hidden border border-border-subtle">
                                 {/* Desktop/Mobile Main Stage */}
                                 <div 
                                     className="relative aspect-[3/4] w-full"
@@ -419,7 +419,7 @@ export default function ProductDetailPage() {
 
                                     {/* Premium Pagination Indicator */}
                                     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0">
-                                        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-xl border border-white/10 px-6 py-2.5 rounded-full shadow-2xl">
+                                        <div className="flex items-center gap-4 bg-background/40 backdrop-blur-xl border border-border-subtle px-6 py-2.5 rounded-full shadow-2xl">
                                             {/* Dot Indicators for Mobile (Visual only interaction is via arrows/swipe) */}
                                             <div className="flex gap-1.5 lg:hidden mr-2">
                                                 {images.map((_, i) => (
@@ -475,29 +475,29 @@ export default function ProductDetailPage() {
                         >
                             {/* Breadcrumbs & Title */}
                             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="space-y-4">
-                                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
+                                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">
                                     <Link to="/" className="hover:text-accent transition-colors">Home</Link>
-                                    <span className="w-1 h-1 bg-white/20 rounded-full"></span>
-                                    <span className="text-white/60">Product Details</span>
+                                    <span className="w-1 h-1 bg-border-subtle rounded-full"></span>
+                                    <span className="text-text-primary">Product Details</span>
                                 </nav>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-impact tracking-tighter leading-[0.9] uppercase">
                                     {product.title}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-6 pt-2">
                                     <div className="flex items-baseline gap-3">
-                                        <span className="text-3xl font-impact text-accent leading-none">₹{product.price}</span>
+                                        <span className="text-3xl font-impact text-accent-contrast leading-none">₹{product.price}</span>
                                         {product.compareAtPrice > product.price && (
-                                            <span className="text-lg font-impact text-white/20 line-through leading-none">₹{product.compareAtPrice}</span>
+                                            <span className="text-lg font-impact text-text-tertiary line-through leading-none">₹{product.compareAtPrice}</span>
                                         )}
                                     </div>
-                                    <div className="w-px h-6 bg-white/10"></div>
+                                    <div className="w-px h-6 bg-border-subtle"></div>
                                     <div className="flex items-center gap-3">
-                                        <div className="flex text-accent">
+                                        <div className="flex text-accent-contrast">
                                             {[1, 2, 3, 4, 5].map(n => (
                                                 <span key={n} className="material-symbols-outlined !text-sm">star</span>
                                             ))}
                                         </div>
-                                        <span className="text-[10px] font-black tracking-widest text-white/40">15.2K REVIEWS</span>
+                                        <span className="text-[10px] font-black tracking-widest text-text-muted">15.2K REVIEWS</span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -505,9 +505,9 @@ export default function ProductDetailPage() {
                             {/* Color Selection */}
                             {uniqueColors.length > 0 && (
                                 <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="space-y-4">
-                                    <div className="flex justify-between items-center pr-4 border-b border-white/5 pb-2">
-                                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90">Select Palette</h4>
-                                        <span className="text-[11px] font-black uppercase tracking-widest text-accent drop-shadow-[0_0_8px_rgba(212,196,177,0.3)]">{selectedColor?.name}</span>
+                                    <div className="flex justify-between items-center pr-4 border-b border-border-subtle pb-2">
+                                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-text-primary">Select Palette</h4>
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-accent-contrast drop-shadow-[0_0_8px_rgba(184,134,11,0.1)]">{selectedColor?.name}</span>
                                     </div>
                                     <div className="flex gap-4">
                                         {uniqueColors.map((color) => (
@@ -516,8 +516,8 @@ export default function ProductDetailPage() {
                                                 onClick={() => handleColorSelect(color)}
                                                 className={`w-14 h-14 rounded-full border transition-all duration-300 relative group/swatch
                                                     ${(selectedColor?._id || selectedColor?.name) === (color._id || color.name)
-                                                        ? "border-accent ring-2 ring-accent ring-offset-[3px] ring-offset-black scale-110 shadow-[0_0_20px_rgba(212,196,177,0.3)] z-10"
-                                                        : "border-white/10 opacity-40 hover:opacity-100 hover:scale-105 hover:border-white/30"}
+                                                        ? "border-accent ring-2 ring-accent ring-offset-[3px] ring-offset-background scale-110 shadow-[0_0_20px_rgba(184,134,11,0.2)] z-10"
+                                                        : "border-border-subtle opacity-60 hover:opacity-100 hover:scale-105 hover:border-accent"}
                                                 `}
                                                 style={{
                                                     backgroundColor: color.hexCode ? (color.hexCode.startsWith('#') ? color.hexCode : `#${color.hexCode}`) : color.name?.toLowerCase()
@@ -538,12 +538,12 @@ export default function ProductDetailPage() {
                             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="space-y-6">
                                 <div className="flex justify-between items-center pr-4">
                                     <div className="flex items-center gap-2">
-                                        <h4 className="text-2xl font-impact uppercase tracking-tight text-white/90">Select Size</h4>
-                                        <span className="text-[9px] font-bold uppercase tracking-widest text-[#d4c4b1]/50">• {selectedColor?.name}</span>
+                                        <h4 className="text-2xl font-impact uppercase tracking-tight text-text-primary">Select Size</h4>
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-accent-contrast/70">• {selectedColor?.name}</span>
                                     </div>
                                     <button 
                                         onClick={() => setIsSizeGuideOpen(true)}
-                                        className="text-[10px] font-bold uppercase tracking-widest text-accent/60 hover:text-accent border-b border-accent/20 transition-all"
+                                        className="text-[10px] font-bold uppercase tracking-widest text-accent-contrast hover:text-accent transition-all border-b border-accent/20"
                                     >
                                         Sizing Guide
                                     </button>
@@ -556,8 +556,8 @@ export default function ProductDetailPage() {
                                             disabled={v.stock <= 0}
                                             className={`min-w-[70px] h-14 rounded-xl flex items-center justify-center transition-all duration-300 border relative group/size
                                                 ${hasExplicitlySelectedSize && selectedVariant?._id === v._id
-                                                    ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.15)] z-10"
-                                                    : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/20 hover:text-white"}
+                                                    ? "bg-text-primary text-background border-text-primary shadow-[0_0_20px_rgba(0,0,0,0.1)] z-10"
+                                                    : "border-border-subtle bg-secondary text-text-secondary hover:border-accent hover:text-text-primary"}
                                                 ${v.stock <= 0 ? "opacity-10 cursor-not-allowed filter grayscale pointer-events-none" : ""}
                                             `}
                                         >
@@ -608,13 +608,13 @@ export default function ProductDetailPage() {
 
                                     return (
                                         <div className="pt-2 flex flex-col gap-3">
-                                            <span className="text-white/40 uppercase text-[9px] tracking-[0.3em] font-black">Garment (In Inches)</span>
+                                            <span className="text-text-muted uppercase text-[9px] tracking-[0.3em] font-black">Garment (In Inches)</span>
                                             <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
                                                 {items.map((item, i) => (
                                                     <Fragment key={i}>
-                                                        <div className="flex items-center gap-2 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5 backdrop-blur-sm">
-                                                            <span className="text-white/30 uppercase font-black tracking-widest text-[8px] sm:text-[9px]">{item.label}</span>
-                                                            <span className="text-white font-impact text-sm sm:text-base leading-none tracking-tighter border-l border-white/10 pl-2 ml-auto">{item.val}</span>
+                                                        <div className="flex items-center gap-2 bg-secondary px-2 py-1.5 rounded-lg border border-border-subtle backdrop-blur-sm">
+                                                            <span className="text-text-muted uppercase font-black tracking-widest text-[8px] sm:text-[9px]">{item.label}</span>
+                                                            <span className="text-text-primary font-impact text-sm sm:text-base leading-none tracking-tighter border-l border-border-subtle pl-2 ml-auto">{item.val}</span>
                                                         </div>
                                                     </Fragment>
                                                 ))}
@@ -640,7 +640,7 @@ export default function ProductDetailPage() {
                                         disabled={isOutOfStock}
                                         whileTap={{ scale: 0.98 }}
                                         className={`h-20 text-[11px] font-black uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 relative overflow-hidden
-                                            ${isAdded ? 'bg-green-600 text-white' : (isAdding ? 'bg-black text-white' : 'bg-[#d4c4b1] text-black hover:bg-white')}
+                                            ${isAdded ? 'bg-green-600 text-white' : (isAdding ? 'bg-text-primary text-background' : 'bg-text-primary text-background hover:bg-accent hover:text-white')}
                                             disabled:opacity-20 disabled:cursor-not-allowed
                                         `}
                                     >
@@ -667,7 +667,7 @@ export default function ProductDetailPage() {
                                         onClick={handleQuickBuy}
                                         disabled={isOutOfStock}
                                         whileTap={{ scale: 0.98 }}
-                                        className="h-20 border border-white/10 text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white/5 transition-all flex items-center justify-center gap-4 disabled:opacity-20"
+                                        className="h-20 border border-border-subtle text-[11px] font-black uppercase tracking-[0.4em] hover:bg-secondary transition-all flex items-center justify-center gap-4 disabled:opacity-20"
                                     >
                                         {isQuickBuying ? (
                                             <span className="animate-pulse">Processing...</span>
@@ -680,7 +680,7 @@ export default function ProductDetailPage() {
                                 {isCustomizable && (
                                     <button
                                         onClick={handleOpenModal}
-                                        className="w-full h-16 bg-[#1a1a1a] border border-accent/20 text-accent text-[11px] font-black uppercase tracking-[0.3em] hover:bg-accent hover:text-black transition-all flex items-center justify-center gap-3"
+                                        className="w-full h-16 bg-secondary border border-accent/20 text-accent text-[11px] font-black uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-all flex items-center justify-center gap-3"
                                     >
                                         Personalize Design <span className="material-symbols-outlined">auto_fix_high</span>
                                     </button>
@@ -693,26 +693,26 @@ export default function ProductDetailPage() {
                             </motion.div>
 
                             {/* Trust signals & Benefits */}
-                            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="grid grid-cols-3 gap-4 pt-6 py-10 border-y border-white/5">
+                            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="grid grid-cols-3 gap-4 pt-6 py-10 border-y border-border-subtle">
                                 {benefits.map((b, i) => (
                                     <div key={i} className="text-center space-y-2 group">
                                         <span className="material-symbols-outlined text-accent group-hover:scale-110 transition-transform">{b.icon}</span>
-                                        <h5 className="text-[10px] font-black uppercase tracking-widest leading-none">{b.title}</h5>
-                                        <p className="text-[9px] text-white/30 uppercase font-bold tracking-widest">{b.desc}</p>
+                                        <h5 className="text-[10px] font-black uppercase tracking-widest leading-none text-text-primary">{b.title}</h5>
+                                        <p className="text-[9px] text-text-muted uppercase font-bold tracking-widest">{b.desc}</p>
                                     </div>
                                 ))}
                             </motion.div>
 
                             {/* Social Sharing */}
                             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="flex items-center gap-6 pt-2">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Share Architecture:</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Share Architecture:</span>
                                 <div className="flex gap-4">
                                     {[
                                         { icon: 'fa-brands fa-whatsapp', color: 'hover:text-green-500' },
-                                        { icon: 'fa-brands fa-x-twitter', color: 'hover:text-white' },
+                                        { icon: 'fa-brands fa-x-twitter', color: 'hover:text-text-primary' },
                                         { icon: 'fa-regular fa-copy', color: 'hover:text-accent' }
                                     ].map((s, i) => (
-                                        <button key={i} className={`text-white/40 transition-all ${s.color} hover:scale-125`}>
+                                        <button key={i} className={`text-text-secondary/60 transition-all ${s.color} hover:scale-125`}>
                                             <i className={`${s.icon} text-sm`}></i>
                                         </button>
                                     ))}
@@ -727,11 +727,11 @@ export default function ProductDetailPage() {
                                         placeholder="Enter Delivery Pincode"
                                         value={pincode}
                                         onChange={(e) => setPincode(e.target.value)}
-                                        className="w-full bg-transparent border-b border-white/10 py-5 text-[11px] font-black tracking-[0.3em] uppercase focus:border-accent focus:outline-none transition-colors placeholder:text-white/10"
+                                        className="w-full bg-transparent border-b border-border-subtle py-5 text-[11px] font-black tracking-[0.3em] uppercase focus:border-accent focus:outline-none transition-colors placeholder:text-text-tertiary/60"
                                     />
                                     <button
                                         onClick={handlePincodeCheck}
-                                        className="absolute right-0 top-1/2 -translate-y-1/2 text-accent text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors"
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 text-accent-contrast text-[10px] font-black uppercase tracking-widest hover:text-text-primary transition-colors"
                                     >
                                         {pincodeStatus === "checking" ? "Verifying..." : "Check"}
                                     </button>
@@ -745,7 +745,7 @@ export default function ProductDetailPage() {
                                 )}
 
                                 {/* Collapsible Specs */}
-                                <div className="divide-y divide-white/5 border-t border-white/5">
+                                <div className="divide-y divide-border-subtle border-t border-border-subtle">
                                     {['fabric', 'shipping'].map((tab) => (
                                         <div key={tab} className="py-6">
                                             <button
@@ -755,7 +755,7 @@ export default function ProductDetailPage() {
                                                 <span className="text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-accent transition-colors">
                                                     {tab === 'fabric' ? 'Material & Care' : 'Global Logistics'}
                                                 </span>
-                                                <span className={`material-symbols-outlined text-white/20 transition-transform ${openAccordion === tab ? 'rotate-180 text-accent' : ''}`}>
+                                                <span className={`material-symbols-outlined text-text-muted transition-transform ${openAccordion === tab ? 'rotate-180 text-accent' : ''}`}>
                                                     expand_circle_down
                                                 </span>
                                             </button>
@@ -767,7 +767,7 @@ export default function ProductDetailPage() {
                                                         exit={{ height: 0, opacity: 0 }}
                                                         className="overflow-hidden"
                                                     >
-                                                        <p className="pt-6 pr-12 text-[11px] leading-loose text-white/50 uppercase font-black tracking-widest">
+                                                        <p className="pt-6 pr-12 text-[11px] leading-loose text-text-muted uppercase font-black tracking-widest">
                                                             {tab === 'fabric'
                                                                 ? (product.composition || "Premium Architecture. Hand-cold wash. Dry in shade. Engineered for durability.")
                                                                 : "Dispatched from Mumbai within 24 hours. Air-travel 3-4 days to most metro cities worldwide."}
@@ -793,13 +793,13 @@ export default function ProductDetailPage() {
                         initial={{ y: 100 }}
                         animate={{ y: 0 }}
                         exit={{ y: 100 }}
-                        className="fixed bottom-0 left-0 right-0 z-[60] bg-[#0a0a0a]/95 backdrop-blur-2xl border-t border-white/10 p-4 px-6 flex items-center justify-between lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)] pb-[calc(1rem+env(safe-area-inset-bottom))]"
+                        className="fixed bottom-0 left-0 right-0 z-[60] bg-background/95 backdrop-blur-2xl border-t border-border-subtle p-4 px-6 flex items-center justify-between lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] pb-[calc(1rem+env(safe-area-inset-bottom))]"
                     >
                         <div className="flex flex-col flex-1 min-w-0 pr-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest truncate text-white/90">{product.title}</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-widest truncate text-text-primary">{product.title}</h4>
                             <div className="flex items-center gap-2 mt-0.5">
-                                <p className="text-[#d4c4b1] font-impact text-lg">₹{product.price}</p>
-                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40 truncate">
+                                <p className="text-accent font-impact text-lg">₹{product.price}</p>
+                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary/60 truncate">
                                     {selectedColor?.name} / {selectedSize || 'Choose Size'}
                                 </span>
                             </div>
@@ -808,8 +808,8 @@ export default function ProductDetailPage() {
                             <motion.button
                                 onClick={handleAddToBag}
                                 whileTap={{ scale: 0.95 }}
-                                className={`text-black px-6 h-14 text-[10px] font-black uppercase tracking-[0.1em] rounded-sm transition-all shadow-xl shadow-[#d4c4b1]/10 flex items-center justify-center min-w-[130px]
-                                    ${isAdded ? 'bg-green-600' : (isAdding ? 'bg-black text-white' : 'bg-[#d4c4b1]')}
+                                className={`text-background px-6 h-14 text-[10px] font-black uppercase tracking-[0.1em] rounded-sm transition-all shadow-xl shadow-accent/10 flex items-center justify-center min-w-[130px]
+                                    ${isAdded ? 'bg-green-600' : (isAdding ? 'bg-text-primary text-background' : 'bg-accent')}
                                 `}
                             >
                                 <AnimatePresence mode="wait">
@@ -834,7 +834,7 @@ export default function ProductDetailPage() {
             </AnimatePresence>
 
             {/* Bottom Sections */}
-            <div className="mt-20 border-t border-white/5">
+            <div className="mt-20 border-t border-border-subtle">
                 <Reviews />
                 <CollectiveFooter />
             </div>

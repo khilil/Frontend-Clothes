@@ -223,14 +223,14 @@ export default function CategoryPage() {
   }, [allProducts, filters]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0a0a] text-white">
+    <div className="flex flex-col min-h-screen bg-background text-text-primary">
 
       <main className="flex-1 flex flex-col lg:flex-row pt-5 lg:pt-20">
 
         {/* DESKTOP SIDEBAR - (મોબાઈલમાં છુપાઈ જશે) */}
         <aside 
           data-lenis-prevent
-          className="hidden lg:block w-80 h-[calc(100vh-80px)] sticky top-20 border-r border-white/5 bg-black/20 overflow-y-auto custom-scrollbar"
+          className="hidden lg:block w-80 h-[calc(100vh-80px)] sticky top-20 border-r border-border-subtle bg-secondary/20 overflow-y-auto custom-scrollbar"
         >
           <FiltersSidebar
             filters={filters}
@@ -259,7 +259,7 @@ export default function CategoryPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-text-primary/10 backdrop-blur-sm transition-opacity"
                 onClick={() => setIsDrawerOpen(false)}
               ></motion.div>
 
@@ -269,23 +269,23 @@ export default function CategoryPage() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="absolute bottom-0 left-0 right-0 bg-[#0c0c0c] border-t border-white/10 rounded-t-3xl max-h-[90vh] overflow-hidden flex flex-col transform transition-transform duration-500"
+                className="absolute bottom-0 left-0 right-0 bg-secondary border-t border-border-subtle rounded-t-3xl max-h-[90vh] overflow-hidden flex flex-col transform transition-transform duration-500"
               >
                 {/* TAP TO CLOSE HANDLE */}
                 <button
                   onClick={() => setIsDrawerOpen(false)}
                   className="w-full pt-4 pb-2 flex flex-col items-center group active:scale-95 transition-transform"
                 >
-                  <div className="w-12 h-1 bg-white/20 rounded-full group-hover:bg-accent transition-colors mb-4"></div>
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 group-hover:text-white transition-colors">Tap to Close</h4>
+                  <div className="w-12 h-1 bg-border-subtle rounded-full group-hover:bg-accent transition-colors mb-4"></div>
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-text-secondary/60 group-hover:text-text-primary transition-colors">Tap to Close</h4>
                 </button>
 
                 <div 
                   data-lenis-prevent
                   className="p-8 pt-4 pb-32 overflow-y-auto custom-scrollbar"
                 >
-                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                    <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-white/90">Refine Collection</h4>
+                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-border-subtle">
+                    <h4 className="text-[12px] font-black uppercase tracking-[0.4em] text-text-primary">Refine Collection</h4>
                   </div>
 
                   <FiltersSidebar
@@ -307,16 +307,16 @@ export default function CategoryPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 absolute bottom-0 left-0 right-0 p-8 pt-6 pb-10 bg-black/80 backdrop-blur-xl border-t border-white/5">
+                <div className="grid grid-cols-2 gap-4 absolute bottom-0 left-0 right-0 p-8 pt-6 pb-10 bg-secondary/80 backdrop-blur-xl border-t border-border-subtle">
                   <button
                     onClick={() => { handleClear(); setIsDrawerOpen(false); }}
-                    className="py-4 text-[10px] font-black uppercase tracking-[0.2em] border border-white/10 hover:border-white/30 transition-colors"
+                    className="py-4 text-[10px] font-black uppercase tracking-[0.2em] border border-border-subtle hover:border-accent transition-colors"
                   >
                     Clear All
                   </button>
                   <button
                     onClick={() => setIsDrawerOpen(false)}
-                    className="py-4 text-[10px] font-black uppercase tracking-[0.2em] bg-accent text-black hover:bg-white transition-colors"
+                    className="py-4 text-[10px] font-black uppercase tracking-[0.2em] bg-accent text-background hover:bg-text-primary hover:text-background transition-colors"
                   >
                     View Results
                   </button>
@@ -334,7 +334,7 @@ export default function CategoryPage() {
           <motion.div
             layout
             className={`lg:hidden sticky top-0 z-40 border-b transition-colors duration-500 ${isSticky
-              ? "bg-black/95 backdrop-blur-xl border-white/10 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] translate-y-0"
+              ? "bg-background/95 backdrop-blur-xl border-border-subtle py-3 shadow-[0_10px_30px_rgba(0,0,0,0.1)] translate-y-0"
               : "bg-transparent border-transparent py-5 opacity-90"
               } px-6 md:px-12 flex items-center justify-between`}
           >
@@ -344,12 +344,12 @@ export default function CategoryPage() {
                 className="flex items-center gap-3 transition-all hover:opacity-70 active:scale-95"
               >
                 <motion.span
-                  animate={{ color: isSticky ? "#C5A059" : "#ffffff" }}
+                  animate={{ color: isSticky ? "rgba(var(--accent))" : "rgba(var(--text-primary))" }}
                   className="material-symbols-outlined text-[20px]"
                 >
                   tune
                 </motion.span>
-                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white">Filter</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-text-primary">Filter</span>
                 {filters.sizes.length > 0 || filters.fit.length > 0 || filters.price < maxPrice ? (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -364,7 +364,7 @@ export default function CategoryPage() {
                 key={filtered.length}
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30"
+                className="text-[9px] font-black uppercase tracking-[0.4em] text-text-secondary/40"
               >
                 {filtered.length} PRODUCTS FOUND
               </motion.span>
@@ -372,7 +372,7 @@ export default function CategoryPage() {
 
             <div className="flex items-center gap-6">
               <div className="hidden sm:flex items-center gap-4">
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/20">Sort By</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-secondary/40">Sort By</span>
                 <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent transition-colors">
                   Featured
                   <span className="material-symbols-outlined text-[16px]">keyboard_arrow_down</span>
@@ -394,30 +394,30 @@ export default function CategoryPage() {
                   <button
                     key={size}
                     onClick={() => handleSizeChange(size)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/60 group-hover:text-white">Size: {size}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Size: {size}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
                 {filters.fit.map(fit => (
                   <button
                     key={fit}
                     onClick={() => handleFitChange(fit)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/60 group-hover:text-white">Fit: {fit}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Fit: {fit}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
                 {filters.color && (
                   <button
                     onClick={() => handleColorChange(filters.color)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: filters.color }}></div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/60 group-hover:text-white">Color: {filters.color}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Color: {filters.color}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 )}
                 <button
@@ -439,12 +439,12 @@ export default function CategoryPage() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-40 text-center"
               >
-                <span className="material-symbols-outlined text-[64px] text-white/10 mb-6">inventory_2</span>
-                <h3 className="text-xl font-impact tracking-widest text-white/40 mb-2">NO PRODUCTS MATCH YOUR FILTERS</h3>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-8">Try adjusting your filters or clearing all to see more products</p>
+                <span className="material-symbols-outlined text-[64px] text-text-secondary/20 mb-6">inventory_2</span>
+                <h3 className="text-xl font-impact tracking-widest text-text-secondary/60 mb-2">NO PRODUCTS MATCH YOUR FILTERS</h3>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/40 mb-8">Try adjusting your filters or clearing all to see more products</p>
                 <button
                   onClick={handleClear}
-                  className="px-10 py-4 bg-accent text-black text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white transition-all transform hover:scale-105"
+                  className="px-10 py-4 bg-accent text-background text-[10px] font-black uppercase tracking-[0.3em] hover:bg-text-primary hover:text-background transition-all transform hover:scale-105"
                 >
                   Reset All Filters
                 </button>

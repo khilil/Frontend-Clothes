@@ -70,7 +70,7 @@ function InstagramFeed() {
                         >
                             <div className="relative w-full h-full overflow-hidden bg-[#111]">
                                 <img src={item.image} alt="Social Feed" className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
-                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[5px] flex items-center justify-center opacity-0 transition-all duration-400 ease group-hover:opacity-100">
+                                <div className="absolute inset-0 bg-background/40 backdrop-blur-[5px] flex items-center justify-center opacity-0 transition-all duration-400 ease group-hover:opacity-100">
                                     <div className="flex flex-col items-center gap-3 translate-y-5 transition-all duration-400 ease group-hover:translate-y-0">
                                         <Instagram size={20} color="#d4c4b1" />
                                         <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase">VIEW ARCHIVE</span>

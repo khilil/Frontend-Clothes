@@ -239,7 +239,7 @@ const ProductListing = () => {
   };
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen text-white pt-[80px] lg:pt-[100px]">
+    <div className="bg-background min-h-screen text-text-primary pt-[80px] lg:pt-[100px]">
       <main className="flex max-w-[1600px] mx-auto gap-5 lg:gap-10 px-5 lg:px-10">
         {/* Sidebar Filters */}
         <aside 
@@ -266,13 +266,13 @@ const ProductListing = () => {
 
         {/* Product Grid Area */}
         <section className="grow pb-[60px]">
-          <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-white/5">
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-white/40">
-              Showing <span className="text-white">{products.length}</span> of {totalProducts} results
+          <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-border-subtle">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-text-secondary/60">
+              Showing <span className="text-text-primary">{products.length}</span> of {totalProducts} results
             </div>
             {/* Mobile Filter Trigger */}
             <button
-              className="flex lg:hidden items-center gap-2.5 bg-white/5 border border-white/10 text-white py-2.5 px-5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.1em] cursor-pointer relative"
+              className="flex lg:hidden items-center gap-2.5 bg-secondary border border-border-subtle text-text-primary py-2.5 px-5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.1em] cursor-pointer relative"
               onClick={() => setIsDrawerOpen(true)}
             >
               <span className="material-symbols-outlined">tune</span>
@@ -296,31 +296,31 @@ const ProductListing = () => {
                   <button
                     key={brand}
                     onClick={() => handleBrandChange(brand)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 group-hover:text-white">Brand: {brand}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Brand: {brand}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
 
                 {filters.size && (
                   <button
                     onClick={() => handleSizeChange(filters.size)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 group-hover:text-white">Size: {filters.size}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Size: {filters.size}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 )}
 
                 {filters.color && (
                   <button
                     onClick={() => handleColorChange(filters.color)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 hover:border-white/30 rounded-full transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: filters.color }}></div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 group-hover:text-white">Color: {filters.color}</span>
-                    <span className="material-symbols-outlined text-[14px] text-white/20 group-hover:text-white">close</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Color: {filters.color}</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 )}
 
@@ -339,23 +339,23 @@ const ProductListing = () => {
             {isDrawerOpen && (
               <>
                 <motion.div
-                  className="fixed inset-0 bg-black/70 backdrop-blur-[4px] z-[1000]"
+                  className="fixed inset-0 bg-text-primary/10 backdrop-blur-[4px] z-[1000]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setIsDrawerOpen(false)}
                 />
                 <motion.div
-                  className="fixed bottom-0 left-0 right-0 bg-[#0d0d0d] border-t border-white/10 rounded-t-[25px] z-[1001] max-h-[90vh] flex flex-col no-scrollbar"
+                  className="fixed bottom-0 left-0 right-0 bg-secondary border-t border-border-subtle rounded-t-[25px] z-[1001] max-h-[90vh] flex flex-col no-scrollbar"
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
                   exit={{ y: "100%" }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
                 >
-                  <div className="p-4 px-6 flex justify-between items-center border-b border-white/5 relative">
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/10 rounded-full"></div>
+                  <div className="p-4 px-6 flex justify-between items-center border-b border-border-subtle relative">
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-border-subtle rounded-full"></div>
                     <h3 className="text-sm font-black uppercase tracking-[0.2em]">Filters</h3>
-                    <button onClick={() => setIsDrawerOpen(false)} className="bg-transparent border-none text-white cursor-pointer">
+                    <button onClick={() => setIsDrawerOpen(false)} className="bg-transparent border-none text-text-primary cursor-pointer">
                       <span className="material-symbols-outlined">close</span>
                     </button>
                   </div>
@@ -381,8 +381,8 @@ const ProductListing = () => {
                       isMobile={true}
                     />
                   </div>
-                  <div className="p-5 px-6 pb-10 border-t border-white/5 bg-[#0d0d0d]">
-                    <button className="w-full bg-accent text-black border-none p-[18px] rounded-xl text-[13px] font-black uppercase tracking-[0.15em] cursor-pointer" onClick={() => setIsDrawerOpen(false)}>
+                  <div className="p-5 px-6 pb-10 border-t border-border-subtle bg-secondary">
+                    <button className="w-full bg-accent text-background border-none p-[18px] rounded-xl text-[13px] font-black uppercase tracking-[0.15em] cursor-pointer" onClick={() => setIsDrawerOpen(false)}>
                       Show {totalProducts} Results
                     </button>
                   </div>
@@ -414,10 +414,10 @@ const ProductListing = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center flex flex-col items-center gap-[15px]"
               >
-                <span className="material-symbols-outlined text-[64px] text-white/10">sentiment_dissatisfied</span>
+                <span className="material-symbols-outlined text-[64px] text-text-secondary/20">sentiment_dissatisfied</span>
                 <h3 className="text-2xl font-black uppercase tracking-[0.1em]">No products found</h3>
-                <p className="text-white/50 text-sm">Try adjusting your filters or category.</p>
-                <button onClick={handleClearFilters} className="mt-[15px] bg-transparent border border-white text-white py-3 px-[30px] rounded-full text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 ease hover:bg-white hover:text-black">Clear All Filters</button>
+                <p className="text-text-secondary text-sm">Try adjusting your filters or category.</p>
+                <button onClick={handleClearFilters} className="mt-[15px] bg-transparent border border-text-primary text-text-primary py-3 px-[30px] rounded-full text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 ease hover:bg-text-primary hover:text-background">Clear All Filters</button>
               </motion.div>
             </div>
           )}
@@ -433,8 +433,8 @@ const ProductListing = () => {
           )}
 
           {!hasMore && products.length > 0 && (
-            <div className="text-center py-[80px] border-t border-white/5 mt-[50px]">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-white/20 font-extrabold">You've reached the end of the collection.</p>
+            <div className="text-center py-[80px] border-t border-border-subtle mt-[50px]">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-text-secondary/40 font-extrabold">You've reached the end of the collection.</p>
             </div>
           )}
         </section>
@@ -447,7 +447,7 @@ const ProductListing = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed bottom-[40px] right-[40px] w-[50px] h-[50px] bg-accent text-black border-none rounded-full cursor-pointer flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-[100] transition-all duration-300 hover:-translate-y-[5px] hover:bg-white"
+            className="fixed bottom-[40px] right-[40px] w-[50px] h-[50px] bg-accent text-background border-none rounded-full cursor-pointer flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] z-[100] transition-all duration-300 hover:-translate-y-[5px] hover:bg-text-primary"
             onClick={scrollToTop}
           >
             <span className="material-symbols-outlined">arrow_upward</span>

@@ -27,9 +27,9 @@ function SalePage() {
     }, []);
 
     return (
-        <div className="bg-black min-h-screen text-white">
+        <div className="bg-background min-h-screen text-text-primary">
 
-            <section className="relative h-[60vh] md:h-[80vh] bg-black flex items-center justify-center overflow-hidden text-center">
+            <section className="relative h-[60vh] md:h-[80vh] bg-secondary flex items-center justify-center overflow-hidden text-center">
                 <motion.div
                     className="absolute inset-0 z-0"
                     initial={{ scale: 1.2, opacity: 0 }}
@@ -43,7 +43,7 @@ function SalePage() {
                     />
                 </motion.div>
 
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background z-10"></div>
 
                 <div className="relative z-20 text-center px-6">
                     <motion.div
@@ -51,14 +51,14 @@ function SalePage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <span className="inline-block px-4 py-1 mb-6 border border-white/20 rounded-full text-[10px] font-black tracking-[0.4em] uppercase bg-white/5 backdrop-blur-md">
+                        <span className="inline-block px-4 py-1 mb-6 border border-border-subtle rounded-full text-[10px] font-black tracking-[0.4em] uppercase bg-secondary backdrop-blur-md">
                             Exclusive Archive Sale
                         </span>
                         <h1 className="text-7xl md:text-9xl font-impact tracking-tighter leading-none mb-6">
                             SEASONAL<br />
                             <span className="text-accent italic">SALE</span>
                         </h1>
-                        <p className="max-w-xl mx-auto text-white/60 text-sm md:text-base leading-relaxed tracking-wide font-light">
+                        <p className="max-w-xl mx-auto text-text-secondary text-sm md:text-base leading-relaxed tracking-wide font-light">
                             DISCOVER A CURATED SELECTION OF PREVIOUS COLLECTIONS AND ICONIC ARCHIVES.
                             REDEFINED ESSENTIALS AT REDUCED PRICES.
                         </p>
@@ -84,7 +84,7 @@ function SalePage() {
                         <h2 className="text-[80px] md:text-4xl font-impact tracking-tight mb-2 uppercase">The Sale Collection</h2>
                         <div className="flex items-center gap-4">
                             <span className="h-px w-12 bg-accent"></span>
-                            <span className="font-[Inter] text-[10px] font-black tracking-[0.5em] text-white/20 uppercase">
+                            <span className="font-[Inter] text-[10px] font-black tracking-[0.5em] text-text-secondary/40 uppercase">
                                 {isLoading ? "Synchronizing..." : `${products.length} Masterpieces Found`}
                             </span>
                         </div>
@@ -102,9 +102,9 @@ function SalePage() {
                         <ProductSection products={products} />
                     </div>
                 ) : (
-                    <div className="py-20 md:py-40 text-center border border-white/5 rounded-[3rem] bg-white/[0.02] mt-10 md:mt-20">
-                        <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-white/20">The Archive is Empty</h3>
-                        <p className="font-[Inter] text-white/50 text-[14px] tracking-[0.1em]">New Items Arriving Shortly</p>
+                    <div className="py-20 md:py-40 text-center border border-border-subtle rounded-[3rem] bg-secondary mt-10 md:mt-20">
+                        <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-text-secondary/40">The Archive is Empty</h3>
+                        <p className="font-[Inter] text-text-secondary/60 text-[14px] tracking-[0.1em]">New Items Arriving Shortly</p>
                     </div>
                 )}
             </div>

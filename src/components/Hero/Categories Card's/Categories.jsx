@@ -37,7 +37,7 @@ function Categories() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-[60px] md:py-[120px] bg-[#0a0a0a] text-white overflow-hidden">
+    <section className="py-[60px] md:py-[120px] bg-background text-text-primary overflow-hidden">
       <div className="max-w-[1800px] mx-auto px-4 md:px-[40px] lg:px-[60px]">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-8 md:mb-20 gap-4 lg:gap-10">
           <motion.div
@@ -46,7 +46,7 @@ function Categories() {
             viewport={{ once: true }}
           >
             <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-2 md:mb-6 block">ATELIER COLLECTIONS</span>
-            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black">ARCHIVE <br /> <span className="font-light opacity-40">SERIES / 24</span></h2>
+            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black text-text-primary">ARCHIVE <br /> <span className="font-light text-text-secondary/40">SERIES / 24</span></h2>
           </motion.div>
 
           <motion.div
@@ -54,7 +54,7 @@ function Categories() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <p className="max-w-[450px] text-[11px] md:text-[13px] leading-[1.6] md:leading-[1.8] tracking-[0.1em] text-white/40 uppercase font-medium">
+            <p className="max-w-[450px] text-[11px] md:text-[13px] leading-[1.6] md:leading-[1.8] tracking-[0.1em] text-text-secondary uppercase font-medium">
               Meticulously engineered garments designed for the modern urban landscape.
               Explore our curated archives of Fenrir and utility.
             </p>
@@ -89,7 +89,7 @@ function Categories() {
               >
                 <div className="relative w-full h-full overflow-hidden">
                   <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 opacity-60 transition-opacity duration-[0.4s] ease-in group-hover:opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 opacity-100 transition-opacity duration-[0.4s] ease-in"></div>
 
                   <div className="absolute inset-0 p-4 md:p-10 flex flex-col justify-between z-10">
                     <div className="flex justify-between opacity-100 md:opacity-0 md:-translate-y-5 transition-all duration-[0.6s] ease group-hover:opacity-100 group-hover:translate-y-0">

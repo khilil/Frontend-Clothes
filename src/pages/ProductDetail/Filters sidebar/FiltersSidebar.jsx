@@ -57,13 +57,13 @@ export default function FiltersSidebar({
   return (
     <div className={`${isMobile ? "space-y-10" : "p-5 space-y-10"}`}>
       {!isMobile && (
-        <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
-          <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-white">Filters</h4>
+        <div className="flex items-center justify-between border-b border-border-subtle pb-6 mb-8">
+          <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-text-primary">Filters</h4>
           <button
             onClick={onClear}
-            className="text-[9px] font-black text-accent uppercase tracking-widest hover:text-white transition-all flex items-center gap-2 group"
+            className="text-[9px] font-black text-accent uppercase tracking-widest hover:text-text-primary transition-all flex items-center gap-2 group"
           >
-            <span className="w-1 h-1 bg-accent rounded-full group-hover:bg-white transition-colors"></span>
+            <span className="w-1 h-1 bg-accent rounded-full group-hover:bg-text-primary transition-colors"></span>
             Reset
           </button>
         </div>
@@ -71,12 +71,12 @@ export default function FiltersSidebar({
 
       {/* CATEGORY FILTER */}
       {(onCategoryChange && availableCategories.length > 0) && (
-        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
           <button
             onClick={() => toggleSection('category')}
             className="w-full flex items-center justify-between mb-6 group"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90 group-hover:text-accent transition-colors">Category</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">Category</span>
             <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${activeSections.category ? 'rotate-180' : ''}`}>
               expand_more
             </span>
@@ -94,7 +94,7 @@ export default function FiltersSidebar({
               <div
                 className={`w-4 h-4 border rounded-full transition-all flex items-center justify-center mr-4 ${filters?.category === 'all'
                   ? "border-accent"
-                  : "border-white/20 group-hover:border-white/40"
+                  : "border-border-subtle group-hover:border-accent"
                   }`}
               >
                 {filters?.category === 'all' && (
@@ -102,7 +102,7 @@ export default function FiltersSidebar({
                 )}
               </div>
               <span
-                className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === 'all' ? "text-white" : "text-white/40 group-hover:text-white/80"
+                className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === 'all' ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                   }`}
               >
                 All Products
@@ -112,7 +112,7 @@ export default function FiltersSidebar({
             {/* Topwear Categories */}
             {(showTopwear && availableCategories.filter(cat => !bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3 pl-2">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-1 block">Topwear</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-1 block">Topwear</span>
                 {availableCategories.filter(cat => !bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
                   const catName = typeof cat === 'string' ? cat : cat.name;
                   const catSlug = typeof cat === 'string' ? cat.toLowerCase() : (cat.slug || cat.name.toLowerCase());
@@ -128,7 +128,7 @@ export default function FiltersSidebar({
                       <div
                         className={`w-4 h-4 border rounded-full transition-all flex items-center justify-center mr-4 ${filters?.category === catSlug
                           ? "border-accent"
-                          : "border-white/20 group-hover:border-white/40"
+                          : "border-border-subtle group-hover:border-accent"
                           }`}
                       >
                         {filters?.category === catSlug && (
@@ -136,7 +136,7 @@ export default function FiltersSidebar({
                         )}
                       </div>
                       <span
-                        className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === catSlug ? "text-white" : "text-white/40 group-hover:text-white/80"
+                        className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === catSlug ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                           }`}
                       >
                         {catName}
@@ -150,7 +150,7 @@ export default function FiltersSidebar({
             {/* Bottomwear Categories */}
             {(showBottomwear && availableCategories.filter(cat => bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3 pl-2">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-1 block">Bottomwear</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-1 block">Bottomwear</span>
                 {availableCategories.filter(cat => bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
                   const catName = typeof cat === 'string' ? cat : cat.name;
                   const catSlug = typeof cat === 'string' ? cat.toLowerCase() : (cat.slug || cat.name.toLowerCase());
@@ -166,7 +166,7 @@ export default function FiltersSidebar({
                       <div
                         className={`w-4 h-4 border rounded-full transition-all flex items-center justify-center mr-4 ${filters?.category === catSlug
                           ? "border-accent"
-                          : "border-white/20 group-hover:border-white/40"
+                          : "border-border-subtle group-hover:border-accent"
                           }`}
                       >
                         {filters?.category === catSlug && (
@@ -174,7 +174,7 @@ export default function FiltersSidebar({
                         )}
                       </div>
                       <span
-                        className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === catSlug ? "text-white" : "text-white/40 group-hover:text-white/80"
+                        className={`text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.category === catSlug ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                           }`}
                       >
                         {catName}
@@ -190,12 +190,12 @@ export default function FiltersSidebar({
 
       {/* BRAND FILTER */}
       {(onBrandChange && availableBrands.length > 0) && (
-        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
           <button
             onClick={() => toggleSection('brand')}
             className="w-full flex items-center justify-between mb-6 group"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90 group-hover:text-accent transition-colors">Brand</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">Brand</span>
             <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${activeSections.brand ? 'rotate-180' : ''}`}>
               expand_more
             </span>
@@ -213,15 +213,15 @@ export default function FiltersSidebar({
                 <div
                   className={`w-4 h-4 border transition-all flex items-center justify-center mr-4 ${(filters?.brand || []).includes(brand)
                     ? "bg-accent border-accent"
-                    : "bg-white/5 border-white/20 group-hover:border-white/40"
+                    : "bg-secondary border-border-subtle group-hover:border-accent"
                     }`}
                 >
                   {(filters?.brand || []).includes(brand) && (
-                    <span className="material-symbols-outlined text-[12px] text-black font-black">check</span>
+                    <span className="material-symbols-outlined text-[12px] text-background font-black">check</span>
                   )}
                 </div>
                 <span
-                  className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.brand || []).includes(brand) ? "text-white" : "text-white/40 group-hover:text-white/80"
+                  className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.brand || []).includes(brand) ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                     }`}
                 >
                   {brand}
@@ -234,12 +234,12 @@ export default function FiltersSidebar({
 
       {/* FIT FILTER */}
       {onFitChange && availableFits.length > 0 && (
-        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
           <button
             onClick={() => toggleSection('fit')}
             className="w-full flex items-center justify-between mb-6 group"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90 group-hover:text-accent transition-colors">Fit / Style</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">Fit / Style</span>
             <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${activeSections.fit ? 'rotate-180' : ''}`}>
               expand_more
             </span>
@@ -249,7 +249,7 @@ export default function FiltersSidebar({
             {/* Topwear Fits */}
             {(showTopwear && availableFits.filter(f => !bottomwearKeywords.some(id => f.toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Topwear</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>
                 {availableFits.filter(f => !bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
                   <label key={fit} className="flex items-center group cursor-pointer py-1">
                     <input
@@ -261,15 +261,15 @@ export default function FiltersSidebar({
                     <div
                       className={`w-4 h-4 border transition-all flex items-center justify-center mr-4 ${(filters?.fit || []).includes(fit.toLowerCase())
                         ? "bg-accent border-accent"
-                        : "bg-white/5 border-white/20 group-hover:border-white/40"
+                        : "bg-secondary border-border-subtle group-hover:border-accent"
                         }`}
                     >
                       {(filters?.fit || []).includes(fit.toLowerCase()) && (
-                        <span className="material-symbols-outlined text-[12px] text-black font-black">check</span>
+                        <span className="material-symbols-outlined text-[12px] text-background font-black">check</span>
                       )}
                     </div>
                     <span
-                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.fit || []).includes(fit.toLowerCase()) ? "text-white" : "text-white/40 group-hover:text-white/80"
+                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.fit || []).includes(fit.toLowerCase()) ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                         }`}
                     >
                       {fit}
@@ -282,7 +282,7 @@ export default function FiltersSidebar({
             {/* Bottomwear Fits */}
             {(showBottomwear && availableFits.filter(f => bottomwearKeywords.some(id => f.toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Bottomwear</span>
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>
                 {availableFits.filter(f => bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
                   <label key={fit} className="flex items-center group cursor-pointer py-1">
                     <input
@@ -294,15 +294,15 @@ export default function FiltersSidebar({
                     <div
                       className={`w-4 h-4 border transition-all flex items-center justify-center mr-4 ${(filters?.fit || []).includes(fit.toLowerCase())
                         ? "bg-accent border-accent"
-                        : "bg-white/5 border-white/20 group-hover:border-white/40"
+                        : "bg-secondary border-border-subtle group-hover:border-accent"
                         }`}
                     >
                       {(filters?.fit || []).includes(fit.toLowerCase()) && (
-                        <span className="material-symbols-outlined text-[12px] text-black font-black">check</span>
+                        <span className="material-symbols-outlined text-[12px] text-background font-black">check</span>
                       )}
                     </div>
                     <span
-                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.fit || []).includes(fit.toLowerCase()) ? "text-white" : "text-white/40 group-hover:text-white/80"
+                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${(filters?.fit || []).includes(fit.toLowerCase()) ? "text-text-primary" : "text-text-secondary/60 group-hover:text-text-primary"
                         }`}
                     >
                       {fit}
@@ -317,12 +317,12 @@ export default function FiltersSidebar({
 
       {/* COLOR FILTER */}
       {onColorChange && (
-        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
           <button
             onClick={() => toggleSection('color')}
             className="w-full flex items-center justify-between mb-6 group"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90 group-hover:text-accent transition-colors">Color</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">Color</span>
             <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${activeSections.color ? 'rotate-180' : ''}`}>
               expand_more
             </span>
@@ -332,7 +332,7 @@ export default function FiltersSidebar({
             {/* Topwear Colors */}
             {showTopwear && (availableColors?.top?.length > 0 || Array.isArray(availableColors)) && (
               <div className="space-y-3">
-                {showBottomwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Topwear</span>}
+                {showBottomwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>}
                 <div className="grid grid-cols-5 gap-4">
                   {(Array.isArray(availableColors) ? availableColors : availableColors.top).map(color => (
                     <button
@@ -342,8 +342,8 @@ export default function FiltersSidebar({
                     >
                       <div
                         className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.name
-                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(197,160,89,0.4)]"
-                          : "border-white/10 group-hover/color:border-white/30"
+                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
+                          : "border-border-subtle group-hover/color:border-accent"
                           }`}
                         style={{ backgroundColor: color.hexCode?.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
                       >
@@ -351,7 +351,7 @@ export default function FiltersSidebar({
                           <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
                         )}
                       </div>
-                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-white/30 group-hover/color:text-white/60"}`}>
+                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
                         {color.name}
                       </span>
                     </button>
@@ -363,7 +363,7 @@ export default function FiltersSidebar({
             {/* Bottomwear Colors */}
             {showBottomwear && availableColors?.bottom?.length > 0 && (
               <div className="space-y-3">
-                {showTopwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Bottomwear</span>}
+                {showTopwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>}
                 <div className="grid grid-cols-5 gap-4">
                   {availableColors.bottom.map(color => (
                     <button
@@ -373,8 +373,8 @@ export default function FiltersSidebar({
                     >
                       <div
                         className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.name
-                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(197,160,89,0.4)]"
-                          : "border-white/10 group-hover/color:border-white/30"
+                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
+                          : "border-border-subtle group-hover/color:border-accent"
                           }`}
                         style={{ backgroundColor: color.hexCode?.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
                       >
@@ -382,7 +382,7 @@ export default function FiltersSidebar({
                           <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
                         )}
                       </div>
-                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-white/30 group-hover/color:text-white/60"}`}>
+                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
                         {color.name}
                       </span>
                     </button>
@@ -395,12 +395,12 @@ export default function FiltersSidebar({
       )}
 
       {/* SIZE FILTER */}
-      <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+      <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
         <button
           onClick={() => toggleSection('size')}
           className="w-full flex items-center justify-between mb-6 group"
         >
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90 group-hover:text-accent transition-colors">Size</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">Size</span>
           <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${activeSections.size ? 'rotate-180' : ''}`}>
             expand_more
           </span>
@@ -410,15 +410,15 @@ export default function FiltersSidebar({
           {/* Topwear Sizes */}
           {(showTopwear && availableSizes.filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).length > 0) && (
             <div className="space-y-3">
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Topwear</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>
               <div className="grid grid-cols-4 gap-2">
                 {availableSizes.filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).map(size => (
                   <button
                     key={size}
                     onClick={() => onSizeChange(size)}
                     className={`h-12 flex items-center justify-center text-[10px] font-black transition-all border ${filters?.sizes?.includes(size) || filters?.size === size
-                      ? "bg-accent border-accent text-black shadow-[0_0_20px_rgba(197,160,89,0.3)]"
-                      : "bg-white/5 border-white/5 text-white/60 hover:border-white/20 hover:text-white"
+                      ? "bg-accent border-accent text-background shadow-[0_0_20px_rgba(184,134,11,0.3)]"
+                      : "bg-secondary border-border-subtle text-text-secondary hover:border-accent hover:text-text-primary"
                       }`}
                   >
                     {size}
@@ -431,15 +431,15 @@ export default function FiltersSidebar({
           {/* Bottomwear Sizes */}
           {(showBottomwear && availableSizes.filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).length > 0) && (
             <div className="space-y-3">
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 mb-2 block">Bottomwear</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>
               <div className="grid grid-cols-4 gap-2">
                 {availableSizes.filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).map(size => (
                   <button
                     key={size}
                     onClick={() => onSizeChange(size)}
                     className={`h-12 flex items-center justify-center text-[10px] font-black transition-all border ${filters?.sizes?.includes(size) || filters?.size === size
-                      ? "bg-accent border-accent text-black shadow-[0_0_20px_rgba(197,160,89,0.3)]"
-                      : "bg-white/5 border-white/5 text-white/60 hover:border-white/20 hover:text-white"
+                      ? "bg-accent border-accent text-background shadow-[0_0_20px_rgba(184,134,11,0.3)]"
+                      : "bg-secondary border-border-subtle text-text-secondary hover:border-accent hover:text-text-primary"
                       }`}
                   >
                     {size}
@@ -453,7 +453,7 @@ export default function FiltersSidebar({
 
       {/* SORT FILTER */}
       {onSortChange && (
-        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-white/5 pb-8">
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
           <button
             onClick={() => toggleSection('sort')}
             className="w-full flex items-center justify-between mb-6 group"
@@ -469,7 +469,7 @@ export default function FiltersSidebar({
               <button
                 key={option.value}
                 onClick={() => onSortChange(option.value)}
-                className={`w-full text-left py-2 text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.sort === option.value ? "text-accent" : "text-white/40 hover:text-white/80"}`}
+                className={`w-full text-left py-2 text-[10px] font-black uppercase tracking-widest transition-colors ${filters?.sort === option.value ? "text-accent" : "text-text-secondary/60 hover:text-text-primary"}`}
               >
                 {option.label}
               </button>
@@ -502,7 +502,7 @@ export default function FiltersSidebar({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className="relative h-1 bg-white/10 rounded-full mb-8">
+              <div className="relative h-1 bg-border-subtle rounded-full mb-8">
                 <div
                   className="absolute top-0 left-0 h-full bg-accent"
                   style={{ width: `${(filters.price / maxPrice) * 100}%` }}
@@ -519,11 +519,11 @@ export default function FiltersSidebar({
 
               <div className="flex justify-between">
                 <div className="flex flex-col">
-                  <span className="text-[8px] text-white/20 uppercase font-black tracking-widest mb-1">Min</span>
-                  <span className="text-[13px] font-impact text-white/60">₹0</span>
+                  <span className="text-[8px] text-text-secondary/40 uppercase font-black tracking-widest mb-1">Min</span>
+                  <span className="text-[13px] font-impact text-text-secondary/60">₹0</span>
                 </div>
                 <div className="flex flex-col text-right">
-                  <span className="text-[8px] text-white/20 uppercase font-black tracking-widest mb-1">Max</span>
+                  <span className="text-[8px] text-text-secondary/40 uppercase font-black tracking-widest mb-1">Max</span>
                   <span className="text-[13px] font-impact text-accent">₹{filters?.price || maxPrice}</span>
                 </div>
               </div>

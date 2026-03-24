@@ -9,22 +9,22 @@ const PrivacyPolicy = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background text-textPrimary font-secondary selection:bg-accent selection:text-primary pb-24">
+    <main className="min-h-screen bg-background text-text-primary font-secondary selection:bg-accent selection:text-primary pb-24">
       {/* Page Header */}
-      <section className="pt-32 pb-16 px-6 md:pt-40 md:pb-20 border-b border-[#1f1f1f]">
+      <section className="pt-32 pb-16 px-6 md:pt-40 md:pb-20 border-b border-border-subtle">
         <div className="max-w-4xl mx-auto">
           <nav className="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-8 opacity-60 flex items-center space-x-3">
-            <Link to="/" className="text-textSecondary hover:text-accent transition-colors duration-300">Home</Link>
-            <span className="text-textSecondary/50">/</span>
+            <Link to="/" className="text-text-secondary hover:text-accent transition-colors duration-300">Home</Link>
+            <span className="text-text-secondary/50">/</span>
             <strong className="text-accent font-medium">Privacy Policy</strong>
           </nav>
-          <h1 className="font-display italic text-5xl md:text-6xl text-textPrimary mb-4">
+          <h1 className="font-display italic text-5xl md:text-6xl text-text-primary mb-4">
             Privacy Policy
           </h1>
-          <p className="font-primary tracking-widest uppercase text-sm md:text-base text-textSecondary opacity-80 mb-6">
+          <p className="font-primary tracking-widest uppercase text-sm md:text-base text-text-secondary opacity-80 mb-6">
             Your privacy is important to us.
           </p>
-          <p className="text-xs text-textSecondary/60 font-primary uppercase tracking-widest">
+          <p className="text-xs text-text-secondary/60 font-primary uppercase tracking-widest">
             Last Updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
@@ -35,8 +35,8 @@ const PrivacyPolicy = () => {
         <div className="max-w-4xl mx-auto space-y-12">
           
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">1. Introduction</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">1. Introduction</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 At Fenrir Era, we value your privacy and are committed to protecting your personal data. This Privacy Policy outlines how we collect, use, and safeguard your information when you visit our website, purchase our products, or interact with our services.
               </p>
@@ -46,11 +46,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">2. Information We Collect</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">2. Information We Collect</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 To provide you with our premium services, we collect various types of information, including:
               </p>
@@ -63,11 +63,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">3. How We Use Your Information</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">3. How We Use Your Information</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 The information we collect is used in the following ways to enhance your experience:
               </p>
@@ -81,11 +81,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">4. Cookies & Tracking Technologies</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">4. Cookies & Tracking Technologies</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 We use cookies and similar tracking technologies to track activity on our service and hold certain information. Cookies are files with small amounts of data which may include an anonymous unique identifier.
               </p>
@@ -95,11 +95,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">5. Data Protection</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">5. Data Protection</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 The security of your personal data is paramount to us. We implement a variety of security measures, including SSL encryption, secure server hosting, and strict access controls, to maintain the safety of your personal information.
               </p>
@@ -109,11 +109,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">6. Third-Party Services</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">6. Third-Party Services</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 We may employ third-party companies and individuals to facilitate our service, provide the service on our behalf, or assist us in analyzing how our service is used. Examples include:
               </p>
@@ -128,11 +128,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">7. User Rights</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">7. User Rights</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 Depending on your location, you may have the right to access, rectify, or erase your personal data. You can also object to the processing of your personal data or request data portability. 
               </p>
@@ -142,11 +142,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">8. Changes to This Policy</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">8. Changes to This Policy</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 We may update our Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date at the top.
               </p>
@@ -156,11 +156,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-[#1f1f1f]"></div>
+          <div className="w-full h-[1px] bg-border-subtle"></div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-primary tracking-wide text-textPrimary">9. Contact Us</h2>
-            <div className="space-y-4 text-textSecondary/80 leading-relaxed text-sm md:text-base font-light">
+            <h2 className="text-2xl font-primary tracking-wide text-text-primary">9. Contact Us</h2>
+            <div className="space-y-4 text-text-secondary/80 leading-relaxed text-sm md:text-base font-light">
               <p>
                 If you have any questions or concerns about this Privacy Policy or our data practices, please contact our Data Protection Officer:
               </p>

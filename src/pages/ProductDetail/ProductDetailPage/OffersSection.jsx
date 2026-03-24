@@ -14,9 +14,9 @@ export const OffersSection = ({ offers = [] }) => {
 
     return (
         <section className="space-y-6 pt-4">
-            <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+            <div className="flex items-center gap-3 border-b border-border-subtle pb-2">
                 <span className="material-symbols-outlined text-accent text-lg">local_offer</span>
-                <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90">
+                <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-text-primary">
                     Save extra with these offers
                 </h4>
             </div>
@@ -33,18 +33,18 @@ export const OffersSection = ({ offers = [] }) => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
                             onClick={() => handleCopy(offer.code, offerId)}
-                            className="group relative p-4 bg-white/[0.02] border border-white/5 rounded-sm hover:border-accent/30 transition-all cursor-pointer overflow-hidden"
+                            className="group relative p-4 bg-secondary border border-border-subtle hover:border-accent/30 transition-all cursor-pointer overflow-hidden"
                         >
                             {/* Subtle background glow on hover */}
                             <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                             
                             <div className="relative z-10 flex items-start gap-4">
-                                <div className="w-10 h-10 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-black transition-colors">
+                                <div className="w-10 h-10 flex-shrink-0 bg-border-subtle rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">
                                     <span className="material-symbols-outlined text-sm">{offer.icon || 'percent'}</span>
                                 </div>
                                 <div className="flex-1 space-y-1">
                                     <div className="flex justify-between items-start">
-                                        <h5 className="text-[10px] font-black uppercase tracking-widest text-white/80 group-hover:text-accent transition-colors">
+                                        <h5 className="text-[10px] font-black uppercase tracking-widest text-text-primary group-hover:text-accent transition-colors">
                                             {offer.title}
                                         </h5>
                                         <div className="flex items-center gap-1.5 min-w-[50px] justify-end">
@@ -65,7 +65,7 @@ export const OffersSection = ({ offers = [] }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         exit={{ opacity: 0 }}
-                                                        className="material-symbols-outlined text-sm text-white/20 group-hover:text-white/60"
+                                                        className="material-symbols-outlined text-sm text-text-secondary/40 group-hover:text-text-primary"
                                                     >
                                                         content_copy
                                                     </motion.span>
@@ -73,11 +73,11 @@ export const OffersSection = ({ offers = [] }) => {
                                             </AnimatePresence>
                                         </div>
                                     </div>
-                                    <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest leading-relaxed pr-8">
+                                    <p className="text-[9px] font-bold text-text-secondary uppercase tracking-widest leading-relaxed pr-8">
                                         {offer.description}
                                     </p>
                                     <div className="pt-2">
-                                        <span className={`inline-block px-2 py-1 transition-colors duration-300 ${isCopied ? 'bg-accent/20 border-accent/40 text-accent' : 'bg-white/5 border-white/10 text-white/60'} border border-dashed text-[8px] font-mono uppercase tracking-widest`}>
+                                        <span className={`inline-block px-2 py-1 transition-colors duration-300 ${isCopied ? 'bg-accent/20 border-accent/40 text-accent' : 'bg-background border-border-subtle text-text-secondary'} border border-dashed text-[8px] font-mono uppercase tracking-widest`}>
                                             Use Code: {offer.code}
                                         </span>
                                     </div>

@@ -49,7 +49,7 @@ export default function MiniCart({ open, onClose }) {
               initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
               animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              className="absolute inset-0 bg-black/40 z-[1]"
+              className="absolute inset-0 bg-background/60 z-[1]"
               onClick={onClose}
             />
             <motion.aside
@@ -57,16 +57,16 @@ export default function MiniCart({ open, onClose }) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
-              className="relative w-full max-w-[440px] h-[100dvh] bg-black border-l border-white/10 flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.8)] overflow-hidden z-[5] before:absolute before:inset-0 before:bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0%,transparent_100%)] before:pointer-events-none"
+              className="relative w-full max-w-[440px] h-[100dvh] bg-background border-l border-border-subtle flex flex-col shadow-[-20px_0_50px_rgba(0,0,0,0.05)] overflow-hidden z-[5] before:absolute before:inset-0 before:bg-[linear-gradient(135deg,var(--color-accent)_0%,transparent_100%)] before:opacity-[0.03] before:pointer-events-none"
             >
               {/* HEADER */}
               <div className="flex-none px-5 py-6 md:px-8 md:pt-10 md:pb-8 border-b border-white/10 bg-gradient-to-b from-white/5 to-transparent">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="font-[Oswald] text-2xl font-medium tracking-[0.1em] uppercase">
-                    YOUR BAG <span className="font-[Inter] text-sm text-[#d4c4b1] ml-2 font-light">[{cart.length}]</span>
+                    YOUR BAG <span className="font-[Inter] text-sm text-accent-contrast ml-2 font-light">[{cart.length}]</span>
                   </h2>
 
-                  <button className="w-10 h-10 rounded-full border border-white/10 bg-white/5 text-white flex items-center justify-center cursor-pointer transition-all duration-400 hover:bg-white hover:text-black hover:rotate-90" onClick={onClose}>
+                  <button className="w-10 h-10 rounded-full border border-border-subtle bg-secondary text-text-primary flex items-center justify-center cursor-pointer transition-all duration-400 hover:bg-accent hover:text-white hover:rotate-90" onClick={onClose}>
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
@@ -74,14 +74,14 @@ export default function MiniCart({ open, onClose }) {
                 {/* Free Shipping Progress Bar */}
                 {cart.length > 0 && (
                   <div className="mt-2.5">
-                    <div className="text-[10px] uppercase tracking-[0.15em] mb-2 text-white/50">
+                    <div className="text-[10px] uppercase tracking-[0.15em] mb-2 text-text-muted">
                       {remainingForFreeShipping > 0 ? (
-                        <p>Spend <span className="text-white font-extrabold">₹{remainingForFreeShipping.toFixed(0)}</span> more for free shipping</p>
+                        <p>Spend <span className="text-text-primary font-extrabold">₹{remainingForFreeShipping.toFixed(0)}</span> more for free shipping</p>
                       ) : (
-                        <p className="text-[#a3e635]">Congrats! You've unlocked <span className="text-white font-extrabold">FREE SHIPPING</span></p>
+                        <p className="text-green-600">Congrats! You've unlocked <span className="text-text-primary font-extrabold">FREE SHIPPING</span></p>
                       )}
                     </div>
-                    <div className="h-[2px] bg-white/10 rounded overflow-hidden">
+                    <div className="h-[2px] bg-border-subtle rounded overflow-hidden">
                       <motion.div
                         className="h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.5)]"
                         initial={{ width: 0 }}
@@ -101,14 +101,14 @@ export default function MiniCart({ open, onClose }) {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6"
+                        className="w-20 h-20 rounded-full bg-secondary border border-border-subtle flex items-center justify-center mb-6"
                       >
-                        <span className="material-symbols-outlined text-[32px] text-white/50">shopping_basket</span>
+                        <span className="material-symbols-outlined text-[32px] text-text-muted">shopping_basket</span>
                       </motion.div>
                       <p className="font-[Oswald] text-xl uppercase tracking-[0.1em] mb-2">Your bag is empty</p>
-                      <p className="text-xs text-white/50 mb-8 leading-[1.6]">Looks like you haven't added anything yet.</p>
+                      <p className="text-xs text-text-muted mb-8 leading-[1.6]">Looks like you haven't added anything yet.</p>
                       <button
-                        className="px-10 py-4 bg-white text-black uppercase text-[11px] font-black tracking-[0.2em] rounded transition-all duration-400 hover:bg-[#d4c4b1] hover:tracking-[0.3em]"
+                        className="px-10 py-4 bg-text-primary text-background uppercase text-[11px] font-black tracking-[0.2em] rounded transition-all duration-400 hover:bg-accent hover:text-white hover:tracking-[0.3em]"
                         onClick={() => { onClose(); navigate("/shop"); }}
                       >
                         Start Shopping
@@ -136,8 +136,8 @@ export default function MiniCart({ open, onClose }) {
                           >
                             <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-800 group-hover/thumb:scale-110" style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }} />
                             {item.customizations?.previews ? (
-                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
-                                <span className="material-symbols-outlined text-white text-lg">zoom_in</span>
+                              <div className="absolute inset-0 bg-background/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
+                                <span className="material-symbols-outlined text-text-primary text-lg">zoom_in</span>
                               </div>
                             ) : (
                               <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/thumb:opacity-100 transition-opacity rounded-xl" />
@@ -152,7 +152,7 @@ export default function MiniCart({ open, onClose }) {
                               </span>
                             </div>
 
-                            <div className="flex items-center gap-2 mb-3 text-[10px] uppercase tracking-[0.1em] text-white/50">
+                            <div className="flex items-center gap-2 mb-3 text-[10px] uppercase tracking-[0.1em] text-text-muted">
                               <span>Size: {item.size}</span>
                               <span className="text-[8px] opacity-30">•</span>
                               <span>Color: {item.color}</span>
@@ -166,11 +166,11 @@ export default function MiniCart({ open, onClose }) {
                             )}
 
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center bg-white/5 border border-white/10 rounded-lg p-0.5">
+                              <div className="flex items-center bg-secondary border border-border-subtle rounded-lg p-0.5">
                                 <button
                                   onClick={() => decreaseQty(item.id, item.variantId, item.qty)}
                                   disabled={item.qty <= 1}
-                                  className="w-7 h-7 flex items-center justify-center text-white transition-all duration-400 disabled:opacity-20 not:disabled:hover:bg-white/10"
+                                  className="w-7 h-7 flex items-center justify-center text-text-primary transition-all duration-400 disabled:opacity-20 not:disabled:hover:bg-text-primary/10"
                                 >
                                   <span className="material-symbols-outlined text-[16px]">remove</span>
                                 </button>
@@ -181,14 +181,14 @@ export default function MiniCart({ open, onClose }) {
 
                                 <button
                                   onClick={() => increaseQty(item.id, item.variantId, item.qty)}
-                                  className="w-7 h-7 flex items-center justify-center text-white transition-all duration-400 disabled:opacity-20 not:disabled:hover:bg-white/10"
+                                  className="w-7 h-7 flex items-center justify-center text-text-primary transition-all duration-400 disabled:opacity-20 not:disabled:hover:bg-text-primary/10"
                                 >
                                   <span className="material-symbols-outlined text-[16px]">add</span>
                                 </button>
                               </div>
 
                               <button
-                                className="text-white/50 transition-all duration-400 hover:text-[#ff4d4d] hover:scale-110"
+                                className="text-text-muted transition-all duration-400 hover:text-red-500 hover:scale-110"
                                 onClick={() => removeItem(item.cartItemId)}
                               >
                                 <span className="material-symbols-outlined">delete</span>
@@ -207,22 +207,22 @@ export default function MiniCart({ open, onClose }) {
                 <div className="shrink-0 p-5 md:p-8 bg-black border-t border-white/10 bg-gradient-to-t from-white/5 to-transparent">
                   <div className="mb-6">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs uppercase font-black tracking-[0.2em] text-white/50">Subtotal</span>
+                      <span className="text-xs uppercase font-black tracking-[0.2em] text-text-muted">Subtotal</span>
                       <span className="font-[Oswald] text-2xl font-medium">₹{subtotal.toLocaleString()}</span>
                     </div>
-                    <p className="text-[10px] text-white/50 uppercase tracking-[0.05em]">Shipping & taxes calculated at checkout</p>
+                    <p className="text-[10px] text-text-muted uppercase tracking-[0.05em]">Shipping & taxes calculated at checkout</p>
                   </div>
 
                   <div className="flex flex-col gap-3">
                     <button
-                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-transparent border border-white text-white hover:bg-white/5"
+                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-transparent border border-white text-white hover:bg-white hover:text-black"
                       onClick={handleCheckout}
                     >
                       View Bag
                       <span className="material-symbols-outlined">shopping_bag</span>
                     </button>
                     <button
-                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-white text-black hover:bg-[#d4c4b1]"
+                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-text-primary text-background hover:bg-accent hover:text-white"
                       onClick={() => { onClose(); navigate("/checkout"); }}
                     >
                       Checkout Now
@@ -243,7 +243,7 @@ export default function MiniCart({ open, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black shadow-2xl flex flex-col items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 z-[100] bg-background shadow-2xl flex flex-col items-center justify-center p-4 md:p-12"
           >
             {/* Close Button */}
             <button

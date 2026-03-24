@@ -33,7 +33,7 @@ function FeaturedProducts() {
     }).slice(0, 8); // Limits to 8 products for the home page
 
     return (
-        <section className="py-[80px] md:py-[120px] bg-[#0a0a0a] text-white">
+        <section className="py-[80px] md:py-[120px] bg-background text-text-primary">
             <div className="container-wide">
                 <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-end mb-[60px] gap-8 lg:gap-10">
                     <motion.div
@@ -42,7 +42,7 @@ function FeaturedProducts() {
                         viewport={{ once: true }}
                         className="relative"
                     >
-                        <span className="text-[10px] font-black tracking-[0.6em] text-accent uppercase mb-4 block">CURATED SELECTION</span>
+                        <span className="text-[10px] font-black tracking-[0.6em] text-accent-contrast uppercase mb-4 block">CURATED SELECTION</span>
                         <h2 className="font-oswald text-[56px] md:text-[80px] lg:text-[110px] leading-[0.85] tracking-[-0.04em] uppercase font-black">THE <br className="md:hidden" /> EDIT</h2>
                         {/* Subtle background glow */}
                         <div className="absolute -left-20 -top-20 w-[300px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
@@ -58,7 +58,7 @@ function FeaturedProducts() {
                         {["NEW ARRIVALS", "BEST SELLERS", "TRENDING"].map((tab) => (
                             <button
                                 key={tab}
-                                className={`relative bg-transparent border-none text-[11px] font-black tracking-[0.3em] uppercase cursor-pointer py-3 transition-colors duration-300 whitespace-nowrap ${activeTab === tab ? 'text-white' : 'text-white/30'}`}
+                                className={`relative bg-transparent border-none text-[11px] font-black tracking-[0.3em] uppercase cursor-pointer py-3 transition-colors duration-300 whitespace-nowrap ${activeTab === tab ? 'text-text-primary' : 'text-text-muted'}`}
                                 onClick={() => setActiveTab(tab)}
                             >
                                 {tab}
@@ -84,7 +84,7 @@ function FeaturedProducts() {
                                 className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-8"
                             >
                                 {Array(4).fill(0).map((_, i) => (
-                                    <div key={i} className="bg-[#111] aspect-[4/5] relative overflow-hidden after:absolute after:inset-0 after:-left-full after:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent)] after:animate-[loading-shimmer_1.5s_infinite]">
+                                    <div key={i} className="bg-secondary aspect-[4/5] relative overflow-hidden after:absolute after:inset-0 after:-left-full after:bg-[linear-gradient(90deg,transparent,rgba(0,0,0,0.03),transparent)] after:animate-[loading-shimmer_1.5s_infinite]">
                                     </div>
                                 ))}
                             </motion.div>
@@ -113,7 +113,7 @@ function FeaturedProducts() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                 >
-                    <button onClick={() => navigate("/category/all")} className="bg-transparent border-none text-white text-[11px] font-black tracking-[0.5em] uppercase cursor-pointer flex flex-col items-center gap-3 group">
+                    <button onClick={() => navigate("/category/all")} className="bg-transparent border-none text-text-primary text-[11px] font-black tracking-[0.5em] uppercase cursor-pointer flex flex-col items-center gap-3 group">
                         VIEW ALL PRODUCTS
                         <span className="w-10 h-[1px] bg-accent transition-[width] duration-400 ease group-hover:w-[100px]"></span>
                     </button>

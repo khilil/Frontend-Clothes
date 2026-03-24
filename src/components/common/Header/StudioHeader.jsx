@@ -29,7 +29,7 @@ export default function StudioHeader() {
     const handleStudioClick = () => { if (slug) { navigate(`/customize/${slug}`); } };
 
     return (
-        <header className="fixed inset-x-0 top-0 z-50 h-16 lg:h-20 bg-black/80 backdrop-blur-xl border-b border-white/5">
+        <header className="fixed inset-x-0 top-0 z-50 h-16 lg:h-20 bg-background/80 backdrop-blur-xl border-b border-border-subtle">
             <div className="max-w-[1920px] mx-auto h-full px-4 lg:px-12 flex items-center justify-between">
 
                 {/* ===== MOBILE LAYOUT ===== */}

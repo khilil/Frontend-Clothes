@@ -6,16 +6,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#000000",
-        secondary: "#121212",
-        accent: "#d4c4b1",
-        background: "#0a0a0a",
-        textPrimary: "#ffffff",
-        textSecondary: "#9ca3af",
-        danger: "#ef4444",
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        accent: "var(--color-accent)",
+        background: "var(--color-background)",
+        textPrimary: "var(--color-text-primary)",
+        textSecondary: "var(--color-text-secondary)",
+        danger: "var(--color-danger)",
+        borderSubtle: "var(--color-border-subtle)",
         // Legacy aliases
-        charcoal: "#121212",
-        muted: "#717171",
+        charcoal: "var(--color-secondary)",
+        muted: "var(--color-text-secondary)",
       },
       fontFamily: {
         primary: ["Oswald", "sans-serif"],
