@@ -8,27 +8,27 @@ const DEFAULT_SLIDES = [
   {
     id: 1,
     image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1920&auto=format&fit=crop",
-    label: "EDITORIAL",
-    subheading: "VOL. 04 / URBAN EXPLORATION",
-    heading: "ESSENTIALS",
+    label: "ATELIER",
+    subheading: "ARCHIVE 01 / DYSTOPIAN MINIMALISM",
+    heading: "VANGUARD",
     cta: "SHOP THE DROP",
     link: "/category/all"
   },
   {
     id: 2,
     image: "https://images.unsplash.com/photo-1505022610485-0249ba5b3675?q=80&w=1920&auto=format&fit=crop",
-    label: "ARCHIVE SERIES",
-    subheading: "THE TAILORED MINIMALIST",
-    heading: "LIMITLESS",
+    label: "CORE SERIES",
+    subheading: "SARTORIAL STREETWEAR",
+    heading: "UNBOUND",
     cta: "DISCOVER MORE",
     link: "/category/shirts"
   },
   {
     id: 3,
     image: "https://images.unsplash.com/photo-1550246140-5119ae4790b8?q=80&w=1920&auto=format&fit=crop",
-    label: "OUTDOOR TECH",
-    subheading: "ALL-WEATHER PERFORMANCE",
-    heading: "VANGUARD",
+    label: "ELEMENTAL",
+    subheading: "TACTICAL EXCELLENCE",
+    heading: "OBSIDIAN",
     cta: "EXPLORE GEER",
     link: "/category/jacket"
   }
@@ -109,7 +109,7 @@ function Hero() {
         animate={{ opacity: 0.4, x: 0, rotate: -90 }}
         transition={{ duration: 1.5 }}
       >
-        <span className="text-[10px] font-black tracking-[0.8em] uppercase text-text-primary whitespace-nowrap">DISCOVER THE ARCHIVE</span>
+        <span className="text-[10px] font-black tracking-[0.8em] uppercase text-text-primary whitespace-nowrap">UNVEIL THE ARCHIVE</span>
       </motion.div>
 
       {/* Main Content */}

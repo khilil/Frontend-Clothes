@@ -63,7 +63,7 @@ const ContactUs = () => {
             <h3 className="text-xl font-primary tracking-wide text-text-primary mb-4">Email Address</h3>
             <p className="text-text-secondary text-sm mb-6 leading-relaxed">Reach out to us via email and our team will get back to you promptly.</p>
             <a href="mailto:support@fenrirera.com" className="text-accent font-primary tracking-widest text-sm hover:underline hover:underline-offset-4 transition-all duration-300">
-              support@fenrir.com
+              support@fenrirera.com
             </a>
           </div>
 
@@ -74,8 +74,8 @@ const ContactUs = () => {
             </div>
             <h3 className="text-xl font-primary tracking-wide text-text-primary mb-4">Phone Support</h3>
             <p className="text-text-secondary text-sm mb-6 leading-relaxed">Need immediate assistance? Give us a call during our business hours.</p>
-            <a href="tel:+919876543210" className="text-accent font-primary tracking-widest text-sm hover:underline hover:underline-offset-4 transition-all duration-300">
-              +91 98765 43210
+            <a href="tel:+912249700000" className="text-accent font-primary tracking-widest text-sm hover:underline hover:underline-offset-4 transition-all duration-300">
+              +91 (0) 22 4970 0000
             </a>
           </div>
 

@@ -172,7 +172,7 @@ const ProductCard = React.memo(({ product }) => {
 
         <div className="p-4 md:p-5 md:pb-6 bg-secondary grow flex flex-col gap-2 border-t border-border-subtle">
           <div className="flex justify-between items-start">
-            <span className="text-[9px] font-black text-accent-contrast tracking-[0.3em] uppercase mt-1 leading-none">{product.brand || "GEN-Z ARCHIVE"}</span>
+            <span className="text-[9px] font-black text-accent-contrast tracking-[0.3em] uppercase mt-1 leading-none">{product.brand || "FENRIR ARCHIVE"}</span>
             <div className="flex flex-col items-end gap-[1px]">
               <span className="text-[14px] md:text-base font-[950] text-text-primary tracking-[-0.01em]">₹{hasActiveOffer ? finalPrice : product.price}</span>
               {displayCompareAtPrice && (

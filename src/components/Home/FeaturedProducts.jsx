@@ -42,8 +42,8 @@ function FeaturedProducts() {
                         viewport={{ once: true }}
                         className="relative"
                     >
-                        <span className="text-[10px] font-black tracking-[0.6em] text-accent-contrast uppercase mb-4 block">CURATED SELECTION</span>
-                        <h2 className="font-oswald text-[56px] md:text-[80px] lg:text-[110px] leading-[0.85] tracking-[-0.04em] uppercase font-black">THE <br className="md:hidden" /> EDIT</h2>
+                        <span className="text-[10px] font-black tracking-[0.6em] text-accent-contrast uppercase mb-4 block">ELITE ARCHIVE</span>
+                        <h2 className="font-oswald text-[56px] md:text-[80px] lg:text-[110px] leading-[0.85] tracking-[-0.04em] uppercase font-black">FRAGMENT <br className="md:hidden" /> EDIT</h2>
                         {/* Subtle background glow */}
                         <div className="absolute -left-20 -top-20 w-[300px] h-[300px] bg-accent/5 blur-[120px] rounded-full pointer-events-none"></div>
                     </motion.div>

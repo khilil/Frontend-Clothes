@@ -75,9 +75,9 @@ function CollectiveFooter() {
           <h4 className="font-oswald text-[11px] font-medium tracking-[0.3em] text-text-primary mb-[35px] uppercase">STUDIO</h4>
           <p className="text-[10px] leading-[2.4] tracking-[0.15em] uppercase text-text-secondary">
             VISIT OUR ATELIER <br />
-            EST. 2024 / LONDON <br />
-            UNITED KINGDOM <br /><br />
-            CONTACT: HELLO@FENRIR.COM
+            EST. 2024 / MUMBAI <br />
+            INDIA <br /><br />
+            CONTACT: SUPPORT@FENRIRERA.COM
           </p>
         </motion.div>
       </div>

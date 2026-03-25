@@ -200,10 +200,10 @@ export default function Header({ forceSolid = false }) {
                           transition={{ duration: 0.8, ease: "easeOut" }}
                           className="relative overflow-hidden group/promo"
                         >
-                          <img alt="Model in Atelier" className="w-full h-full object-cover grayscale brightness-50 group-hover/promo:scale-110 group-hover/promo:grayscale-0 group-hover/promo:brightness-100 transition-all duration-[2s] ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCDaHXAgfnZZMJ5PJyJlJu2htQPWM6diBOxWwEZCVgRqK2NioQJtdBpkA898DJ8jaVUX8zXqiqMulmIS-p9A6Vvw60YVvk7uOoV_7doTOJ1sNlbE0RcmuvhwJ2LrbI9PBFadnFpLV-RUa4tq9StHqLjSSOJHeeWnbhzilO_f0RDPVlLJFH-Gjgj2ltfyvxQ9Enril9a9C-hcpECVdFnYR7c4QcBOmkqdxTf4IDpIVmtgWbA9rPF_OT7g9mJuNlKudYCzeL9_ieJpz" />
+                          <img alt="Fenrir Era Atelier Collection" className="w-full h-full object-cover grayscale brightness-50 group-hover/promo:scale-110 group-hover/promo:grayscale-0 group-hover/promo:brightness-100 transition-all duration-[2s] ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCDaHXAgfnZZMJ5PJyJlJu2htQPWM6diBOxWwEZCVgRqK2NioQJtdBpkA898DJ8jaVUX8zXqiqMulmIS-p9A6Vvw60YVvk7uOoV_7doTOJ1sNlbE0RcmuvhwJ2LrbI9PBFadnFpLV-RUa4tq9StHqLjSSOJHeeWnbhzilO_f0RDPVlLJFH-Gjgj2ltfyvxQ9Enril9a9C-hcpECVdFnYR7c4QcBOmkqdxTf4IDpIVmtgWbA9rPF_OT7g9mJuNlKudYCzeL9_ieJpz" />
                           <div className="absolute inset-0 bg-background/60 flex flex-col items-center justify-center text-center p-8 backdrop-blur-[2px] group-hover/promo:backdrop-blur-0 transition-all duration-1000">
                             <p className="text-[9px] font-black uppercase tracking-[0.5em] mb-4 text-text-primary/60">The Atelier Series</p>
-                            <h5 className="text-3xl font-primary tracking-tighter mb-8 text-text-primary scale-90 group-hover/promo:scale-100 transition-transform duration-1000">SS24<br />EDITORIAL</h5>
+                            <h5 className="text-3xl font-primary tracking-tighter mb-8 text-text-primary scale-90 group-hover/promo:scale-100 transition-transform duration-1000">ESSENCE OF ETERNITY<br />SS24</h5>
                             <Link
                               className="px-10 py-4 bg-text-primary text-primary text-[10px] font-black uppercase tracking-widest hover:bg-accent transition-all hover:px-12"
                               to="/shop"
@@ -292,7 +292,7 @@ export default function Header({ forceSolid = false }) {
                 >
                   <input
                     type="text"
-                    placeholder="SEARCH COLLECTION"
+                    placeholder="DISCOVER THE UNKNOWN"
                     className="w-full bg-text-primary/5 border border-text-primary/10 px-4 py-3 text-[10px] font-black tracking-widest text-text-primary focus:border-accent outline-none"
                   />
                   <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[18px]">search</span>

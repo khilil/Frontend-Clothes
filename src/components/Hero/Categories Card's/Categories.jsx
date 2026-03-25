@@ -45,8 +45,8 @@ function Categories() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-2 md:mb-6 block">ATELIER COLLECTIONS</span>
-            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black text-text-primary">ARCHIVE <br /> <span className="font-light text-text-secondary/40">SERIES / 24</span></h2>
+            <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-2 md:mb-6 block">STUDIO SPECIFICATIONS</span>
+            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black text-text-primary">SERIES 01 <br /> <span className="font-light text-text-secondary/40">// VANGUARD</span></h2>
           </motion.div>
 
           <motion.div
