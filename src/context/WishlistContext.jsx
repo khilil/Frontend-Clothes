@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as wishlistService from '../services/wishlistService';
+import { toast } from 'react-hot-toast';
+import CustomToast from '../components/common/CustomToast';
 
 const WishlistContext = createContext();
 
@@ -43,11 +45,18 @@ export const WishlistProvider = ({ children }) => {
 
             if (res.data.isInWishlist) {
                 setWishlist(prev => [...prev, product]);
+                toast.custom((t) => (
+                    <CustomToast t={t} product={product} actionType="wishlist" />
+                ));
             } else {
                 setWishlist(prev => prev.filter(item => (item._id || item.id) !== productId));
+                toast.custom((t) => (
+                    <CustomToast t={t} product={product} actionType="wishlist" />
+                ));
             }
             return res.data.isInWishlist;
         } catch (error) {
+            toast.error("Failed to update wishlist");
             console.error("Failed to toggle wishlist:", error);
             throw error;
         }

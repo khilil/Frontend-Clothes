@@ -36,7 +36,8 @@ const ProductListing = () => {
     size: searchParams.get('size') || null,
     color: searchParams.get('color') || null,
     price: parseInt(searchParams.get('price')) || 10000,
-    sort: searchParams.get('sort') || 'newest'
+    sort: searchParams.get('sort') || 'newest',
+    search: searchParams.get('q') || ''
   });
 
   const categorizedColors = useMemo(() => {
@@ -100,8 +101,11 @@ const ProductListing = () => {
         brand: [],
         size: null,
         color: null,
-        price: 10000
+        price: 10000,
+        search: searchParams.get('q') || ''
       }));
+    } else if (filters.search !== (searchParams.get('q') || '')) {
+      setFilters(prev => ({ ...prev, search: searchParams.get('q') || '' }));
     }
   }, [urlCategory, searchParams]);
 
@@ -119,7 +123,8 @@ const ProductListing = () => {
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
-          sort: filters.sort
+          sort: filters.sort,
+          search: filters.search
         });
         setProducts(data.products);
         setTotalPages(data.totalPages);
@@ -151,6 +156,7 @@ const ProductListing = () => {
     if (filters.color) params.color = filters.color;
     if (filters.price < 10000) params.price = filters.price;
     if (filters.sort !== 'newest') params.sort = filters.sort;
+    if (filters.search) params.q = filters.search;
     setSearchParams(params);
 
   }, [filters, urlCategory]);
@@ -170,7 +176,8 @@ const ProductListing = () => {
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
-          sort: filters.sort
+          sort: filters.sort,
+          search: filters.search
         });
 
         setProducts(prev => [...prev, ...data.products]);
@@ -221,7 +228,8 @@ const ProductListing = () => {
       size: null,
       color: null,
       price: 10000,
-      sort: 'newest'
+      sort: 'newest',
+      search: ''
     });
   };
 
@@ -268,7 +276,7 @@ const ProductListing = () => {
         <section className="grow pb-[60px]">
           <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-border-subtle">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-text-secondary/60">
-              Showing <span className="text-text-primary">{products.length}</span> of {totalProducts} results
+              {filters.search ? `Results for "${filters.search}"` : `Showing`} <span className="text-text-primary">{products.length}</span> of {totalProducts} results
             </div>
             {/* Mobile Filter Trigger */}
             <button

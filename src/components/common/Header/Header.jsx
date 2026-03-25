@@ -1,10 +1,13 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getAllCategories } from "../../../services/categoryService";
 import { useCart } from "../../../context/CartContext";
+import { useWishlist } from "../../../context/WishlistContext";
+import { fetchProducts } from "../../../api/products.api";
 import MiniCart from "../../../pages/Cart/MiniCart";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { Search, Heart, ShoppingBag, X, ArrowRight, TrendingUp } from "lucide-react";
 
 const CLOTHING_MENU = [
   {
@@ -62,10 +65,54 @@ export default function Header({ forceSolid = false }) {
   const [isLoading, setIsLoading] = useState(true);
   const { cart } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
+  const { wishlist } = useWishlist();
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [liveResults, setLiveResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  // Scroll Lock for search/menu
+  useEffect(() => {
+    if (isMobileMenuOpen || isMobileSearchOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isMobileMenuOpen, isMobileSearchOpen]);
+
+  // Live Search Logic
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (searchQuery.trim().length > 1) {
+        setIsSearching(true);
+        try {
+          const data = await fetchProducts({ search: searchQuery, limit: 6 });
+          setLiveResults(data.products || []);
+        } catch (err) {
+          console.error("Live search error:", err);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setLiveResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsMobileSearchOpen(false);
+    setIsSearchExpanded(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -226,10 +273,163 @@ export default function Header({ forceSolid = false }) {
           )}
 
           {/* ACTIONS (Right on mobile, Auto on desktop) */}
-          <div className="flex-1 lg:flex-none flex items-center justify-end gap-2 md:gap-4 z-50 [&_.material-symbols-outlined]:text-text-secondary [&_.material-symbols-outlined]:transition-all [&_.material-symbols-outlined]:duration-500 [&_.material-symbols-outlined]:ease-[cubic-bezier(0.16,1,0.3,1)]">
-            <button className="w-10 h-10 flex items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors group">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">search</span>
-            </button>
+          {/* ACTIONS (Right on mobile, Auto on desktop) */}
+          <div className="flex-1 lg:flex-none flex items-center justify-end gap-2 md:gap-4 z-[120] relative">
+            {/* INLINE SEARCH */}
+            <div className="relative flex items-center">
+              <motion.div
+                initial={false}
+                animate={{ 
+                  width: isSearchExpanded 
+                    ? (window.innerWidth < 768 ? 'calc(100vw - 120px)' : '320px') 
+                    : '40px',
+                  backgroundColor: isSearchExpanded ? 'var(--color-secondary)' : 'rgba(26, 26, 26, 0.05)'
+                }}
+                className="flex items-center rounded-full border border-border-subtle overflow-hidden group/search pr-1"
+              >
+                <button 
+                  className="w-10 h-10 flex items-center justify-center shrink-0 transition-colors hover:text-accent"
+                  onClick={() => {
+                    if (window.innerWidth < 1024) {
+                      setIsMobileSearchOpen(true);
+                    } else if (!isSearchExpanded) {
+                      setIsSearchExpanded(true);
+                    }
+                  }}
+                >
+                  <Search className={`h-4 w-4 ${isSearchExpanded ? 'text-accent' : 'text-text-secondary'}`} />
+                </button>
+                <input
+                  type="text"
+                  placeholder="SEARCH..."
+                  value={searchQuery}
+                  autoFocus={isSearchExpanded}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setIsSearchExpanded(false);
+                      setLiveResults([]);
+                      navigate(`/shop/all?q=${searchQuery}`);
+                    }
+                  }}
+                  className={`bg-transparent border-none outline-none text-[10px] font-black tracking-widest text-text-primary w-full pr-2 transition-opacity duration-300 placeholder:text-text-secondary/50 ${isSearchExpanded ? 'opacity-100' : 'opacity-0'}`}
+                />
+                
+                {/* CLOSE BUTTON */}
+                <AnimatePresence>
+                  {isSearchExpanded && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={() => {
+                        setIsSearchExpanded(false);
+                        setSearchQuery('');
+                        setLiveResults([]);
+                      }}
+                      className="w-8 h-8 flex items-center justify-center shrink-0 text-text-secondary/40 hover:text-accent transition-colors"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              {/* LIVE RESULTS DROPDOWN */}
+              <AnimatePresence>
+                {isSearchExpanded && (searchQuery.length > 0 || isSearching) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-12 left-0 right-0 sm:left-auto sm:w-[350px] bg-background backdrop-blur-2xl border border-border-subtle rounded-2xl shadow-2xl overflow-hidden z-[130]"
+                  >
+                    {/* KEYWORD SUGGESTION */}
+                    {searchQuery.length > 0 && (
+                      <div className="p-4 border-b border-border-subtle">
+                        <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-2">Suggestions</div>
+                        <button
+                          onClick={() => {
+                            setIsSearchExpanded(false);
+                            setLiveResults([]);
+                            navigate(`/shop/all?q=${searchQuery}`);
+                          }}
+                          className="w-full text-left flex items-center gap-3 p-2 hover:bg-text-primary/5 rounded-lg transition-colors group"
+                        >
+                          <Search className="h-3 w-3 text-accent" />
+                          <span className="text-[11px] font-bold text-text-primary uppercase tracking-tight">
+                            Search for "<span className="text-accent">{searchQuery}</span>"
+                          </span>
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="p-4 py-2 border-b border-border-subtle flex justify-between items-center bg-secondary/30">
+                      <span className="text-[9px] font-black tracking-[0.2em] text-text-secondary/40 uppercase">Product Results</span>
+                      {isSearching && (
+                        <div className="flex gap-1">
+                          <span className="w-1 h-1 bg-accent rounded-full animate-bounce"></span>
+                          <span className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                          <span className="w-1 h-1 bg-accent rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                      {liveResults.length > 0 ? (
+                        liveResults.map((product) => (
+                          <button
+                            key={product._id}
+                            onClick={() => {
+                              setIsSearchExpanded(false);
+                              setLiveResults([]);
+                              navigate(`/product/${product.slug}`);
+                            }}
+                            className="w-full flex items-center gap-4 p-3 hover:bg-text-primary/5 transition-colors group text-left"
+                          >
+                            <div className="h-12 w-12 rounded-lg overflow-hidden bg-secondary border border-border-subtle shrink-0">
+                              <img 
+                                src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"} 
+                                alt={product.title} 
+                                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[10px] font-bold text-text-primary truncate uppercase tracking-tight">{product.title}</div>
+                              <div className="text-[9px] text-accent font-black tracking-widest mt-0.5">₹{product.price}</div>
+                            </div>
+                            <ArrowRight className="h-3 w-3 text-text-secondary/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                          </button>
+                        ))
+                      ) : !isSearching && searchQuery.length > 1 ? (
+                        <div className="p-8 text-center">
+                          <div className="text-[10px] font-black text-text-secondary/30 uppercase tracking-widest">No products found</div>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {/* POPULAR CATEGORIES */}
+                    <div className="p-4 bg-secondary/50 border-t border-border-subtle">
+                      <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-3">Quick Collections</div>
+                      <div className="flex flex-wrap gap-2">
+                        {['New arrivals', 'Essentials', 'Accessories'].map(cat => (
+                          <button
+                            key={cat}
+                            onClick={() => {
+                              setIsSearchExpanded(false);
+                              setLiveResults([]);
+                              navigate(`/shop/all?category=${cat.toLowerCase()}`);
+                            }}
+                            className="px-3 py-1.5 bg-background border border-border-subtle rounded-full text-[8px] font-bold text-text-secondary hover:bg-accent hover:text-primary hover:border-accent transition-all"
+                          >
+                            {cat}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {user ? (
               <Link to="/account/dashboard" className="hidden md:flex w-10 h-10 items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors">
@@ -242,7 +442,17 @@ export default function Header({ forceSolid = false }) {
                 <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">person</span>
               </Link>
             )}
-
+            <Link
+              to="/account/wishlist"
+              className="relative w-10 h-10 flex items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors group"
+            >
+              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">favorite</span>
+              {wishlist.length > 0 && (
+                <span className="absolute top-2 right-2 bg-accent text-primary text-[7px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(197,160,89,0.5)]">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
             <button
               className="relative w-10 h-10 flex items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors group"
               onClick={() => setCartOpen(true)}
@@ -259,6 +469,155 @@ export default function Header({ forceSolid = false }) {
       </header>
 
       <MiniCart open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* MOBILE SEARCH OVERLAY (Full Screen) */}
+      <AnimatePresence>
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 bg-background z-[2000] flex flex-col"
+          >
+            {/* Search Header */}
+            <div className="p-4 border-b border-border-subtle flex items-center gap-4 bg-background">
+              <div className="flex-1 flex items-center bg-secondary rounded-full border border-border-subtle px-4 h-12">
+                <Search className="h-4 w-4 text-text-secondary mr-3" />
+                <input
+                  type="text"
+                  placeholder="SEARCH FOR..."
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 bg-transparent border-none outline-none text-xs font-black tracking-widest text-text-primary placeholder:text-text-secondary/30"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')}>
+                    <X className="h-4 w-4 text-text-secondary/30" />
+                  </button>
+                )}
+              </div>
+              <button 
+                onClick={() => setIsMobileSearchOpen(false)}
+                className="text-[10px] font-black uppercase tracking-widest text-text-primary p-2"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Search Content */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar bg-background">
+              {/* Keyword Suggestion */}
+              {searchQuery.length > 0 && (
+                <div className="p-6 border-b border-border-subtle">
+                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-4">Suggestions</div>
+                  <button
+                    onClick={() => {
+                      setIsMobileSearchOpen(false);
+                      navigate(`/shop/all?q=${searchQuery}`);
+                    }}
+                    className="w-full text-left flex items-center gap-4 p-4 bg-secondary rounded-2xl border border-border-subtle group transition-all"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                      <Search size={16} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-text-primary uppercase tracking-tight">Search for</div>
+                      <div className="text-sm font-bold text-accent">"{searchQuery}"</div>
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {/* Product Results */}
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase">
+                    {searchQuery.length > 1 ? "Product Results" : "Trending Now"}
+                  </div>
+                  {isSearching && (
+                    <div className="flex gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 bg-accent rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  {liveResults.length > 0 ? (
+                    liveResults.map((product) => (
+                      <button
+                        key={product._id}
+                        onClick={() => {
+                          setIsMobileSearchOpen(false);
+                          navigate(`/product/${product.slug}`);
+                        }}
+                        className="w-full flex items-center gap-5 p-3 hover:bg-secondary rounded-2xl transition-all text-left border border-transparent hover:border-border-subtle"
+                      >
+                        <div className="h-20 w-20 rounded-xl overflow-hidden bg-secondary border border-border-subtle shrink-0">
+                          <img 
+                            src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"} 
+                            alt={product.title} 
+                            className="h-full w-full object-cover" 
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-black text-text-primary uppercase tracking-tight line-clamp-1">{product.title}</div>
+                          <div className="text-[11px] text-accent font-black tracking-widest mt-1">₹{product.price}</div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-[9px] px-2 py-0.5 bg-secondary text-text-secondary rounded uppercase font-bold">{product.brand}</span>
+                          </div>
+                        </div>
+                        <ArrowRight size={16} className="text-text-secondary/30" />
+                      </button>
+                    ))
+                  ) : searchQuery.length > 1 && !isSearching ? (
+                    <div className="py-20 text-center">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary mb-4 text-text-secondary/20">
+                        <Search size={32} />
+                      </div>
+                      <div className="text-xs font-black text-text-primary/40 uppercase tracking-[0.2em]">No results found</div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {['Hoodie', 'Tshirt', 'Cargo', 'Jacket'].map(item => (
+                        <button
+                          key={item}
+                          onClick={() => setSearchQuery(item)}
+                          className="flex items-center gap-3 p-4 bg-secondary rounded-2xl border border-border-subtle text-left"
+                        >
+                          <TrendingUp size={14} className="text-accent" />
+                          <span className="text-[10px] font-bold text-text-primary uppercase">{item}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick links */}
+              <div className="p-6 pt-0">
+                <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-4">Quick Links</div>
+                <div className="flex flex-wrap gap-2">
+                  {['Shop All', 'New Arrivals', 'Best Sellers', 'Sale'].map(link => (
+                    <button
+                      key={link}
+                      onClick={() => {
+                        setIsMobileSearchOpen(false);
+                        navigate('/shop/all');
+                      }}
+                      className="px-5 py-2.5 bg-secondary border border-border-subtle rounded-full text-[10px] font-black text-text-primary uppercase tracking-widest"
+                    >
+                      {link}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* MOBILE MENU DRAWER (Framer Motion) */}
       <AnimatePresence>
@@ -282,21 +641,6 @@ export default function Header({ forceSolid = false }) {
               className="fixed top-0 left-0 w-full max-w-[320px] h-full bg-background z-[105] shadow-[0_0_50px_rgba(0,0,0,0.8)] lg:hidden flex flex-col border-r border-border-subtle"
             >
               <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
-
-                {/* SEARCH BAR */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="relative"
-                >
-                  <input
-                    type="text"
-                    placeholder="DISCOVER THE UNKNOWN"
-                    className="w-full bg-text-primary/5 border border-text-primary/10 px-4 py-3 text-[10px] font-black tracking-widest text-text-primary focus:border-accent outline-none"
-                  />
-                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[18px]">search</span>
-                </motion.div>
 
                 <nav className="flex flex-col gap-6">
                   {['New Arrivals', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (

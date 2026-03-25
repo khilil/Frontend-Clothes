@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import * as cartService from "../services/cartService";
 import { ensureAbsoluteUrl } from "../utils/urlUtils";
 import { useOffers } from "./OfferContext";
+import { toast } from "react-hot-toast";
+import CustomToast from "../components/common/CustomToast";
 
 const CartContext = createContext();
 
@@ -188,7 +190,11 @@ export function CartProvider({ children }) {
           };
         });
         setCart(formattedItems);
+        toast.custom((t) => (
+          <CustomToast t={t} product={product} actionType="cart" />
+        ));
       } catch (error) {
+        toast.error("Failed to add to cart");
         console.error("Add to cart failed:", error);
         throw error;
       }
@@ -202,6 +208,9 @@ export function CartProvider({ children }) {
       if (existingItem) {
         setGuestCart(localCart.map(item =>
           item.variantId === variantId ? { ...item, qty: item.qty + 1 } : item
+        ));
+        toast.custom((t) => (
+          <CustomToast t={t} product={product} actionType="cart" />
         ));
       } else {
         const basePrice = product.price || 0;
@@ -223,6 +232,9 @@ export function CartProvider({ children }) {
           customizations: customizations
         };
         setGuestCart([...localCart, newItem]);
+        toast.custom((t) => (
+          <CustomToast t={t} product={product} actionType="cart" />
+        ));
       }
     }
   };
