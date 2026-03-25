@@ -106,10 +106,10 @@ export default function LoginAuth() {
     };
 
     return (
-        <div className="flex min-h-screen w-full bg-[#050505] text-white font-sans selection:bg-[#8b7e6d] selection:text-white overflow-hidden relative">
+        <div className="flex min-h-screen w-full bg-background text-text-primary font-sans selection:bg-accent selection:text-white overflow-hidden relative">
             {/* dynamic Background Effects */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#8b7e6d]/10 blur-[150px] rounded-full opacity-30 animate-pulse" />
+                <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/10 blur-[150px] rounded-full opacity-30 animate-pulse" />
                 <div className="absolute bottom-[-10%] left-[-20%] w-[50%] h-[50%] bg-blue-900/5 blur-[120px] rounded-full opacity-20" />
             </div>
 
@@ -117,7 +117,7 @@ export default function LoginAuth() {
             <div className="flex flex-col lg:flex-row w-full z-10 relative">
                 
                 {/* Visual Section - Desktop */}
-                <div className="hidden lg:flex lg:w-[45%] flex-col justify-center px-16 relative overflow-hidden bg-[#0a0a0a]">
+                <div className="hidden lg:flex lg:w-[45%] flex-col justify-center px-16 relative overflow-hidden bg-secondary">
                     <motion.div 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -126,24 +126,24 @@ export default function LoginAuth() {
                     >
                         <Link to="/" className="inline-block mb-12">
                             <span className="text-4xl font-['Oswald'] tracking-[-0.05em] uppercase">
-                                Fenrir <span className="text-[#8b7e6d] italic font-['Bodoni_Moda'] lowercase">era</span>
+                                Fenrir <span className="text-accent italic font-['Bodoni_Moda'] lowercase">era</span>
                             </span>
                         </Link>
                         
-                        <h1 className="text-6xl xl:text-8xl font-['Bodoni_Moda'] italic mb-8 leading-[0.9] tracking-tight text-white/90">
-                            The New <br /> Standard <br /> <span className="not-italic font-['Oswald'] text-[#8b7e6d] uppercase">Of Luxury</span>
+                        <h1 className="text-6xl xl:text-8xl font-['Bodoni_Moda'] italic mb-8 leading-[0.9] tracking-tight text-text-primary/90">
+                            The New <br /> Standard <br /> <span className="not-italic font-['Oswald'] text-accent uppercase">Of Luxury</span>
                         </h1>
                         
-                        <div className="h-px w-24 bg-[#8b7e6d] mb-8" />
+                        <div className="h-px w-24 bg-accent mb-8" />
                         
-                        <p className="text-sm font-light text-white/40 max-w-sm leading-relaxed tracking-wide uppercase">
+                        <p className="text-sm font-light text-text-secondary/40 max-w-sm leading-relaxed tracking-wide uppercase">
                             Join our exclusive community and experience the finest curation of modern aesthetics.
                         </p>
                     </motion.div>
 
                     {/* Background Subtle Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-transparent opacity-60" />
-                    <div className="absolute top-0 right-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1974&auto=format&fit=crop')] bg-cover bg-center grayscale opacity-10 mix-blend-overlay" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-secondary via-transparent to-transparent opacity-60" />
+                    <div className="absolute top-0 right-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1974&auto=format&fit=crop')] bg-cover bg-center grayscale opacity-10 mix-blend-multiply" />
                 </div>
 
                 {/* Form Section */}
@@ -153,7 +153,7 @@ export default function LoginAuth() {
                         {/* Mobile Logo */}
                         <div className="lg:hidden mb-12 text-center">
                             <span className="text-3xl font-['Oswald'] tracking-tighter uppercase">
-                                Fenrir <span className="text-[#8b7e6d]">era</span>
+                                Fenrir <span className="text-accent">era</span>
                             </span>
                         </div>
 
@@ -171,10 +171,10 @@ export default function LoginAuth() {
                                         {isLogin ? "Welcome" : "Connect"}
                                     </h2>
                                     <div className="flex items-center gap-3">
-                                        <p className="text-[10px] uppercase tracking-[0.4em] text-white/40 font-bold">
+                                        <p className="text-[10px] uppercase tracking-[0.4em] text-text-secondary/40 font-bold">
                                             {isLogin ? "Secure Entry Interface" : "Create Modern Profile"}
                                         </p>
-                                        <div className="h-px w-8 bg-[#8b7e6d]/30" />
+                                        <div className="h-px w-8 bg-accent/30" />
                                     </div>
                                 </motion.div>
                             </AnimatePresence>
@@ -183,11 +183,11 @@ export default function LoginAuth() {
                         {/* Auth Box */}
                         <div className="relative">
                             {/* Glow Effect */}
-                            <div className="absolute -inset-1 bg-gradient-to-r from-[#8b7e6d]/20 to-transparent blur-2xl opacity-50" />
+                            <div className="absolute -inset-1 bg-gradient-to-r from-accent/20 to-transparent blur-2xl opacity-50" />
                             
                             <motion.div 
                                 layout
-                                className="relative bg-[#0d0d0d]/80 backdrop-blur-3xl border border-white/5 rounded-3xl p-8 lg:p-10"
+                                className="relative bg-secondary/80 backdrop-blur-3xl border border-text-primary/5 rounded-3xl p-8 lg:p-10"
                             >
                                 {/* Error Display */}
                                 <AnimatePresence>
@@ -207,16 +207,16 @@ export default function LoginAuth() {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {!isLogin && (
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Full Identity</label>
+                                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Full Identity</label>
                                             <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
                                                 <input
                                                     type="text"
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleChange}
                                                     placeholder="Enter your name"
-                                                    className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white text-sm focus:border-[#8b7e6d]/50 focus:bg-white/[0.04] transition-all outline-none"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
                                                     required
                                                 />
                                             </div>
@@ -224,16 +224,16 @@ export default function LoginAuth() {
                                     )}
 
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Secure Channel</label>
+                                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Secure Channel</label>
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
                                             <input
                                                 type="email"
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
                                                 placeholder="email@example.com"
-                                                className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white text-sm focus:border-[#8b7e6d]/50 focus:bg-white/[0.04] transition-all outline-none"
+                                                className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
                                                 required
                                             />
                                         </div>
@@ -242,20 +242,20 @@ export default function LoginAuth() {
                                     {isLogin && useOTP ? (
                                         <div className="space-y-2">
                                             <div className="flex justify-between items-center ml-1">
-                                                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">Verification Code</label>
+                                                <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70">Verification Code</label>
                                                 {otpSent && (
                                                     <button 
                                                         type="button"
                                                         onClick={handleSendOTP}
                                                         disabled={timer > 0 || isSubmitting}
-                                                        className="text-[8px] font-bold uppercase text-[#8b7e6d] disabled:text-white/20 transition-colors"
+                                                        className="text-[8px] font-bold uppercase text-accent disabled:text-text-secondary/20 transition-colors"
                                                     >
                                                         {timer > 0 ? `Resend in ${timer}s` : "Resend Code"}
                                                     </button>
                                                 )}
                                             </div>
                                             <div className="relative">
-                                                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                                                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
                                                 <input
                                                     type="text"
                                                     name="otp"
@@ -263,7 +263,7 @@ export default function LoginAuth() {
                                                     onChange={handleChange}
                                                     placeholder="• • • • • •"
                                                     disabled={!otpSent}
-                                                    className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white text-sm tracking-[0.5em] font-mono focus:border-[#8b7e6d]/50 focus:bg-white/[0.04] transition-all outline-none disabled:opacity-50"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm tracking-[0.5em] font-mono focus:border-accent focus:bg-background transition-all outline-none disabled:opacity-20 placeholder:text-text-secondary/20"
                                                     required={otpSent}
                                                     maxLength={6}
                                                 />
@@ -271,16 +271,16 @@ export default function LoginAuth() {
                                         </div>
                                     ) : (
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Access Pass</label>
+                                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Access Pass</label>
                                             <div className="relative">
-                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
                                                 <input
                                                     type="password"
                                                     name="password"
                                                     value={formData.password}
                                                     onChange={handleChange}
                                                     placeholder="••••••••"
-                                                    className="w-full bg-white/[0.02] border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white text-sm focus:border-[#8b7e6d]/50 focus:bg-white/[0.04] transition-all outline-none"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
                                                     required
                                                 />
                                             </div>
@@ -295,7 +295,7 @@ export default function LoginAuth() {
                                                 onClick={handleSendOTP}
                                                 disabled={isSubmitting}
                                                 type="button"
-                                                className="w-full py-4 bg-[#8b7e6d] hover:bg-[#a69683] text-black text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all flex items-center justify-center gap-3"
+                                                className="w-full py-4 bg-accent hover:bg-accent/80 text-background text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all flex items-center justify-center gap-3"
                                             >
                                                 {isSubmitting ? "Generating..." : "Get Verification Code"}
                                                 <ArrowRight size={14} />
@@ -306,10 +306,10 @@ export default function LoginAuth() {
                                                 whileTap={{ scale: 0.98 }}
                                                 disabled={isSubmitting}
                                                 type="submit"
-                                                className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-3 group"
+                                                className="w-full py-4 bg-text-primary text-background text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl transition-all shadow-[0_0_20px_rgba(0,0,0,0.1)] flex items-center justify-center gap-3 group"
                                             >
                                                 {isSubmitting ? "Finalizing..." : (isLogin ? "Authenticate" : "Create Account")}
-                                                <Sparkles className="group-hover:text-[#8b7e6d] transition-colors" size={14} />
+                                                <Sparkles className="group-hover:text-accent transition-colors" size={14} />
                                             </motion.button>
                                         )}
                                     </div>
@@ -318,9 +318,9 @@ export default function LoginAuth() {
                                 {/* Alternate Methods */}
                                 <div className="mt-8">
                                     <div className="flex items-center gap-4 mb-6">
-                                        <div className="h-px flex-1 bg-white/5" />
-                                        <span className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em]">Social Access</span>
-                                        <div className="h-px flex-1 bg-white/5" />
+                                        <div className="h-px flex-1 bg-border-subtle/40" />
+                                        <span className="text-[8px] font-bold text-text-secondary/60 uppercase tracking-[0.3em]">Social Access</span>
+                                        <div className="h-px flex-1 bg-border-subtle/40" />
                                     </div>
 
                                     <div className="flex flex-col gap-4">
@@ -344,7 +344,7 @@ export default function LoginAuth() {
                                                 setUseOTP(!useOTP);
                                                 setError("");
                                             }}
-                                            className="w-full py-3 text-[9px] font-bold uppercase tracking-widest text-white/30 hover:text-white transition-colors"
+                                            className="w-full py-3 text-[9px] font-bold uppercase tracking-widest text-text-secondary/80 hover:text-text-primary transition-colors"
                                         >
                                             {useOTP ? "Use Password Instead" : "Switch to OTP Verification"}
                                         </button>
@@ -361,10 +361,10 @@ export default function LoginAuth() {
                                     setError("");
                                     setOtpSent(false);
                                 }}
-                                className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 hover:text-white transition-all"
+                                className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/40 hover:text-text-primary transition-all"
                             >
                                 {isLogin ? "Become a Member" : "Existing Member Login"}
-                                <div className="h-px w-4 bg-[#8b7e6d] transition-all group-hover:w-8" />
+                                <div className="h-px w-4 bg-accent transition-all group-hover:w-8" />
                             </button>
                         </div>
                     </div>
@@ -372,11 +372,11 @@ export default function LoginAuth() {
             </div>
 
             {/* Subtle Footer */}
-            <div className="absolute bottom-6 w-full px-12 hidden lg:flex justify-between items-center text-[7px] font-bold uppercase tracking-[0.5em] text-white/10 pointer-events-none">
+            <div className="absolute bottom-6 w-full px-12 hidden lg:flex justify-between items-center text-[7px] font-bold uppercase tracking-[0.5em] text-text-secondary/20 pointer-events-none">
                 <p>© 2024 Fenrir era / All Rights Reserved</p>
                 <div className="flex gap-8 pointer-events-auto">
-                    <a href="#" className="hover:text-white transition-colors">Digital Atelier</a>
-                    <a href="#" className="hover:text-white transition-colors">Terms of Presence</a>
+                    <a href="#" className="hover:text-text-primary transition-colors">Digital Atelier</a>
+                    <a href="#" className="hover:text-text-primary transition-colors">Terms of Presence</a>
                 </div>
             </div>
         </div>

@@ -2,13 +2,17 @@
 
 @theme {
   /* Brand Colors */
-  --color-primary: #000000;
-  --color-secondary: #121212;
-  --color-accent: #d4c4b1;
-  --color-background: #0a0a0a;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #9ca3af;
-  --color-danger: #ef4444;
+  --color-primary: #FBFAF5;
+  --color-secondary: #F4F2E9;
+  --color-accent: #B8860B;
+  --color-background: #FBFAF5;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #404040;
+  --color-text-muted: #666666;
+  --color-text-tertiary: #888888;
+  --color-accent-contrast: #966900;
+  --color-danger: #D32F2F;
+  --color-border-subtle: #D8D2C2;
 
   /* Legacy aliases for compatibility */
   --color-charcoal: var(--color-secondary);
@@ -67,7 +71,7 @@
     }
     
     .header-scrolled {
-        @apply backdrop-blur-[40px] saturate-[180%] bg-black/75 border-b border-white/5;
+        @apply backdrop-blur-[40px] saturate-[180%] bg-secondary/75 border-b border-border-subtle;
         transition: background-color 0.3s, height 0.3s, border-color 0.3s, backdrop-filter 0.3s;
     }
 
@@ -78,7 +82,7 @@
     }
 
     .mega-menu {
-        @apply absolute top-[100%] left-0 w-screen bg-[#0a0a0a]/[0.99] z-[999] shadow-[0_40px_100px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.03)] border-t border-white/[0.03] pointer-events-auto;
+        @apply absolute top-[100%] left-0 w-screen bg-secondary/[0.99] z-[999] shadow-[0_40px_100px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.03)] border-t border-border-subtle pointer-events-auto;
     }
     .mega-menu::before {
         content: '';
@@ -151,14 +155,14 @@
 
     /* Luxury Design System Utilities */
     .luxury-card {
-        @apply bg-secondary border border-[#1f1f1f] shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out;
+        @apply bg-secondary border border-border-subtle shadow-[0_10px_30px_rgba(150,105,0,0.05)] transition-all duration-300 ease-in-out;
     }
     .luxury-card:hover {
-        @apply scale-[1.02] shadow-[0_20px_40px_rgba(0,0,0,0.6)] border-accent/20;
+        @apply scale-[1.02] shadow-[0_20px_40px_rgba(150,105,0,0.1)] border-accent/20;
     }
 
     .luxury-input {
-        @apply bg-secondary border border-[#1f1f1f] text-text-primary px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20;
+        @apply bg-secondary border border-border-subtle text-text-primary px-4 py-3 rounded-xl transition-all duration-300 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20;
     }
 
     .luxury-button {
@@ -166,11 +170,11 @@
     }
 
     .luxury-gradient-bg {
-        background: linear-gradient(to bottom, #000000, #0a0a0a);
+        background: linear-gradient(to bottom, var(--color-background), var(--color-secondary));
     }
 
     .luxury-gradient-dark {
-        background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(10,10,10,1) 100%);
+        background: linear-gradient(180deg, var(--color-background) 0%, var(--color-secondary) 100%);
     }
 
     .luxury-text-primary {
@@ -204,7 +208,7 @@ html.lenis body {
 }
 
 body {
-    @apply bg-[#0a0a0a] text-white antialiased;
+    @apply bg-background text-text-primary antialiased;
 }
 
 /* Custom scrollbar for premium feel */
@@ -213,14 +217,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #0a0a0a;
+    background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #333;
+    background: var(--color-border-subtle);
     border-radius: 10px;
+    border: 1px solid var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--color-accent-contrast);
 }

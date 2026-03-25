@@ -42,16 +42,16 @@ const PromotionalBanner = ({ banner }) => {
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
           alt={banner.title} 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-8 md:px-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent flex flex-col justify-center px-8 md:px-16">
           <span className="text-accent text-[10px] font-black tracking-[0.5em] uppercase mb-4">{banner.offerType?.replace(/_/g, ' ') || 'PROMOTION'}</span>
-          <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-white mb-2 leading-none">
+          <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-text-primary mb-2 leading-none">
             {banner.bannerText || banner.title}
           </h3>
-          <p className="text-white/60 text-xs md:text-sm max-w-md line-clamp-2 uppercase tracking-widest font-bold">
+          <p className="text-text-secondary/80 text-xs md:text-sm max-w-md line-clamp-2 uppercase tracking-widest font-bold">
             {banner.description}
           </p>
           <div className="mt-8">
-            <button className="bg-white text-black text-[10px] font-black py-4 px-10 rounded-xl uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-colors">
+            <button className="bg-text-primary text-primary text-[10px] font-black py-4 px-10 rounded-xl uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-colors">
               Claim Offer
             </button>
           </div>
@@ -69,7 +69,7 @@ function Home() {
 
   return (
     <motion.main
-      className="bg-black text-white w-full overflow-x-hidden selection:bg-white/90 selection:text-black pt-16 md:pt-24"
+      className="bg-background text-text-primary w-full overflow-x-hidden selection:bg-accent selection:text-white pt-16 md:pt-24"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: "easeOut" }}

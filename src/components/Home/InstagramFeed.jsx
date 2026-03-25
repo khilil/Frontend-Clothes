@@ -32,6 +32,7 @@ const feedItems = [
 function InstagramFeed() {
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   return (
     <section className="py-[80px] sm:py-[120px] bg-[#0a0a0a]">
       <div className="container-wide">
@@ -83,6 +84,42 @@ function InstagramFeed() {
                       <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase">VIEW ARCHIVE</span>
                     </div>
                   </div>
+=======
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 auto-rows-[400px] sm:auto-rows-[300px] lg:auto-rows-[150px] gap-6">
+                    {feedItems.map((item, index) => {
+                        const getGridClasses = (i) => {
+                            switch (i) {
+                                case 1: return "sm:col-span-1 sm:row-span-1 lg:col-[1/4] lg:row-[1/4]";
+                                case 2: return "sm:col-span-1 sm:row-span-1 lg:col-[4/7] lg:row-[1/3]";
+                                case 3: return "sm:col-span-1 sm:row-span-1 lg:col-[7/10] lg:row-[1/4]";
+                                case 4: return "sm:col-span-1 sm:row-span-1 lg:col-[10/13] lg:row-[1/3]";
+                                case 5: return "sm:col-span-1 sm:row-span-1 lg:col-[4/7] lg:row-[3/5]";
+                                case 6: return "sm:col-span-1 sm:row-span-1 lg:col-[10/13] lg:row-[3/5]";
+                                default: return "";
+                            }
+                        };
+                        return (
+                        <motion.div
+                            key={index}
+                            className={`relative cursor-pointer group ${getGridClasses(index + 1)}`}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1, duration: 0.8 }}
+                            onClick={() => navigate("/category/all")}
+                        >
+                            <div className="relative w-full h-full overflow-hidden bg-[#111]">
+                                <img src={item.image} alt="Social Feed" className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-background/40 backdrop-blur-[5px] flex items-center justify-center opacity-0 transition-all duration-400 ease group-hover:opacity-100">
+                                    <div className="flex flex-col items-center gap-3 translate-y-5 transition-all duration-400 ease group-hover:translate-y-0">
+                                        <Instagram size={20} color="#d4c4b1" />
+                                        <span className="text-[9px] font-black tracking-[0.3em] text-white uppercase">VIEW ARCHIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )})}
+>>>>>>> origin/main
                 </div>
               </motion.div>
             );

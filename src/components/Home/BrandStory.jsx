@@ -13,12 +13,12 @@ function BrandStory() {
     const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     return (
-        <section className="relative min-h-[100vh] bg-black py-[100px] sm:py-[160px] overflow-hidden" ref={containerRef}>
+        <section className="relative min-h-[100vh] bg-background py-[100px] sm:py-[160px] overflow-hidden" ref={containerRef}>
             <motion.div
                 className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center z-[1] opacity-30"
                 style={{ y }}
             >
-                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#000_0%,transparent_50%,#000_100%)] z-[2]"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-background)_0%,transparent_50%,var(--color-background)_100%)] z-[2]"></div>
             </motion.div>
 
             <div className="relative z-[5] max-w-[1400px] mx-auto px-10">
@@ -31,15 +31,15 @@ function BrandStory() {
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-3 block">THE PHILOSOPHY</span>
-                        <h2 className="font-oswald text-[clamp(60px,12vw,140px)] leading-[0.85] tracking-[-0.04em] uppercase font-black text-white">
+                        <h2 className="font-oswald text-[clamp(60px,12vw,140px)] leading-[0.85] tracking-[-0.04em] uppercase font-black text-text-primary">
                             ENGINEERING <br />
-                            <span className="[-webkit-text-stroke:1.5px_rgba(212,196,177,0.5)] text-transparent">FENRIR</span>
+                            <span className="[-webkit-text-stroke:1.5px_rgba(184,134,11,0.5)] text-transparent">FENRIR</span>
                         </h2>
                     </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-[60px] lg:gap-[120px] items-center mb-[120px]">
                         <motion.div
-                            className="relative aspect-[4/5] overflow-hidden border border-white/10 order-2 md:order-1"
+                            className="relative aspect-[4/5] overflow-hidden border border-border-subtle order-2 md:order-1"
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
@@ -55,11 +55,11 @@ function BrandStory() {
                             viewport={{ once: true }}
                             transition={{ delay: 0.4, duration: 1 }}
                         >
-                            <p className="text-xl leading-[1.6] font-normal text-white mb-10 tracking-[-0.01em]">
+                            <p className="text-xl leading-[1.6] font-normal text-text-primary mb-10 tracking-[-0.01em]">
                                 We bridge the gap between utilitarian durability and high-street aesthetics.
                                 Every garment is a statement of intent, engineered to survive trends and the test of time.
                             </p>
-                            <p className="text-sm leading-[1.8] text-white/50 mb-[60px] uppercase tracking-[0.1em]">
+                            <p className="text-sm leading-[1.8] text-text-secondary mb-[60px] uppercase tracking-[0.1em]">
                                 Born in 2024, Fenrir represents the fusion of urban aesthetics and utility.
                                 We believe in the legacy of detail and the power of uncompromising craftsmanship.
                             </p>
@@ -72,23 +72,23 @@ function BrandStory() {
                 </div>
 
                 <motion.div
-                    className="flex flex-wrap md:flex-nowrap justify-between pt-[100px] border-t border-white/10 gap-10 md:gap-0"
+                    className="flex flex-wrap md:flex-nowrap justify-between pt-[100px] border-t border-border-subtle gap-10 md:gap-0"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.8, duration: 1 }}
                 >
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
-                        <span className="font-oswald text-[40px] font-black text-white">100%</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase">ORIGINAL ARCHIVE</span>
+                        <span className="font-oswald text-[40px] font-black text-text-primary">100%</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">ORIGINAL ARCHIVE</span>
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
-                        <span className="font-oswald text-[40px] font-black text-white">EST.</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase">2024 / MUMBAI</span>
+                        <span className="font-oswald text-[40px] font-black text-text-primary">EST.</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">2024 / MUMBAI</span>
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
-                        <span className="font-oswald text-[40px] font-black text-white">GLOBAL</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase">DISPATCH AVAILABLE</span>
+                        <span className="font-oswald text-[40px] font-black text-text-primary">GLOBAL</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">DISPATCH AVAILABLE</span>
                     </div>
                 </motion.div>
             </div>

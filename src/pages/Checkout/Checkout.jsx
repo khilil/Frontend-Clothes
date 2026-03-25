@@ -265,7 +265,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="bg-white selection:bg-[#d4c4b1] selection:text-black font-sans text-black min-h-screen">
+    <div className="bg-background selection:bg-accent selection:text-white font-sans text-text-primary min-h-screen">
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-12">
         {/* PROGRESS STEPPER */}
@@ -309,7 +309,7 @@ export default function Checkout() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex justify-between items-center mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none"
+                  className="flex justify-between items-center mb-8 sticky top-20 bg-background/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-border-subtle md:border-0 md:bg-transparent md:backdrop-blur-none"
                 >
                   <h2 className="text-xl md:text-2xl font-[Oswald] uppercase tracking-tight leading-none">Shipping Interface</h2>
                   {user?.addresses?.length > 0 && (
@@ -328,7 +328,7 @@ export default function Checkout() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="text-2xl font-[Oswald] uppercase tracking-tight mb-8 sticky top-20 bg-white/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-50 md:border-0 md:bg-transparent md:backdrop-blur-none"
+                  className="text-2xl font-[Oswald] uppercase tracking-tight mb-8 sticky top-20 bg-background/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-border-subtle md:border-0 md:bg-transparent md:backdrop-blur-none"
                 >
                   Payment Methodology
                 </motion.h2>
@@ -354,7 +354,7 @@ export default function Checkout() {
                           <div
                             key={addr._id}
                             onClick={() => setSelectedAddressId(addr._id)}
-                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group ${selectedAddressId === addr._id ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-200'}`}
+                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group ${selectedAddressId === addr._id ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/30'}`}
                           >
                             <div className="flex justify-between items-start mb-4">
                               <p className="text-[10px] font-black uppercase tracking-widest text-black">{addr.fullName}</p>

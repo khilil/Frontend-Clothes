@@ -104,7 +104,7 @@ export default function TextEditorSidebar() {
                         </label>
                         <input
                             type="text"
-                            defaultValue="Studio Edit"
+                            defaultValue="FENRIR EDIT"
                             onChange={handleTextChange}
                             className="w-full bg-[#1a1a1a]/50 border border-white/5 p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-white focus:ring-1 focus:ring-[#d4c4b1]/50 focus:border-[#d4c4b1]/50 transition-all outline-none"
                         />
