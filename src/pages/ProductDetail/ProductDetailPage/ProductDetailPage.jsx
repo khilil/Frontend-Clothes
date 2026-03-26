@@ -338,9 +338,9 @@ export default function ProductDetailPage() {
     ];
 
     return (
-        <main className="pt-20 bg-background text-text-primary selection:bg-accent selection:text-white overflow-x-hidden">
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-6 md:py-12">
-                <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-start">
+        <main className="pt-12 md:pt-20 bg-background text-text-primary selection:bg-accent selection:text-white overflow-x-hidden">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-2 md:py-12">
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-20 items-start">
 
                     {/* LEFT: MEDIA GALLERY */}
                     <section className="w-full lg:w-[55%] lg:sticky lg:top-28">
@@ -367,7 +367,7 @@ export default function ProductDetailPage() {
                             <div className="flex-1 relative group bg-secondary rounded-sm overflow-hidden border border-border-subtle">
                                 {/* Desktop/Mobile Main Stage */}
                                 <div 
-                                    className="relative aspect-[3/4] w-full"
+                                    className="relative aspect-square lg:aspect-[3/4] w-full"
                                 >
                                     <AnimatePresence initial={false} custom={direction} mode="popLayout">
                                         <motion.img
@@ -446,13 +446,13 @@ export default function ProductDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Mobile Horizontal Thumbnails (Optional, simplified for clean look) */}
+                            {/* Mobile Horizontal Thumbnails */}
                             <div className="lg:hidden flex gap-2.5 overflow-x-auto no-scrollbar px-1 pb-2 h-20 snap-x snap-mandatory">
                                 {images.map((img, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setActiveImage(i)}
-                                        className={`relative flex-shrink-0 w-16 aspect-[3/4] overflow-hidden transition-all snap-center rounded-sm border
+                                        className={`relative flex-shrink-0 w-16 aspect-square overflow-hidden transition-all snap-center rounded-sm border
                                             ${i === activeImage ? "border-accent" : "border-white/5 opacity-50"}
                                         `}
                                     >

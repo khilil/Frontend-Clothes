@@ -67,16 +67,16 @@ const ProductCard = React.memo(({ product }) => {
     >
       <Link to={`/product/${product.slug}`} className="no-underline text-inherit flex flex-col h-full">
         {/* Image Container with Cinematic Zoom and Quick Sizes */}
-        <div className="relative aspect-[3/3.8] overflow-hidden bg-neutral-50">
+        <div className="relative aspect-[4/5] md:aspect-[3/3.8] overflow-hidden bg-neutral-50">
           {/* Badges - Premium Soft Glass */}
-          <div className="absolute top-[20px] left-[20px] z-[20] flex flex-col gap-[8px]">
+          <div className="absolute top-[16px] left-[16px] md:top-[20px] md:left-[20px] z-[20] flex flex-col gap-[6px] md:gap-[8px]">
             {product.isNewArrival && (
-              <span className="text-[9px] font-black tracking-[0.2em] py-[6px] px-[12px] uppercase backdrop-blur-xl bg-black text-white rounded-full shadow-lg">
+              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-black text-white rounded-full shadow-lg">
                 NEW
               </span>
             )}
             {(product.isOnSale || hasActiveOffer) && (
-              <span className="text-[9px] font-black tracking-[0.2em] py-[6px] px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
+              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
                 {activeOffer?.offerType ? activeOffer.offerType.replace(/_/g, ' ') : 'SALE'}
               </span>
             )}
@@ -84,7 +84,7 @@ const ProductCard = React.memo(({ product }) => {
 
           {/* Wishlist Icon - Minimal Contours */}
           <button
-            className={`absolute top-[20px] right-[20px] z-[20] w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-xl border border-black/5 transition-all duration-500 hover:scale-110 ${isLiked ? 'bg-black text-white border-black' : 'bg-white/40 text-black hover:bg-black hover:text-white'}`}
+            className={`absolute top-[16px] right-[16px] md:top-[20px] md:right-[20px] z-[20] w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center backdrop-blur-xl border border-black/5 transition-all duration-500 hover:scale-110 ${isLiked ? 'bg-black text-white border-black' : 'bg-white/40 text-black hover:bg-black hover:text-white'}`}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -92,7 +92,7 @@ const ProductCard = React.memo(({ product }) => {
             }}
           >
             <motion.span
-              className="material-symbols-outlined text-lg"
+              className="material-symbols-outlined text-base md:text-lg"
               animate={isLiked ? { scale: [1, 1.3, 1] } : {}}
               style={{ fontVariationSettings: isLiked ? "'FILL' 1" : "'FILL' 0" }}
             >
@@ -116,17 +116,17 @@ const ProductCard = React.memo(({ product }) => {
           <AnimatePresence>
             {isHovered && sizes.length > 0 && (
               <motion.div
-                className="absolute left-0 bottom-0 w-full z-[30] backdrop-blur-lg bg-white/70 border-t border-black/5 p-4"
+                className="absolute left-0 bottom-0 w-full z-[30] backdrop-blur-lg bg-white/70 border-t border-black/5 p-3 md:p-4"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="flex flex-col gap-2">
-                  <span className="text-[8px] font-black text-black/30 tracking-[0.3em] uppercase">Quick Add</span>
-                  <div className="flex gap-3 flex-wrap">
+                <div className="flex flex-col gap-1.5 md:gap-2">
+                  <span className="text-[7px] md:text-[8px] font-black text-black/30 tracking-[0.3em] uppercase">Quick Add</span>
+                  <div className="flex gap-2.5 md:gap-3 flex-wrap">
                     {sizes.map(size => (
-                      <span key={size} className="text-[10px] font-black text-black/80 hover:text-accent transition-colors cursor-default tracking-widest">{size}</span>
+                      <span key={size} className="text-[9px] md:text-[10px] font-black text-black/80 hover:text-accent transition-colors cursor-default tracking-widest">{size}</span>
                     ))}
                   </div>
                 </div>
@@ -135,22 +135,22 @@ const ProductCard = React.memo(({ product }) => {
           </AnimatePresence>
         </div>
 
-        <div className="p-4 md:p-6 bg-white grow flex flex-col gap-3 md:gap-4 border-t border-neutral-100">
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+        <div className="p-3.5 md:p-6 bg-white grow flex flex-col gap-2 md:gap-4 border-t border-neutral-100">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-1.5 md:gap-2">
             <div className="flex flex-col gap-0.5 md:gap-1">
-              <span className="text-[9px] md:text-[10px] font-black text-accent tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40 group-hover:opacity-100 transition-opacity">
+              <span className="text-[8px] md:text-[10px] font-black text-accent tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40 group-hover:opacity-100 transition-opacity">
                 {product.brand || "FENRIR ERA"}
               </span>
-              <h3 className="text-[12px] md:text-[13px] font-bold text-neutral-900 leading-tight uppercase tracking-widest group-hover:text-black transition-colors duration-500 line-clamp-2">
+              <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-900 leading-tight uppercase tracking-widest group-hover:text-black transition-colors duration-500 line-clamp-2">
                 {product.title}
               </h3>
             </div>
             <div className="flex flex-col items-start sm:items-end gap-[1px] shrink-0">
-              <span className="text-[15px] md:text-lg font-[1000] text-black tracking-tighter italic">
+              <span className="text-[14px] md:text-lg font-[1000] text-black tracking-tighter italic">
                 ₹{hasActiveOffer ? finalPrice : product.price}
               </span>
               {displayCompareAtPrice && (
-                <span className="text-[10px] text-neutral-400 line-through font-medium tracking-tighter">
+                <span className="text-[9px] md:text-[10px] text-neutral-400 line-through font-medium tracking-tighter">
                   ₹{displayCompareAtPrice}
                 </span>
               )}

@@ -44,13 +44,13 @@ export default function Reviews() {
     if (!reviews.length) return null;
 
     return (
-        <section className="py-16 md:py-32 bg-[#0a0a0a] border-t border-white/5">
+        <section className="py-16 md:py-32 bg-white border-t border-neutral-100">
             <div className="max-w-[1920px] mx-auto px-4 md:px-12">
 
                 {/* HEADER */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 md:mb-16">
                     <div>
-                        <h2 className="text-3xl md:text-5xl font-impact tracking-tighter mb-4">
+                        <h2 className="text-3xl md:text-5xl font-impact tracking-tighter mb-4 text-neutral-900">
                             CUSTOMER REVIEWS
                         </h2>
 
@@ -62,13 +62,13 @@ export default function Reviews() {
                                 <span className="material-symbols-outlined text-xl md:text-2xl">star_half</span>
                             </div>
 
-                            <span className="text-[9px] md:text-[11px] font-bold uppercase tracking-widest text-white/40">
+                            <span className="text-[9px] md:text-[11px] font-bold uppercase tracking-widest text-neutral-400">
                                 4.8 Average (1,240 Reviews)
                             </span>
                         </div>
                     </div>
 
-                    <button className="w-full md:w-auto px-10 py-4 border border-white/10 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                    <button className="w-full md:w-auto px-10 py-4 border border-neutral-200 text-[11px] font-black uppercase tracking-widest hover:bg-neutral-900 hover:text-white transition-all text-neutral-900">
                         Write a Review
                     </button>
                 </div>
@@ -78,7 +78,7 @@ export default function Reviews() {
                     {reviews.map(review => (
                         <div
                             key={review.id}
-                            className="bg-[#121212] p-6 md:p-10 border border-white/5 hover:border-white/20 transition-all flex flex-col justify-between"
+                            className="bg-neutral-50 p-6 md:p-10 border border-neutral-100 hover:border-neutral-200 transition-all flex flex-col justify-between"
                         >
                             <div>
                                 <div className="flex justify-between items-start mb-6">
@@ -94,16 +94,16 @@ export default function Reviews() {
                                         </div>
                                     )}
                                 </div>
-                                <h4 className="text-[11px] md:text-[12px] font-black uppercase tracking-widest mb-3">
+                                <h4 className="text-[11px] md:text-[12px] font-black uppercase tracking-widest mb-3 text-neutral-900">
                                     {review.title}
                                 </h4>
-                                <p className="text-white/60 text-[10px] md:text-[11px] leading-relaxed tracking-wider uppercase">
+                                <p className="text-neutral-600 text-[10px] md:text-[11px] leading-relaxed tracking-wider uppercase">
                                     {review.review}
                                 </p>
                             </div>
-                            <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                                <span className="text-[9px] font-black uppercase tracking-widest">{review.name}</span>
-                                <span className="text-[8px] font-bold uppercase text-white/20">{review.time}</span>
+                            <div className="mt-8 pt-6 border-t border-neutral-100 flex items-center justify-between">
+                                <span className="text-[9px] font-black uppercase tracking-widest text-neutral-900">{review.name}</span>
+                                <span className="text-[8px] font-bold uppercase text-neutral-300">{review.time}</span>
                             </div>
                         </div>
                     ))}
