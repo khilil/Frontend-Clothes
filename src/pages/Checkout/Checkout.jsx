@@ -19,8 +19,9 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const [checkoutStep, setCheckoutStep] = useState("shipping"); // "shipping" | "payment"
+  const [checkoutStep, setCheckoutStep] = useState("shipping");
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [completedOrderId, setCompletedOrderId] = useState(null);
 
   // 🛡️ Load Razorpay Script Dynamically
   const loadRazorpayScript = () => {
@@ -188,6 +189,9 @@ export default function Checkout() {
         result = await orderService.cartCheckout(orderData);
       }
 
+      const orderId = result.data._id;
+      setCompletedOrderId(orderId);
+
       // 💳 Razorpay Integration for Online Payments
       if (formData.paymentMethod === "ONLINE" || formData.paymentMethod === "UPI") {
         const scriptLoaded = await loadRazorpayScript();
@@ -272,7 +276,7 @@ export default function Checkout() {
         <div className="flex items-center justify-center mb-12 sm:mb-20 max-w-3xl mx-auto px-4">
           <StepperItem
             label="Cart"
-            active={true}
+            active={false}
             completed={true}
             showLine={true}
             lineActive={true}
@@ -311,12 +315,12 @@ export default function Checkout() {
                   exit={{ opacity: 0, y: -10 }}
                   className="flex justify-between items-center mb-8 sticky top-20 bg-background/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-border-subtle md:border-0 md:bg-transparent md:backdrop-blur-none"
                 >
-                  <h2 className="text-xl md:text-2xl font-[Oswald] uppercase tracking-tight leading-none">Shipping Interface</h2>
+                  <h2 className="text-xl md:text-2xl font-primary uppercase tracking-tight leading-none">Shipping Interface</h2>
                   {user?.addresses?.length > 0 && (
                     <button
                       type="button"
                       onClick={() => setShowNewAddressForm(!showNewAddressForm)}
-                      className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] hover:text-black transition-all hover:bg-gray-50 px-3 py-2 rounded-lg"
+                      className="text-[10px] font-black uppercase tracking-widest text-accent hover:text-text-primary transition-all px-3 py-2 rounded-lg"
                     >
                       {showNewAddressForm ? "Select Existing" : "+ Add New Address"}
                     </button>
@@ -328,7 +332,7 @@ export default function Checkout() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="text-2xl font-[Oswald] uppercase tracking-tight mb-8 sticky top-20 bg-background/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-border-subtle md:border-0 md:bg-transparent md:backdrop-blur-none"
+                  className="text-2xl font-primary uppercase tracking-tight mb-8 sticky top-20 bg-background/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-border-subtle md:border-0 md:bg-transparent md:backdrop-blur-none"
                 >
                   Payment Methodology
                 </motion.h2>
@@ -354,104 +358,104 @@ export default function Checkout() {
                           <div
                             key={addr._id}
                             onClick={() => setSelectedAddressId(addr._id)}
-                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group ${selectedAddressId === addr._id ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/30'}`}
+                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group luxury-card ${selectedAddressId === addr._id ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/30'}`}
                           >
                             <div className="flex justify-between items-start mb-4">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-black">{addr.fullName}</p>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-text-primary">{addr.fullName}</p>
                               {selectedAddressId === addr._id && (
-                                <span className="material-symbols-outlined text-black text-lg">check_circle</span>
+                                <span className="material-symbols-outlined text-accent text-lg">verified</span>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 leading-relaxed uppercase tracking-wider">
+                            <p className="text-xs text-text-muted leading-relaxed uppercase tracking-wider">
                               {addr.streetAddress},<br />
                               {addr.city}, {addr.state} - {addr.pinCode}
                             </p>
-                            <p className="mt-4 text-[10px] font-black text-gray-400 tracking-widest">PHONE: {addr.phone}</p>
+                            <p className="mt-4 text-[10px] font-black text-text-tertiary tracking-widest">DIGITAL: {addr.phone}</p>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/30 p-8 rounded-3xl border border-dashed border-gray-200">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-secondary/30 p-8 rounded-3xl border border-dashed border-border-subtle">
                         <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">First Name</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">First Name</label>
                           <input
                             name="firstName"
                             value={formData.firstName}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="James"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Last Name</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Last Name</label>
                           <input
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="Stirling"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Digital Contact</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Digital Contact</label>
                           <input
                             name="phone"
                             value={formData.phone}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="+91 XXXXX XXXXX"
                             type="tel"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Street Domain</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Street Domain</label>
                           <input
                             name="addressLine"
                             value={formData.addressLine}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="245 Fifth Avenue, Apartment 4B"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Urban City</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Urban City</label>
                           <input
                             name="city"
                             value={formData.city}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="New York"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Regional State</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Regional State</label>
                           <input
                             name="state"
                             value={formData.state}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="New York"
                             type="text"
                           />
                         </div>
                         <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Zip Protocol</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Zip Protocol</label>
                           <input
                             name="pincode"
                             value={formData.pincode}
                             onChange={handleInputChange}
                             required={showNewAddressForm}
-                            className="w-full border-gray-100 bg-white rounded-xl py-4 px-5 text-sm focus:border-black focus:ring-0 transition-all outline-none"
+                            className="luxury-input w-full"
                             placeholder="100116"
                             type="text"
                           />
@@ -462,7 +466,7 @@ export default function Checkout() {
                       <button
                         type="button"
                         onClick={goToPayment}
-                        className="h-16 px-12 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-xl shadow-xl shadow-black/10"
+                        className="luxury-button"
                       >
                         Continue to Payment
                       </button>
@@ -479,23 +483,23 @@ export default function Checkout() {
                     className="space-y-12"
                   >
                     {/* REVIEW CARD */}
-                    <section className="bg-gray-50/50 p-8 rounded-2xl border border-gray-100 relative">
+                    <section className="bg-secondary/50 p-8 rounded-2xl border border-border-subtle relative">
                       <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-[Oswald] uppercase tracking-tight">Review & Pay</h2>
+                        <h2 className="text-xl font-primary uppercase tracking-tight">Review & Pay</h2>
                         <button
                           type="button"
                           onClick={() => setCheckoutStep("shipping")}
-                          className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-all border-b border-gray-200 hover:border-black"
+                          className="text-[10px] font-black uppercase tracking-widest text-accent hover:text-text-primary transition-all underline underline-offset-4"
                         >
-                          Edit Address
+                          Modify Destination
                         </button>
                       </div>
                       <div className="flex items-start gap-4">
-                        <span className="material-symbols-outlined text-gray-400 text-xl">location_on</span>
+                        <span className="material-symbols-outlined text-accent text-xl">location_on</span>
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Shipping To</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-text-tertiary mb-1">Shipping To</p>
                           <p className="text-sm font-bold uppercase">{selectedAddress?.fullName}</p>
-                          <p className="text-sm text-gray-500 uppercase tracking-wider mt-1">
+                          <p className="text-sm text-text-muted uppercase tracking-wider mt-1">
                             {selectedAddress?.streetAddress}, {selectedAddress?.city}, {selectedAddress?.state} - {selectedAddress?.pinCode}, IN
                           </p>
                         </div>
@@ -521,49 +525,90 @@ export default function Checkout() {
                   /* SUCCESS SECTION */
                   <motion.div
                     key="done"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex flex-col items-center justify-center py-12 md:py-24 text-center space-y-8 min-h-[50vh]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center justify-center py-12 md:py-24 text-center min-h-[60vh] relative overflow-hidden"
                   >
-                    <div className="relative">
+                    {/* Sparkle Particles */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      {[...Array(6)].map((_, i) => (
+                        <motion.span
+                          key={i}
+                          className="material-symbols-outlined absolute text-accent/30 animate-sparkle"
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            fontSize: `${Math.random() * 20 + 20}px`,
+                            animationDelay: `${i * 0.5}s`
+                          }}
+                        >
+                          sparkle
+                        </motion.span>
+                      ))}
+                    </div>
+
+                    <div className="relative mb-12">
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 260,
-                          damping: 20,
-                          delay: 0.2
-                        }}
-                        className="w-24 h-24 md:w-32 md:h-32 bg-black rounded-full flex items-center justify-center shadow-2xl relative z-10"
+                        initial={{ scale: 0, rotate: -45 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                        className="w-32 h-32 md:w-40 md:h-40 bg-text-primary rounded-full flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.3)] relative z-10 animate-luxury-glow"
                       >
                         <motion.span
                           initial={{ pathLength: 0, opacity: 0 }}
                           animate={{ pathLength: 1, opacity: 1 }}
-                          transition={{ duration: 0.8, delay: 0.5 }}
-                          className="material-symbols-outlined text-white text-4xl md:text-6xl font-bold"
+                          transition={{ duration: 1, delay: 0.5 }}
+                          className="material-symbols-outlined text-primary text-6xl md:text-7xl"
                         >
-                          check
+                          verified
                         </motion.span>
                       </motion.div>
+                      <div className="absolute -inset-4 border border-accent/20 rounded-full animate-ping opacity-20" />
+                    </div>
+
+                    <div className="space-y-6 max-w-lg mx-auto z-10">
                       <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1.5, opacity: 0 }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                        className="absolute inset-0 border-2 border-black rounded-full"
-                      />
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                      >
+                        <h2 className="text-4xl md:text-6xl font-primary uppercase tracking-tighter leading-none mb-4">Order Confirmed</h2>
+                        <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-accent">Payment Verified • Bag Captured</p>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.2 }}
+                        className="bg-secondary p-8 rounded-[2rem] border border-border-subtle mt-8 space-y-4"
+                      >
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-text-tertiary">
+                          <span>Order Identifier</span>
+                          <span className="text-text-primary">#{completedOrderId?.slice(-12).toUpperCase() || 'FENRIR-ERA-01'}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-text-tertiary">
+                          <span>Delivery Commitment</span>
+                          <span className="text-text-primary">Standard • 3-5 Nodes</span>
+                        </div>
+                      </motion.div>
+
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.5 }}
+                        className="flex flex-col sm:flex-row gap-4 justify-center mt-10"
+                      >
+                        <Link to="/account/orders" className="luxury-button !px-12">View Timeline</Link>
+                        <Link to="/" className="luxury-button !bg-background !text-text-primary border border-border-subtle hover:!bg-secondary !px-12">Continue Ritual</Link>
+                      </motion.div>
                     </div>
-                    <div className="space-y-4 px-6">
-                      <h2 className="text-3xl md:text-5xl font-[Oswald] uppercase tracking-tighter leading-none">Order Captured</h2>
-                      <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-gray-400">Synchronizing with account history...</p>
-                    </div>
-                    <div className="w-40 md:w-64 h-[1px] bg-gray-100">
+
+                    <div className="mt-12 w-48 h-1 bg-border-subtle/30 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: "100%" }}
-                        transition={{ duration: 3 }}
-                        className="h-full bg-black shadow-[0_0_10px_rgba(0,0,0,0.2)]"
+                        transition={{ duration: 3.5 }}
+                        className="h-full bg-accent"
                       />
                     </div>
                   </motion.div>
@@ -584,10 +629,10 @@ export default function Checkout() {
                 <div className="sticky top-32 bg-gray-50 border border-gray-100 p-8 md:p-10 rounded-3xl space-y-10 shadow-sm">
                   <h3 className="text-2xl font-[Oswald] uppercase tracking-tight">Your Bag ({checkoutItems.length} {checkoutItems.length === 1 ? 'Item' : 'Items'})</h3>
 
-                  <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
                     {checkoutItems.map((item, idx) => (
                       <div key={idx} className="flex gap-4 group">
-                        <div className="w-20 aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-100 flex-shrink-0 relative">
+                        <div className="w-20 aspect-[3/4] rounded-2xl overflow-hidden bg-background border border-border-subtle/50 flex-shrink-0 relative shadow-sm">
                           <img
                             src={item.image}
                             alt={item.title}
@@ -595,22 +640,22 @@ export default function Checkout() {
                           />
                         </div>
                         <div className="flex-1 py-1">
-                          <p className="text-[11px] font-black uppercase tracking-widest truncate">{item.title}</p>
-                          <p className="text-[10px] text-gray-500 uppercase mt-1 tracking-widest">Qty: {item.qty || 1} | Size: {item.size}</p>
-                          <p className="text-lg font-[Oswald] tracking-tight mt-2 italic">₹{(item.price * (item.qty || 1)).toLocaleString()}</p>
+                          <p className="text-[11px] font-black uppercase tracking-widest truncate text-text-primary">{item.title}</p>
+                          <p className="text-[10px] text-text-muted uppercase mt-1 tracking-widest font-bold">Qty: {item.qty || 1} | Size: {item.size}</p>
+                          <p className="text-lg font-primary tracking-tight mt-2">₹{(item.price * (item.qty || 1)).toLocaleString()}</p>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="space-y-4 pt-8 border-t border-gray-200">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
+                  <div className="space-y-4 pt-8 border-t border-border-subtle">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-text-tertiary">
                       <span>Base Subtotal</span>
-                      <span className="text-black">₹{(subtotal - checkoutItems.reduce((acc, item) => acc + (item.price - (item.basePrice || item.price)) * (item.qty || 1), 0)).toLocaleString()}</span>
+                      <span className="text-text-primary">₹{(subtotal - checkoutItems.reduce((acc, item) => acc + (item.price - (item.basePrice || item.price)) * (item.qty || 1), 0)).toLocaleString()}</span>
                     </div>
                     {checkoutItems.some(item => (item.price - (item.basePrice || item.price)) > 0) && (
-                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-[#d4c4b1] drop-shadow-[0_0_10px_rgba(212,196,177,0.2)]">
-                        <span>Customization Architecture</span>
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-accent">
+                        <span>Customization</span>
                         <span className="font-bold">+₹{checkoutItems.reduce((acc, item) => acc + (item.price - (item.basePrice || item.price)) * (item.qty || 1), 0).toLocaleString()}</span>
                       </div>
                     )}
@@ -620,17 +665,17 @@ export default function Checkout() {
                         <span className="font-bold">-₹{(appliedCoupon.discountAmount || 0).toLocaleString()}</span>
                       </div>
                     )}
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <span>Shipping Architecture</span>
-                      <span className="text-emerald-600 font-bold uppercase">Complimentary</span>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-text-tertiary">
+                      <span>Shipping</span>
+                      <span className="text-accent font-bold uppercase">Complimentary</span>
                     </div>
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <span>VAT Estimation</span>
-                      <span className="text-black">₹{tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-text-tertiary">
+                      <span>GST Estimation</span>
+                      <span className="text-text-primary">₹{tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="pt-8 border-t border-gray-200 flex justify-between items-end">
-                      <span className="text-lg font-[Oswald] uppercase tracking-tighter italic">Total Due</span>
-                      <span className="text-4xl font-[Oswald] tracking-tight">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <div className="pt-8 border-t border-border-subtle flex justify-between items-end">
+                      <span className="text-lg font-primary uppercase tracking-tighter">Total Due</span>
+                      <span className="text-4xl font-primary tracking-tight text-text-primary">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>
 
@@ -638,7 +683,7 @@ export default function Checkout() {
                     <button
                       type="button"
                       onClick={goToPayment}
-                      className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3"
+                      className="luxury-button w-full h-20 flex items-center justify-center gap-3 animate-slideUp"
                     >
                       Continue to Payment
                       <span className="material-symbols-outlined">arrow_forward</span>
@@ -647,10 +692,10 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isProcessing}
-                      className="w-full h-20 bg-black text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-[#d4c4b1] hover:text-black transition-all rounded-2xl shadow-2xl shadow-black/10 flex items-center justify-center gap-3 disabled:opacity-50"
+                      className="luxury-button w-full h-20 flex items-center justify-center gap-3 disabled:opacity-50 animate-slideUp"
                     >
-                      {isProcessing ? "Validating..." : "Complete Order"}
-                      {!isProcessing && <span className="material-symbols-outlined">shield</span>}
+                      {isProcessing ? "Validating Protocol..." : "Complete Ritual"}
+                      {!isProcessing && <span className="material-symbols-outlined">shield_with_heart</span>}
                     </button>
                   )}
 
@@ -684,38 +729,38 @@ function StepperItem({ label, active, completed, showLine, lineActive }) {
             initial={false}
             animate={{
               scale: active ? 1.2 : 1,
-              backgroundColor: completed ? "#000000" : active ? "#000000" : "#F3F4F6",
+              backgroundColor: completed ? "#B8860B" : active ? "#1A1A1A" : "#F4F2E9",
             }}
-            className={`w-4 h-4 rounded-full flex items-center justify-center`}
+            className={`w-5 h-5 rounded-full flex items-center justify-center shadow-sm`}
           >
             {completed && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="material-symbols-outlined text-[10px] text-white font-bold"
+                className="material-symbols-outlined text-[12px] text-white font-bold"
               >
-                check
+                verified
               </motion.span>
             )}
           </motion.div>
           {active && (
             <motion.div
               layoutId="stepper-ring"
-              className="absolute -inset-1 border border-black rounded-full"
+              className="absolute -inset-1.5 border border-accent/30 rounded-full"
               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
           )}
         </div>
-        <span className={`text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${active || completed ? 'text-black' : 'text-gray-300'}`}>
+        <span className={`text-[9px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${active || completed ? 'text-text-primary' : 'text-text-tertiary'}`}>
           {label}
         </span>
       </div>
       {showLine && (
-        <div className="flex-1 h-[2px] bg-gray-100 mb-6 relative overflow-hidden">
+        <div className="flex-1 h-[1px] bg-secondary mb-6 relative overflow-hidden mx-2">
           <motion.div
             initial={{ width: "0%" }}
             animate={{ width: lineActive ? "100%" : "0%" }}
-            className="absolute inset-0 bg-black"
+            className="absolute inset-0 bg-accent/20"
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </div>
@@ -728,32 +773,31 @@ function PaymentOption({ id, title, desc, icon, active, onClick }) {
   return (
     <label
       onClick={onClick}
-      className={`flex items-center justify-between p-6 border-2 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden group/opt
-        ${active ? 'border-black bg-gray-50/50 shadow-lg' : 'border-gray-100 hover:border-gray-200'}
+      className={`flex items-center justify-between p-6 border-2 rounded-3xl cursor-pointer transition-all duration-500 relative overflow-hidden group/opt luxury-card
+        ${active ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/20'}
       `}
     >
       {active && (
         <motion.div
           layoutId="payment-active-bg"
-          className="absolute inset-0 bg-black/5"
+          className="absolute inset-0 bg-accent/5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         />
       )}
       <div className="flex items-center gap-4 relative z-10">
         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300
-          ${active ? 'border-black bg-black' : 'border-gray-200'}
+          ${active ? 'border-accent bg-accent' : 'border-border-subtle'}
         `}>
           {active && <span className="material-symbols-outlined text-white text-[14px] font-bold">check</span>}
         </div>
         <div>
-          <p className={`text-sm font-black uppercase tracking-widest transition-colors ${active ? 'text-black' : 'text-gray-400 group-hover/opt:text-gray-600'}`}>{title}</p>
-          <p className="text-[10px] text-gray-500 uppercase mt-1 tracking-wider">{desc}</p>
+          <p className={`text-sm font-black uppercase tracking-widest transition-colors ${active ? 'text-text-primary' : 'text-text-tertiary group-hover/opt:text-text-primary'}`}>{title}</p>
+          <p className="text-[10px] text-text-muted uppercase mt-1 tracking-wider">{desc}</p>
         </div>
       </div>
       <span className={`material-symbols-outlined transition-all duration-300 relative z-10 
-        ${active ? 'text-black scale-110' : 'text-gray-200 group-hover/opt:text-gray-400'}
-      `}>{icon}</span>
+        ${active ? 'text-accent scale-110' : 'text-border-subtle group-hover/opt:text-accent'}`}>{icon}</span>
     </label>
   );
 }

@@ -13,6 +13,7 @@ export default function CartPage() {
     const [promoCode, setPromoCode] = useState("");
     const [isApplying, setIsApplying] = useState(false);
     const [error, setError] = useState("");
+    const [isSummaryOpen, setIsSummaryOpen] = useState(false);
  
     // 1. Calculate Base Subtotal
     const subtotal = cart.reduce((acc, item) => acc + (item.price || 0) * (item.qty || 0), 0);
@@ -107,34 +108,48 @@ export default function CartPage() {
     }
 
     return (
-        <div className="bg-background min-h-screen font-secondary text-text-primary selection:bg-accent selection:text-primary">
-            {/* Header Area - Since the main layout might have its own header, we match the style */}
-            <main className="max-w-7xl mx-auto px-4 md:px-8 py-24 md:py-32">
+        <div className="bg-background min-h-screen font-secondary text-text-primary selection:bg-accent selection:text-primary pb-32 lg:pb-0">
+            {/* Header Area */}
+            <main className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-32">
                 {/* Progress Stepper */}
-                <div className="hidden md:flex items-center justify-center mb-16 max-w-2xl mx-auto">
-                    <div className="flex items-center gap-4 group">
+                <div className="flex items-center justify-center mb-10 md:mb-16 max-w-2xl mx-auto">
+                    <div className="flex items-center gap-3 md:gap-4 group">
+                        <div className="w-6 h-6 md:hidden rounded-full bg-text-primary text-primary flex items-center justify-center text-[10px] font-black">1</div>
                         <span className="text-[10px] font-black uppercase tracking-widest text-text-primary">Cart</span>
-                        <div className="w-12 md:w-16 h-[2px] bg-text-primary"></div>
+                        <div className="w-8 md:w-16 h-[2px] bg-text-primary"></div>
                     </div>
-                    <div className="flex items-center gap-4 px-4 text-text-muted">
-                        <span className="text-[10px] font-black uppercase tracking-widest">Shipping</span>
-                        <div className="w-12 md:w-16 h-[2px] bg-border-subtle"></div>
+                    <div className="flex items-center gap-3 md:gap-4 px-3 md:px-4 text-text-muted">
+                        <div className="w-6 h-6 md:hidden rounded-full border border-border-subtle flex items-center justify-center text-[10px] font-black text-text-muted">2</div>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Ship</span>
+                        <div className="w-8 md:w-16 h-[2px] bg-border-subtle"></div>
                     </div>
-                    <div className="flex items-center gap-4 px-4 text-text-muted">
-                        <span className="text-[10px] font-black uppercase tracking-widest">Payment</span>
-                        <div className="w-12 md:w-16 h-[2px] bg-border-subtle"></div>
-                    </div>
-                    <div className="flex items-center gap-4 text-text-muted">
-                        <span className="text-[10px] font-black uppercase tracking-widest">Done</span>
+                    <div className="flex items-center gap-3 md:gap-4 text-text-muted">
+                        <div className="w-6 h-6 md:hidden rounded-full border border-border-subtle flex items-center justify-center text-[10px] font-black text-text-muted">3</div>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Pay</span>
                     </div>
                 </div>
 
                 {cart.length === 0 ? (
-                    <div className="text-center py-32 space-y-8">
-                        <h2 className="text-4xl font-primary uppercase tracking-tighter">Your Bag is Empty</h2>
-                        <p className="text-text-muted uppercase tracking-widest text-[11px] font-bold">Start exploring our premium collection</p>
-                        <Link to="/" className="inline-block px-12 py-5 bg-text-primary text-primary text-[11px] font-black uppercase tracking-[0.4em] hover:bg-accent hover:text-primary transition-all duration-500 rounded-xl">
-                            Continue Exploration
+                    <div className="text-center py-20 md:py-32 space-y-10">
+                        <div className="relative inline-block">
+                            <motion.div 
+                                animate={{ y: [0, -15, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-32 h-32 bg-secondary rounded-full flex items-center justify-center mx-auto border border-border-subtle shadow-xl ring-1 ring-text-primary/5"
+                            >
+                                <span className="material-symbols-outlined text-5xl text-text-muted">shopping_bag</span>
+                            </motion.div>
+                            <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full border-4 border-background flex items-center justify-center">
+                                <span className="material-symbols-outlined text-primary text-xs font-bold">close</span>
+                            </div>
+                        </div>
+                        <div className="max-w-md mx-auto">
+                            <h2 className="text-3xl md:text-5xl font-primary uppercase tracking-tighter leading-none mb-4">Your Bag is Empty</h2>
+                            <p className="text-text-muted uppercase tracking-[0.2em] text-[10px] font-black px-8">Elevate your style with our latest premium drop.</p>
+                        </div>
+                        <Link to="/" className="inline-flex items-center gap-4 px-10 py-5 bg-text-primary text-primary text-[11px] font-black uppercase tracking-[0.4em] hover:bg-accent hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 rounded-2xl group active:scale-95">
+                            Start Exploration
+                            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </Link>
                     </div>
                 ) : (
@@ -144,9 +159,9 @@ export default function CartPage() {
                             <h1 className="text-2xl md:text-3xl font-primary uppercase tracking-tight mb-8">Your Bag ({cart.length} {cart.length === 1 ? 'Item' : 'Items'})</h1>
 
                             {cart.map((item) => (
-                                <div key={item.cartItemId} className="flex flex-col sm:flex-row gap-4 md:gap-8 py-8 border-b border-text-primary/5 last:border-0 hover:bg-text-primary/5 transition-colors p-4 rounded-3xl group">
+                                <div key={item.cartItemId} className="flex flex-row md:flex-row gap-5 md:gap-8 py-6 md:py-8 border-b border-text-primary/5 last:border-0 group">
                                     <div
-                                        className="w-full sm:w-40 aspect-[3/4] bg-background-alt rounded-2xl overflow-hidden flex-shrink-0 relative cursor-zoom-in group"
+                                        className="w-24 md:w-40 aspect-[3/4] bg-secondary rounded-2xl overflow-hidden flex-shrink-0 relative cursor-zoom-in group shadow-sm border border-border-subtle/50"
                                         onClick={() => {
                                             if (item.customizations?.previews) {
                                                 setSelectedItemForPreview(item);
@@ -161,40 +176,40 @@ export default function CartPage() {
                                         />
                                         {item.customizations?.previews && (
                                             <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                <span className="material-symbols-outlined text-text-primary text-3xl">zoom_in</span>
+                                                <span className="material-symbols-outlined text-text-primary text-2xl">zoom_in</span>
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex flex-col flex-1">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-lg font-primary uppercase tracking-widest">{item.title}</h3>
-                                                <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mt-1">Ref: {item.variantId?.slice(-8).toUpperCase() || "MM-OX-001"}</p>
+                                    <div className="flex flex-col flex-1 min-w-0">
+                                        <div className="flex justify-between items-start gap-4">
+                                            <div className="min-w-0">
+                                                <h3 className="text-sm md:text-lg font-primary uppercase tracking-wider md:tracking-widest truncate">{item.title}</h3>
+                                                <p className="text-[9px] text-text-muted font-bold uppercase tracking-widest mt-0.5">Ref: {item.variantId?.slice(-8).toUpperCase() || "MM-OX-001"}</p>
                                             </div>
-                                            <p className="text-xl font-primary">₹{item.price?.toLocaleString()}</p>
+                                            <p className="text-sm md:text-xl font-primary whitespace-nowrap">₹{item.price?.toLocaleString()}</p>
                                         </div>
 
-                                        <div className="mt-4 space-y-4">
-                                            <div className="flex flex-wrap gap-4 text-[11px] font-black uppercase tracking-widest">
-                                                <p>Size: <span className="text-text-muted font-medium">{item.size}</span></p>
+                                        <div className="mt-3 md:mt-4 space-y-3 md:space-y-4">
+                                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[9px] md:text-[11px] font-black uppercase tracking-widest text-text-primary/80">
+                                                <p>Size: <span className="text-text-muted font-bold">{item.size}</span></p>
                                                 {item.color && item.color !== "N/A" && (
-                                                    <p>Color: <span className="text-text-muted font-medium">{item.color}</span></p>
+                                                    <p>Color: <span className="text-text-muted font-bold">{item.color}</span></p>
                                                 )}
                                                 {item.customizations?.printingMethod && (
                                                     <p className="text-accent flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-sm">print</span>
+                                                        <span className="material-symbols-outlined text-[10px]">print</span>
                                                         {item.customizations.printingMethod.label}
                                                     </p>
                                                 )}
                                             </div>
 
                                             {item.customizations?.previews && (
-                                                <div className="flex gap-2 mt-2">
+                                                <div className="flex gap-1.5 md:gap-2">
                                                     {['front', 'back'].map(side => (
                                                         item.customizations.previews[side] && (
                                                             <div
                                                                 key={side}
-                                                                className="w-12 h-16 rounded-md border border-text-primary/10 bg-secondary p-1 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
+                                                                className="w-8 h-10 md:w-12 md:h-16 rounded-lg border border-border-subtle/50 bg-background p-0.5 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
                                                                 onClick={() => {
                                                                     setSelectedItemForPreview(item);
                                                                     setPreviewSide(side);
@@ -205,42 +220,38 @@ export default function CartPage() {
                                                                     className="w-full h-full object-contain"
                                                                     alt={side}
                                                                 />
-                                                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity">
-                                                                    <span className="text-[6px] text-white font-black uppercase">{side}</span>
-                                                                </div>
                                                             </div>
                                                         )
                                                     ))}
                                                 </div>
                                             )}
 
-                                            <div className="flex items-center gap-4">
-                                                <span className="text-[11px] font-black uppercase tracking-widest">Quantity:</span>
-                                                <div className="flex items-center border border-text-primary/10 rounded-lg overflow-hidden bg-background">
+                                            <div className="flex items-center justify-between mt-auto pt-1">
+                                                <div className="flex items-center bg-secondary rounded-full p-1 border border-border-subtle/50 shadow-inner">
                                                     <button
                                                         onClick={() => updateQty(item.id, item.variantId, item.qty - 1)}
-                                                        className="px-3 py-1 hover:bg-text-primary/5 transition-colors border-r border-text-primary/10 disabled:opacity-30"
+                                                        className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-background transition-all active:scale-90 disabled:opacity-20"
                                                         disabled={item.qty <= 1}
-                                                    >-</button>
-                                                    <span className="px-5 py-1 text-xs font-bold w-12 text-center text-text-primary">{item.qty}</span>
+                                                    >
+                                                        <span className="material-symbols-outlined text-base md:text-lg">remove</span>
+                                                    </button>
+                                                    <span className="w-8 md:w-10 text-center text-xs md:text-sm font-black text-text-primary">{item.qty}</span>
                                                     <button
                                                         onClick={() => updateQty(item.id, item.variantId, item.qty + 1)}
-                                                        className="px-3 py-1 hover:bg-text-primary/10 transition-colors border-l border-text-primary/10"
-                                                    >+</button>
+                                                        className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center hover:bg-background transition-all active:scale-90"
+                                                    >
+                                                        <span className="material-symbols-outlined text-base md:text-lg">add</span>
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        <div className="mt-auto pt-6 flex gap-6">
-                                            <button
-                                                onClick={() => removeItem(item.cartItemId)}
-                                                className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted hover:text-danger flex items-center gap-1 transition-colors"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">delete</span> Remove
-                                            </button>
-                                            <button className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted hover:text-text-primary flex items-center gap-1 transition-colors">
-                                                <span className="material-symbols-outlined text-sm">favorite</span> Save for Later
-                                            </button>
+                                                <button
+                                                    onClick={() => removeItem(item.cartItemId)}
+                                                    className="w-10 h-10 md:w-auto md:h-auto rounded-full md:rounded-none flex items-center justify-center md:justify-start text-text-muted hover:text-danger transition-colors group/del"
+                                                >
+                                                    <span className="material-symbols-outlined text-lg md:text-sm">delete</span>
+                                                    <span className="hidden md:inline ml-1 text-[9px] font-black uppercase tracking-widest">Remove</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -358,20 +369,89 @@ export default function CartPage() {
 
             {/* Mobile Bottom Fixed Bar */}
             {cart.length > 0 && (
-                <div className="lg:hidden fixed bottom-0 left-0 w-full z-[60] animate-slideUp">
-                    <div className="bg-background border-t border-text-primary/5 p-6 flex justify-between items-center shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-                        <div>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-text-muted">Total Amount</p>
-                            <span className="text-2xl font-primary text-text-primary tracking-tighter">₹{total.toLocaleString()}</span>
+                <>
+                    {/* Summary Drawer */}
+                    <AnimatePresence>
+                        {isSummaryOpen && (
+                            <>
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setIsSummaryOpen(false)}
+                                    className="fixed inset-0 bg-text-primary/60 backdrop-blur-md z-[55] lg:hidden"
+                                />
+                                <motion.div
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: "100%" }}
+                                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                                    className="fixed bottom-0 left-0 w-full bg-background z-[56] lg:hidden rounded-t-[2.5rem] border-t border-border-subtle p-8 overflow-hidden"
+                                >
+                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-border-subtle rounded-full" />
+                                    
+                                    <h3 className="text-xl font-primary uppercase tracking-tight mb-8 mt-2">Bag Summary</h3>
+
+                                    <div className="space-y-5">
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-text-muted">
+                                            <span>Subtotal ({cart.length} items)</span>
+                                            <span className="text-text-primary">₹{subtotal.toLocaleString()}</span>
+                                        </div>
+                                        {totalDiscount > 0 && (
+                                            <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-accent">
+                                                <span>Savings</span>
+                                                <span>-₹{totalDiscount.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-text-muted">
+                                            <span>Shipping</span>
+                                            <span className={shippingCost === 0 ? "text-accent-contrast" : "text-text-primary"}>
+                                                {shippingCost === 0 ? "FREE" : `₹${shippingCost.toLocaleString()}`}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-text-muted pb-6 border-b border-border-subtle/50">
+                                            <span>Tax</span>
+                                            <span className="text-text-primary">₹{estimatedTax.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between items-end pt-2">
+                                            <span className="text-lg font-primary uppercase tracking-tighter">Total Price</span>
+                                            <span className="text-3xl font-primary text-text-primary tracking-tight">₹{total.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-8 space-y-3">
+                                        <div className="flex items-center gap-3 text-text-muted">
+                                            <span className="material-symbols-outlined text-lg">verified</span>
+                                            <span className="text-[9px] font-black uppercase tracking-widest">Premium Authenticity Guaranteed</span>
+                                        </div>
+                                    </div>
+                                    <div className="h-24" /> {/* Spacer for sticky button */}
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+
+                    <div className="lg:hidden fixed bottom-0 left-0 w-full z-[60] animate-slideUp">
+                        <div className="bg-background-alt/90 backdrop-blur-xl border-t border-border-subtle p-5 flex justify-between items-center shadow-[0_-20px_40px_rgba(0,0,0,0.15)] ring-1 ring-text-primary/5">
+                            <button 
+                                onClick={() => setIsSummaryOpen(!isSummaryOpen)}
+                                className="flex flex-col items-start active:scale-95 transition-transform"
+                            >
+                                <div className="flex items-center gap-1 group">
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-text-muted">Total</p>
+                                    <span className={`material-symbols-outlined text-xs text-text-muted transition-transform duration-300 ${isSummaryOpen ? 'rotate-180' : ''}`}>expand_less</span>
+                                </div>
+                                <span className="text-xl md:text-2xl font-primary text-text-primary tracking-tighter leading-none">₹{total.toLocaleString()}</span>
+                            </button>
+                            <Link
+                                to="/checkout"
+                                className="h-14 px-10 bg-text-primary text-primary text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center rounded-2xl active:scale-95 transition-all shadow-xl shadow-text-primary/20 no-underline"
+                            >
+                                Checkout
+                            </Link>
                         </div>
-                        <Link
-                            to="/checkout"
-                            className="h-14 px-8 bg-text-primary text-primary text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center rounded-xl active:scale-95 transition-all no-underline"
-                        >
-                            Checkout
-                        </Link>
                     </div>
-                </div>
+                </>
             )}
 
             {/* FULL SCREEN PREVIEW MODAL */}
