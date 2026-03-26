@@ -188,28 +188,38 @@ const ProductCard = React.memo(({ product }) => {
             <h3 className="text-[12px] md:text-[13px] font-medium text-text-secondary leading-[1.4] uppercase tracking-[0.05em] m-0 line-clamp-1 group-hover:text-text-primary transition-colors duration-300">{product.title}</h3>
           </div>
 
-          <div className="mt-auto pt-3 border-t border-border-subtle flex justify-between items-center">
-            {colors.length > 0 && (
-              <div className="flex gap-2">
-                {colors.map((color, i) => (
-                  <div
-                    key={i}
-                    className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-[0_0_5px_rgba(0,0,0,0.3)]"
-                    style={{ backgroundColor: color.hexCode.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
-                    title={color.name}
-                  />
-                ))}
-              </div>
-            )}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div 
+                className="mt-auto pt-3 border-t border-border-subtle hidden md:flex justify-between items-center flex-wrap gap-y-2"
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {colors.length > 0 && (
+                  <div className="flex gap-2 flex-wrap">
+                    {colors.map((color, i) => (
+                      <div
+                        key={i}
+                        className="w-3 h-3 rounded-full border border-white/20 shadow-[0_0_5px_rgba(0,0,0,0.1)] hover:scale-125 transition-transform cursor-pointer"
+                        style={{ backgroundColor: color.hexCode.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
+                        title={color.name}
+                      />
+                    ))}
+                  </div>
+                )}
 
-            {sizes.length > 0 && (
-              <div className="flex gap-2.5">
-                {sizes.map(size => (
-                  <span key={size} className="text-[11px] font-black text-text-secondary tracking-[0.05em] uppercase hover:text-accent transition-colors cursor-default">{size}</span>
-                ))}
-              </div>
+                {sizes.length > 0 && (
+                  <div className="flex gap-1.5 flex-wrap">
+                    {sizes.map(size => (
+                      <span key={size} className="text-[10px] font-black text-text-secondary tracking-[0.02em] uppercase hover:text-accent transition-colors cursor-default">{size}</span>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </div>
       </Link>
     </motion.div>
