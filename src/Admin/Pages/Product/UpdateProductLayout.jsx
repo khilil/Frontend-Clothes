@@ -20,16 +20,35 @@ import api from '../../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProductBySlug, updateProduct } from '../../../services/productService';
 
-// Helper to generate SKU
-const generateSKU = (title, color, size) => {
-    if (!title) return '';
-    const base = title
-        .toLowerCase()
-        .replace(/[^\w ]+/g, '')
-        .replace(/ +/g, '-');
-    const colorSuffix = color ? `-${color.toLowerCase()}` : '';
-    const sizeSuffix = size ? `-${size.toLowerCase()}` : '';
-    return `${base}${colorSuffix}${sizeSuffix}`;
+// 🗺️ Category to SKU Code Mapping
+const CATEGORY_MAP = {
+    'tshirt': 'TEE',
+    'jeans': 'JN',
+    'hoodie': 'HD',
+    'shirt': 'SHRT',
+    'jacket': 'JKT',
+    'trousers': 'TR',
+    'cargo': 'CRG',
+    'blazer': 'BLZ',
+    'shorts': 'SHR',
+    'sweater': 'SWTR',
+    'joggers': 'JOG',
+    'shoes': 'SHOE',
+    'accessory': 'ACC',
+    'other': 'MISC'
+};
+
+// 🏛️ Advanced SKU Generator: [BRAND]-[CAT]-[DESIGN]-[COLOR]-[SIZE]
+const generateSKU = (brandCode, category, designId, colorName, sizeName) => {
+    const brand = (brandCode || 'FE').toUpperCase();
+    const cat = (CATEGORY_MAP[category] || 'GEN').toUpperCase();
+    const design = (designId || '01').toString().padStart(2, '0');
+    
+    // Clean and shorten color/size
+    const color = (colorName || '').substring(0, 3).toUpperCase() || 'XXX';
+    const size = (sizeName || '').toUpperCase() || 'OS';
+    
+    return `${brand}-${cat}-${design}-${color}-${size}`;
 };
 
 function UpdateProductLayout() {
@@ -65,6 +84,8 @@ function UpdateProductLayout() {
         metaTitle: '',
         metaDescription: '',
         metaKeywords: '',
+        brandCode: 'FE',
+        designId: '01',
     });
 
     const [variants, setVariants] = useState([]);
@@ -132,8 +153,23 @@ function UpdateProductLayout() {
                     metaTitle: product.metaTitle || '',
                     metaDescription: product.metaDescription || '',
                     metaKeywords: product.metaKeywords || '',
-                    garmentType: product.garmentType || 'top'
+                    garmentType: product.garmentType || 'top',
+                    brandCode: 'FE', // Default
+                    designId: '01'   // Default
                 });
+
+                // 🧪 Try to parse Brand and Design from existing SKUs
+                if (product.variants && product.variants.length > 0) {
+                    const firstSku = product.variants[0].sku || '';
+                    const parts = firstSku.split('-');
+                    if (parts.length >= 3) {
+                        setProductData(prev => ({
+                            ...prev,
+                            brandCode: parts[0],
+                            designId: parts[2]
+                        }));
+                    }
+                }
 
                 // Map variants
                 if (product.variants && Array.isArray(product.variants)) {
@@ -263,11 +299,17 @@ function UpdateProductLayout() {
                     updated[field] = value;
                 }
 
-                // If size or color changed and SKU is NOT manual, regenerate SKU
+                // 🔄 Auto-generate SKU if not manual
                 if ((field === 'size' || field === 'color') && !updated.isSkuManual) {
                     const sizeObj = availableSizes.find(s => s._id === updated.size);
                     const colorObj = availableColors.find(c => c._id === updated.color);
-                    updated.sku = generateSKU(productData.title, colorObj?.name, sizeObj?.name);
+                    updated.sku = generateSKU(
+                        productData.brandCode, 
+                        productData.productType, 
+                        productData.designId, 
+                        colorObj?.name, 
+                        sizeObj?.name
+                    );
                 }
 
                 if (field === 'sku') {
@@ -287,7 +329,13 @@ function UpdateProductLayout() {
                 const colorObj = availableColors.find(c => c._id === v.color);
                 return {
                     ...v,
-                    sku: generateSKU(productData.title, colorObj?.name, sizeObj?.name),
+                    sku: generateSKU(
+                        productData.brandCode, 
+                        productData.productType, 
+                        productData.designId, 
+                        colorObj?.name, 
+                        sizeObj?.name
+                    ),
                     isSkuManual: false
                 };
             }
@@ -352,15 +400,21 @@ function UpdateProductLayout() {
     const handleDataChange = (field, value) => {
         setProductData(prev => {
             const newData = { ...prev, [field]: value };
-            if (field === 'title') {
-                newData.slug = value.toLowerCase().replace(/[^\w ]+/g, '').replace(/ +/g, '-');
+            // 🔄 Auto-Update Variants if identifying fields change
+            if (field === 'brandCode' || field === 'designId' || field === 'productType') {
                 setVariants(prevVariants => prevVariants.map(v => {
                     if (v.isSkuManual) return v;
                     const sizeObj = availableSizes.find(s => s._id === v.size);
                     const colorObj = availableColors.find(c => c._id === v.color);
                     return {
                         ...v,
-                        sku: generateSKU(value, colorObj?.name, sizeObj?.name)
+                        sku: generateSKU(
+                            field === 'brandCode' ? value : prev.brandCode,
+                            field === 'productType' ? value : prev.productType,
+                            field === 'designId' ? value : prev.designId,
+                            colorObj?.name,
+                            sizeObj?.name
+                        )
                     };
                 }));
             }

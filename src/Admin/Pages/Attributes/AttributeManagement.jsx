@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { getAllColors, createColor, deleteColor } from '../../../services/colorService';
 import { getAllSizes, createSize, deleteSize } from '../../../services/sizeService';
+import { COLOR_CATEGORIES, getMainColorFromHex, normalizeHex } from '../../../utils/colorUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AttributeManagement = () => {
@@ -21,7 +22,11 @@ const AttributeManagement = () => {
     const [notification, setNotification] = useState(null);
 
     // Form states
-    const [newColor, setNewColor] = useState({ name: '', hexCode: '#000000' });
+    const [newColor, setNewColor] = useState({ 
+        name: '', 
+        hexCode: '#000000',
+        mainColor: 'BLACK' // 🎨 New Field
+    });
     const [newSize, setNewSize] = useState({ name: '', categoryType: 'topwear' });
     const [isSubmittingColor, setIsSubmittingColor] = useState(false);
     const [isSubmittingSize, setIsSubmittingSize] = useState(false);
@@ -51,14 +56,29 @@ const AttributeManagement = () => {
         setTimeout(() => setNotification(null), 3000);
     };
 
+    const handleHexChange = (e) => {
+        let hex = e.target.value;
+        if (!hex.startsWith('#')) hex = `#${hex}`;
+        
+        const suggestedMain = getMainColorFromHex(hex);
+        setNewColor(prev => ({ 
+            ...prev, 
+            hexCode: hex,
+            mainColor: suggestedMain 
+        }));
+    };
+
     const handleCreateColor = async (e) => {
         e.preventDefault();
         if (!newColor.name || !newColor.hexCode) return;
 
         setIsSubmittingColor(true);
         try {
-            await createColor(newColor);
-            setNewColor({ name: '', hexCode: '#000000' });
+            await createColor({
+                ...newColor,
+                hexCode: normalizeHex(newColor.hexCode)
+            });
+            setNewColor({ name: '', hexCode: '#000000', mainColor: 'BLACK' });
             showNotification('success', 'Color created successfully');
             fetchData();
         } catch (error) {
@@ -166,8 +186,27 @@ const AttributeManagement = () => {
                                         type="color"
                                         className="h-[60px] w-[60px] -mt-[9px] -ml-[9px] cursor-pointer"
                                         value={newColor.hexCode}
-                                        onChange={(e) => setNewColor({ ...newColor, hexCode: e.target.value })}
+                                        onChange={(e) => handleHexChange(e)}
                                     />
+                                </div>
+                            </div>
+
+                            {/* 🎨 Main Color Selection (Group) */}
+                            <div className="sm:col-span-2 space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-indigo-400">Filtering Category (Main Color)</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                                    <select
+                                        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-all cursor-pointer"
+                                        value={newColor.mainColor}
+                                        onChange={(e) => setNewColor({ ...newColor, mainColor: e.target.value })}
+                                    >
+                                        {COLOR_CATEGORIES.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
+                                    <p className="text-[10px] text-slate-500 italic">
+                                        💡 Group similar shades under a main category for better filtering performance.
+                                    </p>
                                 </div>
                             </div>
                             <button
@@ -194,7 +233,12 @@ const AttributeManagement = () => {
                                                 <div className="h-8 w-8 rounded-lg shadow-inner ring-1 ring-white/10" style={{ backgroundColor: color.hexCode }}></div>
                                                 <div>
                                                     <p className="text-sm font-bold text-slate-200">{color.name}</p>
-                                                    <p className="text-[10px] font-mono text-slate-500 uppercase">{color.hexCode}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-[10px] font-mono text-slate-500 uppercase">{color.hexCode}</p>
+                                                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-bold tracking-tighter">
+                                                            {color.mainColor || 'GREY'}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <button

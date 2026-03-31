@@ -10,6 +10,7 @@ import ProductSection from "../../pages/ProductDetail/ProductSection/ProductSect
 import CategoryHero from "./CategoryHero";
 import CollectiveFooter from "../../components/common/CollectiveFooter/CollectiveFooter";
 import { TOPWEAR_SIZES, BOTTOMWEAR_SIZES, isBottomwear } from "../../utils/sizeConstants";
+import { COLOR_CATEGORIES, getColorCategoryInfo, getMainColorFromHex } from "../../utils/colorUtils";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -46,25 +47,30 @@ export default function CategoryPage() {
     return Math.max(...allProducts.map(p => p.price || 0));
   }, [allProducts]);
 
-  const categorizedColors = useMemo(() => {
-    const top = new Map();
-    const bottom = new Map();
-    
-    allProducts.forEach(p => {
-      const isBottom = isBottomwear(p.slug || '', p.productType || '');
-      p.variants?.forEach(v => {
-        if (v.color?.name) {
-          if (isBottom) bottom.set(v.color.name, v.color);
-          else top.set(v.color.name, v.color);
-        }
-      });
-    });
-    
-    return {
-      top: Array.from(top.values()),
-      bottom: Array.from(bottom.values())
-    };
-  }, [allProducts]);
+    const categorizedColors = useMemo(() => {
+        const top = new Set();
+        const bottom = new Set();
+        
+        allProducts.forEach(p => {
+            const isBottom = isBottomwear(p.slug || '', p.productType || '');
+            p.variants?.forEach(v => {
+                // 🤖 Smart Logic: Prioritize our new normalization engine for 100% consistency
+                // This ignores any incorrect 'GREY' defaults in the database.
+                let mainColor = v.color?.mainColor;
+                if (!mainColor || mainColor === 'GREY') {
+                    mainColor = v.color?.hexCode ? getMainColorFromHex(v.color.hexCode) : 'GREY';
+                }
+                
+                if (isBottom) bottom.add(mainColor);
+                else top.add(mainColor);
+            });
+        });
+        
+        return {
+            top: Array.from(top).map(id => getColorCategoryInfo(id)),
+            bottom: Array.from(bottom).map(id => getColorCategoryInfo(id))
+        };
+    }, [allProducts]);
 
   // Fetch Filter Data
   useEffect(() => {
@@ -195,12 +201,18 @@ export default function CategoryPage() {
       result = result.filter(p => p.productType && filters.fit.includes(p.productType.toLowerCase()));
     }
 
-    // 3. Filter by Color
-    if (filters.color) {
-      result = result.filter(p =>
-        p.variants?.some(v => v.color?.name === filters.color)
-      );
-    }
+        // 3. Filter by Color (New MainColor Logic)
+        if (filters.color) {
+            result = result.filter(p =>
+                p.variants?.some(v => {
+                    let mColor = v.color?.mainColor;
+                    if (!mColor || mColor === 'GREY') {
+                        mColor = v.color?.hexCode ? getMainColorFromHex(v.color.hexCode) : 'GREY';
+                    }
+                    return mColor === filters.color;
+                })
+            );
+        }
 
     // 4. Filter by Price
     result = result.filter(p => (p.price || 0) <= filters.price);
@@ -410,16 +422,21 @@ export default function CategoryPage() {
                     <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
-                {filters.color && (
-                  <button
-                    onClick={() => handleColorChange(filters.color)}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: filters.color }}></div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Color: {filters.color}</span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
-                  </button>
-                )}
+                                {filters.color && (
+                                    <button
+                                        onClick={() => handleColorChange(filters.color)}
+                                        className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
+                                    >
+                                        <div 
+                                            className="w-2 h-2 rounded-full border border-white/20" 
+                                            style={{ background: getColorCategoryInfo(filters.color).hex }}
+                                        ></div>
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">
+                                            Color: {getColorCategoryInfo(filters.color).name}
+                                        </span>
+                                        <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                                    </button>
+                                )}
                 <button
                   onClick={handleClear}
                   className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-accent hover:text-white transition-colors"
@@ -432,7 +449,7 @@ export default function CategoryPage() {
 
           <div className="min-h-[60vh] px-6 md:px-12 py-10">
             {filtered.length > 0 ? (
-              <ProductSection products={filtered} />
+              <ProductSection products={filtered} activeColor={filters.color} />
             ) : (
               <motion.div
                 initial={{ opacity: 0 }}

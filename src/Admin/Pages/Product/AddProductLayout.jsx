@@ -23,16 +23,35 @@ import api from '../../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, AlertCircle, Loader2, X } from 'lucide-react';
 
-// Helper to generate SKU
-const generateSKU = (title, colorName, sizeName) => {
-    if (!title) return '';
-    const base = title
-        .toLowerCase()
-        .replace(/[^\w ]+/g, '')
-        .replace(/ +/g, '-');
-    const colorSuffix = colorName ? `-${colorName.toLowerCase()}` : '';
-    const sizeSuffix = sizeName ? `-${sizeName.toLowerCase()}` : '';
-    return `${base}${colorSuffix}${sizeSuffix}`;
+// 🗺️ Category to SKU Code Mapping
+const CATEGORY_MAP = {
+    'tshirt': 'TEE',
+    'jeans': 'JN',
+    'hoodie': 'HD',
+    'shirt': 'SHRT',
+    'jacket': 'JKT',
+    'trousers': 'TR',
+    'cargo': 'CRG',
+    'blazer': 'BLZ',
+    'shorts': 'SHR',
+    'sweater': 'SWTR',
+    'joggers': 'JOG',
+    'shoes': 'SHOE',
+    'accessory': 'ACC',
+    'other': 'MISC'
+};
+
+// 🏛️ Advanced SKU Generator: [BRAND]-[CAT]-[DESIGN]-[COLOR]-[SIZE]
+const generateSKU = (brandCode, category, designId, colorName, sizeName) => {
+    const brand = (brandCode || 'FE').toUpperCase();
+    const cat = (CATEGORY_MAP[category] || 'GEN').toUpperCase();
+    const design = (designId || '01').toString().padStart(2, '0');
+    
+    // Clean and shorten color/size
+    const color = (colorName || '').substring(0, 3).toUpperCase() || 'XXX';
+    const size = (sizeName || '').toUpperCase() || 'OS';
+    
+    return `${brand}-${cat}-${design}-${color}-${size}`;
 };
 
 function AddProductLayout() {
@@ -65,6 +84,8 @@ function AddProductLayout() {
         metaTitle: '',
         metaDescription: '',
         metaKeywords: '',
+        brandCode: 'FE', // 🆔 For SKU Generation (Fenrir Era)
+        designId: '01',  // 🔢 For SKU Generation (Serial Number)
     });
 
     const [variants, setVariants] = useState([]);
@@ -189,11 +210,17 @@ function AddProductLayout() {
                     updated[field] = value;
                 }
 
-                // If size or color changed and SKU is NOT manual, regenerate SKU
+                // 🔄 Auto-generate SKU if not manual
                 if ((field === 'size' || field === 'color') && !updated.isSkuManual) {
                     const sizeObj = availableSizes.find(s => s._id === updated.size);
                     const colorObj = availableColors.find(c => c._id === updated.color);
-                    updated.sku = generateSKU(productData.title, colorObj?.name, sizeObj?.name);
+                    updated.sku = generateSKU(
+                        productData.brandCode, 
+                        productData.productType, 
+                        productData.designId, 
+                        colorObj?.name, 
+                        sizeObj?.name
+                    );
                 }
 
                 if (field === 'sku') {
@@ -213,7 +240,13 @@ function AddProductLayout() {
                 const colorObj = availableColors.find(c => c._id === v.color);
                 return {
                     ...v,
-                    sku: generateSKU(productData.title, colorObj?.name, sizeObj?.name),
+                    sku: generateSKU(
+                        productData.brandCode, 
+                        productData.productType, 
+                        productData.designId, 
+                        colorObj?.name, 
+                        sizeObj?.name
+                    ),
                     isSkuManual: false
                 };
             }
@@ -280,21 +313,21 @@ function AddProductLayout() {
         setProductData(prev => {
             const newData = { ...prev, [field]: value };
 
-            // Auto-generate slug if title changes
-            if (field === 'title') {
-                newData.slug = value
-                    .toLowerCase()
-                    .replace(/[^\w ]+/g, '')
-                    .replace(/ +/g, '-');
-
-                // Also update variant SKUs if title changes AND not manually edited
+            // 🔄 Auto-Update Variants if identifying fields change
+            if (field === 'brandCode' || field === 'designId' || field === 'productType') {
                 setVariants(prevVariants => prevVariants.map(v => {
                     if (v.isSkuManual) return v;
                     const sizeObj = availableSizes.find(s => s._id === v.size);
                     const colorObj = availableColors.find(c => c._id === v.color);
                     return {
                         ...v,
-                        sku: generateSKU(value, colorObj?.name, sizeObj?.name)
+                        sku: generateSKU(
+                            field === 'brandCode' ? value : prev.brandCode,
+                            field === 'productType' ? value : prev.productType,
+                            field === 'designId' ? value : prev.designId,
+                            colorObj?.name,
+                            sizeObj?.name
+                        )
                     };
                 }));
             }

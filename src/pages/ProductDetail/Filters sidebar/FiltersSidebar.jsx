@@ -51,8 +51,9 @@ export default function FiltersSidebar({
     filters.category !== 'all' && 
     !isSelectedCategoryBottomwear;
 
-  const showTopwear = !isSelectedCategoryBottomwear || filters?.category === 'all';
-  const showBottomwear = isSelectedCategoryBottomwear || filters?.category === 'all';
+  // Improved visibility flags for category sections
+  const showTopwear = !isSelectedCategoryBottomwear || filters?.category === 'all' || filters?.category === 'clothing';
+  const showBottomwear = isSelectedCategoryBottomwear || filters?.category === 'all' || filters?.category === 'clothing';
 
   return (
     <div className={`${isMobile ? "space-y-10" : "p-5 space-y-10"}`}>
@@ -334,24 +335,24 @@ export default function FiltersSidebar({
               <div className="space-y-3">
                 {showBottomwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>}
                 <div className="grid grid-cols-5 gap-4">
-                  {(Array.isArray(availableColors) ? availableColors : availableColors.top).map(color => (
+                  {(Array.isArray(availableColors) ? availableColors : (availableColors.top || [])).map(color => (
                     <button
-                      key={color.name}
-                      onClick={() => onColorChange(color.name)}
+                      key={color.id}
+                      onClick={() => onColorChange(color.id)}
                       className="group/color relative flex flex-col items-center gap-2"
                     >
                       <div
-                        className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.name
+                        className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.id
                           ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
                           : "border-border-subtle group-hover/color:border-accent"
                           }`}
-                        style={{ backgroundColor: color.hexCode?.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
+                        style={{ background: color.hex }}
                       >
-                        {filters?.color === color.name && (
+                        {filters?.color === color.id && (
                           <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
                         )}
                       </div>
-                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
+                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.id ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
                         {color.name}
                       </span>
                     </button>
@@ -361,34 +362,36 @@ export default function FiltersSidebar({
             )}
 
             {/* Bottomwear Colors */}
-            {showBottomwear && availableColors?.bottom?.length > 0 && (
-              <div className="space-y-3">
-                {showTopwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>}
-                <div className="grid grid-cols-5 gap-4">
-                  {availableColors.bottom.map(color => (
-                    <button
-                      key={color.name}
-                      onClick={() => onColorChange(color.name)}
-                      className="group/color relative flex flex-col items-center gap-2"
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.name
-                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
-                          : "border-border-subtle group-hover/color:border-accent"
-                          }`}
-                        style={{ backgroundColor: color.hexCode?.startsWith('#') ? color.hexCode : `#${color.hexCode}` }}
-                      >
-                        {filters?.color === color.name && (
-                          <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
-                        )}
-                      </div>
-                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.name ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
-                        {color.name}
-                      </span>
-                    </button>
-                  ))}
+            {(showBottomwear && (availableColors?.bottom?.length > 0)) && (
+                <div className="space-y-3">
+                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">
+                        {(showTopwear || filters?.category === 'all') ? "Bottomwear" : "Available Colors"}
+                    </span>
+                    <div className="grid grid-cols-5 gap-4">
+                        {(availableColors.bottom || []).map(color => (
+                            <button
+                                key={color.id}
+                                onClick={() => onColorChange(color.id)}
+                                className="group/color relative flex flex-col items-center gap-2"
+                            >
+                                <div
+                                    className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.id
+                                        ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
+                                        : "border-border-subtle group-hover/color:border-accent"
+                                        }`}
+                                    style={{ background: color.hex }}
+                                >
+                                    {filters?.color === color.id && (
+                                        <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
+                                    )}
+                                </div>
+                                <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.id ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
+                                    {color.name}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
-              </div>
             )}
           </div>
         </div>

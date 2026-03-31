@@ -1,7 +1,7 @@
 import { useCart } from "../../../context/CartContext";
 import ProductCard from "../../../components/product/ProductCard/ProductCard";
 
-export default function ProductSection({ products = [] }) {
+export default function ProductSection({ products = [], activeColor }) {
   const { addToCart } = useCart();
 
   return (
@@ -18,6 +18,7 @@ export default function ProductSection({ products = [] }) {
             key={product._id}
             product={product}
             addToCart={addToCart}
+            activeColor={activeColor}
           />
         ))}
       </div>

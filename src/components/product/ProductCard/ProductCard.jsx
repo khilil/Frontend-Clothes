@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { useWishlist } from '../../../context/WishlistContext';
 import { useOffers } from '../../../context/OfferContext';
 import FlashSaleTimer from '../FlashSaleTimer';
+import { getMainColorFromHex } from '../../../utils/colorUtils';
 
-const ProductCard = React.memo(({ product }) => {
+const ProductCard = React.memo(({ product, activeColor }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { toggleItem, isInWishlist } = useWishlist();
   const { getProductOffer } = useOffers();
@@ -41,15 +42,26 @@ const ProductCard = React.memo(({ product }) => {
 
   const primaryImage = React.useMemo(() => {
     let primary = product.image;
+    
+    // 🎨 Logic to switch image based on active filter
     if (product.variants && product.variants.length > 0) {
-      const firstVariant = product.variants[0];
-      if (firstVariant.images && firstVariant.images.length > 0) {
-        const explicitPrimary = firstVariant.images.find(img => img.isPrimary);
-        primary = explicitPrimary ? explicitPrimary.url : firstVariant.images[0].url;
+      let targetVariant = product.variants[0];
+      
+      if (activeColor) {
+        const matchingVariant = product.variants.find(v => {
+          const mColor = v.color?.mainColor || (v.color?.hexCode ? getMainColorFromHex(v.color.hexCode) : 'GREY');
+          return mColor === activeColor;
+        });
+        if (matchingVariant) targetVariant = matchingVariant;
+      }
+
+      if (targetVariant.images && targetVariant.images.length > 0) {
+        const explicitPrimary = targetVariant.images.find(img => img.isPrimary);
+        primary = explicitPrimary ? explicitPrimary.url : targetVariant.images[0].url;
       }
     }
     return primary || "https://via.placeholder.com/400x533?text=No+Image";
-  }, [product]);
+  }, [product, activeColor]);
 
   return (
     <motion.div

@@ -116,16 +116,46 @@ const ProductInfo = ({ data, onChange }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                     <div className="space-y-2">
-                        <label htmlFor="brand" className="text-sm font-semibold text-slate-400">Brand</label>
+                        <label htmlFor="brand" className="text-sm font-semibold text-slate-400">Brand Name</label>
                         <input
                             type="text"
                             id="brand"
-                            placeholder="Brand Name"
+                            placeholder="e.g. Fenrir Era"
                             className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-600"
                             value={data.brand}
                             onChange={(e) => onChange('brand', e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label htmlFor="brandCode" className="text-sm font-semibold text-indigo-400/80 flex items-center gap-2">
+                            Brand Code
+                            <span className="text-[10px] bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 uppercase tracking-tighter font-bold">For SKU</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="brandCode"
+                            placeholder="e.g. FE"
+                            maxLength={3}
+                            className="w-full rounded-xl border border-indigo-500/20 bg-slate-950 px-4 py-2.5 text-sm text-white font-bold outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-700"
+                            value={data.brandCode || ''}
+                            onChange={(e) => onChange('brandCode', e.target.value.toUpperCase())}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label htmlFor="designId" className="text-sm font-semibold text-indigo-400/80 flex items-center gap-2">
+                            Design ID
+                            <span className="text-[10px] bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 uppercase tracking-tighter font-bold">Serial</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="designId"
+                            placeholder="e.g. 01"
+                            maxLength={4}
+                            className="w-full rounded-xl border border-indigo-500/20 bg-slate-950 px-4 py-2.5 text-sm text-white font-bold outline-none transition-all focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 placeholder:text-slate-700"
+                            value={data.designId || ''}
+                            onChange={(e) => onChange('designId', e.target.value)}
                         />
                     </div>
                 </div>
