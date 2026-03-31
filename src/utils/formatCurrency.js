@@ -1,3 +1,5 @@
 export const formatCurrency = (amount) => {
-  return '?' + Number(amount).toLocaleString();
+  const value = Number(amount);
+  return '₹' + (isNaN(value) ? '0' : value.toLocaleString());
 };
+

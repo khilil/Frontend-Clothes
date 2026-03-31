@@ -5,6 +5,8 @@ import {
   Clock, Truck, Download, FileText, Send, Trash2
 } from 'lucide-react';
 import { StatusBadge, PriorityBadge, CustomDesignBadge } from '../components/OrderBadges';
+import { formatCurrency } from '../../utils/formatCurrency';
+
 import { updateOrderStatus, markOrderQC, addOrderNote, addCustomerNote, updateOrderPriority } from '../../services/orderService';
 import { generateInvoiceHTML, generateShippingLabelHTML, generatePackingSlipHTML } from '../utils/invoiceUtils';
 
@@ -202,7 +204,8 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                           <span className="text-[10px] font-bold text-slate-400 block mt-1 uppercase tracking-widest">SKU: {item.variantId}</span>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-lg">₹{(item.priceAtPurchase || 0).toLocaleString()}</p>
+                          <p className="font-bold text-lg">{formatCurrency(item.priceAtPurchase || 0)}</p>
+
                           <p className="text-xs text-slate-400 font-medium">Qty: {item.quantity}</p>
                         </div>
                       </div>
@@ -437,7 +440,8 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                  <div className="space-y-2 border-t border-slate-50 dark:border-slate-800 pt-4">
                     <div className="flex justify-between items-center text-xs">
                        <span className="text-slate-500">Subtotal</span>
-                       <span className="font-bold">₹{order.totalAmount.toLocaleString()}</span>
+                       <span className="font-bold">{formatCurrency(order.totalAmount)}</span>
+
                     </div>
                     <div className="flex justify-between items-center text-xs">
                        <span className="text-slate-500">Shipping</span>
@@ -445,7 +449,8 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                     </div>
                     <div className="flex justify-between items-center text-xs border-t border-slate-50 dark:border-slate-800 pt-2 mt-2">
                        <span className="text-slate-900 dark:text-white font-bold uppercase tracking-wider">Total Amount</span>
-                       <span className="font-black text-indigo-600 text-base">₹{order.totalAmount.toLocaleString()}</span>
+                       <span className="font-black text-indigo-600 text-base">{formatCurrency(order.totalAmount)}</span>
+
                     </div>
                  </div>
 

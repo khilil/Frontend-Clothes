@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchDashboardData } from '../features/dashboard/dashboardSlice';
 import OrderHub from './components/OrderHub';
 import OrderDetailView from './Pages/OrderDetailView';
+import { formatCurrency } from '../utils/formatCurrency';
+
 
 // --- Sub-components ---
 const KPICard = ({ title, value, icon: Icon, color, subtext }) => (
@@ -40,7 +42,8 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl shadow-xl">
         <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">{label}</p>
-        <p className="font-black text-indigo-600 text-lg">₹{payload[0].value.toLocaleString()}</p>
+        <p className="font-black text-indigo-600 text-lg">{formatCurrency(payload[0].value)}</p>
+
         <p className="text-[10px] font-bold text-slate-400 mt-1">{payload[0].payload.orders} Orders</p>
       </div>
     );
@@ -70,7 +73,8 @@ const RevenueChartMemo = React.memo(({ revenueData }) => {
           axisLine={false}
           tickLine={false}
           tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }}
-          tickFormatter={(value) => `₹${value}`}
+          tickFormatter={(value) => formatCurrency(value)}
+
           dx={-10}
         />
         <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
@@ -118,13 +122,73 @@ const PipelineChartMemo = React.memo(({ statusData }) => {
   );
 });
 
+const BestSellingProductsWidget = ({ products = [] }) => {
+  if (!products || products.length === 0) {
+    return (
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center">
+        <div className="size-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+           <Package size={24} />
+        </div>
+        <h4 className="text-sm font-bold text-slate-900 dark:text-white">No Sales Data Yet</h4>
+        <p className="text-xs text-slate-500 mt-1">Best selling products will appear here once orders are processed.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Top Sellers</h3>
+          <p className="text-[10px] text-slate-500 font-medium mt-0.5">High-performing products by revenue</p>
+        </div>
+        <TrendingUp size={18} className="text-indigo-600" />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="bg-slate-50/50 dark:bg-slate-800/50 text-[9px] font-black uppercase tracking-widest text-slate-400">
+              <th className="px-6 py-3">Rank</th>
+              <th className="px-6 py-3">Product</th>
+              <th className="px-6 py-3">Sold</th>
+              <th className="px-6 py-3 text-right">Revenue</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+            {products.slice(0, 5).map((product, idx) => (
+              <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center justify-center size-5 rounded-md text-[9px] font-black ${
+                    idx === 0 ? 'bg-amber-100 text-amber-600' :
+                    idx === 1 ? 'bg-slate-100 text-slate-600' :
+                    idx === 2 ? 'bg-orange-100 text-orange-600' : 'text-slate-400'
+                  }`}>
+                    #{idx + 1}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">{product.title}</p>
+                </td>
+                <td className="px-6 py-4 text-xs font-medium text-slate-500">{product.quantity}</td>
+                <td className="px-6 py-4 text-xs font-black text-indigo-600 dark:text-indigo-400 text-right">
+                  {formatCurrency(product.revenue)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Dashboard Component ---
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const { data: dashboardData, loading, error } = useSelector((state) => state.dashboard);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const { kpis, revenueData, statusData } = dashboardData || {};
+  const { kpis, revenueData, statusData, topProducts } = dashboardData || {};
 
   useEffect(() => {
     dispatch(fetchDashboardData());
@@ -173,7 +237,8 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
           title="Gross Revenue" 
-          value={`₹${(kpis?.totalSales || 0).toLocaleString()}`} 
+          value={formatCurrency(kpis?.totalSales || 0)} 
+
           icon={DollarSign} 
           color="bg-indigo-500" 
           subtext="Total lifetime sales"
@@ -245,7 +310,12 @@ export default function AdminDashboard() {
          </div>
       </div>
 
-      {/* 4. Order Hub */}
+      {/* 4. Top Sellers Row */}
+      <div className="grid grid-cols-1 gap-6 mb-8">
+         <BestSellingProductsWidget products={topProducts} />
+      </div>
+
+      {/* 5. Order Hub */}
       <div className="pt-8 relative z-20">
         <div className="flex items-center gap-3 mb-6">
            <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />

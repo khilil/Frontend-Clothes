@@ -23,6 +23,8 @@ import { getAllCategories } from '../../../services/categoryService';
 import { productAttributes } from '../../../config/productAttributes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../../../utils/formatCurrency';
+
 
 export default function AdminProducts() {
     const navigate = useNavigate();
@@ -303,7 +305,8 @@ export default function AdminProducts() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Min Price ($)</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Min Price (₹)</label>
+
                                         <input
                                             type="number"
                                             className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm text-slate-300 outline-none focus:border-indigo-500"
@@ -314,7 +317,8 @@ export default function AdminProducts() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Max Price ($)</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Max Price (₹)</label>
+
                                         <input
                                             type="number"
                                             className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2 text-sm text-slate-300 outline-none focus:border-indigo-500"
@@ -571,7 +575,8 @@ function ProductRow({ product, isSelected, onToggle, onView, onEdit, onDelete })
 
     const displayName = title || name || "Untitled Product";
     const displayId = _id || id || "N/A";
-    const displayImage = images?.[0]?.url || images?.[0] || "https://premium-clothing.com/placeholder.jpg";
+    const displayImage = images?.[0]?.url || images?.[0] || "https://placehold.co/400x400/0f172a/6366f1?text=GZ";
+
     const variantCount = Array.isArray(variants) ? variants.length : (variants || 0);
     const totalStock = Array.isArray(variants) ? variants.reduce((sum, v) => sum + (v.stock || 0), 0) : 0;
 
@@ -602,8 +607,9 @@ function ProductRow({ product, isSelected, onToggle, onView, onEdit, onDelete })
                 </span>
             </td>
             <td className="px-6 py-4 font-mono text-xs font-black text-slate-200">
-                ${(price || 0).toFixed(2)}
+                {formatCurrency(price || 0)}
             </td>
+
             <td className="px-6 py-4">
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">

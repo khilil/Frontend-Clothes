@@ -11,15 +11,15 @@ import {
     Layers,
     Palette,
     Ticket,
-    Image as ImageIcon
+    Image as ImageIcon,
+    X
 } from 'lucide-react';
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../features/auth/authSlice";
 
-const Sidebar = () => {
-
+const Sidebar = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
@@ -29,10 +29,10 @@ const Sidebar = () => {
         navigate("/login");
     };
 
-    // Navigation items config - jethi future ma add/remove karvu easy rahe
+    // Navigation items config
     const menuItems = [
         { name: 'Overview', path: '/admin', icon: LayoutGrid },
-        { name: 'Product ', path: '/admin/products', icon: ShoppingBasket },
+        { name: 'Product', path: '/admin/products', icon: ShoppingBasket },
         { name: 'Inventory', path: '/admin/inventory', icon: Package },
         { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
         { name: 'Categories', path: '/admin/categories', icon: Layers },
@@ -49,49 +49,86 @@ const Sidebar = () => {
         { name: 'Help Center', path: '/admin/help', icon: HelpCircle },
     ];
 
+    const handleLinkClick = () => {
+        if (window.innerWidth < 768) {
+            onClose();
+        }
+    };
+
     return (
-        <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] fixed h-full z-50 flex flex-col">
-            {/* Brand Logo Section */}
-            <div className="p-6">
-                <div className="flex items-center gap-3 mb-8 px-2">
-                    <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-                        <LayoutGrid size={20} strokeWidth={2.5} />
+        <aside className={`
+            w-64 border-r border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-[#0f172a]/90 
+            backdrop-blur-xl fixed h-full z-50 flex flex-col transition-transform duration-500 ease-in-out
+            ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+            {/* 1. Header (Fixed) */}
+            <div className="p-6 pb-4 shrink-0">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3 px-2 group cursor-pointer" onClick={() => navigate('/admin')}>
+                        <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <LayoutGrid size={22} strokeWidth={2.5} />
+                        </div>
+                        <span className="font-black text-2xl tracking-tighter text-slate-900 dark:text-white font-display">
+                            T-Dash
+                        </span>
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white font-display">
-                        T-Dash
-                    </span>
+                    {/* Mobile Close Button */}
+                    <button 
+                        onClick={onClose}
+                        className="p-2 text-slate-400 hover:text-rose-500 md:hidden bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+            </div>
+
+            {/* 2. Scrollable Navigation Area */}
+            <div 
+                className="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar space-y-8 pb-10 min-h-0 h-0" 
+                data-lenis-prevent="true"
+            >
+                {/* Main Navigation */}
+                <div>
+                    <p className="px-4 text-[10px] font-black uppercase text-slate-400 mb-4 tracking-[0.2em] opacity-70">
+                        Management
+                    </p>
+                    <nav className="space-y-1">
+                        {menuItems.map((item) => (
+                            <NavLink
+                                key={item.name}
+                                to={item.path}
+                                end={item.path === '/admin'}
+                                onClick={handleLinkClick}
+                                className={({ isActive }) => `
+                                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative
+                                    ${isActive
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold'
+                                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
+                                `}
+                            >
+                                {({ isActive }) => (
+                                    <>
+                                        <item.icon
+                                            size={20}
+                                            className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'} transition-colors duration-300`}
+                                        />
+                                        <span className="text-[14px] flex-1">{item.name}</span>
+                                        {isActive && (
+                                            <div className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full top-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
+                                        )}
+                                        {!isActive && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        )}
+                                    </>
+                                )}
+                            </NavLink>
+                        ))}
+                    </nav>
                 </div>
 
-                {/* Main Navigation */}
-                <nav className="space-y-1">
-                    {menuItems.map((item) => (
-                        <NavLink
-                            key={item.name}
-                            to={item.path}
-                            end={item.path === '/admin'} // Exact match for dashboard
-                            className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
-                ${isActive
-                                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold'
-                                    : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
-              `}
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    <item.icon
-                                        size={20}
-                                        className={isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 group-hover:text-slate-600'}
-                                    />
-                                    <span className="text-[14px]">{item.name}</span>
-                                </>
-                            )}
-                        </NavLink>
-                    ))}
-                </nav>
-
-                {/* System / Support Section */}
-                <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                    <p className="px-3 text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-[0.1em]">
+                {/* System Section */}
+                <div>
+                    <p className="px-4 text-[10px] font-black uppercase text-slate-400 mb-4 tracking-[0.2em] opacity-70">
                         System
                     </p>
                     <div className="space-y-1">
@@ -99,47 +136,62 @@ const Sidebar = () => {
                             <NavLink
                                 key={item.name}
                                 to={item.path}
+                                onClick={handleLinkClick}
                                 className={({ isActive }) => `
-                  flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
-                  ${isActive
-                                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 font-semibold'
-                                        : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
-                `}
+                                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+                                    ${isActive
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold'
+                                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
+                                `}
                             >
-                                <item.icon size={20} className="text-slate-400 group-hover:text-slate-600" />
-                                <span className="text-[14px]">{item.name}</span>
+                                {({ isActive }) => (
+                                    <>
+                                        <item.icon size={20} className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 transition-colors'}`} />
+                                        <span className="text-[14px] flex-1">{item.name}</span>
+                                        {isActive && (
+                                            <div className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full top-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
+                                        )}
+                                        {!isActive && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        )}
+                                    </>
+                                )}
                             </NavLink>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* User Profile Card - Bottom Section */}
-            <div className="mt-auto p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-                <div className="flex items-center gap-3 p-2 rounded-xl transition-colors">
+            {/* 3. Footer (Fixed) */}
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 shrink-0">
+                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100/50 dark:bg-slate-800/30 border border-transparent hover:border-indigo-500/30 transition-all group">
                     <div className="relative">
-                        <img
-                            src={
-                                user?.avatar ||
-                                `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=6366f1&color=fff`
-                            }
-                            alt="User"
-                            className="w-9 h-9 rounded-full border border-white dark:border-slate-700 object-cover shadow-sm"
-                        />
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 p-[2px]">
+                            <img
+                                src={
+                                    user?.avatar ||
+                                    `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=fff&color=6366f1`
+                                }
+                                alt="User"
+                                className="w-full h-full rounded-[10px] object-cover border-2 border-white dark:border-slate-800"
+                            />
+                        </div>
+                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-[3px] border-white dark:border-slate-900 rounded-full shadow-sm"></span>
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate leading-none mb-1">
+                        <p className="text-xs font-black text-slate-900 dark:text-white truncate leading-none mb-1 translate-y-0.5">
                             {user?.name || "User"}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate"> {user?.role || "Store Admin"}</p>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight truncate opacity-60">
+                             {user?.role || "Store Admin"}
+                        </p>
                     </div>
                     <button
                         onClick={handleLogout}
                         title="Sign Out"
-                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-all"
+                        className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all active:scale-90"
                     >
-                        <LogOut size={18} />
+                        <LogOut size={18} strokeWidth={2.5} />
                     </button>
                 </div>
             </div>
