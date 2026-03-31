@@ -27,7 +27,7 @@ export default function ProductPageHeader({ onMenuClick, isDarkMode, toggleTheme
                         onClick={toggleTheme}
                         className="p-2.5 text-slate-500 hover:text-indigo-600 bg-slate-100 dark:bg-slate-800 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all hover:shadow-sm active:scale-90 border border-slate-200/50 dark:border-slate-800/50"
                     >
-                        {isDarkMode ? <Moon size={19} /> : <Sun size={19} />}
+                        {isDarkMode ? <Sun size={19} /> : <Moon size={19} />}
                     </button>
 
                     <button

@@ -65,7 +65,7 @@ const Header = ({ title = "Dashboard Overview", subtitle, onMenuClick, isDarkMod
                         onClick={toggleTheme}
                         className="p-2 md:p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all hover:shadow-sm active:scale-90"
                     >
-                        {isDarkMode ? <Moon size={19} /> : <Sun size={19} />}
+                        {isDarkMode ? <Sun size={19} /> : <Moon size={19} />}
                     </button>
 
 

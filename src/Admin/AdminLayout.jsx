@@ -8,9 +8,10 @@ export default function AdminLayout() {
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
-    // Isolated theme logic for Admin Panel
+    // Isolated theme logic for Admin Panel — default is LIGHT mode
     const [isDarkMode, setIsDarkMode] = useState(() => {
         const savedTheme = localStorage.getItem('admin-theme');
+        // Only dark if explicitly saved as 'dark'; null/unset = light
         return savedTheme === 'dark';
     });
 
