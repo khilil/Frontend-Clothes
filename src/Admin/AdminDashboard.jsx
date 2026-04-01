@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
   Package, ShoppingCart, BarChart3, AlertCircle,
-  TrendingUp, Layers, CheckCircle2, IndianRupee, Activity
+  TrendingUp, Layers, CheckCircle2, IndianRupee, Activity,
+  Plus, ExternalLink, FileText, Download, AlertTriangle, History, ArrowRight
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDashboardData } from '../features/dashboard/dashboardSlice';
+import { getLowStockProducts } from '../services/inventoryService';
 import OrderHub from './components/OrderHub';
 import OrderDetailView from './Pages/OrderDetailView';
 import { formatCurrency } from '../utils/formatCurrency';
+import { KPICardSkeleton, ChartSkeleton, TableSkeleton } from './components/SkeletonLoader';
 
 
 // --- Sub-components ---
@@ -125,7 +129,7 @@ const PipelineChartMemo = React.memo(({ statusData }) => {
 const BestSellingProductsWidget = ({ products = [] }) => {
   if (!products || products.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center h-full flex flex-col items-center justify-center">
         <div className="size-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
            <Package size={24} />
         </div>
@@ -136,7 +140,7 @@ const BestSellingProductsWidget = ({ products = [] }) => {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm h-full">
       <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <div>
           <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Top Sellers</h3>
@@ -182,24 +186,179 @@ const BestSellingProductsWidget = ({ products = [] }) => {
   );
 };
 
-// --- Main Dashboard Component ---
+const QuickActions = () => {
+  const actions = [
+    { label: 'Add Product', icon: Plus, link: '/admin/products', color: 'bg-indigo-600' },
+    { label: 'Categories', icon: Layers, link: '/admin/categories', color: 'bg-emerald-600' },
+    { label: 'Inventory', icon: FileText, link: '/admin/inventory', color: 'bg-amber-600' },
+    { label: 'Analytics', icon: BarChart3, link: '/admin/analytics', color: 'bg-violet-600' },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {actions.map((action, i) => (
+        <Link 
+          key={i} 
+          to={action.link}
+          className="flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:shadow-lg transition-all hover:-translate-y-1 group"
+        >
+          <div className={`p-2.5 rounded-xl ${action.color} text-white shadow-lg shadow-${action.color.split('-')[1]}-600/20`}>
+            <action.icon size={18} />
+          </div>
+          <span className="text-xs font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 transition-colors">
+            {action.label}
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+};
+
+const LowStockAlerts = ({ products = [], loading }) => {
+  if (loading) return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 h-full">
+      <div className="animate-pulse space-y-4">
+        <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/3" />
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => <div key={i} className="h-12 bg-slate-100 dark:bg-slate-800 rounded-xl w-full" />)}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Inventory Monitor</h3>
+          <p className="text-[10px] text-slate-500 font-medium mt-0.5">Products below threshold</p>
+        </div>
+        <AlertTriangle size={18} className={products.length > 0 ? "text-rose-500" : "text-emerald-500"} />
+      </div>
+      
+      <div className="flex-1 p-4">
+        {products.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-4">
+            <div className="size-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-3">
+               <CheckCircle2 size={20} />
+            </div>
+            <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight">Stock Healthy</p>
+            <p className="text-[10px] text-slate-500 mt-1">All products are within safety limits</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {products.slice(0, 4).map((p, i) => (
+              <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[120px]">{p.name || p.title}</span>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{p.sku}</span>
+                </div>
+                <div className="flex flex-col items-end">
+                   <span className="text-xs font-black text-rose-500">{p.stock} Left</span>
+                   <span className="text-[8px] font-bold text-slate-400">Limit: {p.lowStockThreshold}</span>
+                </div>
+              </div>
+            ))}
+            {products.length > 4 && (
+              <Link to="/admin/inventory" className="block text-center text-[10px] font-black text-indigo-600 uppercase tracking-widest pt-2 hover:underline">
+                View All {products.length} Alerts
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const RecentActivityWidget = ({ activities = [] }) => {
+  // Mocking activities if none provided
+  const displayActivities = activities.length > 0 ? activities : [
+    { type: 'order', label: 'New Order #88291', time: '5 mins ago', icon: <ShoppingCart size={14}/>, color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20' },
+    { type: 'stock', label: 'SKU FEN-TEE-BL-M updated', time: '12 mins ago', icon: <Package size={14}/>, color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20' },
+    { type: 'status', label: 'Order #88285 marked as Shipped', time: '45 mins ago', icon: <CheckCircle2 size={14}/>, color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20' },
+    { type: 'product', label: 'New variant added: Oversized Tee', time: '1 hr ago', icon: <Layers size={14}/>, color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20' },
+    { type: 'alert', label: 'Low stock alert: Black Hoodie (L)', time: '2 hrs ago', icon: <AlertTriangle size={14}/>, color: 'text-rose-600 bg-rose-50 dark:bg-rose-900/20' },
+  ];
+
+  return (
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col font-sans">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Recent Activity</h3>
+          <p className="text-[10px] text-slate-500 font-medium mt-0.5">Real-time operational stream</p>
+        </div>
+        <History size={18} className="text-slate-400" />
+      </div>
+
+      <div className="flex-1 p-4 overflow-y-auto custom-scrollbar">
+        <div className="space-y-4">
+          {displayActivities.map((act, i) => (
+            <div key={i} className="flex gap-4 group cursor-default">
+               <div className="flex flex-col items-center">
+                  <div className={`p-2 rounded-xl ${act.color} transition-transform group-hover:scale-110 shadow-sm border border-slate-100 dark:border-slate-800/50`}>
+                    {act.icon}
+                  </div>
+                  {i !== displayActivities.length - 1 && <div className="w-px h-full bg-slate-100 dark:bg-slate-800 mt-2" />}
+               </div>
+               <div className="flex-1 pb-4">
+                  <p className="text-[11px] font-bold text-slate-900 dark:text-slate-200 leading-tight mb-1">{act.label}</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{act.time}</p>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
+         <button className="w-full flex items-center justify-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">
+            Full Audit Log <ArrowRight size={12}/>
+         </button>
+      </div>
+    </div>
+  );
+};
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const { data: dashboardData, loading, error } = useSelector((state) => state.dashboard);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [isLowStockLoading, setIsLowStockLoading] = useState(true);
 
   const { kpis, revenueData, statusData, topProducts } = dashboardData || {};
 
   useEffect(() => {
     dispatch(fetchDashboardData());
+    fetchLowStock();
   }, [dispatch]);
+
+  const fetchLowStock = async () => {
+    try {
+      const res = await getLowStockProducts();
+      setLowStockProducts(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch low stock", err);
+    } finally {
+      setIsLowStockLoading(false);
+    }
+  };
 
   if (loading && !dashboardData) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="size-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Synchronizing Era Intelligence...</p>
+      <div className="space-y-8 animate-in fade-in duration-500 pb-12">
+        <div className="flex justify-between items-end">
+          <div className="space-y-2">
+            <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-48" />
+            <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-64" />
+          </div>
+          <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-32" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => <KPICardSkeleton key={i} />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2"><ChartSkeleton /></div>
+          <div><ChartSkeleton /></div>
         </div>
       </div>
     );
@@ -232,6 +391,9 @@ export default function AdminDashboard() {
            </div>
         </div>
       </div>
+
+      {/* 1.5 Quick Actions Section */}
+      <QuickActions />
 
       {/* 2. Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -311,8 +473,16 @@ export default function AdminDashboard() {
       </div>
 
       {/* 4. Top Sellers Row */}
-      <div className="grid grid-cols-1 gap-6 mb-8">
-         <BestSellingProductsWidget products={topProducts} />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+         <div className="lg:col-span-2">
+           <BestSellingProductsWidget products={topProducts} />
+         </div>
+         <div className="lg:col-span-1">
+           <LowStockAlerts products={lowStockProducts} loading={isLowStockLoading} />
+         </div>
+         <div className="lg:col-span-1">
+           <RecentActivityWidget />
+         </div>
       </div>
 
       {/* 5. Order Hub */}

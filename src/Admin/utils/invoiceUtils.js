@@ -2,44 +2,49 @@
  * 📝 Core Invoice Component HTML
  */
 const getInvoiceBody = (order) => {
-    const date = new Date(order.createdAt).toLocaleDateString();
+    const date = new Date(order.createdAt).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
     const items = order.items || [];
     const subtotal = order.totalAmount || 0;
     const grandTotal = subtotal;
 
     return `
         <div class="invoice-container">
+            <div class="luxury-seal">CERTIFIED LUXURY APPAREL</div>
             <div class="header">
                 <div>
                     <div class="brand">FENRIR ERA</div>
-                    <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Premium Gentleman's Apparel</p>
+                    <p style="font-family: 'Bodoni Moda', serif; font-size: 10px; color: #B8860B; margin-top: 4px; letter-spacing: 0.3em; font-weight: 700; text-transform: uppercase;">Premium Gentleman's Archival Collection</p>
                 </div>
                 <div style="text-align: right;">
-                    <h1 style="margin: 0; font-size: 20px; font-weight: 800;">INVOICE</h1>
-                    <p style="font-size: 12px; color: #64748b; margin: 4px 0;">#${order._id.toString().toUpperCase()}</p>
-                    <p style="font-size: 12px; color: #64748b; margin: 0;">Date: ${date}</p>
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.05em; color: #1A1A1A;">OFFICIAL INVOICE</h1>
+                    <p style="font-size: 11px; color: #888; margin: 4px 0; font-weight: 800;">HUB_OP_ID: ${order._id.toString().toUpperCase()}</p>
+                    <p style="font-size: 11px; color: #1A1A1A; margin: 0; font-weight: 700;">ISSUED: ${date}</p>
                 </div>
             </div>
 
             <div class="details">
-                <div>
-                    <div class="section-title">Billed To</div>
-                    <div style="font-weight: 700; font-size: 15px;">${order.shippingAddress?.fullName || 'Customer'}</div>
-                    <p style="font-size: 12px; line-height: 1.5; color: #475569; margin-top: 4px;">
+                <div class="detail-box">
+                    <div class="section-title">Recipient Information</div>
+                    <div style="font-weight: 800; font-size: 16px; color: #1A1A1A;">${order.shippingAddress?.fullName || 'Customer'}</div>
+                    <p style="font-size: 12px; line-height: 1.6; color: #444; margin-top: 6px; font-weight: 500;">
                         ${order.shippingAddress?.addressLine}<br>
                         ${order.shippingAddress?.city}, ${order.shippingAddress?.state}<br>
                         ${order.shippingAddress?.pincode}
                     </p>
-                    <div style="font-size: 12px; color: #475569; margin-top: 8px;">
-                        <span>Email: ${order.user?.email || 'N/A'}</span><br>
-                        <span>Phone: ${order.shippingAddress?.phone || 'N/A'}</span>
+                    <div style="font-size: 11px; color: #666; margin-top: 10px; font-weight: 600;">
+                        <span style="color: #B8860B;">IDENTIFIER:</span> ${order.user?.email || 'N/A'}<br>
+                        <span style="color: #B8860B;">VIRTUAL:</span> ${order.shippingAddress?.phone || 'N/A'}
                     </div>
                 </div>
-                <div style="text-align: right;">
-                    <div class="section-title">Payment Info</div>
-                    <div style="font-size: 13px; font-weight: 600;">Method: ${order.paymentMethod}</div>
-                    <div style="font-size: 13px; color: ${order.paymentStatus === 'Paid' ? '#10b981' : '#f59e0b'}; margin-top: 4px;">
-                        Status: ${order.paymentStatus.toUpperCase()}
+                <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div class="section-title">Transaction Protocol</div>
+                    <div style="font-size: 13px; font-weight: 800; color: #1A1A1A;">PROCEDURE: ${order.paymentMethod.toUpperCase()}</div>
+                    <div class="payment-status-badge status-${order.paymentStatus.toLowerCase()}">
+                        PROTOCOL_${order.paymentStatus.toUpperCase()}
                     </div>
                 </div>
             </div>
@@ -47,45 +52,46 @@ const getInvoiceBody = (order) => {
             <table>
                 <thead>
                     <tr>
-                        <th>Item Description</th>
-                        <th>Price</th>
-                        <th style="text-align: center;">Qty</th>
-                        <th style="text-align: right;">Total</th>
+                        <th style="width: 50%">Archival Description</th>
+                        <th style="text-align: right">Unit Valuation</th>
+                        <th style="text-align: center">Qty</th>
+                        <th style="text-align: right">Extended Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${items.map(item => `
                         <tr>
                             <td>
-                                <div style="font-weight: 700;">${item.title || item.name}</div>
-                                <div style="font-size: 10px; color: #64748b; margin-top: 2px;">SKU: ${item.variantId}</div>
+                                <div style="font-weight: 800; color: #1A1A1A; font-size: 14px;">${item.title || item.name}</div>
+                                <div style="font-size: 9px; color: #B8860B; margin-top: 3px; font-weight: 800; letter-spacing: 0.1em;">SKU_REF: ${item.variantId}</div>
                             </td>
-                            <td>₹${(item.priceAtPurchase || 0).toLocaleString()}</td>
-                            <td style="text-align: center;">${item.quantity}</td>
-                            <td style="text-align: right; font-weight: 700;">₹${((item.priceAtPurchase || 0) * item.quantity).toLocaleString()}</td>
+                            <td style="text-align: right; font-weight: 600;">₹${(item.priceAtPurchase || 0).toLocaleString()}</td>
+                            <td style="text-align: center; font-weight: 800;">${item.quantity}</td>
+                            <td style="text-align: right; font-weight: 900; color: #1A1A1A;">₹${((item.priceAtPurchase || 0) * item.quantity).toLocaleString()}</td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
 
-            <div class="total-section">
+            <div class="financial-summary">
                 <div class="total-row">
-                    <span style="color: #64748b;">Subtotal</span>
-                    <span style="font-weight: 600;">₹${subtotal.toLocaleString()}</span>
+                    <span class="label">Gross Ledger</span>
+                    <span class="value">₹${subtotal.toLocaleString()}</span>
                 </div>
                 <div class="total-row">
-                    <span style="color: #64748b;">Shipping</span>
-                    <span style="font-weight: 600; color: #10b981;">FREE</span>
+                    <span class="label">Priority Logistics</span>
+                    <span class="value" style="color: #10b981;">COMPLIMENTARY</span>
                 </div>
                 <div class="total-row grand">
-                    <span>Grand Total</span>
-                    <span>₹${grandTotal.toLocaleString()}</span>
+                    <span class="label">Net Settlement</span>
+                    <span class="value">₹${grandTotal.toLocaleString()}</span>
                 </div>
             </div>
 
             <div class="footer">
-                <p style="font-weight: 700; margin-bottom: 4px;">Thank you for your business!</p>
-                <p>For any queries, contact us at ${import.meta.env.VITE_SUPPORT_EMAIL || 'support@fenrirera.com'}</p>
+                <p style="font-weight: 900; font-size: 12px; color: #1A1A1A; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Excellence is not an act, but a habit.</p>
+                <p style="font-weight: 500;">Secure transmission via Fenrir Era Protocol 4.1</p>
+                <p style="margin-top: 4px;">Inquiries: support@fenrirera.com</p>
             </div>
         </div>
     `;
@@ -94,24 +100,69 @@ const getInvoiceBody = (order) => {
 /**
  * 👗 Styles for the Invoice
  */
+/**
+ * 👗 Luxury Styles for the Invoice
+ */
 const invoiceStyles = `
-    body { font-family: 'Inter', sans-serif; color: #1e293b; padding: 0; margin: 0; }
-    .invoice-container { padding: 40px; page-break-after: always; min-height: 100vh; box-sizing: border-box; }
-    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
-    .brand { color: #4f46e5; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
-    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.1em; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-    th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; padding: 12px; border-bottom: 1px solid #f1f5f9; }
-    td { padding: 12px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
-    .total-section { margin-left: auto; width: 250px; }
-    .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; }
-    .total-row.grand { border-top: 2px solid #f1f5f9; margin-top: 8px; padding-top: 12px; font-weight: 800; font-size: 18px; color: #4f46e5; }
-    .footer { margin-top: 60px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+    @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@200;300;400;500;600;700&display=swap');
+
+    body { font-family: 'Inter', sans-serif; color: #1A1A1A; padding: 0; margin: 0; background: #fff; }
+    .invoice-container { padding: 50px; page-break-after: always; min-height: 100vh; box-sizing: border-box; position: relative; border: 20px solid #FBFAF5; }
+    
+    .luxury-seal {
+        position: absolute;
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Oswald', sans-serif;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: 0.5em;
+        color: rgba(184, 134, 11, 0.2);
+        border: 1px solid rgba(184, 134, 11, 0.2);
+        padding: 4px 12px;
+        border-radius: 4px;
+        text-transform: uppercase;
+    }
+
+    .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #E5E7EB; padding-bottom: 30px; margin-bottom: 40px; margin-top: 40px; }
+    .brand { font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; color: #1A1A1A; }
+    
+    .details { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; margin-bottom: 50px; }
+    .section-title { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #B8860B; margin-bottom: 12px; letter-spacing: 0.15em; }
+    
+    table { width: 100%; border-collapse: collapse; margin-bottom: 50px; border-top: 2px solid #1A1A1A; }
+    th { text-align: left; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1A1A1A; padding: 15px 10px; border-bottom: 1px solid #E5E7EB; letter-spacing: 0.1em; }
+    td { padding: 20px 10px; font-size: 13px; border-bottom: 1px solid #F3F4F6; }
+
+    .payment-status-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-top: 10px;
+    }
+    .status-paid { background: #10b981; color: #fff; }
+    .status-pending { background: #f59e0b; color: #fff; }
+
+    .financial-summary { margin-left: auto; width: 300px; }
+    .total-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px; font-weight: 600; }
+    .total-row .label { color: #666; font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+    .total-row .value { color: #1A1A1A; }
+    
+    .total-row.grand { border-top: 1px solid #1A1A1A; margin-top: 10px; padding-top: 15px; }
+    .total-row.grand .label { color: #B8860B; font-weight: 900; font-size: 12px; }
+    .total-row.grand .value { font-weight: 900; font-size: 24px; color: #1A1A1A; font-family: 'Oswald', sans-serif; }
+    
+    .footer { margin-top: auto; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #E5E7EB; padding-top: 30px; line-height: 1.8; }
+    
     @media print { 
         body { padding: 0; } 
         .no-print { display: none; } 
-        .invoice-container { border: none; }
+        .invoice-container { border: none; padding: 40px; }
     }
 `;
 

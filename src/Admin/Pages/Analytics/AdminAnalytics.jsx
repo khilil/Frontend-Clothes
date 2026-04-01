@@ -10,6 +10,7 @@ import {
 import { getAnalyticsData } from '../../../services/analyticsService';
 import { getAllOrders } from '../../../services/orderService';
 import { formatCurrency } from '../../../utils/formatCurrency';
+import { KPICardSkeleton, ChartSkeleton, TableSkeleton } from '../../components/SkeletonLoader';
 
 const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308'];
 
@@ -89,6 +90,7 @@ const AdminAnalytics = () => {
         const revenueMap = {};
         const statusMap = {};
         const productMap = {};
+        const userMap = {}; // 👥 Track user loyalty
 
         // 🕰️ Time filtering logic (Simple: assumes orders are sorted or recent)
         const rangeDays = range === '7D' ? 7 : range === '30D' ? 30 : range === '90D' ? 90 : 365;
@@ -129,26 +131,47 @@ const AdminAnalytics = () => {
                     productMap[title].revenue += (itemPrice * itemQty);
                 }
             });
+
+            // 👥 Loyalty tracking
+            const userKey = order.user?.email || order.user?._id || "Anonymous";
+            userMap[userKey] = (userMap[userKey] || 0) + 1;
         });
 
         stats.avgOrderValue = stats.totalOrders > 0 ? stats.totalRevenue / stats.totalOrders : 0;
+
+        const customerComposition = [
+            { name: 'New Customers', value: Object.values(userMap).filter(count => count === 1).length, color: '#6366f1' },
+            { name: 'Returning', value: Object.values(userMap).filter(count => count > 1).length, color: '#10b981' }
+        ];
 
         return {
             stats,
             revenueByDate: Object.entries(revenueMap)
                 .map(([date, revenue]) => ({ date, revenue }))
                 .sort((a, b) => new Date(a.date) - new Date(b.date)),
-            ordersByStatus: Object.entries(statusMap).map(([name, value]) => ({ name, value })),
-            topProducts: Object.values(productMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5)
+            ordersByStatus: Object.entries(statusMap)
+                .map(([name, value]) => ({ name, value }))
+                .sort((a, b) => b.value - a.value),
+            topProducts: Object.values(productMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5),
+            customerComposition
         };
     };
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[600px]">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="size-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Crunching numbers...</p>
+            <div className="space-y-8 pb-12 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="space-y-2">
+                        <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-64" />
+                        <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded animate-pulse w-48" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map(i => <KPICardSkeleton key={i} />)}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2"><ChartSkeleton /></div>
+                    <div><ChartSkeleton /></div>
                 </div>
             </div>
         );
@@ -173,12 +196,12 @@ const AdminAnalytics = () => {
     }
 
     const { 
-        stats = {}, 
-        revenueByDate = [], 
-        ordersByStatus = [], 
+        stats = {},
+        revenueByDate = [],
         topCategories = [], 
         customerGrowth = [], 
-        topProducts = [] 
+        topProducts = [],
+        customerComposition = []
     } = data || {};
 
     const totalRevenue = stats.totalRevenue || 0;
@@ -274,15 +297,15 @@ const AdminAnalytics = () => {
                     </div>
                 </div>
 
-                {/* --- ORDER STATUS (PIE CHART) --- */}
+                {/* --- CUSTOMER COMPOSITION (PIE CHART) --- */}
                 <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-[2rem] p-8 shadow-sm">
-                    <h4 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white mb-1">Order Fulfillment</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-8">Status Distribution</p>
+                    <h4 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white mb-1">Customer Composition</h4>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-8">Loyalty distribution</p>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={ordersByStatus}
+                                    data={customerComposition}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={60}
@@ -290,22 +313,27 @@ const AdminAnalytics = () => {
                                     paddingAngle={8}
                                     dataKey="value"
                                 >
-                                    {ordersByStatus.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} cornerRadius={8} />
+                                    {customerComposition.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} cornerRadius={8} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
+                                <Tooltip 
+                                    contentStyle={{ borderRadius: '15px', border: 'none', backgroundColor: '#0f172a', color: '#fff' }}
+                                    itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
                     <div className="space-y-3 mt-4">
-                        {ordersByStatus.map((status, index) => (
+                        {customerComposition.map((entry, index) => (
                             <div key={index} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="size-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{status.name}</span>
+                                    <div className="size-3 rounded-full" style={{ backgroundColor: entry.color }}></div>
+                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{entry.name}</span>
                                 </div>
-                                <span className="text-sm font-bold text-slate-900 dark:text-white">{status.value}</span>
+                                <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                    {entry.value} ({totalOrders > 0 ? ((entry.value/totalOrders)*100).toFixed(1) : 0}%)
+                                </span>
                             </div>
                         ))}
                     </div>

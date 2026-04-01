@@ -1,6 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllCustomers } from '../../../services/customerService';
+import { KPICardSkeleton, TableSkeleton } from '../../components/SkeletonLoader';
+import { User, Mail, MapPin, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Search } from 'lucide-react';
 
 /**
  * AdminCustomers Component
@@ -105,129 +107,142 @@ const AdminCustomers = () => {
             <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto w-full">
 
                 {/* --- PAGE TITLE --- */}
-                <div>
-                    <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Customers</h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Manage your customer base and their lifetime value</p>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase">Archival Customers</h2>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Synchronized user ledger and lifetime valuation protocol.</p>
+                    </div>
                 </div>
 
                 {/* --- KPI CARDS --- */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {kpis.map((kpi, idx) => (
-                        <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 group-hover:bg-[#1152d4]/10 transition-colors">
-                                    <span className="material-symbols-outlined text-[#1152d4]">{kpi.icon}</span>
-                                </div>
-                                <span className={`flex items-center px-2 py-1 rounded-lg text-xs font-bold ${kpi.trend.startsWith('+')
-                                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'
-                                    : 'text-rose-600 bg-rose-50 dark:bg-rose-500/10'
-                                    }`}>
-                                    {kpi.trend}
-                                    <span className="material-symbols-outlined text-[14px] ml-1">
-                                        {kpi.trend.startsWith('+') ? 'trending_up' : 'trending_down'}
+                    {loading ? (
+                        [1, 2, 3].map(i => <KPICardSkeleton key={i} />)
+                    ) : (
+                        kpis.map((kpi, idx) => (
+                            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all group border-l-4 border-l-transparent hover:border-l-indigo-600">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 group-hover:bg-indigo-600/10 transition-colors">
+                                        <TrendingUp size={20} className="text-indigo-600" />
+                                    </div>
+                                    <span className={`flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black tracking-widest uppercase ${kpi.trend.startsWith('+')
+                                        ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'
+                                        : 'text-rose-600 bg-rose-50 dark:bg-rose-500/10'
+                                        }`}>
+                                        {kpi.trend}
                                     </span>
-                                </span>
+                                </div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{kpi.label}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{kpi.value}</p>
                             </div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{kpi.label}</p>
-                            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{kpi.value}</p>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
                 {/* --- CUSTOMERS TABLE --- */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[800px]">
-                            <thead>
-                                <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Customer</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Location</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Orders</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Spent</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Last Order</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan="7" className="px-6 py-12 text-center text-slate-500 font-medium">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="size-8 border-4 border-[#1152d4] border-t-transparent rounded-full animate-spin"></div>
-                                                <p>Loading customers...</p>
-                                            </div>
-                                        </td>
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+                    <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+                        <div className="relative w-full md:w-96">
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold" />
+                            <input 
+                                type="text" 
+                                placeholder="Search by name, email, or city..." 
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-white dark:bg-slate-800 border-none rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:ring-4 focus:ring-indigo-500/10 dark:text-white transition-all outline-none"
+                            />
+                        </div>
+                    </div>
+
+                    {loading ? (
+                        <TableSkeleton rows={10} />
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse min-w-[800px]">
+                                <thead>
+                                    <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Archival User</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Location</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Orders</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">LTV</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Last Access</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</th>
+                                        <th className="px-6 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Procedure</th>
                                     </tr>
-                                ) : error ? (
-                                    <tr>
-                                        <td colSpan="7" className="px-6 py-12 text-center text-rose-500 font-medium">
-                                            {error}
-                                        </td>
-                                    </tr>
-                                ) : filteredCustomers.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="7" className="px-6 py-12 text-center text-slate-500 font-medium">
-                                            No customers found matching your search.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredCustomers.map((customer) => (
-                                        <tr key={customer._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <img className="size-10 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800" src={customer.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={customer.name} />
-                                                    <div>
-                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{customer.name}</p>
-                                                        <p className="text-xs text-slate-500 font-medium">{customer.email}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                                {customer.addresses?.[0] ? `${customer.addresses[0].city}, ${customer.addresses[0].state}` : 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300">{customer.totalOrders || 0}</td>
-                                            <td className="px-6 py-4 text-sm font-black text-slate-900 dark:text-white">₹{(customer.totalSpent || 0).toFixed(2)}</td>
-                                            <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                                {customer.lastOrder ? new Date(customer.lastOrder).toLocaleDateString() : 'Never'}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${customer.isVerified
-                                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
-                                                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-500'
-                                                    }`}>
-                                                    {customer.isVerified ? 'Verified' : 'Pending'}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={() => handleViewProfile(customer._id)}
-                                                    className="px-4 py-1.5 text-xs font-bold text-[#1152d4] border border-[#1152d4]/30 rounded-lg hover:bg-[#1152d4] hover:text-white transition-all transform active:scale-95"
-                                                >
-                                                    View Profile
-                                                </button>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                    {filteredCustomers.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="7" className="px-6 py-20 text-center">
+                                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">No matching archival data found.</p>
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                    ) : (
+                                        filteredCustomers.map((customer) => (
+                                            <tr key={customer._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="relative">
+                                                            <img className="size-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-sm" src={customer.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={customer.name} />
+                                                            {customer.isVerified && <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-emerald-500 border border-white dark:border-slate-800 rounded-full" />}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{customer.name}</p>
+                                                            <p className="text-[11px] text-slate-400 font-medium tracking-tight">{customer.email}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                                        <MapPin size={12} className="text-slate-300" />
+                                                        {customer.addresses?.[0] ? `${customer.addresses[0].city}` : 'N/A'}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm font-black text-slate-700 dark:text-slate-300">{customer.totalOrders || 0}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className="text-sm font-black dark:text-white">₹{(customer.totalSpent || 0).toLocaleString()}</span>
+                                                </td>
+                                                <td className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
+                                                    {customer.lastOrder ? new Date(customer.lastOrder).toLocaleDateString() : 'NO HISTORY'}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-transparent ${customer.isVerified
+                                                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                                                            : 'bg-slate-100 text-slate-500 dark:bg-slate-800/10 dark:text-slate-500'
+                                                        }`}>
+                                                        {customer.isVerified ? 'VERIFIED' : 'PENDING'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button
+                                                        onClick={() => handleViewProfile(customer._id)}
+                                                        className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-600/20 rounded-xl transition-all shadow-sm shadow-indigo-600/5 active:scale-95"
+                                                    >
+                                                        View Data
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
 
                     {/* --- PAGINATION FOOTER --- */}
                     <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <p className="text-xs text-slate-500 font-bold uppercase tracking-tight">
                             Showing <span className="text-slate-900 dark:text-white">1</span> to <span className="text-slate-900 dark:text-white">{filteredCustomers.length}</span> of <span className="text-slate-900 dark:text-white">{customers.length}</span> customers
                         </p>
-                        <div className="flex items-center gap-1.5">
-                            <button className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-400 transition-all disabled:opacity-30" disabled>
-                                <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                        <div className="flex items-center gap-2">
+                            <button className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-400 transition-all disabled:opacity-30" disabled>
+                                <ChevronLeft size={16} />
                             </button>
-                            <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-black bg-[#1152d4] text-white rounded-lg shadow-sm">1</button>
-                            <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">2</button>
-                            <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">3</button>
-                            <button className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-500 transition-all">
-                                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                            <button className="min-w-[36px] h-9 flex items-center justify-center text-xs font-black bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-600/20">1</button>
+                            <button className="min-w-[36px] h-9 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">2</button>
+                            <button className="min-w-[36px] h-9 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">3</button>
+                            <button className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-500 transition-all">
+                                <ChevronRight size={16} />
                             </button>
                         </div>
                     </div>
