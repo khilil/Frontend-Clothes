@@ -135,11 +135,11 @@ const Inventory = () => {
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors dark:text-slate-200">
-            <span className="material-icons-round text-sm">file_download</span>
+            <span className="material-symbols-outlined text-sm">file_download</span>
             Export CSV
           </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium shadow-lg shadow-primary/20 hover:bg-opacity-90 transition-all">
-            <span className="material-icons-round text-sm">add</span>
+            <span className="material-symbols-outlined text-sm">add</span>
             New SKU
           </button>
         </div>
@@ -254,7 +254,7 @@ const Inventory = () => {
                         onClick={() => openUpdateModal(item)}
                         className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                       >
-                        <span className="material-icons-round text-lg leading-none">edit_note</span>
+                        <span className="material-symbols-outlined text-lg leading-none">edit_note</span>
                       </button>
                     </td>
                   </tr>
@@ -285,7 +285,7 @@ const Inventory = () => {
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold dark:text-white">Update Stock</h3>
                 <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
-                  <span className="material-icons-round">close</span>
+                  <span className="material-symbols-outlined">close</span>
                 </button>
               </div>
               <p className="text-sm text-slate-500 mt-1">Adjust inventory for <span className="font-mono font-bold text-primary">{selectedProduct?.sku}</span></p>
@@ -378,7 +378,7 @@ const MetricCard = ({ icon, label, value, trend, color, isAlert }) => {
     <div className={`bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:-translate-y-1 ${isAlert ? `border-l-4 ${label.includes('Low') ? 'border-l-orange-500' : 'border-l-red-500'}` : ''}`}>
       <div className="flex items-center justify-between mb-4">
         <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
-          <span className="material-icons-round">{icon}</span>
+          <span className="material-symbols-outlined">{icon}</span>
         </div>
         {trend && <span className="text-xs font-semibold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">{trend}</span>}
       </div>

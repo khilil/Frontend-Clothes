@@ -112,7 +112,7 @@ const AdminOrderDetails = () => {
                             onClick={() => navigate('/admin/orders')}
                             className="text-[#1152d4] hover:text-[#1152d4]/80 flex items-center gap-1 transition-colors text-sm font-semibold group"
                         >
-                            <span className="material-icons text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
                             Orders List
                         </button>
                         <div className="flex flex-wrap items-center gap-4">
@@ -161,7 +161,7 @@ const AdminOrderDetails = () => {
                                     step.active ? 'bg-[#1152d4] text-white ring-4 ring-[#1152d4]/20 border-2 border-white dark:border-slate-800 scale-110' :
                                         'bg-slate-100 dark:bg-slate-700 text-slate-400'
                                     }`}>
-                                    <span className="material-icons text-lg font-bold">{step.completed ? 'check' : step.icon}</span>
+                                    <span className="material-symbols-outlined text-lg font-bold">{step.completed ? 'check' : step.icon}</span>
                                 </div>
                                 <div className="space-y-0.5">
                                     <p className={`text-[10px] font-black uppercase tracking-widest ${step.active || step.completed ? 'text-[#1152d4]' : 'text-slate-400'}`}>
@@ -181,7 +181,7 @@ const AdminOrderDetails = () => {
                         {/* Fulfillment & Logistics */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                             <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-6">
-                                <span className="material-icons text-accent">local_shipping</span> Fulfillment & Logistics
+                                <span className="material-symbols-outlined text-accent">local_shipping</span> Fulfillment & Logistics
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
@@ -225,7 +225,7 @@ const AdminOrderDetails = () => {
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                             <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-800/50 flex items-center justify-between">
                                 <h2 className="font-bold text-lg flex items-center gap-2">
-                                    <span className="material-icons text-[#1152d4]">inventory_2</span> Order Items
+                                    <span className="material-symbols-outlined text-[#1152d4]">inventory_2</span> Order Items
                                 </h2>
                                 <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-500">
                                     {order.items?.length} TOTAL
@@ -302,7 +302,7 @@ const AdminOrderDetails = () => {
                                                                 <div className="space-y-4 flex-1">
                                                                     <div>
                                                                         <p className="text-[10px] font-black text-[#1152d4] uppercase tracking-widest mb-2 flex items-center gap-1">
-                                                                            <span className="material-icons text-[14px]">precision_manufacturing</span> Production Assets
+                                                                            <span className="material-symbols-outlined text-[14px]">precision_manufacturing</span> Production Assets
                                                                         </p>
                                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                                             {/* High-Res Downloads */}
@@ -316,7 +316,7 @@ const AdminOrderDetails = () => {
                                                                                     }}
                                                                                     className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
                                                                                 >
-                                                                                    <span className="material-icons text-sm group-hover:scale-110 transition-transform">download</span>
+                                                                                    <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">download</span>
                                                                                     Front (Transparent PNG)
                                                                                 </button>
                                                                             )}
@@ -330,7 +330,7 @@ const AdminOrderDetails = () => {
                                                                                     }}
                                                                                     className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
                                                                                 >
-                                                                                    <span className="material-icons text-sm group-hover:scale-110 transition-transform">download</span>
+                                                                                    <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">download</span>
                                                                                     Back (Transparent PNG)
                                                                                 </button>
                                                                             )}
@@ -345,7 +345,7 @@ const AdminOrderDetails = () => {
                                                                                 }}
                                                                                 className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-900 border border-transparent rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-all text-[11px] font-bold shadow-sm group col-span-full"
                                                                             >
-                                                                                <span className="material-icons text-sm">image</span>
+                                                                                <span className="material-symbols-outlined text-sm">image</span>
                                                                                 Download Full Mockup
                                                                             </button>
                                                                         </div>
@@ -356,7 +356,7 @@ const AdminOrderDetails = () => {
                                                                         <div className="bg-slate-900/5 dark:bg-black/20 rounded-xl p-4 border border-dashed border-slate-200 dark:border-slate-700 mt-4">
                                                                             <div className="flex items-center justify-between mb-3">
                                                                                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                                                                                    <span className="material-icons text-[14px]">query_stats</span> Technical Audit
+                                                                                    <span className="material-symbols-outlined text-[14px]">query_stats</span> Technical Audit
                                                                                 </p>
                                                                                 {item.designReference.qualityStatus?.isLowQuality ? (
                                                                                     <span className="bg-red-500/10 text-red-500 text-[8px] font-black px-2 py-0.5 rounded border border-red-500/20 uppercase tracking-widest">LOW QUALITY WARNING</span>
@@ -394,7 +394,7 @@ const AdminOrderDetails = () => {
                                                                                 <div className="mt-3 pt-2 border-t border-slate-200 dark:border-slate-800">
                                                                                     {item.designReference.qualityStatus.warnings.map((w, wi) => (
                                                                                         <p key={wi} className="text-[9px] text-rose-500 flex items-center gap-1">
-                                                                                            <span className="material-icons text-[12px]">warning</span> {w}
+                                                                                            <span className="material-symbols-outlined text-[12px]">warning</span> {w}
                                                                                         </p>
                                                                                     ))}
                                                                                 </div>
@@ -406,7 +406,7 @@ const AdminOrderDetails = () => {
                                                                         <div>
                                                                             <p className="text-[10px] font-black text-[#1152d4] uppercase tracking-widest mb-1">Printing Method</p>
                                                                             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 flex items-center gap-2 shadow-sm">
-                                                                                <span className="material-icons text-accent text-sm">print</span>
+                                                                                <span className="material-symbols-outlined text-accent text-sm">print</span>
                                                                                 <div>
                                                                                     <p className="text-xs font-bold leading-none">{item.customizations.printingMethod?.label || "Standard"}</p>
                                                                                     <p className="text-[9px] text-slate-500 mt-0.5">{item.customizations.printingMethod?.description}</p>
@@ -423,7 +423,7 @@ const AdminOrderDetails = () => {
                                                                                 }}
                                                                                 className="text-[10px] font-bold text-slate-400 hover:text-accent transition-colors flex items-center gap-1 uppercase tracking-widest"
                                                                             >
-                                                                                <span className="material-icons text-xs">content_copy</span> Copy Design JSON
+                                                                                <span className="material-symbols-outlined text-xs">content_copy</span> Copy Design JSON
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => {
@@ -432,7 +432,7 @@ const AdminOrderDetails = () => {
                                                                                 }}
                                                                                 className="text-[10px] font-bold text-slate-400 hover:text-accent transition-colors flex items-center gap-1 uppercase tracking-widest"
                                                                             >
-                                                                                <span className="material-icons text-xs">code</span> Technical View
+                                                                                <span className="material-symbols-outlined text-xs">code</span> Technical View
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -465,7 +465,7 @@ const AdminOrderDetails = () => {
                         {/* Internal Notes Placeholder */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                             <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-4">
-                                <span className="material-icons text-[#1152d4]">sticky_note_2</span> Internal Production Notes
+                                <span className="material-symbols-outlined text-[#1152d4]">sticky_note_2</span> Internal Production Notes
                             </h3>
                             <textarea
                                 value={note}
@@ -476,7 +476,7 @@ const AdminOrderDetails = () => {
                             ></textarea>
                             <div className="mt-4 flex items-center justify-between">
                                 <span className="flex items-center gap-1 text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
-                                    <span className="material-icons text-[12px]">visibility_off</span> Visible: Admins Only
+                                    <span className="material-symbols-outlined text-[12px]">visibility_off</span> Visible: Admins Only
                                 </span>
                                 <button
                                     onClick={() => { alert('Note saved!'); setNote(''); }}
@@ -495,7 +495,7 @@ const AdminOrderDetails = () => {
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                    <span className="material-icons text-[#1152d4]">person</span> Patron Information
+                                    <span className="material-symbols-outlined text-[#1152d4]">person</span> Patron Information
                                 </h3>
                             </div>
                             <div className="flex items-center gap-4 mb-6 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl">
@@ -509,11 +509,11 @@ const AdminOrderDetails = () => {
                             </div>
                             <div className="space-y-4 px-1">
                                 <div className="flex items-center gap-4 text-sm font-medium">
-                                    <span className="material-icons text-slate-400 text-lg">phone</span>
+                                    <span className="material-symbols-outlined text-slate-400 text-lg">phone</span>
                                     <span>{order.shippingAddress?.phone}</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-sm font-medium">
-                                    <span className="material-icons text-slate-400 text-lg">payments</span>
+                                    <span className="material-symbols-outlined text-slate-400 text-lg">payments</span>
                                     <span className="uppercase text-[10px] font-black tracking-widest">{order.paymentMethod} - {order.paymentStatus}</span>
                                 </div>
                             </div>
@@ -523,7 +523,7 @@ const AdminOrderDetails = () => {
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                    <span className="material-icons text-[#1152d4]">map</span> Delivery Address
+                                    <span className="material-symbols-outlined text-[#1152d4]">map</span> Delivery Address
                                 </h3>
                             </div>
                             <div className="text-sm font-medium space-y-1 text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/30 p-4 rounded-lg border border-dashed border-slate-200 dark:border-slate-700">
@@ -557,7 +557,7 @@ const AdminOrderDetails = () => {
                                     className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] font-bold ${isQualityChecked ? 'bg-emerald-600 text-white' : 'bg-white text-slate-900 hover:bg-slate-100'
                                         }`}
                                 >
-                                    <span className="material-icons">{isQualityChecked ? 'verified' : 'check_circle'}</span>
+                                    <span className="material-symbols-outlined">{isQualityChecked ? 'verified' : 'check_circle'}</span>
                                     <span className="text-sm">{isQualityChecked ? 'Quality Checked' : 'Mark Quality Check OK'}</span>
                                 </button>
                                 <button
@@ -565,7 +565,7 @@ const AdminOrderDetails = () => {
                                     disabled={order.orderStatus === 'delivered'}
                                     className="w-full py-4 bg-[#1152d4] hover:bg-[#1152d4]/90 text-white rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] font-bold disabled:opacity-50"
                                 >
-                                    <span className="material-icons">task_alt</span>
+                                    <span className="material-symbols-outlined">task_alt</span>
                                     <span className="text-sm">Finalize Order</span>
                                 </button>
                             </div>

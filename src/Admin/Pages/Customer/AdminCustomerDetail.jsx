@@ -93,18 +93,18 @@ const AdminCustomerDetail = () => {
                             >
                                 Customers
                             </button>
-                            <span className="material-icons text-sm">chevron_right</span>
+                            <span className="material-symbols-outlined text-sm">chevron_right</span>
                             <span className="font-medium text-slate-900 dark:text-slate-200">{customer.name}</span>
                         </nav>
                         <h1 className="text-3xl font-extrabold tracking-tight">Customer Profile</h1>
                     </div>
                     <div className="flex items-center gap-3">
                         <button className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2.5 text-sm font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
-                            <span className="material-icons text-[20px]">edit</span>
+                            <span className="material-symbols-outlined text-[20px]">edit</span>
                             Edit Profile
                         </button>
                         <button className="flex items-center gap-2 rounded-lg bg-[#1152d4] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#1152d4]/20 hover:bg-[#1152d4]/90 transition-all">
-                            <span className="material-icons text-[20px]">mail</span>
+                            <span className="material-symbols-outlined text-[20px]">mail</span>
                             Send Email
                         </button>
                     </div>
@@ -131,21 +131,21 @@ const AdminCustomerDetail = () => {
 
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3">
-                                    <span className="material-icons text-slate-400">email</span>
+                                    <span className="material-symbols-outlined text-slate-400">email</span>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-500 uppercase">Email Address</p>
                                         <p className="text-sm font-medium">{customer.email}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <span className="material-icons text-slate-400">call</span>
+                                    <span className="material-symbols-outlined text-slate-400">call</span>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-500 uppercase">Phone Number</p>
                                         <p className="text-sm font-medium">{customer.phone || 'N/A'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <span className="material-icons text-slate-400">calendar_today</span>
+                                    <span className="material-symbols-outlined text-slate-400">calendar_today</span>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-500 uppercase">Joined Date</p>
                                         <p className="text-sm font-medium">{new Date(customer.createdAt).toLocaleDateString()}</p>
@@ -154,7 +154,7 @@ const AdminCustomerDetail = () => {
 
                                 <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-6">
                                     <div className="flex items-start gap-3">
-                                        <span className="material-icons text-slate-400">location_on</span>
+                                        <span className="material-symbols-outlined text-slate-400">location_on</span>
                                         <div>
                                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-tighter">Primary Shipping Address</p>
                                             {customer.addresses?.length > 0 ? (
@@ -195,7 +195,7 @@ const AdminCustomerDetail = () => {
                             <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md transition-shadow group">
                                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Spent</p>
                                 <div className="mt-2 flex items-baseline gap-2">
-                                    <span className="text-2xl font-black text-[#1152d4] tracking-tight">${stats?.totalSpent.toFixed(2)}</span>
+                                    <span className="text-2xl font-black text-[#1152d4] tracking-tight">₹{stats?.totalSpent.toFixed(2)}</span>
                                     <span className="text-xs font-bold text-emerald-600">+0%</span>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@ const AdminCustomerDetail = () => {
                             <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-md transition-shadow">
                                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Avg. Order Value</p>
                                 <div className="mt-2">
-                                    <span className="text-2xl font-black tracking-tight">${stats?.avgValue.toFixed(2)}</span>
+                                    <span className="text-2xl font-black tracking-tight">₹{stats?.avgValue.toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +239,7 @@ const AdminCustomerDetail = () => {
                                             >
                                                 <td className="px-6 py-4 font-bold text-[#1152d4] group-hover:underline">#{order._id.slice(-8).toUpperCase()}</td>
                                                 <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                                <td className="px-6 py-4 font-bold">${order.totalAmount.toFixed(2)}</td>
+                                                <td className="px-6 py-4 font-bold">₹{order.totalAmount.toFixed(2)}</td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex justify-center">
                                                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider ${getStatusBadge(order.orderStatus)}`}>
@@ -249,7 +249,7 @@ const AdminCustomerDetail = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
                                                     <button className="text-slate-400 hover:text-[#1152d4] transition-colors p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
-                                                        <span className="material-icons">more_vert</span>
+                                                        <span className="material-symbols-outlined">more_vert</span>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -269,13 +269,13 @@ const AdminCustomerDetail = () => {
                                 </p>
                                 <div className="flex gap-1.5">
                                     <button className="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-30 transition-all">
-                                        <span className="material-icons text-sm leading-none">chevron_left</span>
+                                        <span className="material-symbols-outlined text-sm leading-none">chevron_left</span>
                                     </button>
                                     <button className={`rounded-lg px-3 py-1 text-xs font-black shadow-sm bg-[#1152d4]/10 text-[#1152d4] ring-1 ring-[#1152d4]/20`}>
                                         1
                                     </button>
                                     <button className="rounded-lg border border-slate-200 dark:border-slate-800 p-2 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
-                                        <span className="material-icons text-sm leading-none">chevron_right</span>
+                                        <span className="material-symbols-outlined text-sm leading-none">chevron_right</span>
                                     </button>
                                 </div>
                             </div>

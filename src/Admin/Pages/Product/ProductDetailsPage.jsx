@@ -223,7 +223,7 @@ export default function ProductDetailsPage() {
                     <div className="grid grid-cols-3 gap-4">
                         <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
                             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Price</p>
-                            <p className="text-2xl font-black text-white">${product.price?.toFixed(2)}</p>
+                            <p className="text-2xl font-black text-white">₹{product.price?.toFixed(2)}</p>
                         </div>
                         <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
                             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Stock</p>

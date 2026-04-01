@@ -8,7 +8,7 @@ import { AlertCircle, ArrowRight, Mail, Lock, ShieldCheck, User, Sparkles } from
 
 export default function LoginAuth() {
     const [isLogin, setIsLogin] = useState(true);
-    const [useOTP, setUseOTP] = useState(true);
+    const [useOTP] = useState(true); // Always true for customers now
     const [otpSent, setOtpSent] = useState(false);
     const [timer, setTimer] = useState(0);
     const [error, setError] = useState("");
@@ -338,16 +338,6 @@ export default function LoginAuth() {
                                                 width="400px" // Adjusted to be closer to container width
                                             />
                                         </div>
-
-                                        <button 
-                                            onClick={() => {
-                                                setUseOTP(!useOTP);
-                                                setError("");
-                                            }}
-                                            className="w-full py-3 text-[9px] font-bold uppercase tracking-widest text-text-secondary/80 hover:text-text-primary transition-colors"
-                                        >
-                                            {useOTP ? "Use Password Instead" : "Switch to OTP Verification"}
-                                        </button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -382,4 +372,3 @@ export default function LoginAuth() {
         </div>
     );
 }
-

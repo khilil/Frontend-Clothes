@@ -44,8 +44,8 @@ const AdminCustomers = () => {
         // Mocking trends for visual effect as backend doesn't provide them yet
         return [
             { label: 'Total Customers', value: totalCustomers.toLocaleString(), trend: '+0%', icon: 'group', color: 'emerald' },
-            { label: 'Total Revenue', value: `$${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, trend: '+0%', icon: 'payments', color: 'emerald' },
-            { label: 'Avg. Customer Value', value: `$${avgSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, trend: '+0%', icon: 'analytics', color: 'rose' },
+            { label: 'Total Revenue', value: `₹${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, trend: '+0%', icon: 'payments', color: 'emerald' },
+            { label: 'Avg. Customer Value', value: `₹${avgSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, trend: '+0%', icon: 'analytics', color: 'rose' },
         ];
     }, [customers]);
 
@@ -72,7 +72,7 @@ const AdminCustomers = () => {
             {/* --- HEADER SECTION --- */}
             {/* <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-4 md:px-8 sticky top-0 z-10">
                 <div className="max-w-md w-full relative group">
-                    <span className="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-[#1152d4] transition-colors">search</span>
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-[#1152d4] transition-colors">search</span>
                     <input 
                         type="text" 
                         placeholder="Search customers, emails, or orders..." 
@@ -84,7 +84,7 @@ const AdminCustomers = () => {
                 
                 <div className="flex items-center gap-2 md:gap-4">
                     <button className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors relative">
-                        <span className="material-icons">notifications</span>
+                        <span className="material-symbols-outlined">notifications</span>
                         <span className="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
                     </button>
                     <div className="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
@@ -116,14 +116,14 @@ const AdminCustomers = () => {
                         <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 group-hover:bg-[#1152d4]/10 transition-colors">
-                                    <span className="material-icons text-[#1152d4]">{kpi.icon}</span>
+                                    <span className="material-symbols-outlined text-[#1152d4]">{kpi.icon}</span>
                                 </div>
                                 <span className={`flex items-center px-2 py-1 rounded-lg text-xs font-bold ${kpi.trend.startsWith('+')
                                     ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10'
                                     : 'text-rose-600 bg-rose-50 dark:bg-rose-500/10'
                                     }`}>
                                     {kpi.trend}
-                                    <span className="material-icons text-[14px] ml-1">
+                                    <span className="material-symbols-outlined text-[14px] ml-1">
                                         {kpi.trend.startsWith('+') ? 'trending_up' : 'trending_down'}
                                     </span>
                                 </span>
@@ -187,7 +187,7 @@ const AdminCustomers = () => {
                                                 {customer.addresses?.[0] ? `${customer.addresses[0].city}, ${customer.addresses[0].state}` : 'N/A'}
                                             </td>
                                             <td className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300">{customer.totalOrders || 0}</td>
-                                            <td className="px-6 py-4 text-sm font-black text-slate-900 dark:text-white">${(customer.totalSpent || 0).toFixed(2)}</td>
+                                            <td className="px-6 py-4 text-sm font-black text-slate-900 dark:text-white">₹{(customer.totalSpent || 0).toFixed(2)}</td>
                                             <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                                                 {customer.lastOrder ? new Date(customer.lastOrder).toLocaleDateString() : 'Never'}
                                             </td>
@@ -221,13 +221,13 @@ const AdminCustomers = () => {
                         </p>
                         <div className="flex items-center gap-1.5">
                             <button className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-400 transition-all disabled:opacity-30" disabled>
-                                <span className="material-icons text-[20px]">chevron_left</span>
+                                <span className="material-symbols-outlined text-[20px]">chevron_left</span>
                             </button>
                             <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-black bg-[#1152d4] text-white rounded-lg shadow-sm">1</button>
                             <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">2</button>
                             <button className="min-w-[32px] h-8 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all">3</button>
                             <button className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-500 transition-all">
-                                <span className="material-icons text-[20px]">chevron_right</span>
+                                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
                             </button>
                         </div>
                     </div>

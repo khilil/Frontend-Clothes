@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Package, ShoppingCart, BarChart3, AlertCircle,
-  TrendingUp, Layers, CheckCircle2, DollarSign, Activity
+  TrendingUp, Layers, CheckCircle2, IndianRupee, Activity
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
           title="Gross Revenue" 
           value={formatCurrency(kpis?.totalSales || 0)} 
 
-          icon={DollarSign} 
+          icon={IndianRupee} 
           color="bg-indigo-500" 
           subtext="Total lifetime sales"
         />

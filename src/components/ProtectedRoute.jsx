@@ -23,9 +23,10 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
         );
     }
 
-    // 🚫 Not logged in → go to login
+    // 🚫 Not logged in → redirect to correct login page
     if (!user) {
-        return <Navigate to="/login" replace />;
+        const isAdminPath = window.location.pathname.startsWith('/admin');
+        return <Navigate to={isAdminPath ? "/admin/login" : "/login"} replace />;
     }
 
     // 🚫 Role mismatch → redirect appropriately

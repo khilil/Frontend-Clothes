@@ -47,6 +47,7 @@ import SalePage from "../pages/Sale/SalePage";
 import AdminHeroSlider from "../Admin/Pages/HeroSlider/AdminHeroSlider";
 import OfferManagement from "../Admin/Pages/Discounts/OfferManagement";
 import AdminTeam from "../Admin/Pages/Team/AdminTeam";
+import AdminLogin from "../Admin/Pages/Auth/AdminLogin";
 
 
 export default function AppRoutes() {
@@ -137,6 +138,7 @@ export default function AppRoutes() {
             } />
 
             <Route path="/login" element={<LoginAuth />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
 
