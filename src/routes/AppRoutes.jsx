@@ -38,7 +38,6 @@ import LoginAuth from "../Auth/Login";
 import ForgotPassword from "../Auth/ForgotPassword";
 import ResetPassword from "../Auth/ResetPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
-// import AddProductPage from "../Admin/Pages/Product/ProductDetailsPage";
 import AddProductLayout from "../Admin/Pages/Product/AddProductLayout";
 import UpdateProductLayout from "../Admin/Pages/Product/UpdateProductLayout";
 import AttributeManagement from "../Admin/Pages/Attributes/AttributeManagement";
@@ -47,59 +46,92 @@ import NewArrivals from "../pages/NewArrivals/NewArrivals";
 import SalePage from "../pages/Sale/SalePage";
 import AdminHeroSlider from "../Admin/Pages/HeroSlider/AdminHeroSlider";
 import OfferManagement from "../Admin/Pages/Discounts/OfferManagement";
+import AdminTeam from "../Admin/Pages/Team/AdminTeam";
 
 
 export default function AppRoutes() {
     return (
         <Routes>
 
-            {/* Admin Routes */}
+            {/* Admin Routes — both admin and employee can access the layout */}
             <Route
                 path="/admin"
                 element={
-                    <ProtectedRoute allowedRole="admin">
+                    <ProtectedRoute allowedRoles={['admin', 'employee']}>
                         <AdminLayout />
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<AdminDashboard />} />
+                {/* Admin-only pages */}
+                <Route index element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminDashboard />
+                    </ProtectedRoute>
+                } />
+                <Route path="analytics" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminAnalytics />
+                    </ProtectedRoute>
+                } />
+                <Route path="categories" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminCategories />
+                    </ProtectedRoute>
+                } />
+                <Route path="customers" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminCustomers />
+                    </ProtectedRoute>
+                } />
+                <Route path="offers" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <OfferManagement />
+                    </ProtectedRoute>
+                } />
+                <Route path="hero-slider" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminHeroSlider />
+                    </ProtectedRoute>
+                } />
+                <Route path="team" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminTeam />
+                    </ProtectedRoute>
+                } />
+
+                {/* Employee + Admin pages */}
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderManagement />} />
-                <Route path="categories" element={<AdminCategories />} />
                 <Route path="attributes" element={<AttributeManagement />} />
                 <Route path="customization" element={<CustomizationManagement />} />
-                <Route path="customers" element={<AdminCustomers />} />
-                <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="hero-slider" element={<AdminHeroSlider />} />
-                <Route path="offers" element={<OfferManagement />} />
             </Route>
 
             <Route path="/admin/orders/:orderId" element={
-                <ProtectedRoute allowedRole="admin">
+                <ProtectedRoute allowedRoles={['admin', 'employee']}>
                     <AdminOrderDetails />
                 </ProtectedRoute>
             } />
             <Route path="/admin/customers/:id" element={
-                <ProtectedRoute allowedRole="admin">
+                <ProtectedRoute allowedRoles={['admin']}>
                     <AdminCustomerDetail />
                 </ProtectedRoute>
             } />
 
             <Route path="/admin/products/new" element={
-                <ProtectedRoute allowedRole="admin">
+                <ProtectedRoute allowedRoles={['admin', 'employee']}>
                     <AddProductLayout />
                 </ProtectedRoute>
             } />
 
             <Route path="/admin/products/edit/:slug" element={
-                <ProtectedRoute allowedRole="admin">
+                <ProtectedRoute allowedRoles={['admin', 'employee']}>
                     <UpdateProductLayout />
                 </ProtectedRoute>
             } />
 
             <Route path="/admin/products/view/:slug" element={
-                <ProtectedRoute allowedRole="admin">
+                <ProtectedRoute allowedRoles={['admin', 'employee']}>
                     <ProductDetailsPage />
                 </ProtectedRoute>
             } />
@@ -119,12 +151,12 @@ export default function AppRoutes() {
                 <Route path="/sale" element={<SalePage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={
-                    <ProtectedRoute allowedRole="customer">
+                    <ProtectedRoute allowedRoles={['customer']}>
                         <Checkout />
                     </ProtectedRoute>
                 } />
                 <Route path="/checkout/details" element={
-                    <ProtectedRoute allowedRole="customer">
+                    <ProtectedRoute allowedRoles={['customer']}>
                         <CheckoutDetails />
                     </ProtectedRoute>
                 } />
@@ -142,7 +174,7 @@ export default function AppRoutes() {
                 <Route
                     path="/account"
                     element={
-                        <ProtectedRoute allowedRole="customer">
+                        <ProtectedRoute allowedRoles={['customer']}>
                             <AccountLayout />
                         </ProtectedRoute>
                     }

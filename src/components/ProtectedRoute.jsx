@@ -1,23 +1,44 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-export default function ProtectedRoute({ children, allowedRole }) {
+/**
+ * ProtectedRoute — Role-based access control
+ *
+ * Usage:
+ *   allowedRoles={['admin']}              → Only admin
+ *   allowedRoles={['admin', 'employee']}  → Admin + Employee
+ *   allowedRoles={['customer']}           → Customers
+ */
+export default function ProtectedRoute({ children, allowedRoles = [] }) {
     const { user, role, loading } = useSelector((state) => state.auth);
 
-    console.log("User:", user);
-    console.log("Loading:", loading);
-    console.log("Current URL:", window.location.href);
-
     if (loading) {
-        return <div>Loading...</div>; // spinner muki sako
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin" />
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Authenticating...</p>
+                </div>
+            </div>
+        );
     }
-    // 🚫 Not logged in
+
+    // 🚫 Not logged in → go to login
     if (!user) {
         return <Navigate to="/login" replace />;
     }
 
-    // 🚫 Role mismatch
-    if (allowedRole && role !== allowedRole) {
+    // 🚫 Role mismatch → redirect appropriately
+    if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
+        if (role === 'admin') {
+            // Admin trying to access customer-only → go to admin dashboard
+            return <Navigate to="/admin" replace />;
+        }
+        if (role === 'employee') {
+            // Employee trying to access admin-only page → go to their orders page
+            return <Navigate to="/admin/orders" replace />;
+        }
+        // Customer trying to access admin → go to home
         return <Navigate to="/" replace />;
     }
 

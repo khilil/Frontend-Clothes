@@ -12,7 +12,9 @@ import {
     Palette,
     Ticket,
     Image as ImageIcon,
-    X
+    X,
+    UsersRound,
+    Crown
 } from 'lucide-react';
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -22,37 +24,45 @@ import { logoutUser } from "../../features/auth/authSlice";
 const Sidebar = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user } = useSelector((state) => state.auth);
+    const { user, role } = useSelector((state) => state.auth);
+
+    const isAdmin = role === 'admin';
 
     const handleLogout = async () => {
         await dispatch(logoutUser());
         navigate("/login");
     };
 
-    // Navigation items config
+    // All navigation items with role restriction
+    // roles: undefined = all staff, ['admin'] = admin only
     const menuItems = [
-        { name: 'Overview', path: '/admin', icon: LayoutGrid },
-        { name: 'Product', path: '/admin/products', icon: ShoppingBasket },
-        { name: 'Inventory', path: '/admin/inventory', icon: Package },
-        { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
-        { name: 'Categories', path: '/admin/categories', icon: Layers },
-        { name: 'Attributes', path: '/admin/attributes', icon: Palette },
-        { name: 'Customization', path: '/admin/customization', icon: Settings },
-        { name: 'Customers', path: '/admin/customers', icon: Users },
-        { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
-        { name: 'Offers', path: '/admin/offers', icon: Ticket },
-        { name: 'Hero Slider', path: '/admin/hero-slider', icon: ImageIcon },
+        // ─── Admin Only ───
+        { name: 'Overview',       path: '/admin',                icon: LayoutGrid,   end: true,  roles: ['admin'] },
+        { name: 'Analytics',      path: '/admin/analytics',      icon: BarChart3,                roles: ['admin'] },
+        // ─── All Staff ───
+        { name: 'Products',       path: '/admin/products',       icon: ShoppingBasket              },
+        { name: 'Inventory',      path: '/admin/inventory',      icon: Package                     },
+        { name: 'Orders',         path: '/admin/orders',         icon: ShoppingCart                },
+        { name: 'Attributes',     path: '/admin/attributes',     icon: Palette                     },
+        { name: 'Customization',  path: '/admin/customization',  icon: Settings                    },
+        // ─── Admin Only ───
+        { name: 'Categories',     path: '/admin/categories',     icon: Layers,                 roles: ['admin'] },
+        { name: 'Customers',      path: '/admin/customers',      icon: Users,                  roles: ['admin'] },
+        { name: 'Offers',         path: '/admin/offers',         icon: Ticket,                 roles: ['admin'] },
+        { name: 'Hero Slider',    path: '/admin/hero-slider',    icon: ImageIcon,              roles: ['admin'] },
+        { name: 'Team',           path: '/admin/team',           icon: UsersRound,             roles: ['admin'] },
     ];
 
-    const supportItems = [
-        { name: 'Settings', path: '/admin/settings', icon: Settings },
-        { name: 'Help Center', path: '/admin/help', icon: HelpCircle },
-    ];
+    // Filter based on current role
+    const visibleItems = menuItems.filter(item =>
+        !item.roles || item.roles.includes(role)
+    );
+
+    // Group into two sections
+    const mainItems = visibleItems.filter(i => !['Settings', 'Help Center'].includes(i.name));
 
     const handleLinkClick = () => {
-        if (window.innerWidth < 768) {
-            onClose();
-        }
+        if (window.innerWidth < 768) onClose();
     };
 
     return (
@@ -61,7 +71,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             backdrop-blur-xl fixed h-full z-50 flex flex-col transition-transform duration-500 ease-in-out
             ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
-            {/* 1. Header (Fixed) */}
+            {/* Header */}
             <div className="p-6 pb-4 shrink-0">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3 px-2 group cursor-pointer" onClick={() => navigate('/admin')}>
@@ -72,118 +82,87 @@ const Sidebar = ({ isOpen, onClose }) => {
                             T-Dash
                         </span>
                     </div>
-                    {/* Mobile Close Button */}
-                    <button 
+                    {/* Mobile Close */}
+                    <button
                         onClick={onClose}
                         className="p-2 text-slate-400 hover:text-rose-500 md:hidden bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
+
+                {/* Role badge */}
+                <div className={`mt-3 mx-2 flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest w-fit ${
+                    isAdmin
+                        ? 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
+                        : 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20'
+                }`}>
+                    {isAdmin ? <Crown size={10} /> : <UsersRound size={10} />}
+                    {isAdmin ? 'Admin' : 'Employee'}
+                </div>
             </div>
 
-            {/* 2. Scrollable Navigation Area */}
-            <div 
-                className="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar space-y-8 pb-10 min-h-0 h-0" 
+            {/* Scrollable Nav */}
+            <div
+                className="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar space-y-1 pb-10 min-h-0 h-0"
                 data-lenis-prevent="true"
             >
-                {/* Main Navigation */}
-                <div>
-                    <p className="px-4 text-[10px] font-black uppercase text-slate-400 mb-4 tracking-[0.2em] opacity-70">
-                        Management
-                    </p>
-                    <nav className="space-y-1">
-                        {menuItems.map((item) => (
-                            <NavLink
-                                key={item.name}
-                                to={item.path}
-                                end={item.path === '/admin'}
-                                onClick={handleLinkClick}
-                                className={({ isActive }) => `
-                                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative
-                                    ${isActive
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold'
-                                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
-                                `}
-                            >
-                                {({ isActive }) => (
-                                    <>
-                                        <item.icon
-                                            size={20}
-                                            className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'} transition-colors duration-300`}
-                                        />
-                                        <span className="text-[14px] flex-1">{item.name}</span>
-                                        {isActive && (
-                                            <div className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full top-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
-                                        )}
-                                        {!isActive && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        )}
-                                    </>
-                                )}
-                            </NavLink>
-                        ))}
-                    </nav>
-                </div>
-
-                {/* System Section */}
-                <div>
-                    <p className="px-4 text-[10px] font-black uppercase text-slate-400 mb-4 tracking-[0.2em] opacity-70">
-                        System
-                    </p>
-                    <div className="space-y-1">
-                        {supportItems.map((item) => (
-                            <NavLink
-                                key={item.name}
-                                to={item.path}
-                                onClick={handleLinkClick}
-                                className={({ isActive }) => `
-                                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                    ${isActive
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold'
-                                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'}
-                                `}
-                            >
-                                {({ isActive }) => (
-                                    <>
-                                        <item.icon size={20} className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 transition-colors'}`} />
-                                        <span className="text-[14px] flex-1">{item.name}</span>
-                                        {isActive && (
-                                            <div className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full top-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
-                                        )}
-                                        {!isActive && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        )}
-                                    </>
-                                )}
-                            </NavLink>
-                        ))}
-                    </div>
-                </div>
+                <p className="px-4 text-[10px] font-black uppercase text-slate-400 mb-3 mt-2 tracking-[0.2em] opacity-70">
+                    Management
+                </p>
+                <nav className="space-y-1">
+                    {mainItems.map((item) => (
+                        <NavLink
+                            key={item.name}
+                            to={item.path}
+                            end={!!item.end}
+                            onClick={handleLinkClick}
+                            className={({ isActive }) => `
+                                flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative
+                                ${isActive
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold'
+                                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'}
+                            `}
+                        >
+                            {({ isActive }) => (
+                                <>
+                                    <item.icon
+                                        size={20}
+                                        className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'} transition-colors duration-300`}
+                                    />
+                                    <span className="text-[14px] flex-1">{item.name}</span>
+                                    {isActive && (
+                                        <div className="absolute left-0 w-1.5 h-6 bg-white rounded-r-full top-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
+                                    )}
+                                    {!isActive && (
+                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    )}
+                                </>
+                            )}
+                        </NavLink>
+                    ))}
+                </nav>
             </div>
 
-            {/* 3. Footer (Fixed) */}
+            {/* Footer */}
             <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 shrink-0">
                 <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100/50 dark:bg-slate-800/30 border border-transparent hover:border-indigo-500/30 transition-all group">
                     <div className="relative">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 p-[2px]">
                             <img
-                                src={
-                                    user?.avatar ||
-                                    `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=fff&color=6366f1`
-                                }
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=fff&color=6366f1`}
                                 alt="User"
                                 className="w-full h-full rounded-[10px] object-cover border-2 border-white dark:border-slate-800"
                             />
                         </div>
-                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-[3px] border-white dark:border-slate-900 rounded-full shadow-sm"></span>
+                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-[3px] border-white dark:border-slate-900 rounded-full shadow-sm" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-xs font-black text-slate-900 dark:text-white truncate leading-none mb-1 translate-y-0.5">
                             {user?.name || "User"}
                         </p>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight truncate opacity-60">
-                             {user?.role || "Store Admin"}
+                            {role || "Staff"}
                         </p>
                     </div>
                     <button

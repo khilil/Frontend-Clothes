@@ -22,10 +22,10 @@ const AttributeManagement = () => {
     const [notification, setNotification] = useState(null);
 
     // Form states
-    const [newColor, setNewColor] = useState({ 
-        name: '', 
+    const [newColor, setNewColor] = useState({
+        name: '',
         hexCode: '#000000',
-        mainColor: 'BLACK' // 🎨 New Field
+        mainColor: 'BLACK'
     });
     const [newSize, setNewSize] = useState({ name: '', categoryType: 'topwear' });
     const [isSubmittingColor, setIsSubmittingColor] = useState(false);
@@ -59,19 +59,17 @@ const AttributeManagement = () => {
     const handleHexChange = (e) => {
         let hex = e.target.value;
         if (!hex.startsWith('#')) hex = `#${hex}`;
-        
         const suggestedMain = getMainColorFromHex(hex);
-        setNewColor(prev => ({ 
-            ...prev, 
+        setNewColor(prev => ({
+            ...prev,
             hexCode: hex,
-            mainColor: suggestedMain 
+            mainColor: suggestedMain
         }));
     };
 
     const handleCreateColor = async (e) => {
         e.preventDefault();
         if (!newColor.name || !newColor.hexCode) return;
-
         setIsSubmittingColor(true);
         try {
             await createColor({
@@ -91,7 +89,6 @@ const AttributeManagement = () => {
     const handleCreateSize = async (e) => {
         e.preventDefault();
         if (!newSize.name || !newSize.categoryType) return;
-
         setIsSubmittingSize(true);
         try {
             await createSize(newSize);
@@ -129,15 +126,16 @@ const AttributeManagement = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header Area */}
+
+            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Attribute Management</h1>
-                    <p className="text-sm text-slate-400 mt-1">Manage global sizes and colors for product variants.</p>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Attribute Management</h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage global sizes and colors for product variants.</p>
                 </div>
                 <button
                     onClick={fetchData}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
                     title="Refresh Data"
                 >
                     <RefreshCcw size={20} className={isLoading ? 'animate-spin' : ''} />
@@ -146,42 +144,43 @@ const AttributeManagement = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                {/* Colors Section */}
+                {/* ─── Colors Section ─── */}
                 <div className="flex flex-col gap-6">
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-                        <div className="flex items-center gap-2.5 mb-6 text-indigo-400">
+                    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm">
+                        <div className="flex items-center gap-2.5 mb-6 text-indigo-500 dark:text-indigo-400">
                             <Palette size={20} />
-                            <h2 className="text-lg font-bold text-white">Manage Colors</h2>
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Manage Colors</h2>
                         </div>
 
                         <form onSubmit={handleCreateColor} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mb-8">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Color Name</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Color Name</label>
                                 <input
                                     type="text"
                                     placeholder="e.g. Midnight Blue"
-                                    className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-200 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
                                     value={newColor.name}
                                     onChange={(e) => setNewColor({ ...newColor, name: e.target.value })}
                                 />
                             </div>
+
                             <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Hex Code</label>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Hex Code</label>
                                     <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
                                             <Hash size={14} />
                                         </div>
                                         <input
                                             type="text"
                                             placeholder="FFFFFF"
-                                            className="w-full rounded-xl border border-slate-800 bg-slate-950 pl-8 pr-4 py-2.5 text-sm font-mono text-slate-200 outline-none focus:border-indigo-500 transition-all"
+                                            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 pl-8 pr-4 py-2.5 text-sm font-mono text-slate-900 dark:text-slate-200 outline-none focus:border-indigo-500 transition-all"
                                             value={newColor.hexCode.replace('#', '')}
                                             onChange={(e) => setNewColor({ ...newColor, hexCode: `#${e.target.value.replace('#', '')}` })}
                                         />
                                     </div>
                                 </div>
-                                <div className="h-[42px] w-[42px] rounded-xl border border-slate-800 overflow-hidden shadow-inner">
+                                <div className="h-[42px] w-[42px] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-inner">
                                     <input
                                         type="color"
                                         className="h-[60px] w-[60px] -mt-[9px] -ml-[9px] cursor-pointer"
@@ -191,12 +190,12 @@ const AttributeManagement = () => {
                                 </div>
                             </div>
 
-                            {/* 🎨 Main Color Selection (Group) */}
+                            {/* Main Color / Filtering Category */}
                             <div className="sm:col-span-2 space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-indigo-400">Filtering Category (Main Color)</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-indigo-500 dark:text-indigo-400">Filtering Category (Main Color)</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                                     <select
-                                        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-all cursor-pointer"
+                                        className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-200 outline-none focus:border-indigo-500 transition-all cursor-pointer"
                                         value={newColor.mainColor}
                                         onChange={(e) => setNewColor({ ...newColor, mainColor: e.target.value })}
                                     >
@@ -204,11 +203,12 @@ const AttributeManagement = () => {
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
                                     </select>
-                                    <p className="text-[10px] text-slate-500 italic">
+                                    <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">
                                         💡 Group similar shades under a main category for better filtering performance.
                                     </p>
                                 </div>
                             </div>
+
                             <button
                                 type="submit"
                                 disabled={isSubmittingColor}
@@ -219,23 +219,34 @@ const AttributeManagement = () => {
                             </button>
                         </form>
 
+                        {/* Colors List */}
                         <div className="space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 px-1">Current Colors</h3>
-                            {colors.length === 0 ? (
-                                <div className="text-center py-8 text-slate-600 border border-dashed border-slate-800 rounded-xl">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 mb-4 px-1">Current Colors</h3>
+                            {isLoading ? (
+                                <div className="flex justify-center py-8">
+                                    <Loader2 size={24} className="animate-spin text-indigo-500" />
+                                </div>
+                            ) : colors.length === 0 ? (
+                                <div className="text-center py-8 text-slate-400 dark:text-slate-600 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-sm">
                                     No colors added yet
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {colors.map(color => (
-                                        <div key={color._id} className="group flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition-all">
+                                        <div
+                                            key={color._id}
+                                            className="group flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                                        >
                                             <div className="flex items-center gap-3">
-                                                <div className="h-8 w-8 rounded-lg shadow-inner ring-1 ring-white/10" style={{ backgroundColor: color.hexCode }}></div>
+                                                <div
+                                                    className="h-8 w-8 rounded-lg shadow-inner ring-1 ring-black/10 dark:ring-white/10 shrink-0"
+                                                    style={{ backgroundColor: color.hexCode }}
+                                                />
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-200">{color.name}</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-slate-200">{color.name}</p>
                                                     <div className="flex items-center gap-2">
-                                                        <p className="text-[10px] font-mono text-slate-500 uppercase">{color.hexCode}</p>
-                                                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-bold tracking-tighter">
+                                                        <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase">{color.hexCode}</p>
+                                                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold tracking-tighter">
                                                             {color.mainColor || 'GREY'}
                                                         </span>
                                                     </div>
@@ -243,7 +254,7 @@ const AttributeManagement = () => {
                                             </div>
                                             <button
                                                 onClick={() => handleDeleteColor(color._id)}
-                                                className="p-1.5 text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                className="p-1.5 text-slate-400 dark:text-slate-600 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -255,29 +266,29 @@ const AttributeManagement = () => {
                     </div>
                 </div>
 
-                {/* Sizes Section */}
+                {/* ─── Sizes Section ─── */}
                 <div className="flex flex-col gap-6">
-                    <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-                        <div className="flex items-center gap-2.5 mb-6 text-indigo-400">
+                    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm">
+                        <div className="flex items-center gap-2.5 mb-6 text-indigo-500 dark:text-indigo-400">
                             <Ruler size={20} />
-                            <h2 className="text-lg font-bold text-white">Manage Sizes</h2>
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Manage Sizes</h2>
                         </div>
 
                         <form onSubmit={handleCreateSize} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end mb-8">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Size Name</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Size Name</label>
                                 <input
                                     type="text"
                                     placeholder="e.g. Large / 42"
-                                    className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-all"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-200 outline-none focus:border-indigo-500 transition-all placeholder:text-slate-400"
                                     value={newSize.name}
                                     onChange={(e) => setNewSize({ ...newSize, name: e.target.value })}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Category Type</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Category Type</label>
                                 <select
-                                    className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500 transition-all cursor-pointer appearance-none"
+                                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-200 outline-none focus:border-indigo-500 transition-all cursor-pointer appearance-none"
                                     value={newSize.categoryType}
                                     onChange={(e) => setNewSize({ ...newSize, categoryType: e.target.value })}
                                 >
@@ -298,30 +309,38 @@ const AttributeManagement = () => {
                             </button>
                         </form>
 
+                        {/* Sizes List */}
                         <div className="space-y-3">
-                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-4 px-1">Current Sizes</h3>
-                            {sizes.length === 0 ? (
-                                <div className="text-center py-8 text-slate-600 border border-dashed border-slate-800 rounded-xl">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 mb-4 px-1">Current Sizes</h3>
+                            {isLoading ? (
+                                <div className="flex justify-center py-8">
+                                    <Loader2 size={24} className="animate-spin text-indigo-500" />
+                                </div>
+                            ) : sizes.length === 0 ? (
+                                <div className="text-center py-8 text-slate-400 dark:text-slate-600 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-sm">
                                     No sizes added yet
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {sizes.map(size => (
-                                        <div key={size._id} className="group flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition-all">
+                                        <div
+                                            key={size._id}
+                                            className="group flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                                        >
                                             <div className="flex items-center gap-3">
-                                                <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-black text-[10px]">
+                                                <div className="h-8 w-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-black text-[10px] shrink-0">
                                                     {size.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-200">{size.name}</p>
-                                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium capitalize">
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-slate-200">{size.name}</p>
+                                                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium capitalize">
                                                         {size.categoryType}
                                                     </span>
                                                 </div>
                                             </div>
                                             <button
                                                 onClick={() => handleDeleteSize(size._id)}
-                                                className="p-1.5 text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                className="p-1.5 text-slate-400 dark:text-slate-600 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -334,19 +353,19 @@ const AttributeManagement = () => {
                 </div>
             </div>
 
-            {/* Notification Toast */}
+            {/* Toast Notification */}
             <AnimatePresence>
                 {notification && (
                     <motion.div
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        className="fixed bottom-8 right-8 z-[100] flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 p-4 pr-6 shadow-2xl backdrop-blur-xl"
+                        className="fixed bottom-8 right-8 z-[100] flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 pr-6 shadow-2xl backdrop-blur-xl"
                     >
-                        <div className={`p-2 rounded-full ${notification.type === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                        <div className={`p-2 rounded-full ${notification.type === 'success' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400'}`}>
                             {notification.type === 'success' ? <CheckCircle2 size={18} /> : <X size={18} />}
                         </div>
-                        <p className="text-sm font-bold text-white">{notification.message}</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">{notification.message}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
