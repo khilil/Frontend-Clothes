@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getLowStockProducts, updateVariantStock } from '../../../services/inventoryService';
 import { getProducts } from '../../../services/productService';
-import { Loader2, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Search, FileDown, Plus, Edit3, X } from 'lucide-react';
+import { getAllOrders } from '../../../services/orderService';
+import { Loader2, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Search, FileDown, Plus, Edit3, X, Zap, TrendingUp, ShieldAlert, BarChart2 } from 'lucide-react';
 import { KPICardSkeleton, TableSkeleton } from '../../components/SkeletonLoader';
 
 const Inventory = () => {
@@ -30,13 +31,32 @@ const Inventory = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [allProductsRes] = await Promise.all([
-        getProducts({ isAdmin: true })
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const [allProductsRes, ordersRes] = await Promise.all([
+        getProducts({ isAdmin: true, limit: 1000 }),
+        getAllOrders({ startDate: thirtyDaysAgo.toISOString(), limit: 1000 })
       ]);
+
+      // 💹 Sales Velocity Mapping
+      const velocityMap = {};
+      const orders = ordersRes.orders || ordersRes.data?.orders || [];
+      orders.forEach(order => {
+        const items = order.items || [];
+        items.forEach(item => {
+          const sku = item.variantId;
+          velocityMap[sku] = (velocityMap[sku] || 0) + (item.quantity || 0);
+        });
+      });
 
       const flattened = [];
       allProductsRes.products.forEach(p => {
         p.variants.forEach(v => {
+          const unitsSold30d = velocityMap[v._id] || 0;
+          const velocity = Number((unitsSold30d / 30).toFixed(2));
+          const daysLeft = velocity > 0 ? Math.floor(v.stock / velocity) : Infinity;
+
           flattened.push({
             productId: p._id,
             variantId: v._id,
@@ -47,6 +67,8 @@ const Inventory = () => {
             size: v.size?.name || 'N/A',
             stock: v.stock,
             lowStockThreshold: v.lowStockThreshold,
+            velocity,
+            daysLeft,
             status: v.stock <= 0 ? 'Out of Stock' : (v.stock <= v.lowStockThreshold ? 'Low Stock' : 'In Stock')
           });
         });
@@ -331,6 +353,8 @@ const Inventory = () => {
                     </div>
                   </th>
                   <th className="px-6 py-4">Net Stock</th>
+                  <th className="px-6 py-4 text-center">Velocity</th>
+                  <th className="px-6 py-4 text-center">Stock Survival</th>
                   <th className="px-6 py-4">
                     <div className="flex flex-col gap-1">
                       <span>Status</span>
@@ -372,6 +396,26 @@ const Inventory = () => {
                     <td className="px-6 py-4">
                        <span className="text-sm font-black dark:text-white">{item.stock}</span>
                        <span className="text-[10px] text-slate-400 ml-1 font-bold italic tracking-tighter">units</span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">{item.velocity}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Units / Day</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className={`inline-flex flex-col items-center px-4 py-2 rounded-2xl border ${
+                        item.daysLeft <= 7 ? 'bg-rose-500/10 border-rose-500/20 text-rose-600' : 
+                        item.daysLeft <= 14 ? 'bg-amber-500/10 border-amber-500/20 text-amber-600' :
+                        'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
+                      }`}>
+                        <span className="text-sm font-black tracking-tighter leading-none">
+                          {item.daysLeft === Infinity ? '∞' : item.daysLeft}
+                        </span>
+                        <span className="text-[8px] font-black uppercase tracking-widest mt-0.5">
+                          {item.daysLeft === Infinity ? 'NO-DEMAND' : 'DAYS LEFT'}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={item.status} />

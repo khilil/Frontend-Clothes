@@ -92,20 +92,19 @@ const AdminAnalytics = () => {
         const productMap = {};
         const userMap = {}; // 👥 Track user loyalty
 
-        // 🕰️ Time filtering logic (Simple: assumes orders are sorted or recent)
-        const rangeDays = range === '7D' ? 7 : range === '30D' ? 30 : range === '90D' ? 90 : 365;
+        // 🕰️ Cutoff for "At-Risk" (e.g., 90 days of inactivity)
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - rangeDays);
+        cutoffDate.setDate(cutoffDate.getDate() - Number(range));
 
         orders.forEach(order => {
             const orderDate = new Date(order.createdAt);
             if (orderDate < cutoffDate) return;
 
             const dateStr = orderDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const rawAmount = order.totalAmount || order.totalPrice || 0;
-            const amount = typeof rawAmount === 'string' 
-                ? Number(rawAmount.replace(/[^0-9.-]+/g, "")) 
-                : Number(rawAmount);
+            const amount = Number(order.totalAmount || 0);
             
             if (!isNaN(amount)) {
                 stats.totalOrders++;
@@ -116,14 +115,12 @@ const AdminAnalytics = () => {
             const status = order.orderStatus || 'Pending';
             statusMap[status] = (statusMap[status] || 0) + 1;
 
-            const items = order.orderItems || order.items || [];
+            const items = order.items || [];
             items.forEach(item => {
-                const title = item.product?.title || item.title || 'Unknown Product';
+                const title = item.title || 'Unknown Product';
                 if (!productMap[title]) productMap[title] = { title, quantity: 0, revenue: 0 };
                 
-                const itemPrice = typeof item.price === 'string' 
-                    ? Number(item.price.replace(/[^0-9.-]+/g, "")) 
-                    : Number(item.price || 0);
+                const itemPrice = Number(item.priceAtPurchase || item.price || 0);
                 const itemQty = Number(item.quantity || 0);
 
                 if (!isNaN(itemPrice) && !isNaN(itemQty)) {
@@ -132,17 +129,45 @@ const AdminAnalytics = () => {
                 }
             });
 
-            // 👥 Loyalty tracking
+            // 👥 CRM Loyalty Engine
             const userKey = order.user?.email || order.user?._id || "Anonymous";
-            userMap[userKey] = (userMap[userKey] || 0) + 1;
+            if (!userMap[userKey]) userMap[userKey] = { count: 0, totalSpend: 0, lastOrder: orderDate };
+            
+            userMap[userKey].count++;
+            userMap[userKey].totalSpend += amount;
+            if (orderDate > userMap[userKey].lastOrder) userMap[userKey].lastOrder = orderDate;
         });
 
         stats.avgOrderValue = stats.totalOrders > 0 ? stats.totalRevenue / stats.totalOrders : 0;
 
+        // 🏷️ Loyalty Tiering Logic
+        const users = Object.values(userMap);
         const customerComposition = [
-            { name: 'New Customers', value: Object.values(userMap).filter(count => count === 1).length, color: '#6366f1' },
-            { name: 'Returning', value: Object.values(userMap).filter(count => count > 1).length, color: '#10b981' }
-        ];
+            { 
+               name: 'VIP (Whales)', 
+               value: users.filter(u => u.count >= 3 && u.totalSpend > 5000).length, 
+               color: '#f59e0b',
+               description: 'High frequency & high spend'
+            },
+            { 
+               name: 'Loyalists', 
+               value: users.filter(u => u.count >= 2 && u.totalSpend <= 5000).length, 
+               color: '#6366f1',
+               description: 'Repeat customers'
+            },
+            { 
+               name: 'Emerging', 
+               value: users.filter(u => u.count === 1 && u.lastOrder >= ninetyDaysAgo).length, 
+               color: '#10b981',
+               description: 'Recent first-time buyers'
+            },
+            { 
+               name: 'At-Risk', 
+               value: users.filter(u => u.count === 1 && u.lastOrder < ninetyDaysAgo).length, 
+               color: '#f43f5e',
+               description: 'Single purchase, no return'
+            }
+        ].filter(tier => tier.value > 0);
 
         return {
             stats,
@@ -297,10 +322,10 @@ const AdminAnalytics = () => {
                     </div>
                 </div>
 
-                {/* --- CUSTOMER COMPOSITION (PIE CHART) --- */}
+                {/* --- CUSTOMER LOYALTY (DOUNT CHART) --- */}
                 <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-[2rem] p-8 shadow-sm">
-                    <h4 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white mb-1">Customer Composition</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-8">Loyalty distribution</p>
+                    <h4 className="font-black text-sm uppercase tracking-widest text-slate-900 dark:text-white mb-1">Loyalty Tiering</h4>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-8">Behavioral Segmentation</p>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -324,16 +349,26 @@ const AdminAnalytics = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                    <div className="space-y-3 mt-4">
+                    <div className="space-y-4 mt-4">
                         {customerComposition.map((entry, index) => (
-                            <div key={index} className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="size-3 rounded-full" style={{ backgroundColor: entry.color }}></div>
-                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{entry.name}</span>
+                            <div key={index} className="flex items-center justify-between group cursor-default">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-4 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: entry.color }}>
+                                       <div className="size-1.5 bg-white rounded-full" />
+                                    </div>
+                                    <div>
+                                       <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">{entry.name}</span>
+                                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{entry.description}</span>
+                                    </div>
                                 </div>
-                                <span className="text-sm font-bold text-slate-900 dark:text-white">
-                                    {entry.value} ({totalOrders > 0 ? ((entry.value/totalOrders)*100).toFixed(1) : 0}%)
-                                </span>
+                                <div className="text-right">
+                                   <span className="text-xs font-black text-slate-900 dark:text-white block">
+                                       {entry.value} Customers
+                                   </span>
+                                   <span className="text-[9px] font-bold text-indigo-500 uppercase">
+                                       {totalOrders > 0 ? ((entry.value / usersCount) * 100).toFixed(0) : 0}% share
+                                   </span>
+                                </div>
                             </div>
                         ))}
                     </div>

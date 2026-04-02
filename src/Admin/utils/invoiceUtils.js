@@ -282,3 +282,90 @@ export const generatePackingSlipHTML = (order) => {
     `;
     return wrapHTML(content);
 };
+
+/**
+ * 📋 Generate Bulk Picking List HTML
+ * Consolidates items across multiple orders for warehouse staff.
+ */
+export const generatePickingListHTML = (orders) => {
+    const itemMap = {};
+
+    orders.forEach(order => {
+        const items = order.items || [];
+        items.forEach(item => {
+            const key = `${item.productId}-${item.variantId}`;
+            if (!itemMap[key]) {
+                itemMap[key] = {
+                    title: item.title || item.name,
+                    sku: item.variantId,
+                    variant: item.variantName || `${item.color || ""} ${item.size || ""}`,
+                    totalQty: 0,
+                    orders: []
+                };
+            }
+            itemMap[key].totalQty += (item.quantity || 0);
+            itemMap[key].orders.push(`#${order._id.toString().slice(-6).toUpperCase()}`);
+        });
+    });
+
+    const items = Object.values(itemMap);
+
+    const content = `
+        <div class="invoice-container">
+            <div class="luxury-seal">WAREHOUSE PROTOCOL</div>
+            <div class="header">
+                <div>
+                    <div class="brand">FENRIR ERA</div>
+                    <h2 style="margin: 5px 0; font-size: 24px; font-weight: 900; letter-spacing: -1px; color: #1A1A1A;">MASTER PICKING LIST</h2>
+                    <p style="font-size: 10px; color: #B8860B; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generated: ${new Date().toLocaleString()}</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 14px; font-weight: 900; margin: 0; color: #1A1A1A;">${orders.length} ORDERS CONSOLIDATED</p>
+                    <p style="font-size: 10px; margin: 5px 0; color: #666; font-weight: 600;">Logistics Session: ${Math.random().toString(36).substring(7).toUpperCase()}</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <p style="font-size: 10px; font-weight: 800; color: #64748b; margin-top: 0; text-transform: uppercase; letter-spacing: 0.1em;">Order Sequence</p>
+                <p style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 0; line-height: 1.6;">${orders.map(o => `#${o._id.toString().slice(-6).toUpperCase()}`).join(', ')}</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr style="border-bottom: 3px solid #1A1A1A;">
+                        <th style="padding: 20px 10px;">Archival SKU / Description</th>
+                        <th style="padding: 20px 10px; text-align: center; font-size: 14px; color: #B8860B;">Pick Qty</th>
+                        <th style="padding: 20px 10px; text-align: right; width: 40%;">Associated Orders</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr style="background: ${item.totalQty > 5 ? '#fffbeb' : 'transparent'};">
+                            <td style="padding: 25px 10px;">
+                                <div style="font-weight: 900; font-size: 16px; color: #1A1A1A;">${item.title}</div>
+                                <div style="font-size: 11px; font-weight: 800; color: #64748b; margin-top: 5px;">VARIANT: ${item.variant}</div>
+                                <div style="font-size: 10px; font-weight: 900; color: #B8860B; margin-top: 2px;">SKU: ${item.sku}</div>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <div style="font-size: 32px; font-weight: 900; color: #1A1A1A; font-family: 'Oswald', sans-serif;">${item.totalQty}</div>
+                            </td>
+                            <td style="text-align: right; padding-right: 20px; font-size: 11px; color: #94a3b8; font-weight: 600; line-height: 1.5;">
+                                ${item.orders.join(', ')}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 50px; border-top: 2px solid #F3F4F6; padding-top: 30px; display: flex; justify-content: space-between;">
+                <div style="width: 200px; border-bottom: 1px solid #1A1A1A; height: 40px; position: relative;">
+                    <span style="position: absolute; bottom: -20px; left: 0; font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Logistics Manager Sig.</span>
+                </div>
+                <div style="width: 200px; border-bottom: 1px solid #1A1A1A; height: 40px; position: relative;">
+                    <span style="position: absolute; bottom: -20px; left: 0; font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Warehouse Verification</span>
+                </div>
+            </div>
+        </div>
+    `;
+    return wrapHTML(content);
+};

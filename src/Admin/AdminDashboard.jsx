@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Package, ShoppingCart, BarChart3, AlertCircle,
   TrendingUp, Layers, CheckCircle2, IndianRupee, Activity,
-  Plus, ExternalLink, FileText, Download, AlertTriangle, History, ArrowRight
+  Plus, ExternalLink, FileText, Download, AlertTriangle, History, ArrowRight, Zap
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -13,6 +13,8 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDashboardData } from '../features/dashboard/dashboardSlice';
 import { getLowStockProducts } from '../services/inventoryService';
+import { getProducts } from '../services/productService';
+import { getAllOrders } from '../services/orderService';
 import OrderHub from './components/OrderHub';
 import OrderDetailView from './Pages/OrderDetailView';
 import { formatCurrency } from '../utils/formatCurrency';
@@ -214,7 +216,7 @@ const QuickActions = () => {
   );
 };
 
-const LowStockAlerts = ({ products = [], loading }) => {
+const StockIntelligenceWidget = ({ items = [], loading }) => {
   if (loading) return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 h-full">
       <div className="animate-pulse space-y-4">
@@ -226,46 +228,66 @@ const LowStockAlerts = ({ products = [], loading }) => {
     </div>
   );
 
+  const criticalItems = items
+    .filter(i => i.daysLeft <= 10)
+    .sort((a, b) => a.daysLeft - b.daysLeft);
+
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col">
-      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-rose-500/5">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Inventory Monitor</h3>
-          <p className="text-[10px] text-slate-500 font-medium mt-0.5">Products below threshold</p>
+          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-2">
+            <Zap size={14} className="text-rose-500 fill-rose-500" />
+            Stock Intelligence
+          </h3>
+          <p className="text-[10px] text-slate-500 font-medium mt-0.5">Predicted stock-out risks</p>
         </div>
-        <AlertTriangle size={18} className={products.length > 0 ? "text-rose-500" : "text-emerald-500"} />
+        <div className="px-2 py-1 bg-rose-500 text-white text-[8px] font-black rounded-md animate-pulse">CRITICAL</div>
       </div>
       
       <div className="flex-1 p-4">
-        {products.length === 0 ? (
+        {criticalItems.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-4">
             <div className="size-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-3">
                <CheckCircle2 size={20} />
             </div>
-            <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight">Stock Healthy</p>
-            <p className="text-[10px] text-slate-500 mt-1">All products are within safety limits</p>
+            <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-tight">Supply Chain Stable</p>
+            <p className="text-[10px] text-slate-500 mt-1">No immediate stock-out risks predicted</p>
           </div>
         ) : (
           <div className="space-y-2">
-            {products.slice(0, 4).map((p, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+            {criticalItems.slice(0, 4).map((p, i) => (
+              <div key={i} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50 group">
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[120px]">{p.name || p.title}</span>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{p.sku}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{p.sku}</span>
+                    <span className="text-[9px] font-black text-indigo-500 uppercase tracking-widest">{p.velocity} u/day</span>
+                  </div>
                 </div>
                 <div className="flex flex-col items-end">
-                   <span className="text-xs font-black text-rose-500">{p.stock} Left</span>
-                   <span className="text-[8px] font-bold text-slate-400">Limit: {p.lowStockThreshold}</span>
+                   <div className="flex items-center gap-1">
+                      <span className={`text-[10px] font-black ${p.daysLeft <= 3 ? 'text-rose-600' : 'text-amber-600'}`}>
+                        {p.daysLeft} DAYS
+                      </span>
+                   </div>
+                   <div className="w-16 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mt-1 overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full ${p.daysLeft <= 3 ? 'bg-rose-500' : 'bg-amber-500'}`} 
+                        style={{ width: `${Math.min(100, (p.daysLeft / 10) * 100)}%` }}
+                      />
+                   </div>
                 </div>
               </div>
             ))}
-            {products.length > 4 && (
-              <Link to="/admin/inventory" className="block text-center text-[10px] font-black text-indigo-600 uppercase tracking-widest pt-2 hover:underline">
-                View All {products.length} Alerts
-              </Link>
-            )}
           </div>
         )}
+      </div>
+      
+      <div className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
+         <Link to="/admin/inventory" className="w-full flex items-center justify-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">
+            Warehouse Command <ArrowRight size={12}/>
+         </Link>
       </div>
     </div>
   );
@@ -324,20 +346,56 @@ export default function AdminDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [lowStockProducts, setLowStockProducts] = useState([]);
   const [isLowStockLoading, setIsLowStockLoading] = useState(true);
+  const [forecastingItems, setForecastingItems] = useState([]);
 
   const { kpis, revenueData, statusData, topProducts } = dashboardData || {};
 
   useEffect(() => {
     dispatch(fetchDashboardData());
-    fetchLowStock();
+    fetchIntelligence();
   }, [dispatch]);
 
-  const fetchLowStock = async () => {
+  const fetchIntelligence = async () => {
     try {
-      const res = await getLowStockProducts();
-      setLowStockProducts(res.data || []);
+      setIsLowStockLoading(true);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const [productsRes, ordersRes] = await Promise.all([
+        getProducts({ isAdmin: true, limit: 1000 }),
+        getAllOrders({ startDate: thirtyDaysAgo.toISOString(), limit: 1000 })
+      ]);
+
+      // Velocity computation (identical to AdminInventory for consistency)
+      const velocityMap = {};
+      const orders = ordersRes.orders || ordersRes.data?.orders || [];
+      orders.forEach(order => {
+        (order.items || []).forEach(item => {
+          const sku = item.variantId;
+          velocityMap[sku] = (velocityMap[sku] || 0) + (item.quantity || 0);
+        });
+      });
+
+      const flattened = [];
+      (productsRes.products || []).forEach(p => {
+        (p.variants || []).forEach(v => {
+          const unitsSold30d = velocityMap[v._id] || 0;
+          const velocity = Number((unitsSold30d / 30).toFixed(2));
+          const daysLeft = velocity > 0 ? Math.floor(v.stock / velocity) : Infinity;
+
+          flattened.push({
+            sku: v.sku,
+            name: p.title,
+            stock: v.stock,
+            velocity,
+            daysLeft
+          });
+        });
+      });
+
+      setForecastingItems(flattened);
     } catch (err) {
-      console.error("Failed to fetch low stock", err);
+      console.error("Failed to fetch intel", err);
     } finally {
       setIsLowStockLoading(false);
     }
@@ -478,7 +536,7 @@ export default function AdminDashboard() {
            <BestSellingProductsWidget products={topProducts} />
          </div>
          <div className="lg:col-span-1">
-           <LowStockAlerts products={lowStockProducts} loading={isLowStockLoading} />
+           <StockIntelligenceWidget items={forecastingItems} loading={isLowStockLoading} />
          </div>
          <div className="lg:col-span-1">
            <RecentActivityWidget />
