@@ -346,9 +346,10 @@ export default function CartPage() {
 
                                 <Link
                                     to="/checkout"
-                                    className="block text-center w-full mt-10 h-16 bg-text-primary text-primary text-[12px] font-black uppercase tracking-[0.3em] hover:bg-accent hover:text-primary transition-all rounded-xl shadow-xl shadow-primary/10 flex items-center justify-center no-underline"
+                                    className="block text-center w-full mt-10 h-16 bg-text-primary text-primary text-[12px] font-black uppercase tracking-[0.3em] hover:bg-accent hover:text-primary transition-all rounded-xl shadow-xl shadow-primary/10 flex items-center justify-center gap-3 no-underline group"
                                 >
-                                    Proceed to Checkout
+                                    PROCEED TO CHECKOUT
+                                    <span className="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">shield_with_heart</span>
                                 </Link>
 
                                 <div className="mt-8 space-y-3">

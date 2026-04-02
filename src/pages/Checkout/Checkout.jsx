@@ -46,6 +46,11 @@ export default function Checkout() {
     paymentMethod: "ONLINE"
   });
 
+  // 🔝 Auto-scroll to top on step change and mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [checkoutStep]);
+
   // 🔄 Auto-fetch profile
   useEffect(() => {
     if (!user) {
@@ -129,7 +134,6 @@ export default function Checkout() {
       return;
     }
     setCheckoutStep("payment");
-    window.scrollTo(0, 0);
   };
 
   const handlePlaceOrder = async (e) => {
@@ -193,78 +197,70 @@ export default function Checkout() {
       setCompletedOrderId(orderId);
 
       // 💳 Razorpay Integration for Online Payments
-      if (formData.paymentMethod === "ONLINE" || formData.paymentMethod === "UPI") {
-        const scriptLoaded = await loadRazorpayScript();
-        if (!scriptLoaded) {
-          alert("Razorpay SDK failed to load. Are you online?");
-          setIsProcessing(false);
-          return;
-        }
-
-        // Create Razorpay Order in Backend
-        const razorpayOrder = await paymentService.createRazorpayOrder({
-          orderId: result.data._id
-        });
-
-        const options = {
-          key: "rzp_test_SKiQG78TfTVFU7", // Test Key ID
-          amount: razorpayOrder.data.amount,
-          currency: razorpayOrder.data.currency,
-          name: "Fenrir Era",
-          description: "Payment for Order #" + result.data._id,
-          order_id: razorpayOrder.data.id,
-          handler: async function (response) {
-            try {
-              setIsProcessing(true);
-              const verificationData = {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orderId: result.data._id
-              };
-
-              // Verify Signature in Backend
-              await paymentService.verifyRazorpayPayment(verificationData);
-              if (!directBuy) clearCart();
-              setCheckoutStep("done");
-            } catch (error) {
-              console.error("Payment Verification Failed:", error);
-              alert("Payment verification failed. Please contact support.");
-              navigate("/account/orders", { state: { orderSuccess: false } });
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-          prefill: {
-            name: user.fullName,
-            email: user.email,
-            contact: shippingAddress.phone
-          },
-          theme: {
-            color: "#000000"
-          }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response) {
-          console.error("Payment Failed:", response.error);
-          alert("Payment failed: " + response.error.description);
-          setIsProcessing(false);
-        });
-        rzp.open();
-      } else {
-        // Cash on Delivery flow
-        if (!directBuy) clearCart();
-        setCheckoutStep("done");
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert("Razorpay SDK failed to load. Are you online?");
+        setIsProcessing(false);
+        return;
       }
+
+      // Create Razorpay Order in Backend
+      const razorpayOrder = await paymentService.createRazorpayOrder({
+        orderId: result.data._id
+      });
+
+      const options = {
+        key: "rzp_test_SKiQG78TfTVFU7", // Test Key ID
+        amount: razorpayOrder.data.amount,
+        currency: razorpayOrder.data.currency,
+        name: "Fenrir Era",
+        description: "Payment for Order #" + result.data._id,
+        order_id: razorpayOrder.data.id,
+        handler: async function (response) {
+          try {
+            setIsProcessing(true);
+            const verificationData = {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: result.data._id
+            };
+
+            // Verify Signature in Backend
+            await paymentService.verifyRazorpayPayment(verificationData);
+            if (!directBuy) clearCart();
+            setCheckoutStep("done");
+          } catch (error) {
+            console.error("Payment Verification Failed:", error);
+            alert("Payment verification failed. Please contact support.");
+            navigate("/account/orders", { state: { orderSuccess: false } });
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: user.fullName,
+          email: user.email,
+          contact: shippingAddress.phone
+        },
+        theme: {
+          color: "#000000"
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        console.error("Payment Failed:", response.error);
+        alert("Payment failed: " + response.error.description);
+        setIsProcessing(false);
+      });
+      rzp.open();
 
     } catch (error) {
       console.error("Order Failed:", error);
       alert(error.message || "Something went wrong while placing order");
     } finally {
-      if (formData.paymentMethod === "COD") {
-        setIsProcessing(false);
-      }
+      setIsProcessing(false);
     }
   };
 

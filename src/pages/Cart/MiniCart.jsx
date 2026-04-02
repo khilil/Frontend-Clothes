@@ -213,19 +213,20 @@ export default function MiniCart({ open, onClose }) {
                     <p className="text-[10px] text-text-muted uppercase tracking-[0.05em]">Shipping & taxes calculated at checkout</p>
                   </div>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-4">
                     <button
-                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-transparent border border-white text-white hover:bg-white hover:text-black"
-                      onClick={handleCheckout}
-                    >
-                      View Bag
-                      <span className="material-symbols-outlined">shopping_bag</span>
-                    </button>
-                    <button
-                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-text-primary text-background hover:bg-accent hover:text-white"
+                      className="w-full h-12 md:h-14 flex items-center justify-center gap-3 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] rounded transition-all duration-400 bg-text-primary text-background hover:bg-accent hover:text-white shadow-lg"
                       onClick={() => { onClose(); navigate("/checkout"); }}
                     >
-                      Checkout Now
+                      PROCEED TO CHECKOUT
+                      <span className="material-symbols-outlined text-sm">shield_with_heart</span>
+                    </button>
+                    
+                    <button
+                      className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-text-muted hover:text-text-primary transition-colors py-2"
+                      onClick={handleCheckout}
+                    >
+                      Review Your Bag
                     </button>
                   </div>
                 </div>

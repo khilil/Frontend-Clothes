@@ -34,7 +34,9 @@ export function CartProvider({ children }) {
       if (user) {
         try {
           const res = await cartService.getCart();
-          const formattedItems = res.data.items
+          const rawItems = res.data.items;
+
+          const formattedItems = rawItems
             .filter(item => item.product) // 🛡️ Filter out items with missing products
             .map(item => {
               const product = item.product;
@@ -70,7 +72,19 @@ export function CartProvider({ children }) {
                 customizations: item.customizations || {}
               };
             });
+
           setCart(formattedItems);
+
+          // 🧹 Auto-clean ghost items from backend (items filtered out because product is null)
+          const ghostItems = rawItems.filter(item => !item.product);
+          if (ghostItems.length > 0) {
+            console.warn(`[Cart] Cleaning ${ghostItems.length} ghost item(s) with missing products...`);
+            ghostItems.forEach(ghost => {
+              cartService.removeFromCart(ghost._id).catch(err =>
+                console.error("[Cart] Failed to remove ghost item:", ghost._id, err.message)
+              );
+            });
+          }
         } catch (error) {
           console.error("Failed to fetch cart:", error);
         } finally {

@@ -56,7 +56,7 @@ const Inventory = () => {
       const flattened = [];
       allProductsRes.products.forEach(p => {
         p.variants.forEach(v => {
-          const unitsSold30d = velocityMap[v._id] || 0;
+          const unitsSold30d = velocityMap[v.sku] || velocityMap[v._id?.toString()] || 0;
           const velocity = Number((unitsSold30d / 30).toFixed(2));
           const daysLeft = velocity > 0 ? Math.floor(v.stock / velocity) : Infinity;
 
