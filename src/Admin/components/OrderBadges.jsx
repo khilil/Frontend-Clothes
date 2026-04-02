@@ -1,4 +1,5 @@
 import React from 'react';
+import { Globe, MessageCircle, Instagram } from 'lucide-react';
 
 export const StatusBadge = ({ status }) => {
   const styles = {
@@ -46,6 +47,23 @@ export const SLABadge = ({ expectedDate }) => {
   return (
     <span className={`text-[10px] font-bold ${isDelayed ? 'text-rose-500' : 'text-slate-400'}`}>
       {isDelayed ? 'DELAYED' : 'ON-TIME'}
+    </span>
+  );
+};
+
+export const SourceBadge = ({ source = 'Web' }) => {
+  const configs = {
+    Web: { icon: Globe, color: 'text-blue-500 bg-blue-500/10 border-blue-500/20' },
+    WhatsApp: { icon: MessageCircle, color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' },
+    Instagram: { icon: Instagram, color: 'text-pink-500 bg-pink-500/10 border-pink-500/20' },
+  };
+
+  const { icon: Icon, color } = configs[source] || configs.Web;
+
+  return (
+    <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 ${color}`}>
+      <Icon size={12} />
+      {source}
     </span>
   );
 };

@@ -1,7 +1,7 @@
 import { BASE_URL } from '../services/api';
 
 export const ensureAbsoluteUrl = (url) => {
-    if (!url) return "";
+    if (!url) return "/images/product_placeholder.png";
 
     // If it's already an absolute URL, return it
     if (url.startsWith("http://") || url.startsWith("https://")) {

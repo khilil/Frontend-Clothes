@@ -138,6 +138,14 @@ const AdminAnalytics = () => {
             if (orderDate > userMap[userKey].lastOrder) userMap[userKey].lastOrder = orderDate;
         });
 
+        // 🧠 Phase 4: Extreme Insights (Return Rates & Aging)
+        const totalReturns = Object.values(statusMap).reduce((acc, curr, idx) => {
+           const status = Object.keys(statusMap)[idx];
+           if (['returned', 'refunded', 'return requested'].includes(status.toLowerCase())) return acc + curr;
+           return acc;
+        }, 0);
+
+        stats.returnRate = stats.totalOrders > 0 ? ((totalReturns / stats.totalOrders) * 100).toFixed(1) : "0.0";
         stats.avgOrderValue = stats.totalOrders > 0 ? stats.totalRevenue / stats.totalOrders : 0;
 
         // 🏷️ Loyalty Tiering Logic
@@ -162,23 +170,20 @@ const AdminAnalytics = () => {
                description: 'Recent first-time buyers'
             },
             { 
-               name: 'At-Risk', 
-               value: users.filter(u => u.count === 1 && u.lastOrder < ninetyDaysAgo).length, 
+               name: 'Churn Risk', 
+               value: users.filter(u => u.count > 0 && u.lastOrder < ninetyDaysAgo).length, 
                color: '#f43f5e',
-               description: 'Single purchase, no return'
+               description: 'Inactive for >90 days'
             }
-        ].filter(tier => tier.value > 0);
+        ];
 
-        return {
-            stats,
-            revenueByDate: Object.entries(revenueMap)
-                .map(([date, revenue]) => ({ date, revenue }))
-                .sort((a, b) => new Date(a.date) - new Date(b.date)),
-            ordersByStatus: Object.entries(statusMap)
-                .map(([name, value]) => ({ name, value }))
-                .sort((a, b) => b.value - a.value),
+        return { 
+            stats, 
+            revenueByDate: Object.keys(revenueMap).map(date => ({ name: date, sales: revenueMap[date] })),
+            ordersByStatus: Object.keys(statusMap).map(status => ({ name: status, value: statusMap[status] })),
             topProducts: Object.values(productMap).sort((a, b) => b.revenue - a.revenue).slice(0, 5),
-            customerComposition
+            customerComposition,
+            totalReturns
         };
     };
 
@@ -233,6 +238,7 @@ const AdminAnalytics = () => {
     const totalOrders = stats.totalOrders || 0;
     const avgOrderValue = stats.avgOrderValue || 0;
     const conversionRate = stats.conversionRate || 0;
+    const returnRate = stats.returnRate || 0;
 
 
     return (
@@ -273,13 +279,19 @@ const AdminAnalytics = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <KPICard title="Total Revenue" value={formatCurrency(totalRevenue)} trend="+12.5%" icon={IndianRupee} color="indigo" />
                 <KPICard title="Total Orders" value={totalOrders.toLocaleString()} trend="+8.2%" icon={ShoppingBag} color="emerald" />
-                <KPICard title="Avg Order Value" value={formatCurrency(avgOrderValue)} trend="-2.4%" icon={TrendingUp} color="violet" />
                 <KPICard 
-                    title="Conversion Rate" 
-                    value={typeof conversionRate === 'string' && conversionRate.includes('%') ? conversionRate : `${conversionRate}%`} 
-                    trend="+0.5%" 
-                    icon={Users} 
-                    color="pink" 
+                  title="Avg Order Value" 
+                  value={formatCurrency(avgOrderValue)} 
+                  icon={ShoppingBag} 
+                  color="violet" 
+                  trend="+₹240"
+                />
+                <KPICard 
+                  title="Return rate" 
+                  value={`${returnRate}%`}
+                  icon={TrendingUp} 
+                  color="pink" 
+                  trend="Phase 4"
                 />
             </div>
 

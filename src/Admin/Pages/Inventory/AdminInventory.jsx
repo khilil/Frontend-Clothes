@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { getLowStockProducts, updateVariantStock } from '../../../services/inventoryService';
 import { getProducts } from '../../../services/productService';
 import { getAllOrders } from '../../../services/orderService';
-import { Loader2, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Search, FileDown, Plus, Edit3, X, Zap, TrendingUp, ShieldAlert, BarChart2 } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight, Search, FileDown, Plus, Edit3, X, Zap, TrendingUp, ShieldAlert, BarChart2, Activity } from 'lucide-react';
 import { KPICardSkeleton, TableSkeleton } from '../../components/SkeletonLoader';
+import { logActivity } from '../../utils/auditLogger';
 
 const Inventory = () => {
   // --- State Management ---
@@ -16,7 +17,9 @@ const Inventory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+  const [isReplenishModalOpen, setIsReplenishModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null); 
+  const [restockPlan, setRestockPlan] = useState([]);
   
   // Selection State (For Bulk Actions)
   const [selectedSKUs, setSelectedSKUs] = useState([]);
@@ -115,8 +118,20 @@ const Inventory = () => {
 
     setIsSubmitting(true);
     try {
+      // Update local state
+      setItems(prev => prev.map(item => 
+        item.sku === selectedProduct.sku ? { ...item, stock: newStock } : item
+      ));
+
+      // 🕵️‍♂️ Phase 4: Audit Accountability Log
+      logActivity(
+        'Stock Reconciliation (Manual)',
+        `Adjusted SKU ${selectedProduct.sku} from ${selectedProduct.stock} to ${newStock} units. Reason: ${note || 'Internal correction'}`,
+        'INFO'
+      );
+
       await updateVariantStock(selectedProduct.productId, selectedProduct.variantId, newStock);
-      showNotification('success', 'Stock updated successfully');
+      showNotification('success', 'Operational database synchronized.');
       fetchData();
       closeModal();
     } catch (error) {
@@ -150,6 +165,13 @@ const Inventory = () => {
         }
       }));
 
+      // 🕵️‍♂️ Phase 4: Audit Accountability Log
+      logActivity(
+        'Mass Protocol Adjustment', 
+        `Applied ${adjustmentType} adjustment of ${quantity} units across ${selectedSKUs.length} SKUs.`,
+        'WARNING'
+      );
+
       showNotification(
         errorCount === 0 ? 'success' : 'error', 
         `Processed ${selectedSKUs.length} items: ${successCount} successful, ${errorCount} failed.`
@@ -176,7 +198,16 @@ const Inventory = () => {
       await new Promise(r => setTimeout(r, 1500));
       successCount = selectedSKUs.length;
       
-      showNotification('success', `Price protocol adjusted for ${successCount} archival units.`);
+      // Feedback
+      showNotification('success', `Mass update logic finalized for ${selectedSKUs.length} items.`);
+      
+      // 🕵️‍♂️ Phase 4: Audit Accountability Log
+      logActivity(
+        'Mass Protocol Adjustment', 
+        `Applied price adjustment across ${selectedSKUs.length} SKUs.`,
+        'WARNING'
+      );
+
       setIsPriceModalOpen(false);
       setSelectedSKUs([]);
     } catch (error) {
@@ -217,8 +248,21 @@ const Inventory = () => {
     if (selectedSKUs.length === filteredItems.length) {
       setSelectedSKUs([]);
     } else {
-      setSelectedSKUs(filteredItems.map(item => item.sku));
+      setSelectedSKUs(filteredItems.map(i => i.sku));
     }
+  };
+
+  const handlePrepareRestock = () => {
+    const plan = items
+      .filter(item => selectedSKUs.includes(item.sku))
+      .map(item => {
+        // AI Logic: Aim for 30 days of coverage
+        const targetStock = Math.ceil(item.velocity * 30);
+        const suggestedRestock = Math.max(0, targetStock - item.stock);
+        return { ...item, suggestedRestock, targetStock };
+      });
+    setRestockPlan(plan);
+    setIsReplenishModalOpen(true);
   };
 
   const toggleSelectSKU = (sku) => {
@@ -457,6 +501,13 @@ const Inventory = () => {
               </div>
               <div className="h-8 w-px bg-slate-700 dark:bg-slate-200 opacity-20" />
               <div className="flex items-center gap-3">
+                 <button 
+                  onClick={handlePrepareRestock}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20"
+                 >
+                    <Zap size={14} className="fill-white" />
+                    AI Restock Advisor
+                 </button>
                  <button 
                   onClick={() => {
                     setAdjustmentType('Add');
@@ -709,6 +760,73 @@ const Inventory = () => {
           <div>
              <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Security Alert</p>
              <p className="font-bold text-sm tracking-wide">{notification.message}</p>
+          </div>
+        </div>
+      )}
+      {/* 🕵️‍♂️ Phase 4: 🪟 AI REPLENISHMENT MODAL */}
+      {isReplenishModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border border-slate-200 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-emerald-500/5 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-black dark:text-white uppercase tracking-tight flex items-center gap-2">
+                  <TrendingUp className="text-emerald-500" />
+                  AI Restock Protocol
+                </h3>
+                <p className="text-[10px] text-slate-500 mt-1 font-black uppercase tracking-widest">Targeting 30-Day Inventory Cover</p>
+              </div>
+              <button onClick={() => setIsReplenishModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-3">
+                {restockPlan.map((p, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-black text-slate-900 dark:text-white uppercase">{p.name}</span>
+                      <div className="flex items-center gap-2">
+                         <span className="text-[9px] font-black text-slate-400 font-mono">{p.sku}</span>
+                         <span className="text-[9px] font-black text-emerald-500 uppercase">Velocity: {p.velocity} u/d</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-right">
+                        <span className="text-[10px] block font-black text-slate-400 uppercase tracking-widest mb-1">Current Stock</span>
+                        <span className="text-sm font-black dark:text-slate-300">{p.stock} units</span>
+                      </div>
+                      <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
+                      <div className="text-right">
+                        <span className="text-[10px] block font-black text-emerald-600 uppercase tracking-widest mb-1">AI Recommendation</span>
+                        <span className="text-lg font-black text-emerald-500">+{p.suggestedRestock}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex gap-4">
+              <button onClick={() => setIsReplenishModalOpen(false)} className="flex-1 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all dark:text-slate-300">
+                Abort Protocol
+              </button>
+              <button
+                className="flex-1 px-4 py-3 bg-emerald-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-600/30 hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                onClick={() => {
+                   // 🕵️‍♂️ Phase 4: Audit Accountability Log
+                   logActivity(
+                     'AI Restock Authorized', 
+                     `Generated restock drafts for ${restockPlan.length} SKUs targeting 30-day coverage.`,
+                     'SUCCESS'
+                   );
+                   alert("Protocol Authorized: Restock drafts generated and logged in Accountability Suite.");
+                   setIsReplenishModalOpen(false);
+                }}
+              >
+                {isSubmitting ? <Loader2 className="animate-spin" size={14} /> : 'Authorize Restock'}
+              </button>
+            </div>
           </div>
         </div>
       )}

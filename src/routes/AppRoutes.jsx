@@ -48,6 +48,7 @@ import AdminHeroSlider from "../Admin/Pages/HeroSlider/AdminHeroSlider";
 import OfferManagement from "../Admin/Pages/Discounts/OfferManagement";
 import AdminTeam from "../Admin/Pages/Team/AdminTeam";
 import AdminLogin from "../Admin/Pages/Auth/AdminLogin";
+import AdminAuditLogs from "../Admin/Pages/Team/AdminAuditLogs";
 
 
 export default function AppRoutes() {
@@ -97,6 +98,11 @@ export default function AppRoutes() {
                 <Route path="team" element={
                     <ProtectedRoute allowedRoles={['admin']}>
                         <AdminTeam />
+                    </ProtectedRoute>
+                } />
+                <Route path="audit" element={
+                    <ProtectedRoute allowedRoles={['admin']}>
+                        <AdminAuditLogs />
                     </ProtectedRoute>
                 } />
 

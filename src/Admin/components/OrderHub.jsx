@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Download, Eye, ChevronRight, Clock, CheckSquare, Square, Trash2, Calendar } from 'lucide-react';
-import { StatusBadge, PriorityBadge, CustomDesignBadge, SLABadge } from './OrderBadges';
+import { Search, Filter, MoreHorizontal, Download, Eye, ChevronRight, Clock, CheckSquare, Square, Trash2, Calendar, Plus } from 'lucide-react';
+import { StatusBadge, PriorityBadge, CustomDesignBadge, SLABadge, SourceBadge } from './OrderBadges';
 import { getAllOrders, bulkUpdateOrders, updateOrderStatus } from '../../services/orderService';
 import { generateInvoiceHTML, generateBulkInvoiceHTML, generatePickingListHTML } from '../utils/invoiceUtils';
 import { exportOrdersToCSV } from '../utils/exportUtils';
@@ -21,6 +21,7 @@ export default function OrderHub({ onSelectOrder }) {
     paymentMethod: '',
     priority: '',
     isCustom: false,
+    source: '',
   });
   const [showFilters, setShowFilters] = useState(false);
   const [dateRange, setDateRange] = useState({ label: 'All Time', startDate: null, endDate: null });
@@ -54,6 +55,7 @@ export default function OrderHub({ onSelectOrder }) {
         isCustom: activeTab === 'Custom Design 🎨' ? true : filters.isCustom,
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
+        source: filters.source,
         page,
         limit: 10,
       };
@@ -265,16 +267,6 @@ export default function OrderHub({ onSelectOrder }) {
           >
             <Download size={18} />
           </button>
-          <div className="relative group">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search Order ID / Customer..."
-              className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-64"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
           <div className="relative">
             <button 
               onClick={() => { setShowDateFilter(!showDateFilter); setShowFilters(false); }}
@@ -356,7 +348,7 @@ export default function OrderHub({ onSelectOrder }) {
                   <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Advanced Filters</h3>
                   <button 
                     onClick={() => {
-                      setFilters({ status: '', paymentStatus: '', paymentMethod: '', priority: '', isCustom: false });
+                      setFilters({ status: '', paymentStatus: '', paymentMethod: '', priority: '', source: '', isCustom: false });
                       setShowFilters(false);
                     }}
                     className="text-[10px] font-bold text-rose-500 hover:underline"
@@ -366,6 +358,20 @@ export default function OrderHub({ onSelectOrder }) {
                 </div>
 
                 <div className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Source</label>
+                    <select 
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                      value={filters.source}
+                      onChange={(e) => setFilters(f => ({ ...f, source: e.target.value }))}
+                    >
+                      <option value="">All Sources</option>
+                      <option value="Web">Web</option>
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="Instagram">Instagram</option>
+                    </select>
+                  </div>
+
                   <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Payment Status</label>
                     <div className="grid grid-cols-2 gap-2">
@@ -412,6 +418,31 @@ export default function OrderHub({ onSelectOrder }) {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Top Bar Actions */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-4 px-6 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <button 
+            onClick={() => alert("Manual Order Creation Entry Point (Activity 3)")}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 hover:bg-indigo-700 active:scale-95 shadow-lg shadow-indigo-600/20"
+          >
+            <Plus size={16} /> Create Manual Order
+          </button>
+          
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
+          
+          <div className="relative flex-1 md:w-64 lg:w-96 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search Order ID / Customer..."
+              className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
         </div>
       </div>
@@ -496,15 +527,15 @@ export default function OrderHub({ onSelectOrder }) {
                 </th>
                 <th className="px-6 py-4">Order Details</th>
                 <th className="px-6 py-4">Products</th>
-                <th className="px-6 py-4">Financials</th>
-                <th className="px-6 py-4">Timeline & Status</th>
+                <th className="px-6 py-4">Total Amount</th>
+                <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                   <td colSpan="6" className="px-6 py-12 text-center">
+                   <td colSpan="7" className="px-6 py-12 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Loading Orders...</p>

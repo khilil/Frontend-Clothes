@@ -8,7 +8,7 @@ const CustomToast = ({ t, product, actionType = 'cart' }) => {
   const navigate = useNavigate();
   
   const isCart = actionType === 'cart';
-  const productImage = product.image || product.images?.[0]?.url || "https://via.placeholder.com/100";
+  const productImage = product.image || product.images?.[0]?.url || "/images/product_placeholder.png";
   
   return (
     <motion.div

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Package, ShoppingCart, BarChart3, AlertCircle,
   TrendingUp, Layers, CheckCircle2, IndianRupee, Activity,
-  Plus, ExternalLink, FileText, Download, AlertTriangle, History, ArrowRight, Zap
+  Plus, ExternalLink, FileText, Download, AlertTriangle, History, ArrowRight, Zap, Users
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -194,6 +194,7 @@ const QuickActions = () => {
     { label: 'Categories', icon: Layers, link: '/admin/categories', color: 'bg-emerald-600' },
     { label: 'Inventory', icon: FileText, link: '/admin/inventory', color: 'bg-amber-600' },
     { label: 'Analytics', icon: BarChart3, link: '/admin/analytics', color: 'bg-violet-600' },
+    { label: 'Audit Logs', icon: History, link: '/admin/audit', color: 'bg-slate-700' },
   ];
 
   return (
@@ -333,9 +334,9 @@ const RecentActivityWidget = ({ activities = [] }) => {
       </div>
       
       <div className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
-         <button className="w-full flex items-center justify-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">
+         <Link to="/admin/audit" className="w-full flex items-center justify-center gap-2 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-700 transition-colors">
             Full Audit Log <ArrowRight size={12}/>
-         </button>
+         </Link>
       </div>
     </div>
   );
@@ -455,35 +456,10 @@ export default function AdminDashboard() {
 
       {/* 2. Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard 
-          title="Gross Revenue" 
-          value={formatCurrency(kpis?.totalSales || 0)} 
-
-          icon={IndianRupee} 
-          color="bg-indigo-500" 
-          subtext="Total lifetime sales"
-        />
-        <KPICard 
-          title="Total Orders" 
-          value={(kpis?.totalOrders || 0).toLocaleString()} 
-          icon={ShoppingCart} 
-          color="bg-blue-500" 
-          subtext="Total processed orders"
-        />
-        <KPICard 
-          title="Custom Orders %" 
-          value={`${kpis?.customOrdersPercentage || 0}%`} 
-          icon={Layers} 
-          color="bg-purple-500" 
-          subtext="Custom design volume"
-        />
-        <KPICard 
-          title="Operational SLA" 
-          value={`${kpis?.slaPercentage || 0}%`} 
-          icon={CheckCircle2} 
-          color="bg-emerald-500" 
-          subtext="On-time delivery rate"
-        />
+        <KPICard title="Revenue" value={formatCurrency(kpis?.totalRevenue || 0)} icon={IndianRupee} color="bg-indigo-600" subtext="+12% from last month" />
+        <KPICard title="Orders" value={(kpis?.totalOrders || 0).toString()} icon={ShoppingCart} color="bg-emerald-600" subtext="+5% from last month" />
+        <KPICard title="Customers" value={(kpis?.totalUsers || 0).toString()} icon={Users} color="bg-violet-600" subtext="24 new this week" />
+        <KPICard title="Low Stock" value={lowStockProducts.length.toString()} icon={AlertTriangle} color="bg-rose-600" subtext="Action required" />
       </div>
 
       {/* 3. Charts Section */}

@@ -60,7 +60,7 @@ const ProductCard = React.memo(({ product, activeColor }) => {
         primary = explicitPrimary ? explicitPrimary.url : targetVariant.images[0].url;
       }
     }
-    return primary || "https://via.placeholder.com/400x533?text=No+Image";
+    return primary || "/images/product_placeholder.png";
   }, [product, activeColor]);
 
   return (
