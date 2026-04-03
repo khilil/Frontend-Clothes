@@ -14,7 +14,8 @@ import {
     Image as ImageIcon,
     X,
     UsersRound,
-    Crown
+    Crown,
+    Store
 } from 'lucide-react';
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -43,6 +44,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Products',       path: '/admin/products',       icon: ShoppingBasket              },
         { name: 'Inventory',      path: '/admin/inventory',      icon: Package                     },
         { name: 'Orders',         path: '/admin/orders',         icon: ShoppingCart                },
+        { name: 'Store Pickups',  path: '/admin/pickups',        icon: Store                      },
         { name: 'Attributes',     path: '/admin/attributes',     icon: Palette                     },
         { name: 'Customization',  path: '/admin/customization',  icon: Settings                    },
         // ─── Admin Only ───

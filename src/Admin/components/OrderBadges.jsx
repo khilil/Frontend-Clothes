@@ -4,6 +4,7 @@ import { Globe, MessageCircle, Instagram } from 'lucide-react';
 export const StatusBadge = ({ status }) => {
   const styles = {
     placed: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+    "ready-for-pickup": "bg-purple-500/10 text-purple-500 border-purple-500/20",
     "ready-to-ship": "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
     shipped: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
     delivered: "bg-emerald-600/10 text-emerald-400 border-emerald-600/20",
