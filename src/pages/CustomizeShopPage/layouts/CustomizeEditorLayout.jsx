@@ -48,7 +48,7 @@ export default function CustomizeEditorLayout() {
                 {/* HEADER / NAV (Optional, if you have one) */}
                 <div className="h-14 border-b border-black/5 flex items-center justify-between px-6 bg-white z-50">
                     <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">GenZ Studio</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">FENRIR Era</span>
                         <div className="h-4 w-px bg-black/10" />
                         <span className="text-[9px] font-bold uppercase tracking-widest text-black/40 hidden sm:inline">Custom Apparel Design</span>
                     </div>

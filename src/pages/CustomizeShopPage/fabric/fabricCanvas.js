@@ -13,7 +13,33 @@ export function initFabric(
     const canvas = new Canvas(canvasEl, {
         preserveObjectStacking: true,
         selection: true,
+        selectionColor: 'rgba(212, 196, 177, 0.1)',
+        selectionBorderColor: '#D4C4B1',
+        selectionLineWidth: 1
     });
+
+    // Custom Luxury Selection Style
+    const configureObjectSelection = (obj) => {
+        obj.set({
+            cornerColor: '#fcfbf9',
+            cornerStrokeColor: '#D4C4B1',
+            cornerStyle: 'circle',
+            cornerSize: 8,
+            transparentCorners: false,
+            borderColor: '#D4C4B1',
+            borderScaleFactor: 1.5,
+            borderDashArray: [4, 4],
+            padding: 8,
+            // 🖋️ Premium Render Defaults
+            opacity: 0.95,
+            shadow: {
+                color: 'rgba(0,0,0,0.2)',
+                blur: 6,
+                offsetX: 0,
+                offsetY: 2
+            }
+        });
+    };
 
     canvas.backgroundColor = "#ffffff";
     canvas.renderAll();
@@ -26,8 +52,18 @@ export function initFabric(
         const obj = e.target;
         if (obj && !obj.id) {
             obj.id = `obj-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            
+            // 📐 Auto-Center New Designs
+            if (!obj.excludeFromExport) {
+                canvas.centerObject(obj);
+                obj.setCoords();
+            }
+        }
+        if (obj && !obj.excludeFromExport) {
+            configureObjectSelection(obj);
         }
         syncLayers && syncLayers(canvas);
+        canvas.requestRenderAll();
     });
     canvas.on("object:removed", () => syncLayers && syncLayers(canvas));
     canvas.on("object:modified", () => syncLayers && syncLayers(canvas));

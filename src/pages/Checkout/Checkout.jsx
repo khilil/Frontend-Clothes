@@ -48,7 +48,7 @@ export default function Checkout() {
   });
 
   const [selectedStore] = useState({
-    name: "GenZ Cloths Flagship Store",
+    name: "FENRIR Era Flagship Store",
     address: "245 Fifth Avenue, New York, NY 10016",
     mapLink: "https://maps.google.com/?q=245+Fifth+Avenue+New+York",
     hours: "10:00 AM - 08:00 PM",

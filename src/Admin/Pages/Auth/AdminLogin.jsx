@@ -100,7 +100,7 @@ export default function AdminLogin() {
                             Staff Portal
                         </h1>
                         <p className="text-indigo-300/60 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 relative z-10">
-                            GenZ Clothes / Administrative Entry
+                            FENRIR Era / Administrative Entry
                         </p>
                     </div>
 
@@ -141,7 +141,7 @@ export default function AdminLogin() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        placeholder="admin@genz.com"
+                                        placeholder="admin@fenrirera.com"
                                         className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-6 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all placeholder:text-slate-300"
                                     />
                                 </div>
@@ -202,7 +202,7 @@ export default function AdminLogin() {
 
                 <div className="mt-8 text-center">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em]">
-                        © 2024 GenZ Clothes Inc.
+                        © 2024 FENRIR Era Inc.
                     </p>
                 </div>
             </motion.div>

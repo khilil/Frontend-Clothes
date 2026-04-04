@@ -127,7 +127,7 @@ const OrderDetails = () => {
                     >
                         {/* ⚡ Human Background */}
                         <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
-                            <h1 className="text-[20vw] font-impact text-white/5 whitespace-nowrap leading-none grayscale">GENZ CLOTHS GENZ CLOTHS GENZ CLOTHS</h1>
+                            <h1 className="text-[20vw] font-impact text-white/5 whitespace-nowrap leading-none grayscale">FENRIR ERA FENRIR ERA FENRIR ERA</h1>
                         </div>
 
                         <motion.div 
@@ -170,7 +170,7 @@ const OrderDetails = () => {
                             
                             <div className="bg-white/5 rounded-[2.5rem] p-10 mb-12 border border-white/5 text-center">
                                 <p className="text-xl md:text-2xl font-impact italic text-white leading-tight mb-4">
-                                    "Hope you love your new pieces as much as we loved making them. Tag us @GenZ_Cloths so we can see the fit!"
+                                    "Hope you love your new pieces as much as we loved making them. Tag us @FENRIR_Era so we can see the fit!"
                                 </p>
                                 <div className="h-[1px] w-20 bg-[#D4AF37] mx-auto my-6" />
                                 <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">

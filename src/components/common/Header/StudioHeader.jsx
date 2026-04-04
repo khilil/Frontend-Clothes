@@ -65,7 +65,7 @@ export default function StudioHeader() {
                     {/* CENTER */}
                     <div className="flex flex-1 items-center justify-center gap-4 select-none">
                         {/* Canvas Studio Click */}
-                        <button onClick={handleStudioClick} className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-colors duration-300" > Canvas Studio / </button>
+                        <button onClick={handleStudioClick} className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white transition-colors duration-300" > FENRIR Studio / </button>
 
                         <span className="relative text-[10px] text-[#d4c4b1] font-black uppercase tracking-[0.4em] text-accent">
                             {activeLabel || "Pro Editor Mode"}

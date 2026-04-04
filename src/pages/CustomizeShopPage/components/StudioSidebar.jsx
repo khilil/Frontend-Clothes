@@ -2,6 +2,7 @@ import { useFabric } from "../../../context/FabricContext";
 import TextTab from "./sidebar/TextTab";
 import GraphicsTab from "./sidebar/GraphicsTab";
 import LayersTab from "./sidebar/LayersTab";
+import ElementsTab from "./sidebar/ElementsTab";
 import FabricColorPicker from "./FabricColorPicker";
 import BottomCTA from "./BottomCTA";
 
@@ -10,6 +11,20 @@ export default function StudioSidebar() {
 
     const renderTabContent = () => {
         switch (activeTab) {
+            case "basics":
+                return (
+                    <div className="space-y-6 animate-slideUp">
+                        <div className="relative pl-4 border-l-2 border-[#d4c4b1]/30 py-1">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-[#0A0A0A]">
+                                Garment Basics
+                            </h3>
+                            <p className="text-[9px] text-[#4A4A4A] uppercase tracking-[0.2em] mt-2 font-black leading-relaxed">
+                                Select your base canvas color and texture.
+                            </p>
+                        </div>
+                        <FabricColorPicker />
+                    </div>
+                );
             case "text":
                 return <TextTab />;
             case "graphics":
@@ -17,6 +32,7 @@ export default function StudioSidebar() {
             case "layers":
                 return <LayersTab />;
             case "elements":
+                return <ElementsTab />;
             default:
                 return (
                     <div className="space-y-8 animate-slideUp">

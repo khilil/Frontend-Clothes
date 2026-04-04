@@ -187,7 +187,7 @@ export default function Header({ forceSolid = false }) {
               </Link>
 
               <Link className="relative text-text-secondary no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/custom-studio">
-                Custom Studio
+                FENRIR Era
               </Link>
 
               {/* CLOTHING MEGA MENU TRIGGER */}
@@ -647,7 +647,7 @@ export default function Header({ forceSolid = false }) {
               <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
 
                 <nav className="flex flex-col gap-6">
-                  {['New Arrivals', 'Custom Studio', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
+                  {['New Arrivals', 'FENRIR Era', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -656,7 +656,7 @@ export default function Header({ forceSolid = false }) {
                     >
                       <Link
                         className={`text-2xl font-primary uppercase tracking-wider transition-colors hover:text-accent ${item === 'Sale' ? 'text-accent' : 'text-text-primary'}`}
-                        to={item === 'Collections' ? '/shop' : item === 'Custom Studio' ? '/custom-studio' : `/${item.toLowerCase().replace(' ', '-')}`}
+                        to={item === 'Collections' ? '/shop' : item === 'FENRIR Era' ? '/custom-studio' : `/${item.toLowerCase().replace(' ', '-')}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item}

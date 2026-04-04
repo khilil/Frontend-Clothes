@@ -485,7 +485,7 @@ export default function OfferManagement() {
                                                         value={formData.code}
                                                         onChange={handleFormChange}
                                                         className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-slate-200 font-mono outline-none focus:border-indigo-500"
-                                                        placeholder="GENZ2026"
+                                                        placeholder="FENRIR2026"
                                                     />
                                                 </div>
                                             </div>

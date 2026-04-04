@@ -1,5 +1,14 @@
+import { useFabric } from "../../../context/FabricContext";
+
 export default function FabricColorPicker() {
-    const colors = ["white", "black", "#2d3a3a", "#d4c4b1"];
+    const { garmentColor, setGarmentColor } = useFabric();
+    const colors = [
+        { id: 'white', value: '#F9F6F0', label: 'Bone White' },
+        { id: 'black', value: '#1A1A1A', label: 'Charcoal Black' },
+        { id: 'olive', value: '#4B5320', label: 'Tactical Olive' },
+        { id: 'beige', value: '#D2B48C', label: 'Atelier Sand' },
+        { id: 'navy', value: '#000080', label: 'Deep Sea Navy' },
+    ];
 
     return (
         <section className="space-y-6">
@@ -13,20 +22,22 @@ export default function FabricColorPicker() {
             <div className="flex gap-4">
                 {colors.map(color => (
                     <button
-                        key={color}
-                        className="group relative w-12 h-12 rounded-full border border-black/10 p-1 hover:border-[#d4c4b1]/50 transition-all duration-300"
+                        key={color.id}
+                        onClick={() => setGarmentColor(color.value)}
+                        className={`group relative w-12 h-12 rounded-full border p-1 transition-all duration-300 ${garmentColor === color.value ? "border-[#d4c4b1] scale-110 shadow-lg" : "border-black/10 hover:border-black/30"
+                            }`}
                     >
                         <div
-                            className="w-full h-full rounded-full border border-black/5 shadow-inner transition-transform group-hover:scale-90 duration-300"
-                            style={{ backgroundColor: color }}
+                            className="w-full h-full rounded-full border border-black/5 shadow-inner transition-transform group-hover:scale-95 duration-300"
+                            style={{ backgroundColor: color.value }}
                         />
                         {/* Subtle inner glow for black color */}
-                        {color === 'black' && <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none" />}
+                        {color.id === 'black' && <div className="absolute inset-0 rounded-full border border-white/5 pointer-events-none" />}
                     </button>
                 ))}
             </div>
             <p className="text-[9px] text-[#4A4A4A] uppercase tracking-widest text-center mt-2 font-black">
-                Premium Fabric Selection
+                {colors.find(c => c.value === garmentColor)?.label || "Custom Selection"}
             </p>
         </section>
     );

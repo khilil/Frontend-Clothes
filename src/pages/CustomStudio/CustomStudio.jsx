@@ -50,7 +50,7 @@ const CustomStudio = () => {
                     >
                         <motion.div variants={itemVariants} className="flex items-center gap-3 mb-6">
                             <div className="h-px w-12 bg-accent/40" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Studio Atelier</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">FENRIR Era Atelier</span>
                         </motion.div>
                         
                         <motion.h1 
@@ -132,7 +132,7 @@ const CustomStudio = () => {
                         {[
                             {
                                 icon: <Palette size={32} />,
-                                title: "Canvas Studio",
+                                title: "FENRIR Studio",
                                 desc: "Full creative control. Upload graphics, add text, and layer patterns.",
                                 items: ["Multi-layering", "Hi-Res Uploads", "3D Preview"],
                                 path: '/shop/all?isCustomizable=true'

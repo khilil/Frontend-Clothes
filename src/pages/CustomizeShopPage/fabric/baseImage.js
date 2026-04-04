@@ -28,10 +28,9 @@ export async function addBaseImage(canvas, imageURL) {
     hasBorders: false,
     hoverCursor: "default",
     excludeFromExport: true,
+    opacity: 0 // Hide in editor, as React layers handle visualization
   });
 
-
-  canvas.toJSON()
   canvas.add(img);
   canvas.moveObjectTo(img, 0);
   canvas.renderAll();
