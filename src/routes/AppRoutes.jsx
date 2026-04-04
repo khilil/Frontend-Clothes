@@ -50,6 +50,7 @@ import OfferManagement from "../Admin/Pages/Discounts/OfferManagement";
 import AdminTeam from "../Admin/Pages/Team/AdminTeam";
 import AdminLogin from "../Admin/Pages/Auth/AdminLogin";
 import AdminAuditLogs from "../Admin/Pages/Team/AdminAuditLogs";
+import PickupHandover from "../Admin/Pages/Orders/PickupHandover";
 
 
 export default function AppRoutes() {
@@ -112,6 +113,7 @@ export default function AppRoutes() {
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderManagement />} />
                 <Route path="pickups" element={<PickupManagement />} />
+                <Route path="pickups/handover/:orderId" element={<PickupHandover />} />
                 <Route path="attributes" element={<AttributeManagement />} />
                 <Route path="customization" element={<CustomizationManagement />} />
             </Route>

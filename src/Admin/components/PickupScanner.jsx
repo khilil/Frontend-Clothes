@@ -1,34 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { X, CheckCircle, AlertCircle, Loader2, Package, User, CreditCard } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Html5Qrcode } from 'html5-qrcode';
+import { X, CheckCircle, AlertCircle, Loader2, Package, User, CreditCard, Camera, StopCircle, RefreshCw } from 'lucide-react';
 import { verifyPickupOrder, updateOrderStatus } from '../../services/orderService';
 import toast from 'react-hot-toast';
 
 export default function PickupScanner({ onClose, onVerified }) {
-  const [scanResult, setScanResult] = useState(null);
+  const navigate = useNavigate();
+  const [isScanning, setIsScanning] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifiedOrder, setVerifiedOrder] = useState(null);
   const [manualToken, setManualToken] = useState({ id: '', token: '' });
+  const [scannerError, setScannerError] = useState(null);
+  
+  const scannerRef = useRef(null);
+  const readerId = "reader";
+
+  // Check if context is secure for camera access
+  const isSecureContext = window.isSecureContext;
+
+  const startScanner = async () => {
+    try {
+      setScannerError(null);
+      if (!isSecureContext && window.location.hostname !== 'localhost') {
+        setScannerError("Camera access requires HTTPS. Please use a secure connection.");
+        return;
+      }
+
+      if (!scannerRef.current) {
+        scannerRef.current = new Html5Qrcode(readerId);
+      }
+
+      setIsScanning(true);
+      await scannerRef.current.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+        },
+        onScanSuccess,
+        onScanError
+      );
+    } catch (err) {
+      console.error("Failed to start scanner:", err);
+      setScannerError(err.message || "Failed to access camera. Please check permissions.");
+      setIsScanning(false);
+    }
+  };
+
+  const stopScanner = async () => {
+    if (scannerRef.current && scannerRef.current.isScanning) {
+      try {
+        await scannerRef.current.stop();
+        setIsScanning(false);
+      } catch (err) {
+        console.error("Failed to stop scanner:", err);
+      }
+    }
+  };
+
+  function onScanSuccess(result) {
+    stopScanner();
+    handleVerification(result);
+  }
+
+  function onScanError(err) {
+    // Keep scanning - standard behavior
+  }
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner('reader', {
-      qrbox: { width: 250, height: 250 },
-      fps: 10,
-    });
-
-    scanner.render(onScanSuccess, onScanError);
-
-    function onScanSuccess(result) {
-      scanner.clear();
-      handleVerification(result);
-    }
-
-    function onScanError(err) {
-      // Keep scanning
-    }
-
     return () => {
-      scanner.clear().catch(error => console.error("Scanner cleanup failed", error));
+      // Cleanup: Stop scanner if it's running when component unmounts
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().catch(console.error);
+      }
     };
   }, []);
 
@@ -62,8 +107,13 @@ export default function PickupScanner({ onClose, onVerified }) {
       // If they only entered one field, allow it for "Smart Search"
       const res = await verifyPickupOrder(finalId, finalToken);
       if (res.success) {
-        setVerifiedOrder(res.data);
-        toast.success("Order Verified Successfully!");
+        console.log("🛠️ DEBUG PICKUP DATA:", res.data);
+        toast.success("Identity Verified!");
+        // Small delay for the toast to be seen before redirect
+        setTimeout(() => {
+          navigate(`/admin/pickups/handover/${res.data._id}`);
+          onClose(); // Close the scanner modal
+        }, 800);
       }
     } catch (error) {
       console.error("Verification failed:", error);
@@ -79,7 +129,7 @@ export default function PickupScanner({ onClose, onVerified }) {
       setVerifying(true);
       // Update status to delivered and payment to Paid if it was Cash on Pickup
       const payload = {
-        orderStatus: 'delivered',
+        status: 'delivered', 
         paymentStatus: verifiedOrder.paymentMethod === 'CASH_ON_PICKUP' ? 'Paid' : verifiedOrder.paymentStatus
       };
       
@@ -110,9 +160,60 @@ export default function PickupScanner({ onClose, onVerified }) {
         </div>
 
         <div className="p-8">
-          {!verifiedOrder ? (
+          {!verifiedOrder && (
             <div className="space-y-6">
-              <div id="reader" className="w-full overflow-hidden rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50" />
+              <div className="relative group min-h-[250px] rounded-3xl overflow-hidden bg-slate-50 dark:bg-slate-950/50 border-2 border-dashed border-slate-200 dark:border-slate-800">
+                {/* 🎯 Dedicated Scanner Container (Empty for React) */}
+                <div 
+                  id={readerId} 
+                  className={`w-full h-full ${isScanning ? 'block' : 'hidden'}`}
+                />
+
+                {/* 🛠️ Activation / Error Overlays (Separate from Reader DOM) */}
+                {!isScanning && !scannerError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                    <div className="w-16 h-16 bg-purple-600/10 rounded-full flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
+                      <Camera size={32} />
+                    </div>
+                    <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">Camera Inactive</h4>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 mb-6">Permission required to scan units</p>
+                    <button 
+                      onClick={startScanner}
+                      className="px-6 py-3 bg-purple-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-purple-700 shadow-lg shadow-purple-600/20 transition-all active:scale-95 flex items-center gap-2"
+                    >
+                      <Camera size={14} />
+                      Activate Lens
+                    </button>
+                  </div>
+                )}
+
+                {scannerError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-rose-500/5 backdrop-blur-[2px] z-20">
+                    <div className="w-16 h-16 bg-rose-600/10 rounded-full flex items-center justify-center text-rose-600 mb-4">
+                      <AlertCircle size={32} />
+                    </div>
+                    <h4 className="text-sm font-black text-rose-600 uppercase tracking-tight">Access Denied</h4>
+                    <p className="text-[10px] text-rose-500/70 font-bold uppercase tracking-widest mt-1 mb-6 max-w-[200px] leading-relaxed">{scannerError}</p>
+                    <button 
+                      onClick={startScanner}
+                      className="px-6 py-3 bg-slate-900 text-white dark:bg-white dark:text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-2"
+                    >
+                      <RefreshCw size={14} />
+                      Retry Sync
+                    </button>
+                  </div>
+                )}
+
+                {isScanning && (
+                  <button 
+                    onClick={stopScanner}
+                    className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md text-white rounded-lg hover:bg-rose-600 transition-all z-30"
+                    title="Stop Camera"
+                  >
+                    <StopCircle size={18} />
+                  </button>
+                )}
+              </div>
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100 dark:border-slate-800" /></div>
@@ -139,54 +240,6 @@ export default function PickupScanner({ onClose, onVerified }) {
                   <CheckCircle size={20} />
                 </button>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-               <div className="p-6 bg-purple-500/5 border border-purple-500/20 rounded-3xl">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-600/20">
-                      <CheckCircle size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-impact text-black dark:text-white uppercase tracking-tight">Identity Confirmed</h4>
-                      <p className="text-[10px] font-black text-purple-600 uppercase tracking-widest">Protocol #V-{verifiedOrder._id.slice(-6).toUpperCase()}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
-                      <User size={16} />
-                      <span className="text-xs font-bold">{verifiedOrder.user?.fullName}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
-                      <Package size={16} />
-                      <span className="text-xs font-bold">{verifiedOrder.items?.length} Items Verified</span>
-                    </div>
-                    <div className={`flex items-center gap-3 p-3 rounded-xl border ${verifiedOrder.paymentStatus === 'Paid' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' : 'bg-rose-500/10 border-rose-500/20 text-rose-600 animate-pulse'}`}>
-                      <CreditCard size={16} />
-                      <span className="text-xs font-black uppercase tracking-widest">
-                        {verifiedOrder.paymentStatus === 'Paid' ? 'Fully Paid' : `Payment Req: ₹${verifiedOrder.totalAmount.toLocaleString()}`}
-                      </span>
-                    </div>
-                  </div>
-               </div>
-
-               <div className="flex gap-4">
-                 <button 
-                  onClick={() => setVerifiedOrder(null)}
-                  className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200"
-                 >
-                   Reset
-                 </button>
-                 <button 
-                  onClick={handleConfirmHandover}
-                  disabled={verifying}
-                  className="flex-[2] py-4 bg-purple-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-purple-700 shadow-xl shadow-purple-600/20 flex items-center justify-center gap-2"
-                 >
-                   {verifying ? <Loader2 className="animate-spin" size={14} /> : <Package size={14} />}
-                   Confirm Handover
-                 </button>
-               </div>
             </div>
           )}
         </div>

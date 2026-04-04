@@ -40,6 +40,10 @@ const ProductListing = () => {
     search: searchParams.get('q') || ''
   });
 
+  const getColorDetail = useCallback((id) => {
+    return availableColors?.find(c => c.id === id || c._id === id || c.hexCode === id);
+  }, [availableColors]);
+
   const categorizedColors = useMemo(() => {
     const top = new Map();
     const bottom = new Map();
@@ -48,8 +52,12 @@ const ProductListing = () => {
       const isBottom = isBottomwear(p.slug || '', p.productType || '');
       p.variants?.forEach(v => {
         if (v.color?.name) {
-          if (isBottom) bottom.set(v.color.name, v.color);
-          else top.set(v.color.name, v.color);
+          const colorName = v.color.name.trim();
+          const targetMap = isBottom ? bottom : top;
+          // De-duplicate by name: only add if name not already present in the target group
+          if (!targetMap.has(colorName)) {
+            targetMap.set(colorName, v.color);
+          }
         }
       });
     });
@@ -120,6 +128,7 @@ const ProductListing = () => {
           limit: 12,
           category: filters.category === 'all' ? null : filters.category,
           brand: filters.brand,
+          size: filters.size, // Added size
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
@@ -149,17 +158,18 @@ const ProductListing = () => {
     loadInitialProducts();
 
     // Update URL params
-    const params = {};
-    if (filters.category !== 'all') params.category = filters.category;
-    if (filters.brand.length > 0) params.brand = filters.brand;
-    if (filters.size) params.size = filters.size;
-    if (filters.color) params.color = filters.color;
-    if (filters.price < 10000) params.price = filters.price;
-    if (filters.sort !== 'newest') params.sort = filters.sort;
-    if (filters.search) params.q = filters.search;
-    setSearchParams(params);
+    const params = new URLSearchParams();
+    if (filters.category !== 'all') params.set('category', filters.category);
+    if (filters.brand.length > 0) params.set('brand', filters.brand.join(','));
+    if (filters.size) params.set('size', filters.size);
+    if (filters.color) params.set('color', filters.color);
+    if (filters.price < 10000) params.set('price', filters.price.toString());
+    if (filters.sort !== 'newest') params.set('sort', filters.sort);
+    if (filters.search) params.set('q', filters.search);
+    
+    setSearchParams(params, { replace: true });
 
-  }, [filters, urlCategory]);
+  }, [filters]); // Removed urlCategory from dependencies to prevent unintended resets
 
   // Load More (Infinite Scroll)
   useEffect(() => {
@@ -173,6 +183,7 @@ const ProductListing = () => {
           limit: 12,
           category: filters.category === 'all' ? null : filters.category,
           brand: filters.brand,
+          size: filters.size, // Added size
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
@@ -190,7 +201,7 @@ const ProductListing = () => {
     };
 
     loadMoreProducts();
-  }, [page]);
+  }, [page, filters]); // Added filters to dependencies
 
   const handleCategoryChange = (cat) => {
     setFilters(prev => ({ ...prev, category: cat }));
@@ -326,8 +337,13 @@ const ProductListing = () => {
                     onClick={() => handleColorChange(filters.color)}
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: filters.color }}></div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Color: {filters.color}</span>
+                    <div 
+                      className="w-2 h-2 rounded-full shadow-sm" 
+                      style={{ backgroundColor: getColorDetail(filters.color)?.hexCode || filters.color }}
+                    ></div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">
+                      Color: {getColorDetail(filters.color)?.name || filters.color}
+                    </span>
                     <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 )}
