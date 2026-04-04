@@ -8,13 +8,13 @@
   --color-secondary: #F4F2E9;
   --color-accent: #B8860B;
   --color-background: #FBFAF5;
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #404040;
-  --color-text-muted: #666666;
-  --color-text-tertiary: #888888;
-  --color-accent-contrast: #966900;
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #2D2D2D;
+  --color-text-muted: #4A4A4A;
+  --color-text-tertiary: #6A6A6A;
+  --color-accent-contrast: #8B7E6D;
   --color-danger: #D32F2F;
-  --color-border-subtle: #D8D2C2;
+  --color-border-subtle: #E5E1DA;
 
   /* Legacy aliases for compatibility */
   --color-charcoal: var(--color-secondary);
@@ -225,7 +225,15 @@
     }
 
     .luxury-text-secondary {
-        @apply text-text-secondary font-secondary;
+        @apply text-text-secondary font-secondary leading-relaxed;
+    }
+
+    .luxury-text-muted-darker {
+        @apply text-text-muted font-secondary leading-relaxed tracking-wide;
+    }
+
+    .luxury-label-darker {
+        @apply text-text-primary font-primary uppercase tracking-[0.3em] font-black;
     }
 }
 

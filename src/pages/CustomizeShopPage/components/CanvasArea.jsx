@@ -289,7 +289,7 @@ export default function CanvasArea() {
     ============================= */
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-[400px] text-white">
+            <div className="flex items-center justify-center h-[400px] text-black/40 font-black uppercase tracking-[0.3em] text-[10px]">
                 Loading Design Studio...
             </div>
         );
@@ -307,12 +307,12 @@ export default function CanvasArea() {
        RENDER
     ============================= */
     return (
-        <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden bg-[#0f0f0f]">
+        <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden bg-[#f0f0f0]">
 
             {/* FLOATING FRONT / BACK TOGGLE */}
             <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-6 md:top-6 z-30">
-                <div className="flex bg-[#1a1a1d]/95 backdrop-blur-xl border border-white/10 
-                    rounded-2xl p-1 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                <div className="flex bg-white/95 backdrop-blur-xl border border-black/5 
+                    rounded-2xl p-1 shadow-[0_10px_30px_rgba(0,0,0,0.05)]">
 
                     <button
                         onClick={() => switchSide("front")}
@@ -321,7 +321,7 @@ export default function CanvasArea() {
                             rounded-xl transition-all duration-500
                             ${viewSide === "front"
                                 ? "bg-[#d4c4b1] text-black shadow-[0_0_20px_rgba(212,196,177,0.3)]"
-                                : "text-[#9a9a9a] hover:text-white"
+                                : "text-black/40 hover:text-[#1a1a1a]"
                             }`}
                     >
                         Front
@@ -334,7 +334,7 @@ export default function CanvasArea() {
                             rounded-xl transition-all duration-500
                             ${viewSide === "back"
                                 ? "bg-[#d4c4b1] text-black shadow-[0_0_20px_rgba(212,196,177,0.3)]"
-                                : "text-[#9a9a9a] hover:text-white"
+                                : "text-black/40 hover:text-[#1a1a1a]"
                             }`}
                     >
                         Back
@@ -344,8 +344,8 @@ export default function CanvasArea() {
             </div>
 
             {/* CANVAS CONTAINER */}
-            <div className="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-12">
-                <div className="relative w-full max-w-[450px] aspect-[450/500] bg-[#0a0a0a] shadow-[0_30px_70px_rgba(0,0,0,0.6)] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-white/5 transition-transform duration-700 hover:scale-[1.01]">
+            <div className="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-12 font-primary">
+                <div className="relative w-full max-w-[450px] aspect-[450/500] bg-white shadow-[0_30px_70px_rgba(0,0,0,0.08)] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-black/5 transition-transform duration-700 hover:scale-[1.01]">
                     <canvas
                         ref={canvasRef}
                         width={450}

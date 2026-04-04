@@ -22,6 +22,7 @@ import ShapeEditorPage from "../pages/CustomizeShopPage/ShapeEditorPage";
 import CustomizeEditorLayout from "../pages/CustomizeShopPage/layouts/CustomizeEditorLayout";
 import GraphicsEditorPage from "../pages/CustomizeShopPage/GraphicsEditorPage";
 import PreviewPage from "../pages/CustomizeShopPage/components/Preview/PreviewPage";
+import CustomStudio from "../pages/CustomStudio/CustomStudio";
 import AdminLayout from "../Admin/AdminLayout";
 import AdminDashboard from "../Admin/AdminDashboard";
 import Inventory from "../Admin/Pages/Inventory/AdminInventory";
@@ -175,6 +176,7 @@ export default function AppRoutes() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/custom-studio" element={<CustomStudio />} />
 
                 {/* <Route path="/customize/:slug" element={<CustomizePage />} /> */}
                 <Route path="/customize/:slug" element={<CustomizeEditorLayout />}>

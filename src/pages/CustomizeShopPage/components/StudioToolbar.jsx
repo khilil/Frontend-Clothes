@@ -108,47 +108,47 @@ export default function StudioToolbar() {
     };
 
     return (
-        <div className="absolute bottom-4 md:bottom-auto md:top-4 left-1/2 -translate-x-1/2 flex items-center bg-[#1a1a1a]/95 backdrop-blur-xl border border-white/10 rounded-full px-3 md:px-4 py-2 gap-2 md:gap-3 shadow-2xl z-40 animate-slideUp max-w-[95vw] overflow-x-auto no-scrollbar">
+        <div className="absolute bottom-4 md:bottom-auto md:top-4 left-1/2 -translate-x-1/2 flex items-center bg-white/90 backdrop-blur-xl border border-black/5 rounded-full px-3 md:px-4 py-2 gap-2 md:gap-3 shadow-2xl z-40 animate-slideUp max-w-[95vw] overflow-x-auto no-scrollbar">
 
             {/* TEXT SPECIFIC CONTROLS */}
             {isText && (
                 <>
                     <select
-                        className="bg-transparent text-[10px] font-bold text-white outline-none cursor-pointer border-r border-white/10 pr-2 md:pr-3 mr-1 max-w-[80px] md:max-w-none"
+                        className="bg-transparent text-[10px] font-bold text-[#1a1a1a] outline-none cursor-pointer border-r border-black/10 pr-2 md:pr-3 mr-1 max-w-[80px] md:max-w-none font-primary"
                         value={selectedObject.fontFamily}
                         onChange={handleFontChange}
                     >
                         {fonts.map(f => (
-                            <option key={f.value} value={f.value} className="bg-[#1a1a1a]">
+                            <option key={f.value} value={f.value} className="bg-white text-black">
                                 {f.label}
                             </option>
                         ))}
                     </select>
 
-                    <div className="flex items-center gap-1.5 md:gap-2 border-r border-white/10 pr-2 md:pr-3 shrink-0">
+                    <div className="flex items-center gap-1.5 md:gap-2 border-r border-black/10 pr-2 md:pr-3 shrink-0">
                         <input
                             type="color"
-                            className="w-5 h-5 md:w-6 md:h-6 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0"
+                            className="w-5 h-5 md:w-6 md:h-6 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0 shadow-inner"
                             value={selectedObject.fill?.length === 4 ? selectedObject.fill.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : selectedObject.fill}
                             onChange={handleColorChange}
                         />
-                        <span className="hidden md:block text-[10px] uppercase font-black text-white/40">Color</span>
+                        <span className="hidden md:block text-[10px] uppercase font-black text-black/30">Color</span>
                     </div>
                 </>
             )}
 
             {/* LAYER CONTROLS */}
-            <div className="flex items-center gap-0.5 md:gap-1 border-r border-white/10 pr-2 md:pr-3 shrink-0">
+            <div className="flex items-center gap-0.5 md:gap-1 border-r border-black/10 pr-2 md:pr-3 shrink-0">
                 <button
                     onClick={handleMoveToFront}
-                    className="p-2 text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2 text-black/30 hover:text-[#1a1a1a] hover:bg-black/5 rounded-lg transition-colors"
                     title="Bring to Front"
                 >
                     <FiChevronUp size={18} className="md:size-[16px]" />
                 </button>
                 <button
                     onClick={handleMoveToBack}
-                    className="p-2 text-white/40 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2 text-black/30 hover:text-[#1a1a1a] hover:bg-black/5 rounded-lg transition-colors"
                     title="Send to Back"
                 >
                     <FiChevronDown size={18} className="md:size-[16px]" />
@@ -158,21 +158,21 @@ export default function StudioToolbar() {
             <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
                 <button
                     onClick={handleCenter}
-                    className="p-2 text-white/40 hover:text-[#d4c4b1] hover:bg-[#d4c4b1]/10 rounded-lg transition-colors"
+                    className="p-2 text-black/30 hover:text-[#d4c4b1] hover:bg-[#d4c4b1]/10 rounded-lg transition-colors"
                     title="Center Selection"
                 >
                     <FiAlignCenter size={18} className="md:size-[16px]" />
                 </button>
                 <button
                     onClick={handleDuplicate}
-                    className="p-2 text-white/40 hover:text-[#d4c4b1] hover:bg-[#d4c4b1]/10 rounded-lg transition-colors"
+                    className="p-2 text-black/30 hover:text-[#d4c4b1] hover:bg-[#d4c4b1]/10 rounded-lg transition-colors"
                     title="Duplicate"
                 >
                     <FiCopy size={18} className="md:size-[16px]" />
                 </button>
                 <button
                     onClick={handleDelete}
-                    className="p-2 text-white/40 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                    className="p-2 text-black/30 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                     title="Delete"
                 >
                     <FiTrash2 size={18} className="md:size-[16px]" />

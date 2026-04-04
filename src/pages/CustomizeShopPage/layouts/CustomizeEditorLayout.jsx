@@ -17,7 +17,7 @@ function HeaderControls() {
             <button
                 onClick={undo}
                 disabled={!canUndo}
-                className={`p-2 rounded-lg transition-all ${canUndo ? "text-white hover:bg-white/10" : "text-white/10 cursor-not-allowed"}`}
+                className={`p-2 rounded-lg transition-all ${canUndo ? "text-[#1a1a1a] hover:bg-black/5" : "text-black/10 cursor-not-allowed"}`}
                 title="Undo"
             >
                 <FiRotateCcw size={18} />
@@ -25,7 +25,7 @@ function HeaderControls() {
             <button
                 onClick={redo}
                 disabled={!canRedo}
-                className={`p-2 rounded-lg transition-all ${canRedo ? "text-white hover:bg-white/10" : "text-white/10 cursor-not-allowed"}`}
+                className={`p-2 rounded-lg transition-all ${canRedo ? "text-[#1a1a1a] hover:bg-black/5" : "text-black/10 cursor-not-allowed"}`}
                 title="Redo"
             >
                 <FiRotateCw size={18} />
@@ -43,14 +43,14 @@ export default function CustomizeEditorLayout() {
 
     return (
         <FabricProvider>
-            <div className="bg-[#0a0a0a] h-[100dvh] overflow-hidden flex flex-col relative text-white">
+            <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
                 {/* HEADER / NAV (Optional, if you have one) */}
-                <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a] z-50">
+                <div className="h-14 border-b border-black/5 flex items-center justify-between px-6 bg-white z-50">
                     <div className="flex items-center gap-4">
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">GenZ Studio</span>
-                        <div className="h-4 w-px bg-white/10" />
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/40 hidden sm:inline">Custom Apparel Design</span>
+                        <div className="h-4 w-px bg-black/10" />
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-black/40 hidden sm:inline">Custom Apparel Design</span>
                     </div>
 
                     <HeaderControls />
@@ -67,7 +67,7 @@ export default function CustomizeEditorLayout() {
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#0f0f0f] ${isExpanded ? "mb-[60vh] md:mb-0" : "mb-[80px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[60vh] md:mb-0" : "mb-[80px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
@@ -87,11 +87,11 @@ export default function CustomizeEditorLayout() {
                                         if (info.offset.y < -50) setIsExpanded(true);
                                     }
                                 }}
-                                className={`fixed bottom-0 left-0 right-0 w-full bg-[#121212] z-[60] 
-                                    transition-all duration-500 ease-in-out border-t border-white/10
+                                className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
+                                    transition-all duration-500 ease-in-out border-t border-black/5
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
                                     ${isExpanded ? "h-[60vh] translate-y-0" : "h-[80px] translate-y-0"} 
-                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-none
+                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)] md:shadow-none
                                     flex flex-col`}
                             >
                                 {/* Drag Handle - Mobile Only */}
@@ -99,7 +99,7 @@ export default function CustomizeEditorLayout() {
                                     className="w-full py-2 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
                                     onClick={() => setIsExpanded(!isExpanded)}
                                 >
-                                    <div className="w-12 h-1 bg-white/20 rounded-full mb-1"></div>
+                                    <div className="w-12 h-1 bg-black/10 rounded-full mb-1"></div>
                                     {!isExpanded && (
                                         <span className="text-[7px] font-black uppercase tracking-[0.2em] text-[#d4c4b1] animate-pulse">
                                             Open Editor
@@ -109,7 +109,7 @@ export default function CustomizeEditorLayout() {
 
                                 {/* Mobile Navbar - Only visible on mobile AND when expanded */}
                                 {isExpanded && (
-                                    <div className="md:hidden shrink-0 border-b border-white/5 animate-slideUp">
+                                    <div className="md:hidden shrink-0 border-b border-black/5 animate-slideUp">
                                         <StudioNavbar />
                                     </div>
                                 )}

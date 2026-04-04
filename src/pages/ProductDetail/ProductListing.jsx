@@ -37,7 +37,8 @@ const ProductListing = () => {
     color: searchParams.get('color') || null,
     price: parseInt(searchParams.get('price')) || 10000,
     sort: searchParams.get('sort') || 'newest',
-    search: searchParams.get('q') || ''
+    search: searchParams.get('q') || '',
+    isCustomizable: searchParams.get('isCustomizable') === 'true'
   });
 
   const getColorDetail = useCallback((id) => {
@@ -114,6 +115,8 @@ const ProductListing = () => {
       }));
     } else if (filters.search !== (searchParams.get('q') || '')) {
       setFilters(prev => ({ ...prev, search: searchParams.get('q') || '' }));
+    } else if (filters.isCustomizable !== (searchParams.get('isCustomizable') === 'true')) {
+      setFilters(prev => ({ ...prev, isCustomizable: searchParams.get('isCustomizable') === 'true' }));
     }
   }, [urlCategory, searchParams]);
 
@@ -133,7 +136,8 @@ const ProductListing = () => {
           minPrice: 0,
           maxPrice: filters.price,
           sort: filters.sort,
-          search: filters.search
+          search: filters.search,
+          isCustomizable: filters.isCustomizable
         });
         setProducts(data.products);
         setTotalPages(data.totalPages);
@@ -166,6 +170,7 @@ const ProductListing = () => {
     if (filters.price < 10000) params.set('price', filters.price.toString());
     if (filters.sort !== 'newest') params.set('sort', filters.sort);
     if (filters.search) params.set('q', filters.search);
+    if (filters.isCustomizable) params.set('isCustomizable', 'true');
     
     setSearchParams(params, { replace: true });
 
@@ -188,7 +193,8 @@ const ProductListing = () => {
           minPrice: 0,
           maxPrice: filters.price,
           sort: filters.sort,
-          search: filters.search
+          search: filters.search,
+          isCustomizable: filters.isCustomizable
         });
 
         setProducts(prev => [...prev, ...data.products]);
@@ -240,7 +246,8 @@ const ProductListing = () => {
       color: null,
       price: 10000,
       sort: 'newest',
-      search: ''
+      search: '',
+      isCustomizable: false
     });
   };
 
@@ -287,7 +294,7 @@ const ProductListing = () => {
         <section className="grow pb-[60px]">
           <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-border-subtle">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-text-secondary/60">
-              {filters.search ? `Results for "${filters.search}"` : `Showing`} <span className="text-text-primary">{products.length}</span> of {totalProducts} results
+              {filters.isCustomizable ? 'Customizable Products' : filters.search ? `Results for "${filters.search}"` : `Showing`} <span className="text-text-primary">{products.length}</span> of {totalProducts} results
             </div>
             {/* Mobile Filter Trigger */}
             <button
