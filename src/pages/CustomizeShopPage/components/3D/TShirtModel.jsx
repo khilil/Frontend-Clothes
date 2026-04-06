@@ -11,7 +11,7 @@ export default function TShirtModel({ color, viewSide }) {
     // 🎯 DYNAMIC COLORING
     useEffect(() => {
         if (!materials) return;
-        
+
         const newColor = new THREE.Color(color);
         Object.keys(materials).forEach((key) => {
             const material = materials[key];
@@ -60,7 +60,7 @@ export default function TShirtModel({ color, viewSide }) {
                     // Try to find the material, fallback to a default if missing
                     const materialName = node.material?.name;
                     const material = (materialName && materials[materialName]) || null;
-                    
+
                     return (
                         <mesh
                             key={key}

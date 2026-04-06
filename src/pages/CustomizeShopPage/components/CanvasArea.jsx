@@ -517,8 +517,8 @@ export default function CanvasArea() {
                             style={{ 
                                 perspective: "1500px", 
                                 transform: "translateZ(20px)",
-                                width: "85%", // Increased from 70%
-                                height: "85%" // Increased from 70%
+                                width: "95%", // Maximized
+                                height: "100%" // Full vertical range
                             }}
                             className="relative flex items-center justify-center pointer-events-none"
                         >
