@@ -45,12 +45,12 @@ export default function CustomizeEditorLayout() {
         <FabricProvider>
             <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
-                {/* HEADER / NAV (Optional, if you have one) */}
-                <div className="h-14 border-b border-black/5 flex items-center justify-between px-6 bg-white z-50">
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">FENRIR Era</span>
-                        <div className="h-4 w-px bg-black/10" />
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-black/40 hidden sm:inline">Custom Apparel Design</span>
+                {/* HEADER / NAV */}
+                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-6 bg-white z-50 shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap">FENRIR Era</span>
+                        <div className="h-4 w-px bg-black/10 hidden xs:block" />
+                        <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/40 hidden md:inline">Custom Apparel Design</span>
                     </div>
 
                     <HeaderControls />
@@ -67,12 +67,12 @@ export default function CustomizeEditorLayout() {
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[60vh] md:mb-0" : "mb-[80px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[55vh] md:mb-0" : "mb-[100px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
 
-                                <div className="flex-1 flex items-center justify-center p-4">
+                                <div className="flex-1 flex items-center justify-center p-2 sm:p-4 min-h-0">
                                     <CanvasArea />
                                 </div>
                             </div>
@@ -90,8 +90,8 @@ export default function CustomizeEditorLayout() {
                                 className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
                                     transition-all duration-500 ease-in-out border-t border-black/5
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? "h-[60vh] translate-y-0" : "h-[80px] translate-y-0"} 
-                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-10px_40px_rgba(0,0,0,0.05)] md:shadow-none
+                                    ${isExpanded ? "h-[55vh] translate-y-0" : "h-[100px] translate-y-0"} 
+                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-15px_50px_rgba(0,0,0,0.08)] md:shadow-none
                                     flex flex-col`}
                             >
                                 {/* Drag Handle - Mobile Only */}

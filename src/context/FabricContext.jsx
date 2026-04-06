@@ -7,6 +7,7 @@ const FabricContext = createContext(null);
 
 export function FabricProvider({ children }) {
     const canvasRef = useRef(null);
+    const wrapperRef = useRef(null);
     const fabricCanvas = useRef(null);
     const printAreaRef = useRef(null);
     const activeTextRef = useRef(null);
@@ -163,6 +164,7 @@ export function FabricProvider({ children }) {
         <FabricContext.Provider
             value={{
                 canvasRef,
+                wrapperRef,
                 fabricCanvas,
                 printAreaRef,
                 activeTextRef,

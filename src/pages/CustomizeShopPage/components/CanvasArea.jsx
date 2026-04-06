@@ -1,15 +1,19 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useFabric } from "../../../context/FabricContext";
 import { initFabric } from "../fabric/fabricCanvas.js";
 import { clampToPrintArea } from "../../../utils/printAreaClamp.js";
 import { addBaseImage } from "../fabric/baseImage";
 import { getProductBySlug } from "../../../services/productService";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Canvas } from "@react-three/fiber";
+import { Environment, ContactShadows } from "@react-three/drei";
+import TShirtModel from "./3D/TShirtModel";
 
 export default function CanvasArea() {
     const {
         canvasRef,
+        wrapperRef, // new ref needed for container
         fabricCanvas,
         activeTextRef,
         printAreaRef,
@@ -73,8 +77,8 @@ export default function CanvasArea() {
             setIsPremiumMode(true);
             const data = {
                 title: "Premium Oversized T-Shirt Mockup",
-                frontImage: "/images/mockups/premium-front.png",
-                backImage: "/images/mockups/premium-back.png",
+                frontImage: "/images/mockups/premium-front-alpha.png",
+                backImage: "/images/mockups/premium-back-alpha.png",
                 isCustomizable: true,
                 price: 499
             };
@@ -172,6 +176,10 @@ export default function CanvasArea() {
             canvas.sendObjectToBack(baseImg);
         }
 
+        const { addPrintArea } = await import("../fabric/printArea");
+        const isMobile = window.innerWidth < 1024;
+        addPrintArea(canvas, isMobile);
+
         canvas.renderAll();
         updatePrice(canvas);
 
@@ -196,7 +204,8 @@ export default function CanvasArea() {
             canvasRef.current,
             printAreaRef,
             activeTextRef,
-            syncLayers
+            syncLayers,
+            window.innerWidth < 1024 // isMobile parity with TShirtModel
         );
 
         const canvas = fabricCanvas.current;
@@ -221,6 +230,10 @@ export default function CanvasArea() {
 
             const baseImg = canvas.getObjects().find(o => o.excludeFromExport);
             if (baseImg) canvas.sendObjectToBack(baseImg);
+
+            const { addPrintArea } = await import("../fabric/printArea");
+            const isMobile = window.innerWidth < 1024;
+            addPrintArea(canvas, isMobile);
 
             canvas.renderAll();
             updatePrice(canvas);
@@ -262,6 +275,21 @@ export default function CanvasArea() {
                 saveHistory(canvas); // ✅ Save to history
                 updatePrice(canvas); // ✅ Update price
             }
+        });
+
+        // 🛡️ REAL-TIME BOUNDARY ENFORCEMENT (v7.22)
+        canvas.on("object:moving", (e) => {
+            const obj = e.target;
+            if (!obj || obj.excludeFromExport) return;
+            clampToPrintArea(obj, canvas.printArea);
+            canvas.requestRenderAll();
+        });
+
+        canvas.on("object:scaling", (e) => {
+            const obj = e.target;
+            if (!obj || obj.excludeFromExport) return;
+            clampToPrintArea(obj, canvas.printArea);
+            canvas.requestRenderAll();
         });
 
         canvas.on("object:added", (e) => {
@@ -307,16 +335,62 @@ export default function CanvasArea() {
     }, [productData]);
 
     /* =============================
+       RESPONSIVE SYNC (v7.17)
+    ============================= */
+    useEffect(() => {
+        if (!wrapperRef.current || !fabricCanvas.current) return;
+
+        const observer = new ResizeObserver(async (entries) => {
+            const canvas = fabricCanvas.current;
+            if (!canvas || !entries[0]) return;
+
+            const { width, height } = entries[0].contentRect;
+            
+            // Standardizing based on original 500x600 coordinate system
+            const baseWidth = 500;
+            const zoom = width / baseWidth;
+            const isMobile = window.innerWidth < 1024;
+
+            canvas.setDimensions({ width, height });
+            canvas.setZoom(zoom);
+
+            // 📐 RE-CALIBRATE PRO BOUNDARY ON RESIZE
+            const { addPrintArea } = await import("../fabric/printArea");
+            // Remove old markers and rect first to avoid duplication
+            const objectsToRemove = canvas.getObjects().filter(o => o.excludeFromExport && !o.isBaseImage);
+            objectsToRemove.forEach(o => canvas.remove(o));
+            addPrintArea(canvas, isMobile);
+
+            canvas.renderAll();
+        });
+
+        observer.observe(wrapperRef.current);
+        return () => observer.disconnect();
+    }, [fabricCanvas.current]);
+
+    /* =============================
+       ATELIER 3D ENGINE (v7.0)
+    ============================= */
+    const garmentCanvasRef = useRef(null);
+
+    // Sync views when side switches
+    useEffect(() => {
+        if (fabricCanvas.current) {
+            // Fabric canvas handles design updates
+        }
+    }, [viewSide]);
+
+    /* =============================
        LOADING UI
     ============================= */
     if (loading) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center studio-void blueprint-grid">
+            <div className="flex-1 flex flex-col items-center justify-center" style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}>
                 <div className="flex flex-col items-center gap-6 animate-pulse">
-                    <div className="w-16 h-16 border-2 border-[#d4c4b1]/20 border-t-[#d4c4b1] rounded-full animate-spin" />
+                    <div className="w-16 h-16 border-2 border-[#d4c4b1]/10 border-t-[#d4c4b1] rounded-full animate-spin" />
                     <div className="space-y-2 text-center">
-                        <span className="text-[10px] text-[#0A0A0A] font-black uppercase tracking-[0.4em] block">Initializing Studio</span>
-                        <span className="text-[8px] text-[#4A4A4A] font-medium uppercase tracking-widest">Architecting Custom Environment...</span>
+                        <span className="text-[10px] text-[#A0A0A0] font-black uppercase tracking-[0.4em] block">Initializing Engine v7.13 (Balanced Studio)</span>
+                        <span className="text-[8px] text-[#404040] font-medium uppercase tracking-widest">Optimizing Studio Space...</span>
                     </div>
                 </div>
             </div>
@@ -332,23 +406,46 @@ export default function CanvasArea() {
     }
 
     /* =============================
-       RENDER (HD 3D ENGINE)
+       RENDER (v7.7 - High Contrast Studio)
     ============================= */
     return (
-        <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden studio-void blueprint-grid">
+        <div 
+            className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden transition-colors duration-1000"
+            style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
+        >
+            {/* 🕸️ TECHNICAL HIGH-VISIBILITY GRID */}
+            <div className="absolute inset-0 pointer-events-none blueprint-grid-dark" />
             
-            {/* ARCHITECTURAL METADATA - TOP LEFT */}
-            <div className="absolute top-6 left-6 hidden lg:block">
-                <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Atelier Protocol v5.0 (HD)</span>
-                    <span className="text-[7px] font-medium uppercase tracking-[0.2em] text-[#4A4A4A]">3D Deep Mockup // {slug?.toUpperCase()}</span>
+            {/* 🛡️ SVG ALPHA MASK ENGINE (Invisible) */}
+            <svg width="0" height="0" className="absolute pointer-events-none">
+                <defs>
+                    <mask id="garmentMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+                        {/* No filter needed because we use Alpha PNGs now */}
+                        <image 
+                            href={viewSide === "front" ? productData?.frontImage : productData?.backImage}
+                            width="100%" 
+                            height="100%" 
+                            preserveAspectRatio="xMidYMid meet"
+                        />
+                    </mask>
+                </defs>
+            </svg>
+
+            {/* SAFE AREA TOP PADDING (Mobile Notch Support) */}
+            <div className="h-[env(safe-area-inset-top,1.5rem)] lg:hidden" />
+
+            {/* ARCHITECTURAL METADATA - TOP LEFT (Responsive) */}
+            <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-6 z-50 pointer-events-none">
+                <div className="flex flex-col items-center sm:items-start gap-1">
+                    <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-[#000000]/60 whitespace-nowrap">Atelier Protocol v7.14 (High Performance)</span>
+                    <span className="text-[6px] sm:text-[7px] font-medium uppercase tracking-[0.2em] text-[#000000]/30 whitespace-nowrap">Direct Material Dyeing // {slug?.toUpperCase()}</span>
                 </div>
             </div>
 
-            {/* FLOATING FRONT / BACK TOGGLE */}
-            <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-6 md:top-20 z-[100]">
-                <div className="flex bg-white/40 backdrop-blur-md border border-black/5 
-                    rounded-2xl p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.03)] relative overflow-hidden">
+            {/* FLOATING FRONT / BACK TOGGLE (Bottom Position On Mobile) */}
+            <div className="absolute bottom-6 sm:bottom-auto sm:top-20 md:top-24 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-6 z-[100]">
+                <div className="flex bg-white/60 backdrop-blur-xl border border-black/5 
+                    rounded-2xl p-1.5 shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative overflow-hidden">
                     
                     <motion.div 
                         animate={{ x: viewSide === "front" ? 0 : "100%" }}
@@ -378,60 +475,62 @@ export default function CanvasArea() {
                 </div>
             </div>
 
-            {/* MAIN 3D STACK */}
-            <div className="w-full h-full flex items-center justify-center p-3 sm:p-6 md:p-12 font-primary z-10">
-                <div className="relative w-full max-w-[500px] aspect-[500/600] studio-card-shadow rounded-[2rem] overflow-hidden bg-[#F0F0F0]">
+            {/* MAIN 3D ATELIER STACK (v7.15 Balanced Mobile) */}
+            <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center p-2 sm:p-6 md:p-12 font-primary z-10">
+                <div 
+                    className="relative w-full h-full lg:max-w-[500px] lg:aspect-[500/600] studio-card-shadow rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-transparent shrink-0"
+                    style={{ touchAction: "none" }}
+                >
                     
-                    {/* LAYER 1: BASE COLOR OVERLAY (The color selected by user) */}
-                    <div 
-                        className="absolute inset-0 z-0 transition-colors duration-700"
-                        style={{ backgroundColor: garmentColor }}
-                    />
+                    {/* ⚙️ 3D WEBGL STAGE */}
+                    <Canvas 
+                        dpr={[1, 2]}
+                        gl={{ 
+                            antialias: false, 
+                            powerPreference: "high-performance",
+                            preserveDrawingBuffer: true 
+                        }}
+                        camera={{ position: [0, 0, 10], fov: 26 }}
+                        className="w-full h-full"
+                    >
+                        {/* 💡 ENHANCED LIGHTING FOR CONTRAST */}
+                        <ambientLight intensity={0.4} />
+                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
+                        
+                        {/* 🌟 RIM LIGHTS (Separates garment from background) */}
+                        <pointLight position={[-10, 5, -5]} intensity={1.5} color="#ffffff" />
+                        <pointLight position={[10, 5, -5]} intensity={1.5} color="#ffffff" />
+                        <pointLight position={[0, -5, 5]} intensity={0.5} />
+                        
+                        <Suspense fallback={null}>
+                            <TShirtModel color={garmentColor} viewSide={viewSide} />
+                            <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.4} far={10} color="#000000" />
+                            <Environment preset="city" />
+                        </Suspense>
+                    </Canvas>
 
-                    {/* LAYER 2: BASE MOCKUP (Wrinkles & Shadows - MULTIPLY) */}
-                    <img 
-                        src={viewSide === "front" ? productData?.frontImage : productData?.backImage}
-                        alt="Garment Base"
-                        className="absolute inset-0 w-full h-full object-contain mix-blend-multiply opacity-100 z-10 pointer-events-none"
-                    />
-
-                    {/* LAYER 3: COTTON TEXTURE (REALISM BOOST - OVERLAY) */}
-                    <img 
-                        src="/images/mockups/cotton-texture.png"
-                        alt="Fabric Texture"
-                        className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-10 z-10 pointer-events-none"
-                    />
-
-                    {/* LAYER 4: DESIGN CANVAS (THE USER'S DESIGN) */}
+                    {/* 🧶 REALISM GRAIN (OVERLAY) */}
                     <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none" 
                          style={{ perspective: "1500px" }}>
                         <motion.div 
+                            ref={wrapperRef}
                             style={{ 
                                 perspective: "1500px", 
-                                transform: "translateZ(10px)",
-                                width: "70%",
-                                height: "70%"
+                                transform: "translateZ(20px)",
+                                width: "85%", // Increased from 70%
+                                height: "85%" // Increased from 70%
                             }}
                             className="relative flex items-center justify-center pointer-events-none"
                         >
                             <canvas
                                 ref={canvasRef}
-                                width={500}
-                                height={600}
-                                className="w-full h-full object-contain mix-blend-normal pointer-events-auto opacity-[0.95] drop-shadow-sm"
+                                className="w-full h-full object-contain mix-blend-normal pointer-events-auto opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
                             />
                         </motion.div>
                     </div>
 
-                    {/* LAYER 5: SPECULAR HIGHLIGHTS (STUDIO LIGHTING - SCREEN) */}
-                    <img 
-                        src={viewSide === "front" ? productData?.frontImage : productData?.backImage}
-                        alt="Highlights"
-                        className="absolute inset-0 w-full h-full object-contain mix-blend-screen opacity-15 brightness-125 z-30 pointer-events-none"
-                    />
-
-                    {/* VIGNETTE OVERLAY (Depth Effect) */}
-                    <div className="absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.1)_100%)] pointer-events-none" />
+                    {/* 🌫️ STUDIO VIGNETTE & DEPTH (Enhanced for separation) */}
+                    <div className="absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
 
                 </div>
             </div>

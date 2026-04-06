@@ -6,7 +6,8 @@ export function initFabric(
     canvasEl,
     printAreaRef,
     activeTextRef,
-    syncLayers
+    syncLayers,
+    isMobile = false
 ) {
     if (!canvasEl) return null;
 
@@ -44,7 +45,7 @@ export function initFabric(
     canvas.backgroundColor = "#ffffff";
     canvas.renderAll();
 
-    const printArea = addPrintArea(canvas);
+    const printArea = addPrintArea(canvas, isMobile);
     printAreaRef.current = printArea;
     canvas.printArea = printArea;
 

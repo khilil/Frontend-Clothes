@@ -3,42 +3,39 @@ export function clampToPrintArea(obj, printArea) {
 
     obj.setCoords();
 
-    const objBounds = obj.getBoundingRect(true, true);
-    const areaBounds = printArea.getBoundingRect(true, true);
+    const objBounds = obj.getBoundingRect();
+    const areaBounds = printArea.getBoundingRect();
 
-    let newLeft = obj.left;
-    let newTop = obj.top;
+    let deltaLeft = 0;
+    let deltaTop = 0;
 
-    // LEFT
+    // ⬅️ LEFT BOUNDARY
     if (objBounds.left < areaBounds.left) {
-        newLeft += areaBounds.left - objBounds.left;
+        deltaLeft = areaBounds.left - objBounds.left;
     }
 
-    // RIGHT
+    // ➡️ RIGHT BOUNDARY
     if (objBounds.left + objBounds.width > areaBounds.left + areaBounds.width) {
-        newLeft -=
-            objBounds.left +
-            objBounds.width -
-            (areaBounds.left + areaBounds.width);
+        deltaLeft = (areaBounds.left + areaBounds.width) - (objBounds.left + objBounds.width);
     }
 
-    // TOP
+    // ⬆️ TOP BOUNDARY
     if (objBounds.top < areaBounds.top) {
-        newTop += areaBounds.top - objBounds.top;
+        deltaTop = areaBounds.top - objBounds.top;
     }
 
-    // BOTTOM
+    // ⬇️ BOTTOM BOUNDARY
     if (objBounds.top + objBounds.height > areaBounds.top + areaBounds.height) {
-        newTop -=
-            objBounds.top +
-            objBounds.height -
-            (areaBounds.top + areaBounds.height);
+        deltaTop = (areaBounds.top + areaBounds.height) - (objBounds.top + objBounds.height);
     }
 
-    obj.set({
-        left: newLeft,
-        top: newTop,
-    });
-
-    obj.setCoords();
+    // Apply the correction directly to current position
+    // This works regardless of originX/originY
+    if (deltaLeft !== 0 || deltaTop !== 0) {
+        obj.set({
+            left: obj.left + deltaLeft,
+            top: obj.top + deltaTop
+        });
+        obj.setCoords();
+    }
 }

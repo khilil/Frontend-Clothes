@@ -28,6 +28,7 @@ export async function addBaseImage(canvas, imageURL) {
     hasBorders: false,
     hoverCursor: "default",
     excludeFromExport: true,
+    isBaseImage: true, // v7.20.1 Stability Flag
     opacity: 0 // Hide in editor, as React layers handle visualization
   });
 
