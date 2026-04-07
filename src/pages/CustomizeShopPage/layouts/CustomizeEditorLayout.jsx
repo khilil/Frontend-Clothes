@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { FabricProvider, useFabric } from "../../../context/FabricContext";
 import CanvasArea from "../components/CanvasArea";
 import StudioNavbar from "../components/StudioNavbar";
@@ -8,7 +8,7 @@ import StudioSidebar from "../components/StudioSidebar";
 import DesignPreviewModal from "../components/DesignPreviewModal";
 import InitialConfigOverlay from "../components/InitialConfigOverlay";
 import { motion } from "framer-motion";
-import { FiRotateCcw, FiRotateCw } from "react-icons/fi";
+import { FiRotateCcw, FiRotateCw, FiArrowLeft } from "react-icons/fi";
 import { useEffect } from "react";
 
 function HeaderControls() {
@@ -51,6 +51,7 @@ export default function CustomizeEditorLayout() {
 }
 
 function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }) {
+    const navigate = useNavigate();
     // Mobile state
     const [isExpanded, setIsExpanded] = useState(true);
     const { setGarmentColor } = useFabric();
@@ -84,6 +85,14 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                 {/* HEADER / NAV */}
                 <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-6 bg-white z-50 shrink-0">
                     <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                        <button 
+                            onClick={() => navigate(-1)}
+                            className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-all text-[#1a1a1a] flex items-center justify-center"
+                            title="Go Back"
+                        >
+                            <FiArrowLeft size={20} />
+                        </button>
+                        <div className="h-4 w-px bg-black/10" />
                         <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap">FENRIR Era</span>
                         <div className="h-4 w-px bg-black/10 hidden xs:block" />
                         <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/40 hidden md:inline">Custom Apparel Design</span>
