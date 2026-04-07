@@ -37,8 +37,13 @@ const ProductListing = () => {
     color: searchParams.get('color') || null,
     price: parseInt(searchParams.get('price')) || 10000,
     sort: searchParams.get('sort') || 'newest',
-    search: searchParams.get('q') || ''
+    search: searchParams.get('q') || '',
+    isCustomizable: searchParams.get('isCustomizable') === 'true'
   });
+
+  const getColorDetail = useCallback((id) => {
+    return availableColors?.find(c => c.id === id || c._id === id || c.hexCode === id);
+  }, [availableColors]);
 
   const categorizedColors = useMemo(() => {
     const top = new Map();
@@ -48,8 +53,12 @@ const ProductListing = () => {
       const isBottom = isBottomwear(p.slug || '', p.productType || '');
       p.variants?.forEach(v => {
         if (v.color?.name) {
-          if (isBottom) bottom.set(v.color.name, v.color);
-          else top.set(v.color.name, v.color);
+          const colorName = v.color.name.trim();
+          const targetMap = isBottom ? bottom : top;
+          // De-duplicate by name: only add if name not already present in the target group
+          if (!targetMap.has(colorName)) {
+            targetMap.set(colorName, v.color);
+          }
         }
       });
     });
@@ -106,6 +115,8 @@ const ProductListing = () => {
       }));
     } else if (filters.search !== (searchParams.get('q') || '')) {
       setFilters(prev => ({ ...prev, search: searchParams.get('q') || '' }));
+    } else if (filters.isCustomizable !== (searchParams.get('isCustomizable') === 'true')) {
+      setFilters(prev => ({ ...prev, isCustomizable: searchParams.get('isCustomizable') === 'true' }));
     }
   }, [urlCategory, searchParams]);
 
@@ -120,23 +131,30 @@ const ProductListing = () => {
           limit: 12,
           category: filters.category === 'all' ? null : filters.category,
           brand: filters.brand,
+          size: filters.size, // Added size
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
           sort: filters.sort,
-          search: filters.search
+          search: filters.search,
+          isCustomizable: filters.isCustomizable
         });
-        setProducts(data.products);
+        // Fallback filter in case backend doesn't support 'isCustomizable' yet
+        const frontendFiltered = filters.isCustomizable 
+          ? data.products.filter(p => p.isCustomizable) 
+          : data.products;
+
+        setProducts(frontendFiltered);
         setTotalPages(data.totalPages);
-        setTotalProducts(data.totalProducts);
+        setTotalProducts(filters.isCustomizable ? frontendFiltered.length : data.totalProducts);
         setHasMore(data.currentPage < data.totalPages);
 
         // Derive brands and fits from products if not already set or for updates
-        if (data.products.length > 0) {
-          const brands = [...new Set(data.products.map(p => p.brand).filter(Boolean))];
+        if (frontendFiltered.length > 0) {
+          const brands = [...new Set(frontendFiltered.map(p => p.brand).filter(Boolean))];
           setAvailableBrands(prev => [...new Set([...prev, ...brands])]);
           
-          const fits = [...new Set(data.products.map(p => p.productType).filter(Boolean))];
+          const fits = [...new Set(frontendFiltered.map(p => p.productType).filter(Boolean))];
           setAvailableFits(prev => [...new Set([...prev, ...fits])]);
         }
       } catch (error) {
@@ -149,17 +167,19 @@ const ProductListing = () => {
     loadInitialProducts();
 
     // Update URL params
-    const params = {};
-    if (filters.category !== 'all') params.category = filters.category;
-    if (filters.brand.length > 0) params.brand = filters.brand;
-    if (filters.size) params.size = filters.size;
-    if (filters.color) params.color = filters.color;
-    if (filters.price < 10000) params.price = filters.price;
-    if (filters.sort !== 'newest') params.sort = filters.sort;
-    if (filters.search) params.q = filters.search;
-    setSearchParams(params);
+    const params = new URLSearchParams();
+    if (filters.category !== 'all') params.set('category', filters.category);
+    if (filters.brand.length > 0) params.set('brand', filters.brand.join(','));
+    if (filters.size) params.set('size', filters.size);
+    if (filters.color) params.set('color', filters.color);
+    if (filters.price < 10000) params.set('price', filters.price.toString());
+    if (filters.sort !== 'newest') params.set('sort', filters.sort);
+    if (filters.search) params.set('q', filters.search);
+    if (filters.isCustomizable) params.set('isCustomizable', 'true');
+    
+    setSearchParams(params, { replace: true });
 
-  }, [filters, urlCategory]);
+  }, [filters]); // Removed urlCategory from dependencies to prevent unintended resets
 
   // Load More (Infinite Scroll)
   useEffect(() => {
@@ -173,14 +193,21 @@ const ProductListing = () => {
           limit: 12,
           category: filters.category === 'all' ? null : filters.category,
           brand: filters.brand,
+          size: filters.size, // Added size
           color: filters.color,
           minPrice: 0,
           maxPrice: filters.price,
           sort: filters.sort,
-          search: filters.search
+          search: filters.search,
+          isCustomizable: filters.isCustomizable
         });
 
-        setProducts(prev => [...prev, ...data.products]);
+        // Fallback filter
+        const frontendFiltered = filters.isCustomizable 
+          ? data.products.filter(p => p.isCustomizable) 
+          : data.products;
+
+        setProducts(prev => [...prev, ...frontendFiltered]);
         setHasMore(data.currentPage < data.totalPages);
       } catch (error) {
         console.error("Error loading more products:", error);
@@ -190,7 +217,7 @@ const ProductListing = () => {
     };
 
     loadMoreProducts();
-  }, [page]);
+  }, [page, filters]); // Added filters to dependencies
 
   const handleCategoryChange = (cat) => {
     setFilters(prev => ({ ...prev, category: cat }));
@@ -221,6 +248,10 @@ const ProductListing = () => {
     setFilters(prev => ({ ...prev, sort }));
   };
 
+  const handleCustomizableChange = (val) => {
+    setFilters(prev => ({ ...prev, isCustomizable: val }));
+  };
+
   const handleClearFilters = () => {
     setFilters({
       category: 'all',
@@ -229,7 +260,8 @@ const ProductListing = () => {
       color: null,
       price: 10000,
       sort: 'newest',
-      search: ''
+      search: '',
+      isCustomizable: false
     });
   };
 
@@ -262,6 +294,7 @@ const ProductListing = () => {
             onColorChange={handleColorChange}
             onPriceChange={handlePriceChange}
             onSortChange={handleSortChange}
+            onCustomizableChange={handleCustomizableChange}
             onClear={handleClearFilters}
             availableCategories={availableCategories}
             availableBrands={availableBrands}
@@ -276,7 +309,7 @@ const ProductListing = () => {
         <section className="grow pb-[60px]">
           <header className="flex justify-between items-center mb-[25px] lg:mb-[35px] pb-5 border-b border-border-subtle">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-text-secondary/60">
-              {filters.search ? `Results for "${filters.search}"` : `Showing`} <span className="text-text-primary">{products.length}</span> of {totalProducts} results
+              {filters.isCustomizable ? 'Customizable Products' : filters.search ? `Results for "${filters.search}"` : `Showing`} <span className="text-text-primary">{products.length}</span> of {totalProducts} results
             </div>
             {/* Mobile Filter Trigger */}
             <button
@@ -326,8 +359,13 @@ const ProductListing = () => {
                     onClick={() => handleColorChange(filters.color)}
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: filters.color }}></div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Color: {filters.color}</span>
+                    <div 
+                      className="w-2 h-2 rounded-full shadow-sm" 
+                      style={{ backgroundColor: getColorDetail(filters.color)?.hexCode || filters.color }}
+                    ></div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">
+                      Color: {getColorDetail(filters.color)?.name || filters.color}
+                    </span>
                     <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
                   </button>
                 )}
@@ -379,6 +417,7 @@ const ProductListing = () => {
                       onColorChange={handleColorChange}
                       onPriceChange={handlePriceChange}
                       onSortChange={handleSortChange}
+                      onCustomizableChange={handleCustomizableChange}
                       onClear={handleClearFilters}
                       availableCategories={availableCategories}
                       availableBrands={availableBrands}

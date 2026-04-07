@@ -5,7 +5,7 @@ import { getAllOrders, bulkUpdateOrders, updateOrderStatus } from '../../service
 import { generateInvoiceHTML, generateBulkInvoiceHTML, generatePickingListHTML } from '../utils/invoiceUtils';
 import { exportOrdersToCSV } from '../utils/exportUtils';
 
-export default function OrderHub({ onSelectOrder }) {
+export default function OrderHub({ onSelectOrder, orderType: propOrderType }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('All');
@@ -29,7 +29,9 @@ export default function OrderHub({ onSelectOrder }) {
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
 
-  const tabs = ['All', 'Custom Design 🎨', 'Pending', 'Shipped', 'Delivered'];
+  const tabs = propOrderType === 'PICKUP' 
+    ? ['All', 'Custom Design 🎨', 'Pending', 'Delivered'] 
+    : ['All', 'Custom Design 🎨', 'Pending', 'Shipped', 'Delivered'];
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -56,6 +58,7 @@ export default function OrderHub({ onSelectOrder }) {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
         source: filters.source,
+        orderType: propOrderType || (activeTab === 'Store Pickup 🏪' ? 'PICKUP' : ''), 
         page,
         limit: 10,
       };
@@ -470,6 +473,7 @@ export default function OrderHub({ onSelectOrder }) {
                 >
                     <option value="">Switch Protocol...</option>
                     <option value="placed">Placed</option>
+                    <option value="ready-for-pickup">Ready-for-Pickup</option>
                     <option value="ready-to-ship">Ready-to-Ship</option>
                     <option value="shipped">Shipped</option>
                     <option value="delivered">Delivered</option>
@@ -552,7 +556,18 @@ export default function OrderHub({ onSelectOrder }) {
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
                       <span className="font-bold text-sm text-indigo-600 dark:text-indigo-400">#{order._id.toString().slice(-6).toUpperCase()}</span>
-                      <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{order.shippingAddress?.fullName}</span>
+                      {order.orderType === 'PICKUP' ? (
+                        <div className="flex items-center gap-1.5 bg-purple-500/10 text-purple-600 px-1.5 py-0.5 rounded text-[9px] font-black w-fit uppercase tracking-tighter">
+                          <CheckSquare size={10} /> Store Pickup
+                        </div>
+                      ) : (
+                        <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{order.shippingAddress?.fullName}</span>
+                      )}
+                      {order.orderStatus === 'ready-for-pickup' && (
+                        <span className="text-[10px] font-bold text-purple-500 flex items-center gap-1">
+                          Slot: {order.pickupDetails?.pickupTime}
+                        </span>
+                      )}
                       <span className="text-[10px] text-slate-400">{new Date(order.createdAt).toLocaleDateString()}</span>
                     </div>
                   </td>
@@ -593,6 +608,11 @@ export default function OrderHub({ onSelectOrder }) {
                         <span className={`text-[10px] font-bold ${order.paymentStatus === 'Paid' ? 'text-emerald-500' : 'text-amber-500'}`}>
                           {order.paymentStatus}
                         </span>
+                        {order.paymentMethod === 'CASH_ON_PICKUP' && order.paymentStatus !== 'Paid' && (
+                          <span className="bg-purple-500/10 text-purple-600 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest border border-purple-500/20">
+                            Collect
+                          </span>
+                        )}
                         {order.discount?.amount > 0 && (
                           <span className="bg-rose-500/10 text-rose-500 text-[9px] px-1.5 py-0.5 rounded font-bold">
                             COUPON

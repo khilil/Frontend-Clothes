@@ -6,8 +6,10 @@ import StudioNavbar from "../components/StudioNavbar";
 import StudioToolbar from "../components/StudioToolbar";
 import StudioSidebar from "../components/StudioSidebar";
 import DesignPreviewModal from "../components/DesignPreviewModal";
+import InitialConfigOverlay from "../components/InitialConfigOverlay";
 import { motion } from "framer-motion";
 import { FiRotateCcw, FiRotateCw } from "react-icons/fi";
+import { useEffect } from "react";
 
 function HeaderControls() {
     const { undo, redo, canUndo, canRedo } = useFabric();
@@ -17,7 +19,7 @@ function HeaderControls() {
             <button
                 onClick={undo}
                 disabled={!canUndo}
-                className={`p-2 rounded-lg transition-all ${canUndo ? "text-white hover:bg-white/10" : "text-white/10 cursor-not-allowed"}`}
+                className={`p-2 rounded-lg transition-all ${canUndo ? "text-[#1a1a1a] hover:bg-black/5" : "text-black/10 cursor-not-allowed"}`}
                 title="Undo"
             >
                 <FiRotateCcw size={18} />
@@ -25,7 +27,7 @@ function HeaderControls() {
             <button
                 onClick={redo}
                 disabled={!canRedo}
-                className={`p-2 rounded-lg transition-all ${canRedo ? "text-white hover:bg-white/10" : "text-white/10 cursor-not-allowed"}`}
+                className={`p-2 rounded-lg transition-all ${canRedo ? "text-[#1a1a1a] hover:bg-black/5" : "text-black/10 cursor-not-allowed"}`}
                 title="Redo"
             >
                 <FiRotateCw size={18} />
@@ -38,19 +40,53 @@ export default function CustomizeEditorLayout() {
     const location = useLocation();
     const isPreview = location.pathname.includes("/preview");
 
-    // Mobile state
-    const [isExpanded, setIsExpanded] = useState(true);
+    // Safety check: is the studio initialized from Product Details OR overlay?
+    const isConfigured = !!location.state?.variantId;
 
     return (
         <FabricProvider>
-            <div className="bg-[#0a0a0a] h-[100dvh] overflow-hidden flex flex-col relative text-white">
+            <CustomizeEditorContent isPreview={isPreview} isConfigured={isConfigured} slug={location.pathname.split('/').pop()} locationState={location.state} />
+        </FabricProvider>
+    );
+}
 
-                {/* HEADER / NAV (Optional, if you have one) */}
-                <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-[#0a0a0a] z-50">
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">GenZ Studio</span>
-                        <div className="h-4 w-px bg-white/10" />
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/40 hidden sm:inline">Custom Apparel Design</span>
+function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }) {
+    // Mobile state
+    const [isExpanded, setIsExpanded] = useState(true);
+    const { setGarmentColor } = useFabric();
+
+    useEffect(() => {
+        if (locationState?.hexColor) {
+            setGarmentColor(locationState.hexColor.startsWith('#') ? locationState.hexColor : `#${locationState.hexColor}`);
+        } else if (locationState?.color) {
+            const colors = [
+                { id: 'white', value: '#F9F6F0', label: 'Bone White', match: 'white' },
+                { id: 'black', value: '#1a1a1a', label: 'Charcoal Black', match: 'black' },
+                { id: 'olive', value: '#4B5320', label: 'Tactical Olive', match: 'olive' },
+                { id: 'beige', value: '#D2B48C', label: 'Atelier Sand', match: 'sand' },
+                { id: 'navy', value: '#000080', label: 'Deep Sea Navy', match: 'navy' },
+            ];
+            const nameLower = locationState.color.toLowerCase();
+            const found = colors.find(c => nameLower.includes(c.match));
+            if (found) {
+                setGarmentColor(found.value);
+            }
+        }
+    }, [locationState?.color, locationState?.hexColor, setGarmentColor]);
+
+    return (
+        <>
+            {!isConfigured && !isPreview && (
+                <InitialConfigOverlay slug={slug} />
+            )}
+            <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
+
+                {/* HEADER / NAV */}
+                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-6 bg-white z-50 shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap">FENRIR Era</span>
+                        <div className="h-4 w-px bg-black/10 hidden xs:block" />
+                        <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/40 hidden md:inline">Custom Apparel Design</span>
                     </div>
 
                     <HeaderControls />
@@ -67,12 +103,12 @@ export default function CustomizeEditorLayout() {
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#0f0f0f] ${isExpanded ? "mb-[60vh] md:mb-0" : "mb-[80px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[55vh] md:mb-0" : "mb-[100px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
 
-                                <div className="flex-1 flex items-center justify-center p-4">
+                                <div className="flex-1 flex items-center justify-center p-2 sm:p-4 min-h-0">
                                     <CanvasArea />
                                 </div>
                             </div>
@@ -87,11 +123,11 @@ export default function CustomizeEditorLayout() {
                                         if (info.offset.y < -50) setIsExpanded(true);
                                     }
                                 }}
-                                className={`fixed bottom-0 left-0 right-0 w-full bg-[#121212] z-[60] 
-                                    transition-all duration-500 ease-in-out border-t border-white/10
+                                className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
+                                    transition-all duration-500 ease-in-out border-t border-black/5
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? "h-[60vh] translate-y-0" : "h-[80px] translate-y-0"} 
-                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-none
+                                    ${isExpanded ? "h-[55vh] translate-y-0" : "h-[100px] translate-y-0"} 
+                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-15px_50px_rgba(0,0,0,0.08)] md:shadow-none
                                     flex flex-col`}
                             >
                                 {/* Drag Handle - Mobile Only */}
@@ -99,7 +135,7 @@ export default function CustomizeEditorLayout() {
                                     className="w-full py-2 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
                                     onClick={() => setIsExpanded(!isExpanded)}
                                 >
-                                    <div className="w-12 h-1 bg-white/20 rounded-full mb-1"></div>
+                                    <div className="w-12 h-1 bg-black/10 rounded-full mb-1"></div>
                                     {!isExpanded && (
                                         <span className="text-[7px] font-black uppercase tracking-[0.2em] text-[#d4c4b1] animate-pulse">
                                             Open Editor
@@ -109,7 +145,7 @@ export default function CustomizeEditorLayout() {
 
                                 {/* Mobile Navbar - Only visible on mobile AND when expanded */}
                                 {isExpanded && (
-                                    <div className="md:hidden shrink-0 border-b border-white/5 animate-slideUp">
+                                    <div className="md:hidden shrink-0 border-b border-black/5 animate-slideUp">
                                         <StudioNavbar />
                                     </div>
                                 )}
@@ -124,6 +160,6 @@ export default function CustomizeEditorLayout() {
                 </div>
             </div>
             <DesignPreviewModal />
-        </FabricProvider>
+        </>
     );
 }

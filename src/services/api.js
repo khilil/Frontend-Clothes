@@ -1,10 +1,15 @@
 import axios from "axios";
 
-const USE_LIVE_API = true; // 🚀 Set to TRUE for Render, FALSE for Localhost
+// 🌍 Dynamic Environment Detection
+const IS_LOCAL_HOST = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+// 🚀 Toggle manually if you want to force LIVE while on localhost
+const FORCE_LIVE = false; 
+
 const LIVE_URL = "https://backend-clothes-1p7b.onrender.com";
 const LOCAL_URL = "http://localhost:5000";
 
-export const BASE_URL = USE_LIVE_API ? LIVE_URL : LOCAL_URL;
+export const BASE_URL = (IS_LOCAL_HOST && !FORCE_LIVE) ? LOCAL_URL : LIVE_URL;
 export const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 const api = axios.create({

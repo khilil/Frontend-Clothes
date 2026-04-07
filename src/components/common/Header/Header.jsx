@@ -186,6 +186,10 @@ export default function Header({ forceSolid = false }) {
                 New Arrivals
               </Link>
 
+              <Link className="relative text-text-secondary no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/custom-studio">
+                Customizable
+              </Link>
+
               {/* CLOTHING MEGA MENU TRIGGER */}
               <div
                 className="mega-menu-trigger h-full flex items-center"
@@ -279,15 +283,15 @@ export default function Header({ forceSolid = false }) {
             <div className="relative flex items-center">
               <motion.div
                 initial={false}
-                animate={{ 
-                  width: isSearchExpanded 
-                    ? (window.innerWidth < 768 ? 'calc(100vw - 120px)' : '320px') 
+                animate={{
+                  width: isSearchExpanded
+                    ? (window.innerWidth < 768 ? 'calc(100vw - 120px)' : '320px')
                     : '40px',
                   backgroundColor: isSearchExpanded ? 'var(--color-secondary)' : 'rgba(26, 26, 26, 0.05)'
                 }}
                 className="flex items-center rounded-full border border-border-subtle overflow-hidden group/search pr-1"
               >
-                <button 
+                <button
                   className="w-10 h-10 flex items-center justify-center shrink-0 transition-colors hover:text-accent"
                   onClick={() => {
                     if (window.innerWidth < 1024) {
@@ -314,7 +318,7 @@ export default function Header({ forceSolid = false }) {
                   }}
                   className={`bg-transparent border-none outline-none text-[10px] font-black tracking-widest text-text-primary w-full pr-2 transition-opacity duration-300 placeholder:text-text-secondary/50 ${isSearchExpanded ? 'opacity-100' : 'opacity-0'}`}
                 />
-                
+
                 {/* CLOSE BUTTON */}
                 <AnimatePresence>
                   {isSearchExpanded && (
@@ -387,10 +391,10 @@ export default function Header({ forceSolid = false }) {
                             className="w-full flex items-center gap-4 p-3 hover:bg-text-primary/5 transition-colors group text-left"
                           >
                             <div className="h-12 w-12 rounded-lg overflow-hidden bg-secondary border border-border-subtle shrink-0">
-                              <img 
-                                src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"} 
-                                alt={product.title} 
-                                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                              <img
+                                src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"}
+                                alt={product.title}
+                                className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
                               />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -498,7 +502,7 @@ export default function Header({ forceSolid = false }) {
                   </button>
                 )}
               </div>
-              <button 
+              <button
                 onClick={() => setIsMobileSearchOpen(false)}
                 className="text-[10px] font-black uppercase tracking-widest text-text-primary p-2"
               >
@@ -556,10 +560,10 @@ export default function Header({ forceSolid = false }) {
                         className="w-full flex items-center gap-5 p-3 hover:bg-secondary rounded-2xl transition-all text-left border border-transparent hover:border-border-subtle"
                       >
                         <div className="h-20 w-20 rounded-xl overflow-hidden bg-secondary border border-border-subtle shrink-0">
-                          <img 
-                            src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"} 
-                            alt={product.title} 
-                            className="h-full w-full object-cover" 
+                          <img
+                            src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"}
+                            alt={product.title}
+                            className="h-full w-full object-cover"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -643,7 +647,7 @@ export default function Header({ forceSolid = false }) {
               <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
 
                 <nav className="flex flex-col gap-6">
-                  {['New Arrivals', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
+                  {['New Arrivals', 'FENRIR Era', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -652,7 +656,7 @@ export default function Header({ forceSolid = false }) {
                     >
                       <Link
                         className={`text-2xl font-primary uppercase tracking-wider transition-colors hover:text-accent ${item === 'Sale' ? 'text-accent' : 'text-text-primary'}`}
-                        to={item === 'Collections' ? '/shop' : `/${item.toLowerCase().replace(' ', '-')}`}
+                        to={item === 'Collections' ? '/shop' : item === 'FENRIR Era' ? '/custom-studio' : `/${item.toLowerCase().replace(' ', '-')}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item}

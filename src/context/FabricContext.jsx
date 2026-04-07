@@ -7,6 +7,7 @@ const FabricContext = createContext(null);
 
 export function FabricProvider({ children }) {
     const canvasRef = useRef(null);
+    const wrapperRef = useRef(null);
     const fabricCanvas = useRef(null);
     const printAreaRef = useRef(null);
     const activeTextRef = useRef(null);
@@ -21,9 +22,12 @@ export function FabricProvider({ children }) {
     const [printingType, setPrintingType] = useState("dtf");
     const [frontPrice, setFrontPrice] = useState(0);
     const [backPrice, setBackPrice] = useState(0);
+    const [garmentColor, setGarmentColor] = useState("#FFFFFF"); // Default to white
+    const [isPremiumMode, setIsPremiumMode] = useState(false);
     const [pricingSettings, setPricingSettings] = useState({
-        basePrice: 100,
-        textPricePerElement: 20,
+        basePrice: 499,
+        textPricePerElement: 50,
+        imagePricePerElement: 80,
         printingMethods: [
             { id: "dtf", label: "DTF Printing", price: 150, description: "Direct to Film - Vibrant & Durable" },
             { id: "screen", label: "Screen Print", price: 100, description: "Classic & Long-lasting" },
@@ -52,8 +56,11 @@ export function FabricProvider({ children }) {
         let total = 0;
 
         objects.forEach(obj => {
-            if (obj.type === 'textbox') {
+            if (obj.type === 'textbox' || obj.type === 'i-text') {
                 total += pricingSettings.textPricePerElement;
+            } else if (obj.type === 'image' || obj.type === 'group') {
+                // Using image price for uploads and complex elements
+                total += pricingSettings.imagePricePerElement;
             } else if (obj.price) {
                 total += Number(obj.price);
             }
@@ -157,6 +164,7 @@ export function FabricProvider({ children }) {
         <FabricContext.Provider
             value={{
                 canvasRef,
+                wrapperRef,
                 fabricCanvas,
                 printAreaRef,
                 activeTextRef,
@@ -193,7 +201,12 @@ export function FabricProvider({ children }) {
                 initialSizeRef,
                 initialColorRef,
                 // Production Metadata
-                uploadedAssetsMetadataRef
+                uploadedAssetsMetadataRef,
+                // Mockup Context
+                garmentColor,
+                setGarmentColor,
+                isPremiumMode,
+                setIsPremiumMode
             }}
         >
             {children}

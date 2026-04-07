@@ -9,6 +9,7 @@ export default function FiltersSidebar({
   onColorChange,
   onCategoryChange,
   onSortChange,
+  onCustomizableChange,
   onClear,
   availableCategories = [],
   availableBrands = [],
@@ -67,6 +68,31 @@ export default function FiltersSidebar({
             <span className="w-1 h-1 bg-accent rounded-full group-hover:bg-text-primary transition-colors"></span>
             Reset
           </button>
+        </div>
+      )}
+
+      {/* CUSTOMIZABLE TOGGLE */}
+      {filters && typeof filters.isCustomizable !== 'undefined' && (
+        <div className="transition-all duration-300 ease mb-6 last:border-b-0 border-b border-border-subtle pb-8">
+          <label className="flex items-center justify-between cursor-pointer group">
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-text-primary group-hover:text-accent transition-colors">
+              Customizable Only
+            </span>
+            <div className="relative">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={filters.isCustomizable || false}
+                onChange={(e) => {
+                  if (onCustomizableChange) {
+                      onCustomizableChange(e.target.checked);
+                  }
+                }}
+              />
+              <div className={`block w-10 h-6 rounded-full transition-colors ${filters.isCustomizable ? 'bg-accent' : 'bg-secondary border border-border-subtle'}`}></div>
+              <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${filters.isCustomizable ? 'translate-x-4 bg-background' : ''}`}></div>
+            </div>
+          </label>
         </div>
       )}
 

@@ -8,13 +8,13 @@
   --color-secondary: #F4F2E9;
   --color-accent: #B8860B;
   --color-background: #FBFAF5;
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #404040;
-  --color-text-muted: #666666;
-  --color-text-tertiary: #888888;
-  --color-accent-contrast: #966900;
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #2D2D2D;
+  --color-text-muted: #4A4A4A;
+  --color-text-tertiary: #6A6A6A;
+  --color-accent-contrast: #8B7E6D;
   --color-danger: #D32F2F;
-  --color-border-subtle: #D8D2C2;
+  --color-border-subtle: #E5E1DA;
 
   /* Legacy aliases for compatibility */
   --color-charcoal: var(--color-secondary);
@@ -139,6 +139,54 @@
         @apply opacity-100;
     }
 
+    .studio-void {
+        background: radial-gradient(circle at 50% 50%, #FBFAF5 0%, #F4F2E9 100%);
+        position: relative;
+    }
+
+    .studio-void-dark {
+        background: radial-gradient(circle at 50% 50%, #1A1A1A 0%, #0A0A0A 100%);
+        position: relative;
+    }
+
+    .blueprint-grid {
+        background-image: 
+            linear-gradient(to right, rgba(212, 196, 177, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(212, 196, 177, 0.05) 1px, transparent 1px),
+            linear-gradient(to right, rgba(212, 196, 177, 0.02) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(212, 196, 177, 0.02) 1px, transparent 1px);
+        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    }
+
+    .blueprint-grid-dark {
+        background-image: 
+            linear-gradient(to right, rgba(160, 160, 160, 0.25) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(160, 160, 160, 0.25) 1px, transparent 1px),
+            linear-gradient(to right, rgba(160, 160, 160, 0.12) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(160, 160, 160, 0.12) 1px, transparent 1px);
+        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .blueprint-grid-dark::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle at 50% 50%, rgba(160, 160, 160, 0.15) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+    }
+
+    .studio-card-shadow {
+        box-shadow: 
+            0 30px 60px -12px rgba(0, 0, 0, 0.08),
+            0 18px 36px -18px rgba(0, 0, 0, 0.1),
+            0 -12px 36px -8px rgba(0, 0, 0, 0.01);
+    }
+
     .account-avatar {
         @apply bg-white text-black font-black w-[28px] h-[28px] rounded-full flex items-center justify-center border border-white/10 transition-all duration-300;
     }
@@ -225,7 +273,15 @@
     }
 
     .luxury-text-secondary {
-        @apply text-text-secondary font-secondary;
+        @apply text-text-secondary font-secondary leading-relaxed;
+    }
+
+    .luxury-text-muted-darker {
+        @apply text-text-muted font-secondary leading-relaxed tracking-wide;
+    }
+
+    .luxury-label-darker {
+        @apply text-text-primary font-primary uppercase tracking-[0.3em] font-black;
     }
 }
 

@@ -1,6 +1,7 @@
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { OfferProvider } from "./context/OfferContext";
+import { SocketProvider } from "./context/SocketContext";
 import AppRoutes from "./routes/AppRoutes";
 import { store } from "./app/store";
 import { useDispatch } from "react-redux";
@@ -27,13 +28,15 @@ function App() {
   return (
     <>
       <OfferProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <Toaster position={isMobile ? "top-center" : "top-right"} />
-            <SmoothScroll />
-            <AppRoutes />
-          </WishlistProvider>
-        </CartProvider>
+        <SocketProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Toaster position={isMobile ? "top-center" : "top-right"} />
+              <SmoothScroll />
+              <AppRoutes />
+            </WishlistProvider>
+          </CartProvider>
+        </SocketProvider>
       </OfferProvider>
     </>
   );

@@ -43,6 +43,8 @@ const AdminOrders = () => {
         const hasCustomItems = order.items?.some(item => item.customizations && Object.keys(item.customizations).length > 0);
         if (activeTab === 'custom') {
             matchesTab = hasCustomItems;
+        } else if (activeTab === 'pickup') {
+            matchesTab = order.orderType === 'PICKUP';
         }
 
         const matchesSearch = order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -53,6 +55,7 @@ const AdminOrders = () => {
     const getStatusStyles = (status) => {
         switch (status) {
             case 'placed': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+            case 'ready-for-pickup': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
             case 'shipped': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
             case 'delivered': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
             case 'cancelled': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
@@ -91,7 +94,7 @@ const AdminOrders = () => {
 
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <div className="flex border-b border-slate-200 dark:border-slate-800 px-6 overflow-x-auto no-scrollbar">
-                    {['all', 'custom', 'placed', 'ready-to-ship', 'shipped', 'delivered', 'cancelled'].map((tab) => (
+                    {['all', 'custom', 'pickup', 'placed', 'ready-for-pickup', 'ready-to-ship', 'shipped', 'delivered', 'cancelled'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -100,7 +103,7 @@ const AdminOrders = () => {
                                 : 'border-transparent text-slate-500 hover:text-slate-300'
                                 }`}
                         >
-                            {tab === 'custom' ? '🎨 Custom Designs' : tab}
+                            {tab === 'custom' ? '🎨 Custom Designs' : tab === 'pickup' ? '🏪 Store Pickup' : tab.replace(/-/g, ' ')}
                         </button>
                     ))}
                 </div>
@@ -123,8 +126,15 @@ const AdminOrders = () => {
                                 const isCustom = order.items?.some(item => item.customizations && Object.keys(item.customizations).length > 0);
                                 return (
                                     <tr key={order._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
-                                        <td className="px-6 py-4 font-bold text-accent">
-                                            #{order._id.slice(-8).toUpperCase()}
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="font-bold text-accent">#{order._id.slice(-8).toUpperCase()}</span>
+                                                {order.orderType === 'PICKUP' && (
+                                                    <span className="bg-purple-500/10 text-purple-500 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest w-fit">
+                                                        Store Pickup
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
@@ -142,6 +152,7 @@ const AdminOrders = () => {
                                                 className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border-none focus:ring-0 cursor-pointer ${getStatusStyles(order.orderStatus)}`}
                                             >
                                                 <option value="placed">Placed</option>
+                                                <option value="ready-for-pickup">Ready-for-Pickup</option>
                                                 <option value="ready-to-ship">Ready-to-Ship</option>
                                                 <option value="shipped">Shipped</option>
                                                 <option value="delivered">Delivered</option>

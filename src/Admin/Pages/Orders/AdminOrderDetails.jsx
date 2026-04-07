@@ -94,7 +94,12 @@ const AdminOrderDetails = () => {
         );
     }
 
-    const timelineSteps = [
+    const timelineSteps = order.orderType === 'PICKUP' ? [
+        { label: 'Placed', icon: 'check', date: new Date(order.createdAt).toLocaleDateString(), completed: true },
+        { label: 'Processing', icon: 'precision_manufacturing', date: order.orderStatus, active: order.orderStatus === 'processing', completed: ['ready-for-pickup', 'delivered'].includes(order.orderStatus) },
+        { label: 'Ready for Pickup', icon: 'storefront', date: order.pickupDetails?.pickupTime || 'Pending', completed: order.orderStatus === 'delivered', active: order.orderStatus === 'ready-for-pickup' },
+        { label: 'Picked Up', icon: 'done_all', date: order.orderStatus === 'delivered' ? 'Completed' : 'Pending', completed: order.orderStatus === 'delivered' },
+    ] : [
         { label: 'Placed', icon: 'check', date: new Date(order.createdAt).toLocaleDateString(), completed: true },
         { label: 'Production', icon: 'precision_manufacturing', date: order.orderStatus, active: ['in-production', 'ready-to-ship'].includes(order.orderStatus), completed: ['shipped', 'delivered'].includes(order.orderStatus) },
         { label: 'Shipped', icon: 'local_shipping', date: order.trackingNumber || 'Pending', completed: order.orderStatus === 'delivered' || order.orderStatus === 'shipped', active: order.orderStatus === 'shipped' },
@@ -140,9 +145,15 @@ const AdminOrderDetails = () => {
                         >
                             <option value="placed">Mark as Placed</option>
                             <option value="processing">Mark as Processing</option>
-                            <option value="in-production">Mark as In-Production</option>
-                            <option value="ready-to-ship">Mark as Ready-to-Ship</option>
-                            <option value="shipped">Mark as Shipped</option>
+                            {order.orderType === 'PICKUP' ? (
+                                <option value="ready-for-pickup">Mark as Ready for Pickup</option>
+                            ) : (
+                                <>
+                                    <option value="in-production">Mark as In-Production</option>
+                                    <option value="ready-to-ship">Mark as Ready-to-Ship</option>
+                                    <option value="shipped">Mark as Shipped</option>
+                                </>
+                            )}
                             <option value="delivered">Mark as Delivered</option>
                             <option value="cancelled">Mark as Cancelled</option>
                         </select>
@@ -179,47 +190,102 @@ const AdminOrderDetails = () => {
                     {/* LEFT COLUMN */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Fulfillment & Logistics */}
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                            <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-6">
-                                <span className="material-symbols-outlined text-accent">local_shipping</span> Fulfillment & Logistics
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Courier Service</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. BlueDart, Delhivery"
-                                        value={courierService}
-                                        onChange={(e) => setCourierService(e.target.value)}
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
-                                    />
+                        {order.orderType === 'PICKUP' ? (
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-6">
+                                    <span className="material-symbols-outlined text-accent">storefront</span> Store Pickup Logistics
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-4">
+                                        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">Selected Store</p>
+                                            <p className="font-bold text-sm">{order.pickupDetails?.storeName}</p>
+                                            <p className="text-xs text-slate-500 mt-1">{order.pickupDetails?.storeAddress}</p>
+                                        </div>
+                                        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-2">Requested Time Slot</p>
+                                            <p className="font-bold text-sm text-accent">{order.pickupDetails?.pickupTime}</p>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div className="bg-purple-50 dark:bg-purple-900/10 p-5 rounded-2xl border border-purple-100 dark:border-purple-800/30">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <span className="material-symbols-outlined text-purple-600">info</span>
+                                                <p className="text-xs font-bold text-purple-900 dark:text-purple-400 uppercase tracking-tight">Pickup Instructions</p>
+                                            </div>
+                                            <ul className="text-[11px] space-y-2 text-purple-800/80 dark:text-purple-400/80 list-disc pl-4">
+                                                <li>Verify order items are correctly picked and packed.</li>
+                                                <li>Ensure the Order ID matches the customer's confirmation.</li>
+                                                <li>Mark as "Ready for Pickup" to notify the customer.</li>
+                                                {order.paymentMethod === 'CASH_ON_PICKUP' && (
+                                                    <li className="font-black text-purple-900 dark:text-purple-300 uppercase underline">Collect Payment: ₹{order.totalAmount.toLocaleString()}</li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Tracking Number</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter AWB or tracking ID"
-                                        value={trackingNumber}
-                                        onChange={(e) => setTrackingNumber(e.target.value)}
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
-                                    />
+                                <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-700">
+                                    {order.orderStatus === 'processing' && (
+                                        <button
+                                            onClick={() => handleStatusUpdate('ready-for-pickup')}
+                                            className="px-8 py-3 bg-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20"
+                                        >
+                                            Notify: Ready for Pickup
+                                        </button>
+                                    )}
+                                    {order.orderStatus === 'ready-for-pickup' && (
+                                        <button
+                                            onClick={() => handleStatusUpdate('delivered')}
+                                            className="px-8 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
+                                        >
+                                            Confirm Pickup (Delivered)
+                                        </button>
+                                    )}
                                 </div>
                             </div>
-                            <div className="mt-6 flex justify-end gap-3">
-                                <button
-                                    onClick={() => handleStatusUpdate('shipped', { trackingNumber, courierService })}
-                                    className="px-6 py-2 bg-black text-white rounded-lg text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-black transition-all"
-                                >
-                                    Mark as Shipped & Notify
-                                </button>
-                                <button
-                                    onClick={handleSaveLogistics}
-                                    className="px-6 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all font-bold"
-                                >
-                                    Save Info Only
-                                </button>
+                        ) : (
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                                <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-6">
+                                    <span className="material-symbols-outlined text-accent">local_shipping</span> Fulfillment & Logistics
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Courier Service</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. BlueDart, Delhivery"
+                                            value={courierService}
+                                            onChange={(e) => setCourierService(e.target.value)}
+                                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Tracking Number</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter AWB or tracking ID"
+                                            value={trackingNumber}
+                                            onChange={(e) => setTrackingNumber(e.target.value)}
+                                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-accent/50 outline-none"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-end gap-3">
+                                    <button
+                                        onClick={() => handleStatusUpdate('shipped', { trackingNumber, courierService })}
+                                        className="px-6 py-2 bg-black text-white rounded-lg text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-black transition-all"
+                                    >
+                                        Mark as Shipped & Notify
+                                    </button>
+                                    <button
+                                        onClick={handleSaveLogistics}
+                                        className="px-6 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all font-bold"
+                                    >
+                                        Save Info Only
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Order Items Card */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -519,19 +585,30 @@ const AdminOrderDetails = () => {
                             </div>
                         </div>
 
-                        {/* Shipping Address */}
+                        {/* Shipping/Pickup Address */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-[#1152d4]">map</span> Delivery Address
+                                    <span className="material-symbols-outlined text-[#1152d4]">{order.orderType === 'PICKUP' ? 'store' : 'map'}</span> 
+                                    {order.orderType === 'PICKUP' ? 'Pickup Location' : 'Delivery Address'}
                                 </h3>
                             </div>
                             <div className="text-sm font-medium space-y-1 text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/30 p-4 rounded-lg border border-dashed border-slate-200 dark:border-slate-700">
-                                <p className="font-black text-slate-900 dark:text-white">{order.shippingAddress?.fullName}</p>
-                                <p>{order.shippingAddress?.addressLine}</p>
-                                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
-                                <p>{order.shippingAddress?.pincode}</p>
-                                <p>India</p>
+                                {order.orderType === 'PICKUP' ? (
+                                    <>
+                                        <p className="font-black text-slate-900 dark:text-white uppercase tracking-tighter">{order.pickupDetails?.storeName}</p>
+                                        <p className="text-xs">{order.pickupDetails?.storeAddress}</p>
+                                        <p className="text-[10px] font-black text-blue-500 uppercase mt-4 block">Self-Pickup Protocol</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="font-black text-slate-900 dark:text-white">{order.shippingAddress?.fullName}</p>
+                                        <p>{order.shippingAddress?.addressLine}</p>
+                                        <p>{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
+                                        <p>{order.shippingAddress?.pincode}</p>
+                                        <p>India</p>
+                                    </>
+                                )}
                             </div>
                             <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700">
                                 <div className="flex items-center justify-between mb-2">
@@ -541,8 +618,8 @@ const AdminOrderDetails = () => {
                                     </span>
                                 </div>
                                 <div className="flex flex-col gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg">
-                                    <span className="text-[10px] font-black text-slate-400">RAZORPAY ID:</span>
-                                    <span className="text-[10px] font-mono break-all text-slate-600 dark:text-slate-300">{order.razorpayOrderId || "N/A"}</span>
+                                    <span className="text-[10px] font-black text-slate-400">REFERENCE:</span>
+                                    <span className="text-[10px] font-mono break-all text-slate-600 dark:text-slate-300">{order.razorpayOrderId || order.paymentMethod}</span>
                                 </div>
                             </div>
                         </div>

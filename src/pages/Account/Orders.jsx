@@ -62,6 +62,13 @@ const Orders = () => {
           dot: 'bg-indigo-500',
           border: 'border-indigo-500/20'
         };
+      case 'ready-for-pickup':
+        return {
+          bg: 'bg-purple-500/10',
+          text: 'text-purple-600',
+          dot: 'bg-purple-500',
+          border: 'border-purple-500/20'
+        };
       case 'cancelled':
         return {
           bg: 'bg-rose-500/10',
@@ -138,7 +145,12 @@ const Orders = () => {
                       </div>
                       <div className="text-right sm:text-left">
                         <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Protocol ID</p>
-                        <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">#MM-{order._id.slice(-8).toUpperCase()}</p>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">#MM-{order._id.slice(-8).toUpperCase()}</p>
+                          {order.orderType === 'PICKUP' && (
+                            <span className="text-[7px] font-black uppercase bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded tracking-widest w-fit">Pickup</span>
+                          )}
+                        </div>
                       </div>
                       <div className="col-span-2 lg:col-span-1 border-t sm:border-t-0 pt-4 sm:pt-0">
                         <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2 text-center lg:text-left">Investment</p>
@@ -147,8 +159,8 @@ const Orders = () => {
                     </div>
                     <div className="flex items-center justify-center md:justify-end gap-4 scale-90 sm:scale-100">
                       <span className={`flex items-center gap-3 px-6 py-2.5 ${status.bg} ${status.text} rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] border ${status.border} shadow-[0_10px_30px_rgba(0,0,0,0.02)]`}>
-                        <span className={`w-2 h-2 rounded-full ${status.dot} ${order.orderStatus !== 'delivered' && order.orderStatus !== 'cancelled' ? 'animate-pulse shadow-[0_0_10px_currentColor]' : ''}`}></span>
-                        {order.orderStatus}
+                        <span className={`w-2 h-2 rounded-full ${status.dot} ${!['delivered', 'cancelled'].includes(order.orderStatus?.toLowerCase()) ? 'animate-pulse shadow-[0_0_10px_currentColor]' : ''}`}></span>
+                        {order.orderStatus?.replace(/-/g, ' ')}
                       </span>
                     </div>
                   </div>
@@ -180,7 +192,7 @@ const Orders = () => {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full lg:w-auto">
-                      {order.orderStatus === 'processing' || order.orderStatus === 'placed' ? (
+                      {(order.orderStatus === 'processing' || order.orderStatus === 'placed') && order.orderStatus !== 'ready-for-pickup' ? (
                         <button
                           onClick={() => handleCancelOrder(order._id)}
                           className="flex-1 lg:flex-none px-6 sm:px-10 py-4 sm:py-5 border border-rose-500/20 text-rose-500/60 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rose-500/10 hover:text-rose-600 transition-all"
@@ -188,7 +200,9 @@ const Orders = () => {
                           Abort
                         </button>
                       ) : (
-                        <button className="flex-1 lg:flex-none px-6 sm:px-10 py-4 sm:py-5 border border-black/10 text-black/60 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black/5 hover:text-black transition-all">Track</button>
+                        <button className="flex-1 lg:flex-none px-6 sm:px-10 py-4 sm:py-5 border border-black/10 text-black/60 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black/5 hover:text-black transition-all">
+                          {order.orderType === 'PICKUP' ? 'Store Location' : 'Track'}
+                        </button>
                       )}
                       <Link
                         to={`/account/orders/${order._id}`}

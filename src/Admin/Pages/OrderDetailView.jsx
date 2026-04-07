@@ -36,7 +36,9 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
   const [newCustomerNote, setNewCustomerNote] = useState('');
   const [updating, setUpdating] = useState(false);
 
-  const steps = ["placed", "ready-to-ship", "shipped", "delivered"];
+  const steps = order.orderType === 'PICKUP' 
+    ? ["placed", "ready-for-pickup", "delivered"]
+    : ["placed", "ready-to-ship", "shipped", "delivered"];
   const currentStepIndex = steps.indexOf(order.orderStatus);
 
   const handleStatusUpdate = async (newStatus) => {
@@ -142,13 +144,38 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
              </button>
           )}
 
-          <button onClick={handleDownloadShippingLabel} className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all font-bold shadow-sm" title="Shipping Label">
-            <Truck size={16} />
-          </button>
-          
-          <button onClick={handleDownloadPackingSlip} className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all font-bold shadow-sm" title="Packing Slip">
-            <Package size={16} />
-          </button>
+          {order.orderType === 'PICKUP' ? (
+             <>
+               {order.orderStatus === 'placed' && (
+                 <button 
+                  onClick={() => handleStatusUpdate('ready-for-pickup')}
+                  disabled={updating}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-700 transition-all shadow-lg shadow-purple-600/20 flex items-center gap-2"
+                 >
+                    <Package size={14} /> Notify Ready
+                 </button>
+               )}
+               {order.orderStatus === 'ready-for-pickup' && (
+                 <button 
+                  onClick={() => handleStatusUpdate('delivered')}
+                  disabled={updating}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+                 >
+                    <CheckCircle size={14} /> Confirm Pickup
+                 </button>
+               )}
+             </>
+          ) : (
+            <>
+              <button onClick={handleDownloadShippingLabel} className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all font-bold shadow-sm" title="Shipping Label">
+                <Truck size={16} />
+              </button>
+              
+              <button onClick={handleDownloadPackingSlip} className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all font-bold shadow-sm" title="Packing Slip">
+                <Package size={16} />
+              </button>
+            </>
+          )}
 
           <button 
             onClick={handleGenerateInvoice}
@@ -163,7 +190,7 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
             onChange={(e) => handleStatusUpdate(e.target.value)}
             disabled={updating}
           >
-            {steps.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+            {steps.map(s => <option key={s} value={s}>{s.replace(/-/g, ' ').charAt(0).toUpperCase() + s.replace(/-/g, ' ').slice(1)}</option>)}
           </select>
         </div>
       </div>
@@ -410,16 +437,35 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                       <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{order.shippingAddress?.phone}</p>
                    </div>
                 </div>
-                <div className="flex items-start gap-4">
-                   <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-400"><MapPin size={16} /></div>
-                   <div>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase mb-0.5">Shipping Address</p>
-                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">
-                        {order.shippingAddress?.addressLine}<br/>
-                        {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.pincode}
-                      </p>
+                {order.orderType === 'PICKUP' ? (
+                   <div className="flex items-start gap-4">
+                      <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl text-purple-600"><Package size={16} /></div>
+                      <div>
+                         <p className="text-[10px] text-slate-400 font-bold uppercase mb-0.5 text-purple-600">Store Pickup Logistics</p>
+                         <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                           {order.pickupDetails?.storeName || 'Main Store'}
+                         </p>
+                         <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                           {order.pickupDetails?.storeAddress}
+                         </p>
+                         <div className="mt-2 p-2 bg-purple-500/5 border border-purple-500/10 rounded-lg">
+                           <p className="text-[9px] font-black uppercase text-purple-500">Scheduled Slot</p>
+                           <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{order.pickupDetails?.pickupTime}</p>
+                         </div>
+                      </div>
                    </div>
-                </div>
+                ) : (
+                   <div className="flex items-start gap-4">
+                      <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-400"><MapPin size={16} /></div>
+                      <div>
+                         <p className="text-[10px] text-slate-400 font-bold uppercase mb-0.5">Shipping Address</p>
+                         <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">
+                           {order.shippingAddress?.addressLine}<br/>
+                           {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.pincode}
+                         </p>
+                      </div>
+                   </div>
+                )}
              </div>
            </div>
 
@@ -429,13 +475,21 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                 <CreditCard size={14} /> Financial Snapshot
               </div>
               <div className="space-y-4">
-                 <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex justify-between items-center">
-                     <div>
-                        <p className="text-[10px] text-emerald-600/60 font-black uppercase mb-1">Payment Status</p>
-                        <span className="text-sm font-black text-emerald-600 uppercase">{order.paymentStatus}</span>
-                     </div>
-                    <CheckCircle className="text-emerald-500" size={24} />
-                 </div>
+                  <div className={`p-4 rounded-2xl flex justify-between items-center ${order.paymentMethod === 'CASH_ON_PICKUP' ? 'bg-purple-500/10 border border-purple-500/30' : 'bg-emerald-500/5 border border-emerald-500/10'}`}>
+                      <div>
+                         <p className={`text-[10px] font-black uppercase mb-1 ${order.paymentMethod === 'CASH_ON_PICKUP' ? 'text-purple-600' : 'text-emerald-600'}`}>Payment Status</p>
+                         <span className={`text-sm font-black uppercase ${order.paymentMethod === 'CASH_ON_PICKUP' ? 'text-purple-600' : 'text-emerald-600'}`}>{order.paymentStatus}</span>
+                      </div>
+                     {order.paymentMethod === 'CASH_ON_PICKUP' ? <Info className="text-purple-500" size={24} /> : <CheckCircle className="text-emerald-500" size={24} />}
+                  </div>
+                  {order.paymentMethod === 'CASH_ON_PICKUP' && order.paymentStatus !== 'Paid' && (
+                    <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-pulse">
+                      <p className="text-[10px] font-black text-rose-500 uppercase flex items-center gap-1">
+                        <CreditCard size={12} /> Action Required: Collect Cash
+                      </p>
+                      <p className="text-[11px] font-bold text-rose-700 dark:text-rose-400 mt-1">Collect ₹{order.totalAmount.toLocaleString()} at Store</p>
+                    </div>
+                  )}
 
                  <div className="space-y-2 border-t border-slate-50 dark:border-slate-800 pt-4">
                     <div className="flex justify-between items-center text-xs">

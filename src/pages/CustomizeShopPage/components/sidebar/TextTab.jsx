@@ -94,7 +94,7 @@ export default function TextTab() {
                 </button>
             </div>
 
-            <div className="h-px bg-white/5" />
+            <div className="h-px bg-black/5" />
 
             {/* QUICK EDIT (If text selected) */}
             {activeTextRef.current && (
@@ -104,23 +104,23 @@ export default function TextTab() {
                     </h3>
 
                     <div className="space-y-3">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                             Edit Content
                         </label>
                         <input
                             type="text"
                             placeholder="Type here..."
                             onChange={handleTextChange}
-                            className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-white outline-none focus:border-[#d4c4b1]/50 transition-all"
+                            className="w-full bg-white border border-black/20 p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-[#0A0A0A] outline-none focus:border-[#d4c4b1] transition-all font-primary shadow-sm"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-3">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                                 Alignment
                             </label>
-                            <div className="flex bg-white/5 border border-white/10 rounded-xl overflow-hidden h-12">
+                            <div className="flex bg-white border border-black/20 rounded-xl overflow-hidden h-12 shadow-sm">
                                 {[
                                     { id: 'left', icon: FiAlignLeft },
                                     { id: 'center', icon: FiAlignCenter },
@@ -129,7 +129,7 @@ export default function TextTab() {
                                     <button
                                         key={item.id}
                                         onClick={() => handleAlignment(item.id)}
-                                        className="flex-1 flex items-center justify-center hover:bg-white/10 hover:text-[#d4c4b1] transition-all"
+                                        className="flex-1 flex items-center justify-center hover:bg-black/5 hover:text-[#8b7e6d] transition-all text-black/40"
                                     >
                                         <item.icon size={16} />
                                     </button>
@@ -138,10 +138,10 @@ export default function TextTab() {
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
+                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                                 Kerning
                             </label>
-                            <div className="flex items-center h-12 px-3 bg-white/5 border border-white/10 rounded-xl">
+                            <div className="flex items-center h-12 px-3 bg-white border border-black/20 rounded-xl shadow-sm">
                                 <input
                                     type="range"
                                     min="0"
@@ -151,7 +151,7 @@ export default function TextTab() {
                                         setKerning(e.target.value);
                                         applyTextKerning(fabricCanvas.current, activeTextRef.current, e.target.value * 10);
                                     }}
-                                    className="w-full h-1 bg-white/10 appearance-none accent-[#d4c4b1] rounded-lg cursor-pointer"
+                                    className="w-full h-1 bg-black/10 appearance-none accent-[#d4c4b1] rounded-lg cursor-pointer"
                                 />
                             </div>
                         </div>
@@ -165,7 +165,7 @@ export default function TextTab() {
                 </h3>
                 <div data-lenis-prevent className="grid grid-cols-1 gap-2 h-[300px] overflow-y-auto pr-2">
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-12 gap-3 text-white/20">
+                        <div className="flex flex-col items-center justify-center py-12 gap-3 text-black/20">
                             <FiLoader className="animate-spin" size={24} />
                             <span className="text-[10px] font-black uppercase tracking-widest">Loading Typography...</span>
                         </div>
@@ -175,11 +175,11 @@ export default function TextTab() {
                                 key={font.value}
                                 onClick={() => handleFontChange(font.value)}
                                 className={`flex items-center justify-between p-4 rounded-xl border transition-all text-left ${fontFamily === font.value
-                                    ? "bg-[#d4c4b1]/10 border-[#d4c4b1]/30 text-[#d4c4b1]"
-                                    : "bg-white/5 border-white/5 text-white/60 hover:border-white/20 hover:text-white"
+                                    ? "bg-[#d4c4b1]/10 border-[#d4c4b1]/30 text-[#8b7e6d]"
+                                    : "bg-white border-black/5 text-black/60 hover:border-black/20 hover:text-black shadow-sm"
                                     }`}
                             >
-                                <span className="text-xs font-bold tracking-widest uppercase" style={{ fontFamily: font.value }}>
+                                <span className="text-xs font-bold tracking-widest uppercase font-primary" style={{ fontFamily: font.value }}>
                                     {font.label}
                                 </span>
                                 {fontFamily === font.value && (

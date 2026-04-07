@@ -94,3 +94,8 @@ export const bulkUpdateOrders = async (orderIds, status) => {
     const response = await api.patch('/orders/bulk/status', { orderIds, status });
     return response.data;
 };
+
+export const verifyPickupOrder = async (orderId, verificationToken) => {
+    const response = await api.post('/orders/verify-pickup', { orderId, verificationToken });
+    return response.data;
+};

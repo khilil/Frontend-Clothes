@@ -26,8 +26,8 @@ export default function PreviewContent() {
     const [addingToCart, setAddingToCart] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [productData, setProductData] = useState(null);
-    const [selectedSize, setSelectedSize] = useState("L");
-    const [baseColor, setBaseColor] = useState("white");
+    const [selectedVariant, setSelectedVariant] = useState(null);
+    const [selectedColor, setSelectedColor] = useState(null);
     const [viewSide, setViewSide] = useState("front");
 
     const garmentBasePrice = productData?.price || 1700;
@@ -60,7 +60,10 @@ export default function PreviewContent() {
     };
 
     const handleAddToBag = async () => {
-        if (!productData) return;
+        if (!productData || !selectedVariant) {
+            alert("Please select a size before adding to bag.");
+            return;
+        }
         setAddingToCart(true);
         try {
             const customizations = {
@@ -71,10 +74,11 @@ export default function PreviewContent() {
                 previews: { front: previewImage } // Simplification for now
             };
 
-            // Note: In a real app we'd need high-res print files here too.
-            // For now, let's just make the price flow work.
-
-            await addToCart({ _id: (location.state?.productId || slug), ...productData }, { variantId: selectedSize }, customizations);
+            await addToCart(
+                { _id: (location.state?.productId || slug), ...productData },
+                { variantId: selectedVariant.sku || selectedVariant._id, size: selectedVariant.size?.name, color: selectedColor?.name },
+                customizations
+            );
             alert("Added to bag!");
             navigate("/cart");
         } catch (err) {
@@ -88,39 +92,74 @@ export default function PreviewContent() {
 
 
     /* =============================
-        GET PRODUCT IMAGE (SAFE)
+        GET PRODUCT IMAGE (SAFE) & VARIANTS
      ============================= */
     useEffect(() => {
-        if (location.state?.frontImage) {
-            console.log("✅ Using image from location state");
-            setProductData({
-                frontImage: location.state.frontImage,
-                backImage: location.state.backImage || location.state.frontImage
-            });
-        } else {
-            console.log("⚠ location.state missing → fetching again");
-            getProductBySlug(slug)
-                .then(res => {
-                    const data = res;
-                    const images = [];
-                    data.variants?.forEach(v => {
-                        v.images?.forEach(img => {
-                            if (img.url && !images.includes(img.url)) {
-                                images.push(img.url);
-                            }
-                        });
+        getProductBySlug(slug)
+            .then(res => {
+                const data = res;
+                const images = [];
+                data.variants?.forEach(v => {
+                    v.images?.forEach(img => {
+                        if (img.url && !images.includes(img.url)) {
+                            images.push(img.url);
+                        }
                     });
-
-                    setProductData({
-                        frontImage: images[0] || "https://placehold.co/600x800/121212/white?text=No+Front+Image",
-                        backImage: images[1] || images[0] || "https://placehold.co/600x800/121212/white?text=No+Back+Image"
-                    });
-                })
-                .catch(err => {
-                    console.error("Fetch product error in Preview:", err);
                 });
+
+                const finalFront = location.state?.frontImage || images[0] || "https://placehold.co/600x800/121212/white?text=No+Front+Image";
+                const finalBack = location.state?.backImage || images[1] || images[0] || "https://placehold.co/600x800/121212/white?text=No+Back+Image";
+
+                setProductData({
+                    ...data,
+                    frontImage: finalFront,
+                    backImage: finalBack
+                });
+
+                // Auto-select starting variant and color
+                if (data.variants && data.variants.length > 0) {
+                    let defaultVariant = data.variants[0];
+                    if (location.state?.variantId) {
+                        const found = data.variants.find(v => v.sku === location.state.variantId || v._id === location.state.variantId);
+                        if (found) defaultVariant = found;
+                    }
+                    setSelectedVariant(defaultVariant);
+                    setSelectedColor(defaultVariant.color);
+                }
+            })
+            .catch(err => {
+                console.error("Fetch product error in Preview:", err);
+            });
+    }, [slug, location.state]);
+
+    const uniqueColors = useMemo(() => {
+        if (!productData || !productData.variants) return [];
+        const colors = [];
+        const seen = new Set();
+        productData.variants.forEach(v => {
+            const col = v.color;
+            if (!col) return;
+            const colorId = typeof col === 'object' ? (col._id || col.name) : col;
+            if (colorId && !seen.has(colorId)) {
+                seen.add(colorId);
+                colors.push(typeof col === 'object' ? col : { _id: col, name: 'Standard', hexCode: '#000000' });
+            }
+        });
+        return colors;
+    }, [productData]);
+
+    const filteredVariants = useMemo(() => {
+        if (!productData || !productData.variants || !selectedColor) return [];
+        return productData.variants.filter(v => (v.color?._id || v.color?.name) === (selectedColor._id || selectedColor.name));
+    }, [productData, selectedColor]);
+
+    const handleColorSelect = (color) => {
+        setSelectedColor(color);
+        const firstAvailable = productData?.variants?.find(v => (v.color?._id || v.color?.name) === (color._id || color.name));
+        if (firstAvailable) {
+            setSelectedVariant(firstAvailable);
         }
-    }, [slug]);
+    };
 
     console.log("👀 FRONT in Preview:", frontDesignRef.current);
     /* =============================
@@ -242,7 +281,7 @@ export default function PreviewContent() {
                                     alt="User Design"
                                     className="max-w-full max-h-full object-contain opacity-90"
                                     style={{
-                                        mixBlendMode: baseColor === 'black' ? 'screen' : 'normal'
+                                        mixBlendMode: selectedColor?.name?.toLowerCase() === 'black' ? 'screen' : 'normal'
                                     }}
                                 />
                             ) : (
@@ -266,8 +305,8 @@ export default function PreviewContent() {
                 <div className="space-y-10">
                     <div>
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] mb-4 block">Hand-Crafted series</span>
-                        <h1 className="text-5xl font-impact tracking-tighter text-white uppercase leading-none mb-4">Custom Artisan Tee</h1>
-                        <p className="text-white/40 text-xs leading-relaxed max-w-xs">Hand-crafted luxury jersey. Tailored for a relaxed yet structured fit with your bespoke design.</p>
+                        <h1 className="text-5xl font-impact tracking-tighter text-white uppercase leading-none mb-4">{productData?.title || location.state?.title || "Custom Artisan Tee"}</h1>
+                        <p className="text-white/40 text-xs leading-relaxed max-w-xs">{productData?.shortDescription || "Hand-crafted luxury jersey. Tailored for a relaxed yet structured fit with your bespoke design."}</p>
                     </div>
 
                     <div className="flex flex-col">
@@ -275,34 +314,46 @@ export default function PreviewContent() {
                         <span className="text-3xl font-impact tracking-tighter text-white">₹{grandTotal.toLocaleString()}</span>
                     </div>
 
-                    <div className="space-y-4">
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Fabric Color</span>
-                        <div className="flex gap-4">
-                            {['white', 'black'].map((color) => (
-                                <button
-                                    key={color}
-                                    onClick={() => setBaseColor(color)}
-                                    className={`w-8 h-8 rounded-full border transition-all ${baseColor === color ? 'ring-1 ring-white ring-offset-4 ring-offset-[#121212]' : 'border-white/10 hover:scale-110'}`}
-                                    style={{ backgroundColor: color }}>
-                                </button>
-                            ))}
+                    {uniqueColors.length > 0 && (
+                        <div className="space-y-4">
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Fabric Color: <span className="text-white">{selectedColor?.name}</span></span>
+                            <div className="flex gap-4">
+                                {uniqueColors.map((color) => {
+                                    const isSelected = (selectedColor?._id || selectedColor?.name) === (color._id || color.name);
+                                    return (
+                                        <button
+                                            key={color._id || color.name}
+                                            onClick={() => handleColorSelect(color)}
+                                            className={`w-10 h-10 rounded-full border transition-all ${isSelected ? 'ring-2 ring-white ring-offset-4 ring-offset-[#121212]' : 'border-white/10 hover:scale-110'}`}
+                                            title={color.name}
+                                            style={{ backgroundColor: color.hexCode ? (color.hexCode.startsWith('#') ? color.hexCode : `#${color.hexCode}`) : color.name?.toLowerCase() }}>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
                             <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Select Size</span>
                             <button className="text-[9px] font-bold uppercase tracking-widest text-[#d4c4b1] underline underline-offset-4">Size Guide</button>
                         </div>
-                        <div className="grid grid-cols-4 gap-2">
-                            {['S', 'M', 'L', 'XL'].map((size) => (
+                        <div className="flex flex-wrap gap-2">
+                            {filteredVariants.length > 0 ? filteredVariants.map((v) => (
                                 <button
-                                    key={size}
-                                    onClick={() => setSelectedSize(size)}
-                                    className={`h-12 border flex items-center justify-center text-[11px] font-bold transition-all ${selectedSize === size ? 'border-white bg-white/5 text-white' : 'border-white/10 text-white/60 hover:border-white'}`}>
-                                    {size}
+                                    key={v._id || v.sku}
+                                    onClick={() => setSelectedVariant(v)}
+                                    disabled={v.stock <= 0}
+                                    className={`h-12 min-w-[3rem] px-4 border flex items-center justify-center text-[11px] font-bold transition-all relative
+                                        ${selectedVariant?._id === v._id ? 'border-white bg-white text-black' : 'border-white/10 text-white/60 hover:border-white'}
+                                        ${v.stock <= 0 ? 'opacity-20 cursor-not-allowed' : ''}
+                                    `}>
+                                    {v.size?.name || "N/A"}
                                 </button>
-                            ))}
+                            )) : (
+                                <span className="text-[10px] text-white/40 italic">No sizes available for this variant.</span>
+                            )}
                         </div>
                     </div>
                 </div>

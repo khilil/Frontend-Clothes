@@ -34,7 +34,6 @@ export default function Checkout() {
     });
   };
 
-  // 📝 Form State for New Address
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -43,7 +42,16 @@ export default function Checkout() {
     city: "",
     state: "",
     pincode: "",
-    paymentMethod: "ONLINE"
+    paymentMethod: "ONLINE",
+    deliveryMethod: "DELIVERY", // NEW: DELIVERY or PICKUP
+    pickupTime: "", // NEW: Selected slot
+  });
+
+  const [selectedStore] = useState({
+    name: "FENRIR Era Flagship Store",
+    address: "245 Fifth Avenue, New York, NY 10016",
+    mapLink: "https://maps.google.com/?q=245+Fifth+Avenue+New+York",
+    hours: "10:00 AM - 08:00 PM",
   });
 
   // 🔝 Auto-scroll to top on step change and mount
@@ -115,23 +123,31 @@ export default function Checkout() {
   };
 
   const goToPayment = () => {
-    if (showNewAddressForm) {
-      // Validate form
-      if (!formData.firstName || !formData.addressLine || !formData.pincode) {
-        alert("Please complete the address form");
+    if (formData.deliveryMethod === "DELIVERY") {
+      if (showNewAddressForm) {
+        // Validate form
+        if (!formData.firstName || !formData.addressLine || !formData.pincode) {
+          alert("Please complete the address form");
+          return;
+        }
+        setSelectedAddress({
+          fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+          phone: formData.phone,
+          streetAddress: formData.addressLine,
+          city: formData.city,
+          state: formData.state,
+          pinCode: formData.pincode
+        });
+      } else if (!selectedAddressId) {
+        alert("Please select an existing address or add a new one.");
         return;
       }
-      setSelectedAddress({
-        fullName: `${formData.firstName} ${formData.lastName}`.trim(),
-        phone: formData.phone,
-        streetAddress: formData.addressLine,
-        city: formData.city,
-        state: formData.state,
-        pinCode: formData.pincode
-      });
-    } else if (!selectedAddressId) {
-      alert("Please select an existing address or add a new one.");
-      return;
+    } else {
+      // Pickup validation
+      if (!formData.pickupTime) {
+        alert("Please select a pickup time slot");
+        return;
+      }
     }
     setCheckoutStep("payment");
   };
@@ -175,10 +191,16 @@ export default function Checkout() {
       }
 
       const orderData = {
-        shippingAddress,
+        shippingAddress: formData.deliveryMethod === "DELIVERY" ? shippingAddress : undefined,
         paymentMethod: formData.paymentMethod,
         couponCode: appliedCoupon?.code || "",
-        discountAmount: appliedCoupon?.discountAmount || 0
+        discountAmount: appliedCoupon?.discountAmount || 0,
+        orderType: formData.deliveryMethod,
+        pickupDetails: formData.deliveryMethod === "PICKUP" ? {
+          storeName: selectedStore.name,
+          storeAddress: selectedStore.address,
+          pickupTime: formData.pickupTime,
+        } : undefined
       };
 
       let result;
@@ -347,126 +369,204 @@ export default function Checkout() {
                     transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                     className="relative"
                   >
+                    {/* DELIVERY METHOD SELECTION */}
+                    <div className="grid grid-cols-2 gap-4 mb-10">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, deliveryMethod: "DELIVERY" })}
+                        className={`p-6 border-2 rounded-2xl transition-all duration-300 text-left relative overflow-hidden luxury-card ${formData.deliveryMethod === "DELIVERY" ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle opacity-60 hover:opacity-100'}`}
+                      >
+                        <span className="material-symbols-outlined text-accent mb-2">local_shipping</span>
+                        <p className="text-[10px] font-black uppercase tracking-widest">Home Delivery</p>
+                        <p className="text-[8px] text-text-muted uppercase mt-1">3-5 Nodes Commitment</p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, deliveryMethod: "PICKUP" })}
+                        className={`p-6 border-2 rounded-2xl transition-all duration-300 text-left relative overflow-hidden luxury-card ${formData.deliveryMethod === "PICKUP" ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle opacity-60 hover:opacity-100'}`}
+                      >
+                        <span className="material-symbols-outlined text-accent mb-2">storefront</span>
+                        <p className="text-[10px] font-black uppercase tracking-widest">Store Pickup</p>
+                        <p className="text-[8px] text-accent uppercase mt-1 font-bold">Ready in 2 Hours</p>
+                      </button>
+                    </div>
 
-                    {!showNewAddressForm && user?.addresses?.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {user.addresses.map((addr) => (
-                          <div
-                            key={addr._id}
-                            onClick={() => setSelectedAddressId(addr._id)}
-                            className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group luxury-card ${selectedAddressId === addr._id ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/30'}`}
-                          >
-                            <div className="flex justify-between items-start mb-4">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-text-primary">{addr.fullName}</p>
-                              {selectedAddressId === addr._id && (
-                                <span className="material-symbols-outlined text-accent text-lg">verified</span>
-                              )}
-                            </div>
-                            <p className="text-xs text-text-muted leading-relaxed uppercase tracking-wider">
-                              {addr.streetAddress},<br />
-                              {addr.city}, {addr.state} - {addr.pinCode}
-                            </p>
-                            <p className="mt-4 text-[10px] font-black text-text-tertiary tracking-widest">DIGITAL: {addr.phone}</p>
+                    {formData.deliveryMethod === "DELIVERY" ? (
+                      <>
+                        {!showNewAddressForm && user?.addresses?.length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {user.addresses.map((addr) => (
+                              <div
+                                key={addr._id}
+                                onClick={() => setSelectedAddressId(addr._id)}
+                                className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 relative group luxury-card ${selectedAddressId === addr._id ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle hover:border-accent/30'}`}
+                              >
+                                <div className="flex justify-between items-start mb-4">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-text-primary">{addr.fullName}</p>
+                                  {selectedAddressId === addr._id && (
+                                    <span className="material-symbols-outlined text-accent text-lg">verified</span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-text-muted leading-relaxed uppercase tracking-wider">
+                                  {addr.streetAddress},<br />
+                                  {addr.city}, {addr.state} - {addr.pinCode}
+                                </p>
+                                <p className="mt-4 text-[10px] font-black text-text-tertiary tracking-widest">DIGITAL: {addr.phone}</p>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-secondary/30 p-8 rounded-3xl border border-dashed border-border-subtle">
+                            <div className="space-y-2 md:col-span-1">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">First Name</label>
+                              <input
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="James"
+                                type="text"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-1">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Last Name</label>
+                              <input
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="Stirling"
+                                type="text"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Digital Contact</label>
+                              <input
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="+91 XXXXX XXXXX"
+                                type="tel"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Street Domain</label>
+                              <input
+                                name="addressLine"
+                                value={formData.addressLine}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="245 Fifth Avenue, Apartment 4B"
+                                type="text"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-1">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Urban City</label>
+                              <input
+                                name="city"
+                                value={formData.city}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="New York"
+                                type="text"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-1">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Regional State</label>
+                              <input
+                                name="state"
+                                value={formData.state}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="New York"
+                                type="text"
+                              />
+                            </div>
+                            <div className="space-y-2 md:col-span-1">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Zip Protocol</label>
+                              <input
+                                name="pincode"
+                                value={formData.pincode}
+                                onChange={handleInputChange}
+                                required={showNewAddressForm}
+                                className="luxury-input w-full"
+                                placeholder="100116"
+                                type="text"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-12 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={goToPayment}
+                            className="luxury-button"
+                          >
+                            Continue to Payment
+                          </button>
+                        </div>
+                      </>
                     ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-secondary/30 p-8 rounded-3xl border border-dashed border-border-subtle">
-                        <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">First Name</label>
-                          <input
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="James"
-                            type="text"
-                          />
+                      /* STORE PICKUP UI */
+                      <div className="space-y-8 animate-fadeIn">
+                        <div className="p-8 bg-secondary/50 rounded-3xl border border-border-subtle backdrop-blur-md relative overflow-hidden group">
+                           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                              <span className="material-symbols-outlined text-8xl">store</span>
+                           </div>
+                           <h3 className="text-xl font-primary uppercase tracking-tight mb-4">{selectedStore.name}</h3>
+                           <div className="space-y-4 relative z-10">
+                              <div className="flex items-start gap-4">
+                                 <span className="material-symbols-outlined text-accent">location_on</span>
+                                 <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-1">Location Protocol</p>
+                                    <p className="text-xs font-bold leading-relaxed">{selectedStore.address}</p>
+                                    <a href={selectedStore.mapLink} target="_blank" rel="noreferrer" className="text-[9px] font-black uppercase text-accent hover:underline mt-2 block tracking-widest">Open in Maps →</a>
+                                 </div>
+                              </div>
+                              <div className="flex items-start gap-4">
+                                 <span className="material-symbols-outlined text-accent">schedule</span>
+                                 <div>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-1">Operational Window</p>
+                                    <p className="text-xs font-bold">{selectedStore.hours}</p>
+                                 </div>
+                              </div>
+                           </div>
                         </div>
-                        <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Last Name</label>
-                          <input
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="Stirling"
-                            type="text"
-                          />
+
+                        <div className="space-y-4">
+                           <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Select Capture Slot</h4>
+                           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                              {["Today, 2PM-4PM", "Today, 4PM-6PM", "Today, 6PM-8PM", "Tomorrow, 10AM-12PM", "Tomorrow, 12PM-2PM"].map((slot) => (
+                                 <button
+                                    key={slot}
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, pickupTime: slot })}
+                                    className={`p-4 border rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${formData.pickupTime === slot ? 'border-accent bg-accent text-white shadow-lg' : 'border-border-subtle bg-background hover:border-accent/50'}`}
+                                 >
+                                    {slot}
+                                 </button>
+                              ))}
+                           </div>
+                           <p className="text-[9px] text-accent font-black uppercase tracking-widest text-center mt-6 animate-pulse">Your order will be ready for pickup at the selected time</p>
                         </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Digital Contact</label>
-                          <input
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="+91 XXXXX XXXXX"
-                            type="tel"
-                          />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Street Domain</label>
-                          <input
-                            name="addressLine"
-                            value={formData.addressLine}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="245 Fifth Avenue, Apartment 4B"
-                            type="text"
-                          />
-                        </div>
-                        <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Urban City</label>
-                          <input
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="New York"
-                            type="text"
-                          />
-                        </div>
-                        <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Regional State</label>
-                          <input
-                            name="state"
-                            value={formData.state}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="New York"
-                            type="text"
-                          />
-                        </div>
-                        <div className="space-y-2 md:col-span-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Zip Protocol</label>
-                          <input
-                            name="pincode"
-                            value={formData.pincode}
-                            onChange={handleInputChange}
-                            required={showNewAddressForm}
-                            className="luxury-input w-full"
-                            placeholder="100116"
-                            type="text"
-                          />
+                        <div className="mt-12 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={goToPayment}
+                            className="luxury-button"
+                          >
+                            Continue to Payment
+                          </button>
                         </div>
                       </div>
                     )}
-                    <div className="mt-12 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={goToPayment}
-                        className="luxury-button"
-                      >
-                        Continue to Payment
-                      </button>
-                    </div>
                   </motion.section>
                 ) : checkoutStep === "payment" ? (
                   /* PAYMENT SECTION */
@@ -493,10 +593,16 @@ export default function Checkout() {
                       <div className="flex items-start gap-4">
                         <span className="material-symbols-outlined text-accent text-xl">location_on</span>
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-text-tertiary mb-1">Shipping To</p>
-                          <p className="text-sm font-bold uppercase">{selectedAddress?.fullName}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-text-tertiary mb-1">
+                            {formData.deliveryMethod === "DELIVERY" ? "Shipping To" : "Pickup From"}
+                          </p>
+                          <p className="text-sm font-bold uppercase">
+                            {formData.deliveryMethod === "DELIVERY" ? selectedAddress?.fullName : selectedStore.name}
+                          </p>
                           <p className="text-sm text-text-muted uppercase tracking-wider mt-1">
-                            {selectedAddress?.streetAddress}, {selectedAddress?.city}, {selectedAddress?.state} - {selectedAddress?.pinCode}, IN
+                            {formData.deliveryMethod === "DELIVERY" 
+                              ? `${selectedAddress?.streetAddress}, ${selectedAddress?.city}, ${selectedAddress?.state} - ${selectedAddress?.pinCode}, IN`
+                              : selectedStore.address}
                           </p>
                         </div>
                       </div>
@@ -513,6 +619,25 @@ export default function Checkout() {
                             active={formData.paymentMethod === "ONLINE"}
                             onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
                           />
+                          {formData.deliveryMethod === "PICKUP" ? (
+                            <PaymentOption
+                              id="CASH_ON_PICKUP"
+                              title="Cash on Pickup"
+                              desc="Pay at store during pickup"
+                              icon="payments"
+                              active={formData.paymentMethod === "CASH_ON_PICKUP"}
+                              onClick={() => setFormData({ ...formData, paymentMethod: "CASH_ON_PICKUP" })}
+                            />
+                          ) : (
+                            <PaymentOption
+                              id="COD"
+                              title="Cash on Delivery"
+                              desc="Pay when delivered"
+                              icon="payments"
+                              active={formData.paymentMethod === "COD"}
+                              onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
+                            />
+                          )}
                         </div>
                       </div>
                     </section>
@@ -569,7 +694,9 @@ export default function Checkout() {
                         transition={{ delay: 0.8 }}
                       >
                         <h2 className="text-4xl md:text-6xl font-primary uppercase tracking-tighter leading-none mb-4">Order Confirmed</h2>
-                        <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-accent">Payment Verified • Bag Captured</p>
+                        <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-accent">
+                          {formData.paymentMethod === "CASH_ON_PICKUP" ? "Pay at Store during Pickup" : "Payment Verified • Bag Captured"}
+                        </p>
                       </motion.div>
 
                       <motion.div
@@ -583,8 +710,10 @@ export default function Checkout() {
                           <span className="text-text-primary">#{completedOrderId?.slice(-12).toUpperCase() || 'FENRIR-ERA-01'}</span>
                         </div>
                         <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-text-tertiary">
-                          <span>Delivery Commitment</span>
-                          <span className="text-text-primary">Standard • 3-5 Nodes</span>
+                          <span>{formData.deliveryMethod === "DELIVERY" ? "Delivery Commitment" : "Pickup Slot"}</span>
+                          <span className="text-text-primary">
+                            {formData.deliveryMethod === "DELIVERY" ? "Standard • 3-5 Nodes" : formData.pickupTime}
+                          </span>
                         </div>
                       </motion.div>
 
@@ -662,7 +791,7 @@ export default function Checkout() {
                       </div>
                     )}
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-text-tertiary">
-                      <span>Shipping</span>
+                      <span>{formData.deliveryMethod === "DELIVERY" ? "Shipping" : "Pickup Process"}</span>
                       <span className="text-accent font-bold uppercase">Complimentary</span>
                     </div>
                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-text-tertiary">

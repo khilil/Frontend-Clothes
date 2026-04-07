@@ -244,26 +244,26 @@ export default function DesignPreviewModal() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsOpen(false)}
-                className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+                className="absolute inset-0 bg-[#f4f2ee]/90 backdrop-blur-xl"
             />
 
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="relative w-full max-w-6xl h-[90vh] md:h-[85vh] bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-white/10 overflow-hidden flex flex-col md:flex-row shadow-[0_50px_100px_rgba(0,0,0,0.8)]"
+                className="relative w-full max-w-6xl h-[90vh] md:h-[85vh] bg-[#fcfbf9] rounded-[2rem] md:rounded-[2.5rem] border border-black/5 overflow-hidden flex flex-col md:flex-row shadow-[0_50px_100px_rgba(0,0,0,0.1)]"
             >
                 {/* Left: Preview Content */}
-                <div className="flex-1 flex flex-col overflow-hidden border-r border-white/5">
+                <div className="flex-1 flex flex-col overflow-hidden border-r border-black/5">
                     {/* Preview Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-black/40">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-black/5 bg-white/40">
                         <div className="flex items-center gap-4">
-                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#d4c4b1]">Final Review</span>
-                            <div className="flex bg-white/5 rounded-full p-1">
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Final Review</span>
+                            <div className="flex bg-black/5 rounded-full p-1">
                                 {['front', 'back'].map(side => (
                                     <button
                                         key={side}
                                         onClick={() => setCurrentSide(side)}
-                                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${currentSide === side ? 'bg-[#d4c4b1] text-black shadow-lg shadow-[#d4c4b1]/20' : 'text-white/40 hover:text-white'}`}
+                                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${currentSide === side ? 'bg-[#0A0A0A] text-white shadow-lg' : 'text-[#4A4A4A] hover:text-[#0A0A0A]'}`}
                                     >
                                         {side}
                                     </button>
@@ -273,7 +273,7 @@ export default function DesignPreviewModal() {
                     </div>
 
                     {/* Preview Image */}
-                    <div className="flex-1 relative flex items-center justify-center p-8 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/[0.03] to-transparent overflow-hidden">
+                    <div className="flex-1 relative flex items-center justify-center p-8 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-black/[0.02] to-transparent overflow-hidden">
                         <AnimatePresence mode="wait">
                             {loading ? (
                                 <motion.div
@@ -299,9 +299,9 @@ export default function DesignPreviewModal() {
                                             className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
                                         />
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center text-center p-8 bg-white/5 rounded-3xl border border-white/5 max-w-sm">
-                                            <FiX size={24} className="text-white/20 mb-4" />
-                                            <p className="text-[9px] text-white/40 uppercase tracking-widest">No design found for {currentSide} side</p>
+                                        <div className="flex flex-col items-center justify-center text-center p-8 bg-black/5 rounded-3xl border border-black/5 max-w-sm">
+                                            <FiX size={24} className="text-black/20 mb-4" />
+                                            <p className="text-[9px] text-black/40 uppercase tracking-widest">No design found for {currentSide} side</p>
                                         </div>
                                     )}
                                 </motion.div>
@@ -311,18 +311,18 @@ export default function DesignPreviewModal() {
                 </div>
 
                 {/* Right: Checkout Sidebar */}
-                <div className="w-full md:w-[400px] flex flex-col bg-black/60 relative">
+                <div className="w-full md:w-[400px] flex flex-col bg-white/60 relative">
                     <button
                         onClick={() => setIsOpen(false)}
-                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all active:scale-95 z-20"
+                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-black/40 hover:text-black transition-all active:scale-95 z-20"
                     >
                         <FiX size={20} />
                     </button>
 
                     <div className="flex-1 overflow-y-auto p-8 pt-20 custom-scrollbar">
-                        <div className="mb-8">
-                            <h3 className="text-xl font-impact uppercase tracking-tight text-[#d4c4b1] mb-2">Final Step</h3>
-                            <p className="text-[10px] text-white/40 uppercase tracking-[0.2em]">Select your preferred printing method</p>
+                        <div className="mb-8 font-primary">
+                            <h3 className="text-xl font-impact uppercase tracking-tight text-[#0A0A0A] mb-2">Final Step</h3>
+                            <p className="text-[10px] text-[#4A4A4A] uppercase tracking-[0.2em] font-black">Select your preferred printing method</p>
                         </div>
 
                         <div className="space-y-4 mb-12">
@@ -331,23 +331,23 @@ export default function DesignPreviewModal() {
                                     key={type.id}
                                     onClick={() => setPrintingType(type.id)}
                                     className={`w-full group relative flex items-center justify-between p-5 rounded-2xl border transition-all duration-500 overflow-hidden ${printingType === type.id
-                                        ? "border-[#d4c4b1] bg-[#d4c4b1]/5 shadow-[0_0_30px_rgba(212,196,177,0.1)]"
-                                        : "border-white/5 bg-white/5 hover:border-white/20"
+                                        ? "border-[#d4c4b1] bg-[#d4c4b1]/5 shadow-[0_0_30px_rgba(212,196,177,0.05)]"
+                                        : "border-black/5 bg-white hover:border-black/20"
                                         }`}
                                 >
                                     <div className="relative z-10 text-left">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <span className={`text-[11px] font-black uppercase tracking-widest ${printingType === type.id ? "text-[#d4c4b1]" : "text-white/60"}`}>
+                                            <span className={`text-[11px] font-black uppercase tracking-widest ${printingType === type.id ? "text-[#0A0A0A]" : "text-[#4A4A4A]"}`}>
                                                 {type.label}
                                             </span>
                                             {printingType === type.id && (
                                                 <div className="w-1.5 h-1.5 rounded-full bg-[#d4c4b1] animate-pulse" />
                                             )}
                                         </div>
-                                        <p className="text-[9px] text-white/20 uppercase tracking-wider">{type.description}</p>
+                                        <p className="text-[9px] text-[#4A4A4A] uppercase tracking-wider font-bold">{type.description}</p>
                                     </div>
                                     <div className="text-right relative z-10">
-                                        <span className={`text-xs font-black uppercase tracking-widest ${printingType === type.id ? "text-[#d4c4b1]" : "text-white/20"}`}>
+                                        <span className={`text-xs font-black uppercase tracking-widest ${printingType === type.id ? "text-[#8b7e6d]" : "text-black/20"}`}>
                                             +₹{type.price}
                                         </span>
                                     </div>
@@ -363,29 +363,29 @@ export default function DesignPreviewModal() {
                         </div>
 
                         {/* Summary */}
-                        <div className="space-y-4 p-6 rounded-2xl bg-white/5 border border-white/5">
-                            <div className="flex justify-between text-[10px] uppercase tracking-widest">
-                                <span className="text-white/40">Garment Base</span>
-                                <span className="text-white">₹{garmentBasePrice.toLocaleString()}</span>
+                        <div className="space-y-4 p-6 rounded-2xl bg-white border border-black/5 shadow-sm">
+                            <div className="flex justify-between text-[10px] uppercase tracking-widest font-black">
+                                <span className="text-[#4A4A4A]">Garment Base</span>
+                                <span className="text-[#0A0A0A] font-bold">₹{garmentBasePrice.toLocaleString()}</span>
                             </div>
-                            <div className="flex justify-between text-[10px] uppercase tracking-widest">
-                                <span className="text-white/40">Customization</span>
-                                <span className="text-white">₹{customizationPrice.toLocaleString()}</span>
+                            <div className="flex justify-between text-[10px] uppercase tracking-widest font-black">
+                                <span className="text-[#4A4A4A]">Customization</span>
+                                <span className="text-[#0A0A0A] font-bold">₹{customizationPrice.toLocaleString()}</span>
                             </div>
-                            <div className="h-px bg-white/5 my-2" />
+                            <div className="h-px bg-black/5 my-2" />
                             <div className="flex justify-between items-baseline">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#d4c4b1]">Total Amount</span>
-                                <span className="text-3xl font-impact text-[#d4c4b1] tracking-tight">₹{grandTotal.toLocaleString()}</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#0A0A0A]">Total Amount</span>
+                                <span className="text-3xl font-impact text-[#0A0A0A] tracking-tight">₹{grandTotal.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-8 border-t border-white/5 bg-black/40">
+                    <div className="p-8 border-t border-black/5 bg-white/40">
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="h-14 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 transition-all"
+                                className="h-14 rounded-xl border border-black/10 text-[10px] font-black uppercase tracking-widest text-black/40 hover:text-black hover:bg-black/5 transition-all"
                             >
                                 Back
                             </button>
@@ -394,7 +394,7 @@ export default function DesignPreviewModal() {
                                 disabled={addingToCart || success}
                                 className={`h-14 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-xl active:scale-95 px-6 ${success
                                     ? "bg-green-500 text-white shadow-green-500/20"
-                                    : "bg-white text-black hover:bg-[#d4c4b1] shadow-white/5"
+                                    : "bg-black text-white hover:bg-[#8b7e6d] shadow-black/5"
                                     } disabled:opacity-50`}
                             >
                                 {addingToCart ? (

@@ -69,10 +69,10 @@ export default function LayersTab() {
     return (
         <div className="space-y-6 animate-slideUp">
             <div className="space-y-2">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">
                     Canvas Layers
                 </h3>
-                <p className="text-[9px] text-white/40 uppercase tracking-widest leading-relaxed">
+                <p className="text-[9px] text-[#4A4A4A] uppercase tracking-widest leading-relaxed font-black">
                     Drag to reorder elements and manage visibility.
                 </p>
             </div>
@@ -87,21 +87,21 @@ export default function LayersTab() {
                     <Reorder.Item
                         key={obj.id || Math.random()}
                         value={obj}
-                        className="group flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-[#d4c4b1]/30 transition-all cursor-grab active:cursor-grabbing"
+                        className="group flex items-center justify-between p-4 bg-white border border-black/5 rounded-2xl hover:border-[#d4c4b1]/30 transition-all cursor-grab active:cursor-grabbing shadow-sm"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-black/40 rounded-lg flex items-center justify-center border border-white/5">
+                            <div className="w-10 h-10 bg-[#f4f2ee] rounded-lg flex items-center justify-center border border-black/5">
                                 {obj.type === 'textbox' ? (
-                                    <span className="text-[10px] font-black text-[#d4c4b1]">Aa</span>
+                                    <span className="text-[10px] font-black text-[#8b7e6d]">Aa</span>
                                 ) : (
-                                    <FiMove size={14} className="text-[#d4c4b1]" />
+                                    <FiMove size={14} className="text-[#8b7e6d]" />
                                 )}
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/80">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#0A0A0A]">
                                     {obj.type === 'textbox' ? 'Text' : 'Graphic'}
                                 </span>
-                                <span className="text-[8px] font-medium uppercase tracking-widest text-white/20">
+                                <span className="text-[8px] font-black uppercase tracking-widest text-[#666666]">
                                     Layer ID: {obj.id?.slice(4, 12)}
                                 </span>
                             </div>
@@ -110,19 +110,19 @@ export default function LayersTab() {
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={() => handleToggleVisibility(obj)}
-                                className={`p-2 rounded-lg transition-colors ${!obj.visible ? 'text-[#d4c4b1]' : 'text-white/20 hover:text-white hover:bg-white/5'}`}
+                                className={`p-2 rounded-lg transition-colors ${!obj.visible ? 'text-[#d4c4b1]' : 'text-black/20 hover:text-black hover:bg-black/5'}`}
                             >
                                 {obj.visible ? <FiEye size={14} /> : <FiEyeOff size={14} />}
                             </button>
                             <button
                                 onClick={() => handleToggleLock(obj)}
-                                className={`p-2 rounded-lg transition-colors ${obj.lockMovementX ? 'text-[#d4c4b1]' : 'text-white/20 hover:text-white hover:bg-white/5'}`}
+                                className={`p-2 rounded-lg transition-colors ${obj.lockMovementX ? 'text-[#d4c4b1]' : 'text-black/20 hover:text-black hover:bg-black/5'}`}
                             >
                                 {obj.lockMovementX ? <FiLock size={14} /> : <FiUnlock size={14} />}
                             </button>
                             <button
                                 onClick={() => handleDelete(obj)}
-                                className="p-2 text-white/20 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                                className="p-2 text-black/20 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                             >
                                 <FiTrash2 size={14} />
                             </button>
@@ -131,11 +131,11 @@ export default function LayersTab() {
                 ))}
 
                 {items.length === 0 && (
-                    <div className="py-20 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-white/5 rounded-3xl">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/10">
+                    <div className="py-20 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-black/5 rounded-3xl bg-black/[0.01]">
+                        <div className="w-12 h-12 rounded-full bg-black/5 flex items-center justify-center text-black/10">
                             <FiMove size={24} />
                         </div>
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/20">
                             No Layers Created
                         </span>
                     </div>
