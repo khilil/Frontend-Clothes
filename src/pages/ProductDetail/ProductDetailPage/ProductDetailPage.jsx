@@ -68,6 +68,7 @@ export default function ProductDetailPage() {
                 variantId: selectedVariant?.sku || selectedVariant?._id,
                 size: selectedSize,
                 color: selectedColor?.name,
+                hexColor: selectedColor?.hexCode || selectedColor?.value || null,
                 title: product.title,
                 frontImage: images[0],
                 backImage: images[1] || images[0],

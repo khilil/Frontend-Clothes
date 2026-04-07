@@ -7,8 +7,8 @@ export function addPrintArea(canvas) {
 
     if (screenWidth < 768) {
         // 📱 MOBILE
-        width = 160;
-        height = 195;
+        width = 175;
+        height = 200;
         top = 300;
     } else if (screenWidth >= 768 && screenWidth < 1024) {
         // 📇 TABLET (Middle ground between Mobile & Desktop)
@@ -17,8 +17,8 @@ export function addPrintArea(canvas) {
         top = 295;
     } else {
         // 🖥️ DESKTOP
-        width = 220;
-        height = 220;
+        width = 200;
+        height = 190;
         top = 290;
     }
 

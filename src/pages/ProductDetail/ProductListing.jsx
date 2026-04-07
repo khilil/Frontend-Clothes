@@ -139,17 +139,22 @@ const ProductListing = () => {
           search: filters.search,
           isCustomizable: filters.isCustomizable
         });
-        setProducts(data.products);
+        // Fallback filter in case backend doesn't support 'isCustomizable' yet
+        const frontendFiltered = filters.isCustomizable 
+          ? data.products.filter(p => p.isCustomizable) 
+          : data.products;
+
+        setProducts(frontendFiltered);
         setTotalPages(data.totalPages);
-        setTotalProducts(data.totalProducts);
+        setTotalProducts(filters.isCustomizable ? frontendFiltered.length : data.totalProducts);
         setHasMore(data.currentPage < data.totalPages);
 
         // Derive brands and fits from products if not already set or for updates
-        if (data.products.length > 0) {
-          const brands = [...new Set(data.products.map(p => p.brand).filter(Boolean))];
+        if (frontendFiltered.length > 0) {
+          const brands = [...new Set(frontendFiltered.map(p => p.brand).filter(Boolean))];
           setAvailableBrands(prev => [...new Set([...prev, ...brands])]);
           
-          const fits = [...new Set(data.products.map(p => p.productType).filter(Boolean))];
+          const fits = [...new Set(frontendFiltered.map(p => p.productType).filter(Boolean))];
           setAvailableFits(prev => [...new Set([...prev, ...fits])]);
         }
       } catch (error) {
@@ -197,7 +202,12 @@ const ProductListing = () => {
           isCustomizable: filters.isCustomizable
         });
 
-        setProducts(prev => [...prev, ...data.products]);
+        // Fallback filter
+        const frontendFiltered = filters.isCustomizable 
+          ? data.products.filter(p => p.isCustomizable) 
+          : data.products;
+
+        setProducts(prev => [...prev, ...frontendFiltered]);
         setHasMore(data.currentPage < data.totalPages);
       } catch (error) {
         console.error("Error loading more products:", error);
@@ -236,6 +246,10 @@ const ProductListing = () => {
 
   const handleSortChange = (sort) => {
     setFilters(prev => ({ ...prev, sort }));
+  };
+
+  const handleCustomizableChange = (val) => {
+    setFilters(prev => ({ ...prev, isCustomizable: val }));
   };
 
   const handleClearFilters = () => {
@@ -280,6 +294,7 @@ const ProductListing = () => {
             onColorChange={handleColorChange}
             onPriceChange={handlePriceChange}
             onSortChange={handleSortChange}
+            onCustomizableChange={handleCustomizableChange}
             onClear={handleClearFilters}
             availableCategories={availableCategories}
             availableBrands={availableBrands}
@@ -402,6 +417,7 @@ const ProductListing = () => {
                       onColorChange={handleColorChange}
                       onPriceChange={handlePriceChange}
                       onSortChange={handleSortChange}
+                      onCustomizableChange={handleCustomizableChange}
                       onClear={handleClearFilters}
                       availableCategories={availableCategories}
                       availableBrands={availableBrands}

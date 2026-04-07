@@ -6,8 +6,10 @@ import StudioNavbar from "../components/StudioNavbar";
 import StudioToolbar from "../components/StudioToolbar";
 import StudioSidebar from "../components/StudioSidebar";
 import DesignPreviewModal from "../components/DesignPreviewModal";
+import InitialConfigOverlay from "../components/InitialConfigOverlay";
 import { motion } from "framer-motion";
 import { FiRotateCcw, FiRotateCw } from "react-icons/fi";
+import { useEffect } from "react";
 
 function HeaderControls() {
     const { undo, redo, canUndo, canRedo } = useFabric();
@@ -37,12 +39,46 @@ function HeaderControls() {
 export default function CustomizeEditorLayout() {
     const location = useLocation();
     const isPreview = location.pathname.includes("/preview");
-
-    // Mobile state
-    const [isExpanded, setIsExpanded] = useState(true);
+    
+    // Safety check: is the studio initialized from Product Details OR overlay?
+    const isConfigured = !!location.state?.variantId;
 
     return (
         <FabricProvider>
+            <CustomizeEditorContent isPreview={isPreview} isConfigured={isConfigured} slug={location.pathname.split('/').pop()} locationState={location.state} />
+        </FabricProvider>
+    );
+}
+
+function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }) {
+    // Mobile state
+    const [isExpanded, setIsExpanded] = useState(true);
+    const { setGarmentColor } = useFabric();
+
+    useEffect(() => {
+        if (locationState?.hexColor) {
+            setGarmentColor(locationState.hexColor.startsWith('#') ? locationState.hexColor : `#${locationState.hexColor}`);
+        } else if (locationState?.color) {
+            const colors = [
+                { id: 'white', value: '#F9F6F0', label: 'Bone White', match: 'white' },
+                { id: 'black', value: '#1a1a1a', label: 'Charcoal Black', match: 'black' },
+                { id: 'olive', value: '#4B5320', label: 'Tactical Olive', match: 'olive' },
+                { id: 'beige', value: '#D2B48C', label: 'Atelier Sand', match: 'sand' },
+                { id: 'navy', value: '#000080', label: 'Deep Sea Navy', match: 'navy' },
+            ];
+            const nameLower = locationState.color.toLowerCase();
+            const found = colors.find(c => nameLower.includes(c.match));
+            if (found) {
+                setGarmentColor(found.value);
+            }
+        }
+    }, [locationState?.color, locationState?.hexColor, setGarmentColor]);
+
+    return (
+        <>
+            {!isConfigured && !isPreview && (
+                <InitialConfigOverlay slug={slug} />
+            )}
             <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
                 {/* HEADER / NAV */}
@@ -124,6 +160,6 @@ export default function CustomizeEditorLayout() {
                 </div>
             </div>
             <DesignPreviewModal />
-        </FabricProvider>
+        </>
     );
 }

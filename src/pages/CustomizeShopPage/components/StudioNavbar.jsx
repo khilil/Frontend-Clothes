@@ -9,7 +9,6 @@ import {
 import { useFabric } from "../../../context/FabricContext";
 
 const TABS = [
-    { id: "basics", icon: FiDroplet, label: "Basics" },
     { id: "elements", icon: FiGrid, label: "Elements" },
     { id: "graphics", icon: FiImage, label: "Graphics" },
     { id: "text", icon: FiType, label: "Text" },

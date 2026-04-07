@@ -77,11 +77,16 @@ const ProductCard = React.memo(({ product, activeColor }) => {
       }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <Link to={`/product/${product.slug}`} className="no-underline text-inherit flex flex-col h-full">
+      <Link to={product.isCustomizable ? `/customize/${product.slug}` : `/product/${product.slug}`} className="no-underline text-inherit flex flex-col h-full">
         {/* Image Container with Cinematic Zoom and Quick Sizes */}
         <div className="relative aspect-[4/5] md:aspect-[3/3.8] overflow-hidden bg-neutral-50">
           {/* Badges - Premium Soft Glass */}
           <div className="absolute top-[16px] left-[16px] md:top-[20px] md:left-[20px] z-[20] flex flex-col gap-[6px] md:gap-[8px]">
+            {product.isCustomizable && (
+              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
+                CUSTOMIZE
+              </span>
+            )}
             {product.isNewArrival && (
               <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-black text-white rounded-full shadow-lg">
                 NEW
