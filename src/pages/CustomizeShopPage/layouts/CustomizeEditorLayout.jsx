@@ -39,7 +39,7 @@ function HeaderControls() {
 export default function CustomizeEditorLayout() {
     const location = useLocation();
     const isPreview = location.pathname.includes("/preview");
-    
+
     // Safety check: is the studio initialized from Product Details OR overlay?
     const isConfigured = !!location.state?.variantId;
 

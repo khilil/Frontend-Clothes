@@ -42,7 +42,7 @@ const CustomStudio = () => {
             {/* HERO SECTION */}
             <section className="relative px-6 md:px-12 lg:px-24 mb-32">
                 <div className="max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <motion.div 
+                    <motion.div
                         initial="hidden"
                         animate="visible"
                         variants={containerVariants}
@@ -52,24 +52,24 @@ const CustomStudio = () => {
                             <div className="h-px w-12 bg-accent/40" />
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">FENRIR Era Atelier</span>
                         </motion.div>
-                        
-                        <motion.h1 
+
+                        <motion.h1
                             variants={itemVariants}
                             className="text-6xl md:text-8xl font-primary tracking-tighter leading-[0.9] mb-8"
                         >
                             THE ART OF <br />
                             <span className="text-accent italic">CREATION.</span>
                         </motion.h1>
-                        
-                        <motion.p 
+
+                        <motion.p
                             variants={itemVariants}
                             className="text-lg text-text-secondary max-w-md mb-12 font-secondary leading-relaxed"
                         >
                             Step into our digital sanctuary. From conceptual sketches to wearable art, customize every fiber of your identity.
                         </motion.p>
-                        
+
                         <motion.div variants={itemVariants} className="flex flex-wrap gap-6">
-                            <button 
+                            <button
                                 onClick={() => navigate('/shop/all?isCustomizable=true')}
                                 className="group relative px-10 py-5 bg-text-primary text-primary overflow-hidden transition-all hover:pr-14"
                             >
@@ -82,21 +82,21 @@ const CustomStudio = () => {
                         </motion.div>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 1.1 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                         className="relative h-[600px] rounded-3xl overflow-hidden group shadow-2xl"
                     >
-                        <img 
-                            src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=2000" 
-                            alt="Atelier Studio" 
+                        <img
+                            src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=2000"
+                            alt="Atelier Studio"
                             className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                        
+
                         {/* Floating elements for extra "wow" */}
-                        <motion.div 
+                        <motion.div
                             variants={floatVariants}
                             animate="animate"
                             className="absolute top-12 left-12 p-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl hidden md:block"
@@ -145,7 +145,7 @@ const CustomStudio = () => {
                                 path: '/shop/all'
                             }
                         ].map((path, idx) => (
-                            <motion.div 
+                            <motion.div
                                 key={idx}
                                 whileHover={{ y: -10 }}
                                 onClick={() => navigate(path.path)}
@@ -180,7 +180,7 @@ const CustomStudio = () => {
             {/* TRUST/PROCESS SECTION */}
             <section className="py-32 bg-secondary/30 border-y border-border-subtle px-6">
                 <div className="max-w-4xl mx-auto text-center">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/10 mb-12 text-accent"

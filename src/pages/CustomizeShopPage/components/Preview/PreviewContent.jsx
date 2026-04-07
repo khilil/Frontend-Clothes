@@ -75,8 +75,8 @@ export default function PreviewContent() {
             };
 
             await addToCart(
-                { _id: (location.state?.productId || slug), ...productData }, 
-                { variantId: selectedVariant.sku || selectedVariant._id, size: selectedVariant.size?.name, color: selectedColor?.name }, 
+                { _id: (location.state?.productId || slug), ...productData },
+                { variantId: selectedVariant.sku || selectedVariant._id, size: selectedVariant.size?.name, color: selectedColor?.name },
                 customizations
             );
             alert("Added to bag!");
