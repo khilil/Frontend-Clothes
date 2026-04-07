@@ -1,211 +1,202 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Palette, Layers, Wand2, ArrowRight, Zap, Target, Star } from 'lucide-react';
+import { Palette, Wand2, Star, CheckCircle2, ShoppingBag, ArrowRight, Sparkles, Layout, MousePointer2, CheckCircle } from 'lucide-react';
+import { fetchProducts } from '../../api/products.api';
+import ProductCard from '../../components/product/ProductCard/ProductCard';
+import SkeletonCards from '../../components/product/Skeleton/SkeletonCards';
 
 const CustomStudio = () => {
     const navigate = useNavigate();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadCustomProducts = async () => {
+            setLoading(true);
+            try {
+                const data = await fetchProducts({
+                    isCustomizable: true,
+                    limit: 20
+                });
+                setProducts(data.products || []);
+            } catch (error) {
+                console.error("Error fetching custom products:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadCustomProducts();
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.3
+                staggerChildren: 0.1,
+                delayChildren: 0.2
             }
         }
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
             y: 0,
-            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
         }
     };
 
-    const floatVariants = {
-        animate: {
-            y: [0, -10, 0],
-            transition: {
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }
+    const tutorialSteps = [
+        {
+            icon: <Layout className="w-6 h-6" />,
+            title: "Choose Base",
+            desc: "Select a premium garment from our customizable collection to start your journey."
+        },
+        {
+            icon: <MousePointer2 className="w-6 h-6" />,
+            title: "Open Studio",
+            desc: "Click 'Customize' on any product to enter our state-of-the-art 3D Design Studio."
+        },
+        {
+            icon: <Wand2 className="w-6 h-6" />,
+            title: "Design & Manifest",
+            desc: "Add your graphics, text, and patterns in real-time. See your creation come alive."
+        },
+        {
+            icon: <CheckCircle className="w-6 h-6" />,
+            title: "Expert Review",
+            desc: "Our team of master designers will verify your creation for perfection before production."
         }
-    };
+    ];
 
     return (
-        <div className="min-h-screen bg-background text-text-primary pt-24 pb-16 overflow-hidden">
-            {/* HERO SECTION */}
-            <section className="relative px-6 md:px-12 lg:px-24 mb-32">
-                <div className="max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="min-h-screen bg-background text-text-primary pt-28 pb-20">
+            {/* MINIMALIST HEADER */}
+            <section className="px-6 md:px-12 lg:px-24 mb-16">
+                <div className="max-w-[1400px] mx-auto">
                     <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={containerVariants}
-                        className="relative z-10"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center text-center space-y-4"
                     >
-                        <motion.div variants={itemVariants} className="flex items-center gap-3 mb-6">
-                            <div className="h-px w-12 bg-accent/40" />
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-4 h-4 text-accent animate-pulse" />
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">FENRIR Era Atelier</span>
-                        </motion.div>
-
-                        <motion.h1
-                            variants={itemVariants}
-                            className="text-6xl md:text-8xl font-primary tracking-tighter leading-[0.9] mb-8"
-                        >
-                            THE ART OF <br />
-                            <span className="text-accent italic">CREATION.</span>
-                        </motion.h1>
-
-                        <motion.p
-                            variants={itemVariants}
-                            className="text-lg text-text-secondary max-w-md mb-12 font-secondary leading-relaxed"
-                        >
-                            Step into our digital sanctuary. From conceptual sketches to wearable art, customize every fiber of your identity.
-                        </motion.p>
-
-                        <motion.div variants={itemVariants} className="flex flex-wrap gap-6">
-                            <button
-                                onClick={() => navigate('/shop/all?isCustomizable=true')}
-                                className="group relative px-10 py-5 bg-text-primary text-primary overflow-hidden transition-all hover:pr-14"
-                            >
-                                <span className="relative z-10 text-[10px] font-black uppercase tracking-widest">Start From Scratch</span>
-                                <ArrowRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" size={16} />
-                            </button>
-                            <button className="px-10 py-5 border border-border-subtle hover:bg-secondary transition-colors text-[10px] font-black uppercase tracking-widest">
-                                View Collection
-                            </button>
-                        </motion.div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="relative h-[600px] rounded-3xl overflow-hidden group shadow-2xl"
-                    >
-                        <img
-                            src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=2000"
-                            alt="Atelier Studio"
-                            className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-
-                        {/* Floating elements for extra "wow" */}
-                        <motion.div
-                            variants={floatVariants}
-                            animate="animate"
-                            className="absolute top-12 left-12 p-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl hidden md:block"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="h-10 w-10 flex items-center justify-center bg-accent/20 rounded-full text-accent">
-                                    <Zap size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-accent">Real-time</p>
-                                    <p className="text-xs font-bold text-white">Visualizer 3.0</p>
-                                </div>
-                            </div>
-                        </motion.div>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-primary tracking-tighter leading-none uppercase italic">
+                            Custom <span className="text-accent not-italic">Studio</span>
+                        </h1>
+                        <p className="text-text-secondary max-w-xl text-sm font-secondary tracking-wide opacity-80 uppercase leading-relaxed">
+                            Transform premium apparel into your personal canvas. <br />
+                            Professional grade tools for the modern creator.
+                        </p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* PATHWAYS SECTION */}
+            {/* PRODUCT GRID SECTION */}
             <section className="px-6 md:px-12 lg:px-24 mb-32">
-                <div className="max-w-[1920px] mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
-                        <div>
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-accent mb-4">Choose Your Path</h2>
-                            <h3 className="text-4xl md:text-5xl font-primary tracking-tighter">CRAFTING MODES</h3>
+                <div className="max-w-[1400px] mx-auto px-4">
+                    <div className="flex justify-between items-end mb-12 border-b border-border-subtle pb-6">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Studio Collection</h2>
+                            <h3 className="text-2xl md:text-3xl font-primary tracking-tighter uppercase italic">Select Your Base</h3>
                         </div>
-                        <p className="max-w-xs text-sm text-text-secondary font-secondary italic">
-                            Three ways to manifest your vision. Select a method that fits your creative rhythm.
-                        </p>
+                        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60">
+                            {products.length} Customizable Items
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                        {[
-                            {
-                                icon: <Palette size={32} />,
-                                title: "FENRIR Studio",
-                                desc: "Full creative control. Upload graphics, add text, and layer patterns.",
-                                items: ["Multi-layering", "Hi-Res Uploads", "3D Preview"],
-                                path: '/shop/all?isCustomizable=true'
-                            },
-                            {
-                                icon: <Layers size={32} />,
-                                title: "Bespoke Builder",
-                                desc: "Choose from pre-set archival designs and tweak them to your liking.",
-                                items: ["Heritage Patterns", "Size Adjusting", "Material Select"],
-                                path: '/shop/all'
-                            }
-                        ].map((path, idx) => (
+                    {loading ? (
+                        <SkeletonCards count={8} />
+                    ) : products.length > 0 ? (
+                        <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12">
+                            {products.map((product, idx) => (
+                                <ProductCard key={product._id || idx} product={product} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-32 text-center border border-dashed border-border-subtle rounded-3xl">
+                            <ShoppingBag className="w-12 h-12 text-text-secondary/20 mb-4" />
+                            <p className="text-sm uppercase tracking-widest text-text-secondary">No customizable products found at the moment.</p>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* HOW IT WORKS / TUTORIAL SECTION */}
+            <section className="px-6 md:px-12 lg:px-24 py-24 bg-secondary/30 relative overflow-hidden">
+                {/* Background decorative elements */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2" />
+
+                <div className="max-w-[1400px] mx-auto relative z-10">
+                    <div className="text-center mb-20">
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-accent mb-4">The Process</h2>
+                        <h3 className="text-4xl md:text-5xl font-primary tracking-tighter uppercase">How It Works</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {tutorialSteps.map((step, idx) => (
                             <motion.div
                                 key={idx}
-                                whileHover={{ y: -10 }}
-                                onClick={() => navigate(path.path)}
-                                className="luxury-card p-12 relative group cursor-pointer"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="p-8 luxury-card bg-background/50 backdrop-blur-sm border border-border-subtle group hover:border-accent/40 transition-all duration-500"
                             >
-                                {path.tag && (
-                                    <span className="absolute top-6 right-6 px-3 py-1 bg-accent/10 border border-accent/20 rounded-full text-[8px] font-black uppercase tracking-widest text-accent">
-                                        {path.tag}
-                                    </span>
-                                )}
-                                <div className="text-accent mb-8 group-hover:scale-110 transition-transform duration-500">
-                                    {path.icon}
+                                <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-8 group-hover:scale-110 transition-transform duration-500">
+                                    {step.icon}
                                 </div>
-                                <h4 className="text-2xl font-primary tracking-tighter mb-4">{path.title}</h4>
-                                <p className="text-sm text-text-secondary font-secondary leading-relaxed mb-8">
-                                    {path.desc}
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className="text-[8px] font-black text-accent border border-accent/20 px-2 py-0.5 rounded-full uppercase tracking-widest">Step 0{idx + 1}</span>
+                                </div>
+                                <h4 className="text-xl font-primary tracking-tighter uppercase mb-3">{step.title}</h4>
+                                <p className="text-sm text-text-secondary leading-relaxed font-secondary opacity-70">
+                                    {step.desc}
                                 </p>
-                                <ul className="space-y-3">
-                                    {path.items.map((item, i) => (
-                                        <li key={i} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-text-primary/60">
-                                            <div className="h-1 w-1 bg-accent rounded-full" />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
                             </motion.div>
                         ))}
                     </div>
+
+                    <div className="mt-20 flex flex-col items-center gap-8 p-12 rounded-3xl bg-background border border-border-subtle text-center">
+                        <div>
+                            <h4 className="text-2xl font-primary tracking-tighter uppercase mb-4 italic">Ready to make your mark?</h4>
+                            <p className="text-sm text-text-secondary max-w-sm mx-auto font-secondary opacity-70">
+                                Join the era of creators. High performance meets aesthetic perfection.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })}
+                            className="bg-accent text-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-3 hover:gap-6 transition-all hover:pr-14 group relative"
+                        >
+                            <span>Browse Masterbases</span>
+                            <ArrowRight className="w-4 h-4 transition-transform" />
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            {/* TRUST/PROCESS SECTION */}
-            <section className="py-32 bg-secondary/30 border-y border-border-subtle px-6">
-                <div className="max-w-4xl mx-auto text-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/10 mb-12 text-accent"
-                    >
-                        <Target size={32} />
-                    </motion.div>
-                    <h2 className="text-4xl md:text-6xl font-primary tracking-tighter mb-8 italic">HUMAN-MAD LOGIC</h2>
-                    <p className="text-xl text-text-secondary font-secondary leading-relaxed mb-12 px-6">
-                        "Every stitch is calculated. Every design is validated. We bridge the gap between digital imagination and physical perfection."
-                    </p>
-                    <div className="flex justify-center items-center gap-12 border-t border-border-subtle pt-12">
-                        <div className="flex flex-col items-center">
-                            <span className="text-3xl font-primary text-accent">100%</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Cotton Blend</span>
-                        </div>
-                        <div className="h-12 w-px bg-border-subtle" />
-                        <div className="flex flex-col items-center">
-                            <span className="text-3xl font-primary text-accent">FAST</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Studio Pickup</span>
-                        </div>
-                        <div className="h-12 w-px bg-border-subtle" />
-                        <div className="flex flex-col items-center">
-                            <span className="text-3xl font-primary text-accent">EXPERT</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Design Verify</span>
-                        </div>
+            {/* TRUST MARK SECTION */}
+            <section className="py-20 border-t border-border-subtle px-6">
+                <div className="max-w-[1400px] mx-auto flex flex-wrap justify-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+                    <div className="flex flex-col items-center gap-2">
+                        <Star className="w-6 h-6 text-accent" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Premium Fabric</span>
+                    </div>
+                    <div className="h-10 w-px bg-border-subtle hidden md:block" />
+                    <div className="flex flex-col items-center gap-2">
+                        <CheckCircle2 className="w-6 h-6 text-accent" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Hand Inspected</span>
+                    </div>
+                    <div className="h-10 w-px bg-border-subtle hidden md:block" />
+                    <div className="flex flex-col items-center gap-2">
+                        <Palette className="w-6 h-6 text-accent" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">High Definition Prints</span>
                     </div>
                 </div>
             </section>
