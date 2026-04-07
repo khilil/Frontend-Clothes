@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
 import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "fabric";
+import { Canvas as ThreeCanvas } from "@react-three/fiber";
+import { Environment, ContactShadows } from "@react-three/drei";
+import TShirtModel from "./3D/TShirtModel";
 
 export default function DesignPreviewModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +32,8 @@ export default function DesignPreviewModal() {
         uploadedAssetsMetadataRef,
         initialVariantIdRef,
         initialSizeRef,
-        initialColorRef
+        initialColorRef,
+        garmentColor
     } = useFabric();
 
     const { addToCart } = useCart();
@@ -82,14 +86,17 @@ export default function DesignPreviewModal() {
 
         // A. Capture Mockup (with shirt, no stroke)
         if (activePrintArea) activePrintArea.set({ stroke: 'transparent' });
+        if (activeBaseImg) activeBaseImg.set({ opacity: 1, visible: true }); // 👕 Show shirt for mockup
+
         results[activeSide] = mainCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 4.5 });
         thumbnails[activeSide] = mainCanvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 0.6 });
 
         // B. Capture Print File (no shirt, high-res)
-        if (activeBaseImg) activeBaseImg.set({ visible: false });
+        if (activeBaseImg) activeBaseImg.set({ visible: false, opacity: 0 }); // 🚫 Hide shirt for print file
         printFiles[activeSide] = mainCanvas.toDataURL({ format: 'png', multiplier: 4.5 });
-        if (activeBaseImg) activeBaseImg.set({ visible: true });
-
+        
+        // Restore for editor
+        if (activeBaseImg) activeBaseImg.set({ visible: true, opacity: 0 }); 
         if (activePrintArea) activePrintArea.set({ stroke: 'rgba(0,0,0,0.3)' });
         mainCanvas.requestRenderAll();
 
@@ -100,8 +107,8 @@ export default function DesignPreviewModal() {
             const sideDesignJSON = side === 'front' ? frontDesignRef.current : backDesignRef.current;
             if (sideDesignJSON) {
                 const hiddenEl = document.createElement('canvas');
-                hiddenEl.width = 450;
-                hiddenEl.height = 500;
+                hiddenEl.width = 500; // 🎯 Standard 500x600 for coordinate parity
+                hiddenEl.height = 600;
                 const hiddenCanvas = new Canvas(hiddenEl, { skipOffscreen: true });
 
                 await hiddenCanvas.loadFromJSON(sideDesignJSON);
@@ -114,7 +121,10 @@ export default function DesignPreviewModal() {
                 await addBaseImage(hiddenCanvas, baseURL);
 
                 const baseImg = hiddenCanvas.getObjects().find(o => o.excludeFromExport && o.type === 'image');
-                if (baseImg) hiddenCanvas.sendObjectToBack(baseImg);
+                if (baseImg) {
+                    baseImg.set({ opacity: 1, visible: true }); // 👕 Ensure shirt visible in mockup
+                    hiddenCanvas.sendObjectToBack(baseImg);
+                }
 
                 const sPrintArea = hiddenCanvas.getObjects().find(o => o.excludeFromExport && o.type === 'rect');
                 if (sPrintArea) sPrintArea.set({ stroke: 'transparent' });
@@ -290,20 +300,50 @@ export default function DesignPreviewModal() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="w-full h-full flex items-center justify-center"
+                                    className="w-full h-full relative"
                                 >
-                                    {previews[currentSide] ? (
-                                        <img
-                                            src={previews[currentSide]}
-                                            alt="Design Preview"
-                                            className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
-                                        />
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center text-center p-8 bg-black/5 rounded-3xl border border-black/5 max-w-sm">
-                                            <FiX size={24} className="text-black/20 mb-4" />
-                                            <p className="text-[9px] text-black/40 uppercase tracking-widest">No design found for {currentSide} side</p>
-                                        </div>
-                                    )}
+                                    {/* ⚙️ 3D WEBGL STAGE */}
+                                    <ThreeCanvas
+                                        dpr={[1, 2]}
+                                        gl={{
+                                            antialias: false,
+                                            powerPreference: "high-performance",
+                                            preserveDrawingBuffer: true
+                                        }}
+                                        camera={{ position: [0, 0, 10], fov: 26 }}
+                                        className="w-full h-full"
+                                    >
+                                        <ambientLight intensity={0.4} />
+                                        <spotLight position={[10, 10, 10]} intensity={1.5} />
+                                        <Suspense fallback={null}>
+                                            <TShirtModel color={garmentColor} viewSide={currentSide} />
+                                            <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.3} far={10} color="#000000" />
+                                            <Environment preset="city" />
+                                        </Suspense>
+                                    </ThreeCanvas>
+
+                                    {/* 📦 DESIGN OVERLAY (Atelier Sync) */}
+                                    <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none">
+                                        <motion.div
+                                            key={`${currentSide}-design`}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="relative w-[95%] h-full flex items-center justify-center pointer-events-none"
+                                        >
+                                            {previews?.printFiles?.[currentSide] ? (
+                                                <img
+                                                    src={previews.printFiles[currentSide]}
+                                                    className="w-full h-full object-contain mix-blend-normal opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
+                                                    alt="Design Snapshot"
+                                                />
+                                            ) : (
+                                                <div className="text-[8px] text-black/10 font-bold uppercase tracking-widest">Awaiting Render...</div>
+                                            )}
+                                        </motion.div>
+                                    </div>
+
+                                    {/* 🌫️ STUDIO VIGNETTE */}
+                                    <div className="absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.15)_100%)] pointer-events-none rounded-3xl" />
                                 </motion.div>
                             )}
                         </AnimatePresence>
