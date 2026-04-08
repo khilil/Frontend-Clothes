@@ -39,7 +39,7 @@ export default function StudioToolbar() {
 
     if (!selectedObject) return null;
 
-    const isText = selectedObject.type === "textbox";
+    const canHaveColor = ["textbox", "rect", "circle", "triangle", "polygon"].includes(selectedObject.type);
 
     const handleDelete = () => {
         if (!fabricCanvas.current || !selectedObject) return;
@@ -110,20 +110,22 @@ export default function StudioToolbar() {
     return (
         <div className="absolute bottom-4 md:bottom-auto md:top-6 left-1/2 -translate-x-1/2 flex items-center bg-white/40 backdrop-blur-2xl border border-black/5 rounded-2xl px-4 md:px-6 py-2.5 gap-3 md:gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-40 animate-slideUp max-w-[95vw] overflow-x-auto no-scrollbar">
 
-            {/* TEXT SPECIFIC CONTROLS */}
-            {isText && (
+            {/* DYNAMIC CONTROLS */}
+            {canHaveColor && (
                 <>
-                    <select
-                        className="bg-transparent text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer border-r border-black/10 pr-2 md:pr-4 mr-1 max-w-[80px] md:max-w-none font-primary uppercase tracking-widest"
-                        value={selectedObject.fontFamily}
-                        onChange={handleFontChange}
-                    >
-                        {fonts.map(f => (
-                            <option key={f.value} value={f.value} className="bg-white text-black font-black uppercase">
-                                {f.label}
-                            </option>
-                        ))}
-                    </select>
+                    {selectedObject.type === "textbox" && (
+                        <select
+                            className="bg-transparent text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer border-r border-black/10 pr-2 md:pr-4 mr-1 max-w-[80px] md:max-w-none font-primary uppercase tracking-widest"
+                            value={selectedObject.fontFamily}
+                            onChange={handleFontChange}
+                        >
+                            {fonts.map(f => (
+                                <option key={f.value} value={f.value} className="bg-white text-black font-black uppercase">
+                                    {f.label}
+                                </option>
+                            ))}
+                        </select>
+                    )}
 
                     <div className="flex items-center gap-1.5 md:gap-3 border-r border-black/10 pr-2 md:pr-4 shrink-0">
                         <input

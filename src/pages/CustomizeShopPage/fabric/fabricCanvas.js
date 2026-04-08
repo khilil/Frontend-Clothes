@@ -54,8 +54,9 @@ export function initFabric(
         if (obj && !obj.id) {
             obj.id = `obj-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             
-            // 📐 Auto-Center New Designs
-            if (!obj.excludeFromExport) {
+            // 📐 Auto-Center ONLY if it's a truly new user-added object
+            // We skip centering if 'isRestoring' is true (e.g. during side switch or undo/redo)
+            if (!obj.excludeFromExport && !canvas.isRestoring) {
                 canvas.centerObject(obj);
                 obj.setCoords();
             }

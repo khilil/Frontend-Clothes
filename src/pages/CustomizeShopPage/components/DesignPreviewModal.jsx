@@ -48,7 +48,7 @@ export default function DesignPreviewModal() {
                 // 🚀 EXTRA SAFE: Save current active design to ref before generating
                 const mainCanvas = fabricCanvas.current;
                 if (mainCanvas) {
-                    const json = mainCanvas.toJSON();
+                    const json = mainCanvas.toJSON(['id', 'price', 'excludeFromExport', 'isBaseImage']); // 🎯 Preserve metadata
                     if (viewSideRef.current === "front") {
                         frontDesignRef.current = json;
                     } else {

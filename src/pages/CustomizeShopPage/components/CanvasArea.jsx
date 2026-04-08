@@ -147,7 +147,7 @@ export default function CanvasArea() {
         isInternalChange.current = true;
 
         // 1️⃣ Save current design JSON
-        const json = canvas.toJSON();
+        const json = canvas.toJSON(['id', 'price', 'excludeFromExport', 'isBaseImage']); // 🎯 Preserve metadata
         if (viewSideRef.current === "front") {
             frontDesignRef.current = json;
         } else {
@@ -155,12 +155,10 @@ export default function CanvasArea() {
         }
 
         // 2️⃣ Load saved design of new side
-        const savedDesign =
-            side === "front"
-                ? frontDesignRef.current
-                : backDesignRef.current;
-
+        canvas.isRestoring = true; // 🚧 Toggle flag to skip auto-centering
+        const savedDesign = side === "front" ? frontDesignRef.current : backDesignRef.current;
         await canvas.loadFromJSON(savedDesign || { objects: [] });
+        canvas.isRestoring = false;
 
         // 3️⃣ Add base image AFTER JSON load
         const baseImageURL =
@@ -239,7 +237,7 @@ export default function CanvasArea() {
             updatePrice(canvas);
 
             // Save initial state to refs so preview works immediately
-            const json = canvas.toJSON();
+            const json = canvas.toJSON(['id', 'price', 'excludeFromExport', 'isBaseImage']);
             if (viewSideRef.current === "front") {
                 frontDesignRef.current = json;
             } else {
@@ -253,7 +251,7 @@ export default function CanvasArea() {
 
         const updateDesignRef = () => {
             if (isInternalChange.current) return;
-            const json = canvas.toJSON();
+            const json = canvas.toJSON(['id', 'price', 'excludeFromExport', 'isBaseImage']);
             if (viewSideRef.current === "front") {
                 frontDesignRef.current = json;
             } else {

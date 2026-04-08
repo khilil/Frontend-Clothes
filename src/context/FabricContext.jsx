@@ -91,7 +91,7 @@ export function FabricProvider({ children }) {
 
     const saveHistory = (canvas) => {
         if (!canvas) return;
-        const json = JSON.stringify(canvas.toJSON());
+        const json = JSON.stringify(canvas.toJSON(['id', 'price', 'excludeFromExport', 'isBaseImage']));
         const newHistory = historyRef.current.slice(0, historyIndex + 1);
         newHistory.push(json);
 
@@ -104,40 +104,44 @@ export function FabricProvider({ children }) {
 
     const undo = async () => {
         if (historyIndex <= 0 || !fabricCanvas.current) return;
+        const canvas = fabricCanvas.current;
         const newIndex = historyIndex - 1;
-        const json = historyRef.current[newIndex];
-        await fabricCanvas.current.loadFromJSON(JSON.parse(json));
+        
+        canvas.isRestoring = true;
+        await canvas.loadFromJSON(JSON.parse(historyRef.current[newIndex]));
+        canvas.isRestoring = false;
 
-        // Re-add base image if it's missing (it should be in JSON though if not excluded)
-        // But our base image is usually excluded. Let's ensure it stays.
         const baseImageURL = viewSideRef.current === "front"
             ? productDataRef.current?.frontImage
             : productDataRef.current?.backImage;
 
         const { addBaseImage } = await import("../pages/CustomizeShopPage/fabric/baseImage");
-        await addBaseImage(fabricCanvas.current, baseImageURL);
+        await addBaseImage(canvas, baseImageURL);
 
-        fabricCanvas.current.renderAll();
+        canvas.renderAll();
         setHistoryIndex(newIndex);
-        syncLayers(fabricCanvas.current);
+        syncLayers(canvas);
     };
 
     const redo = async () => {
         if (historyIndex >= historyRef.current.length - 1 || !fabricCanvas.current) return;
+        const canvas = fabricCanvas.current;
         const newIndex = historyIndex + 1;
-        const json = historyRef.current[newIndex];
-        await fabricCanvas.current.loadFromJSON(JSON.parse(json));
+
+        canvas.isRestoring = true;
+        await canvas.loadFromJSON(JSON.parse(historyRef.current[newIndex]));
+        canvas.isRestoring = false;
 
         const baseImageURL = viewSideRef.current === "front"
             ? productDataRef.current?.frontImage
             : productDataRef.current?.backImage;
 
         const { addBaseImage } = await import("../pages/CustomizeShopPage/fabric/baseImage");
-        await addBaseImage(fabricCanvas.current, baseImageURL);
+        await addBaseImage(canvas, baseImageURL);
 
-        fabricCanvas.current.renderAll();
+        canvas.renderAll();
         setHistoryIndex(newIndex);
-        syncLayers(fabricCanvas.current);
+        syncLayers(canvas);
     };
 
     // 🔥 Store JSON instead of PNG
