@@ -127,16 +127,21 @@ export default function ProductDetailPage() {
         setIsAdding(true);
 
         // Artificial delay for smooth interaction feedback
-        setTimeout(() => {
-            addToCart(product, {
-                variantId: selectedVariant.sku,
-                size: selectedSize,
-                color: selectedVariant.color?.name
-            });
+        setTimeout(async () => {
+            try {
+                await addToCart(product, {
+                    variantId: selectedVariant.sku,
+                    size: selectedSize,
+                    color: selectedVariant.color?.name
+                });
 
-            setIsAdding(false);
-            setIsAdded(true);
-            setTimeout(() => setIsAdded(false), 2000);
+                setIsAdding(false);
+                setIsAdded(true);
+                setTimeout(() => setIsAdded(false), 2000);
+            } catch (error) {
+                console.error("Cart error:", error);
+                setIsAdding(false);
+            }
         }, 800);
     };
 

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import * as cartService from "../services/cartService";
+import * as storageUtils from "../utils/storageUtils";
 import { ensureAbsoluteUrl } from "../utils/urlUtils";
 import { useOffers } from "./OfferContext";
 import { toast } from "react-hot-toast";
@@ -16,15 +17,40 @@ export function CartProvider({ children }) {
   const { getCartOffers } = useOffers();
 
   /* 🔄 HELPERS */
-  const getGuestCart = () => {
-    const saved = localStorage.getItem("guest_cart");
-    return saved ? JSON.parse(saved) : [];
+  const getGuestCart = async () => {
+    const saved = await storageUtils.getItem("guest_cart");
+    return saved || [];
   };
 
-  const setGuestCart = (newCart) => {
-    localStorage.setItem("guest_cart", JSON.stringify(newCart));
-    setCart(newCart);
+  const setGuestCart = async (newCart) => {
+    try {
+      await storageUtils.setItem("guest_cart", newCart);
+      setCart(newCart);
+    } catch (error) {
+      console.error("[CartContext] Failed to save guest cart:", error);
+      toast.error("Storage full! Please log in to save large designs permanently.");
+    }
   };
+
+  /* 🔄 STORAGE MIGRATION (localStorage -> IndexedDB) */
+  useEffect(() => {
+    const migrateStorage = async () => {
+      const legacyCart = localStorage.getItem("guest_cart");
+      if (legacyCart) {
+        try {
+          console.log("📦 Migrating guest cart to IndexedDB...");
+          const parsed = JSON.parse(legacyCart);
+          await storageUtils.setItem("guest_cart", parsed);
+          localStorage.removeItem("guest_cart");
+          if (!user) setCart(parsed);
+          console.log("✅ Migration successful.");
+        } catch (e) {
+          console.error("❌ Migration failed:", e);
+        }
+      }
+    };
+    migrateStorage();
+  }, [user]);
 
   /* 🔄 INITIAL FETCH */
   useEffect(() => {
@@ -92,7 +118,8 @@ export function CartProvider({ children }) {
         }
       } else {
         // Guest Cart
-        setCart(getGuestCart());
+        const localCart = await getGuestCart();
+        setCart(localCart);
         setIsLoading(false);
       }
     };
@@ -104,7 +131,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     const mergeCarts = async () => {
       if (!authLoading && user) {
-        const localCart = getGuestCart();
+        const localCart = await getGuestCart();
         if (localCart.length > 0) {
           console.log("🛒 Merging guest cart items into user account...");
           try {
@@ -119,7 +146,7 @@ export function CartProvider({ children }) {
               );
             }
             // Clear local cart
-            localStorage.removeItem("guest_cart");
+            await storageUtils.removeItem("guest_cart");
             // Refresh final cart state from backend
             const res = await cartService.getCart();
             const formattedItems = res.data.items
@@ -220,13 +247,13 @@ export function CartProvider({ children }) {
       }
     } else {
       // GUEST FLOW
-      const localCart = getGuestCart();
+      const localCart = await getGuestCart();
       const variantId = options.variantId;
 
       const existingItem = localCart.find(item => item.variantId === variantId && JSON.stringify(item.customizations) === JSON.stringify(customizations));
 
       if (existingItem) {
-        setGuestCart(localCart.map(item =>
+        await setGuestCart(localCart.map(item =>
           item.variantId === variantId ? { ...item, qty: item.qty + 1 } : item
         ));
         toast.custom((t) => (
@@ -251,7 +278,7 @@ export function CartProvider({ children }) {
           color: options.color || "N/A",
           customizations: customizations
         };
-        setGuestCart([...localCart, newItem]);
+        await setGuestCart([...localCart, newItem]);
         toast.custom((t) => (
           <CustomToast t={t} product={product} actionType="cart" />
         ));
@@ -273,8 +300,8 @@ export function CartProvider({ children }) {
         throw error;
       }
     } else {
-      const localCart = getGuestCart();
-      setGuestCart(localCart.map(item =>
+      const localCart = await getGuestCart();
+      await setGuestCart(localCart.map(item =>
         item.variantId === variantId ? { ...item, qty: newQty } : item
       ));
     }
@@ -290,14 +317,14 @@ export function CartProvider({ children }) {
         console.error("Remove item failed:", error);
       }
     } else {
-      const localCart = getGuestCart();
-      setGuestCart(localCart.filter(item => item.cartItemId !== cartItemId));
+      const localCart = await getGuestCart();
+      await setGuestCart(localCart.filter(item => item.cartItemId !== cartItemId));
     }
   };
 
   /* 🧹 CLEAR CART */
-  const clearCart = () => {
-    if (!user) localStorage.removeItem("guest_cart");
+  const clearCart = async () => {
+    if (!user) await storageUtils.removeItem("guest_cart");
     setCart([]);
     setAppliedCoupon(null);
   };
