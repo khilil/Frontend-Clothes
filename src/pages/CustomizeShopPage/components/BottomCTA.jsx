@@ -5,7 +5,6 @@ export default function BottomCTA() {
 
     // Find selected printing type to get its price
     const currentType = printingMethods?.find(t => t.id === printingType);
-    const printingCharge = currentType?.price || 0;
     const basePrice = productDataRef.current?.price || 1700; // Updated default for ₹
     const totalPrice = basePrice + customizationPrice;
 
@@ -15,16 +14,16 @@ export default function BottomCTA() {
     };
 
     return (
-        <div className="mt-2 md:mt-12 pt-2 md:pt-12 space-y-3 md:space-y-6">
-            <div className="flex justify-between items-center md:items-end">
+        <div className="mt-0 md:mt-12 pt-1 md:pt-12 space-y-3 md:space-y-6">
+            <div className="flex justify-between items-center md:items-end gap-4">
                 <div className="space-y-0.5 md:space-y-1">
                     <span className="uppercase text-[8px] md:text-[9px] font-black tracking-[0.2em] text-[#0A0A0A] block">Total</span>
-                    <span className="hidden md:block text-[10px] text-[#4A4A4A] uppercase tracking-widest font-black">
+                    <span className="text-[8px] md:text-[10px] text-[#4A4A4A] uppercase tracking-[0.18em] md:tracking-widest font-black">
                         {currentType?.label || "Standard"} Included
                     </span>
                 </div>
                 <div className="text-right">
-                    <span className="text-xl md:text-3xl font-impact text-[#0A0A0A] tracking-tight">
+                    <span className="text-2xl md:text-3xl font-impact text-[#0A0A0A] tracking-tight">
                         ₹{totalPrice.toLocaleString()}
                     </span>
                 </div>
@@ -33,7 +32,7 @@ export default function BottomCTA() {
             <div className="grid grid-cols-1 gap-3">
                 <button
                     onClick={handlePreview}
-                    className="h-12 md:h-16 border border-black/10 rounded-xl flex items-center justify-center gap-3 hover:bg-black/5 transition-all group"
+                    className="h-12 md:h-16 border border-black/10 rounded-xl flex items-center justify-center gap-3 hover:bg-black/5 active:scale-[0.99] transition-all group bg-white"
                 >
                     <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#0A0A0A] group-hover:bg-[#0A0A0A] group-hover:text-white group-hover:px-4 group-hover:py-2 group-hover:rounded-lg transition-all duration-300">
                         Preview
@@ -48,7 +47,7 @@ export default function BottomCTA() {
                 </button> */}
             </div>
 
-            <p className="hidden md:block text-[8px] text-black/20 uppercase tracking-[0.3em] text-center font-medium">
+            <p className="text-[8px] text-black/20 uppercase tracking-[0.24em] md:tracking-[0.3em] text-center font-medium">
                 3-5 Days Processing for Custom Orders
             </p>
         </div>

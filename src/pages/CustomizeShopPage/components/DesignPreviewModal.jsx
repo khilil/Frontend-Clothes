@@ -312,7 +312,7 @@ export default function DesignPreviewModal() {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-8">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -324,12 +324,12 @@ export default function DesignPreviewModal() {
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="relative w-full max-w-6xl h-[90vh] md:h-[85vh] bg-[#fcfbf9] rounded-[2rem] md:rounded-[2.5rem] border border-black/5 overflow-hidden flex flex-col md:flex-row shadow-[0_50px_100px_rgba(0,0,0,0.1)]"
+                className="relative w-full max-w-none md:max-w-6xl h-[100dvh] md:h-[85vh] bg-[#fcfbf9] rounded-none md:rounded-[2.5rem] border-0 md:border border-black/5 overflow-hidden flex flex-col md:flex-row shadow-[0_50px_100px_rgba(0,0,0,0.1)]"
             >
                 {/* Left: Preview Content */}
-                <div className="flex-1 flex flex-col overflow-hidden border-r border-black/5">
+                <div className="flex-1 min-h-[44dvh] md:min-h-0 flex flex-col overflow-hidden border-b md:border-b-0 md:border-r border-black/5">
                     {/* Preview Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-black/5 bg-white/40">
+                    <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-black/5 bg-white/40 shrink-0">
                         <div className="flex items-center gap-4">
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Final Review</span>
                             <div className="flex bg-black/5 rounded-full p-1">
@@ -347,7 +347,7 @@ export default function DesignPreviewModal() {
                     </div>
 
                     {/* Preview Image */}
-                    <div className="flex-1 relative flex items-center justify-center p-8 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-black/[0.02] to-transparent overflow-hidden">
+                    <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 md:p-8 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-black/[0.02] to-transparent overflow-hidden">
                         <AnimatePresence mode="wait">
                             {loading ? (
                                 <motion.div
@@ -367,7 +367,7 @@ export default function DesignPreviewModal() {
                                     className="w-full h-full flex items-center justify-center"
                                 >
                                     <div
-                                        className="relative w-full max-w-[500px] aspect-[500/600] rounded-[2rem] overflow-hidden"
+                                        className="relative w-full max-w-[340px] sm:max-w-[420px] md:max-w-[500px] aspect-[500/600] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden"
                                         style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
                                     >
                                         <div className="absolute inset-0 pointer-events-none blueprint-grid-dark" />
@@ -415,15 +415,15 @@ export default function DesignPreviewModal() {
                 </div>
 
                 {/* Right: Checkout Sidebar */}
-                <div className="w-full md:w-[400px] flex flex-col bg-white/60 relative">
+                <div className="w-full md:w-[400px] flex flex-col bg-white/60 relative max-h-[56dvh] md:max-h-none">
                     <button
                         onClick={() => setIsOpen(false)}
-                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-black/40 hover:text-black transition-all active:scale-95 z-20"
+                        className="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-black/40 hover:text-black transition-all active:scale-95 z-20"
                     >
                         <FiX size={20} />
                     </button>
 
-                    <div className="flex-1 overflow-y-auto p-8 pt-20 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-5 sm:p-6 md:p-8 pt-16 md:pt-20 custom-scrollbar">
                         <div className="mb-8 font-primary">
                             <h3 className="text-xl font-impact uppercase tracking-tight text-[#0A0A0A] mb-2">Final Step</h3>
                             <p className="text-[10px] text-[#4A4A4A] uppercase tracking-[0.2em] font-black">Select your preferred printing method</p>
@@ -485,7 +485,7 @@ export default function DesignPreviewModal() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="p-8 border-t border-black/5 bg-white/40">
+                    <div className="p-5 sm:p-6 md:p-8 border-t border-black/5 bg-white/40 shrink-0 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] md:pb-8">
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => setIsOpen(false)}

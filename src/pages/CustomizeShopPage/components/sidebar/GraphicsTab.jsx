@@ -32,7 +32,11 @@ export default function GraphicsTab() {
     const allGraphics = fetchedGraphics.map(g => ({ name: g.name, file: g.url, price: g.price }));
 
     const handleGraphicAdd = async (graphic) => {
-        const { file, price, name } = graphic;
+        const normalizedGraphic = typeof graphic === "string"
+            ? { file: graphic, price: 0, name: "Uploaded Graphic" }
+            : graphic;
+
+        const { file, price, name } = normalizedGraphic;
 
         // Store metadata for production audit
         if (!uploadedAssetsMetadataRef.current[file]) {
@@ -92,7 +96,7 @@ export default function GraphicsTab() {
                     name: file.name
                 };
 
-                handleGraphicAdd(objectUrl, 0);
+                handleGraphicAdd(objectUrl);
             };
             img.src = objectUrl;
         } else {
@@ -105,7 +109,7 @@ export default function GraphicsTab() {
                 type: file.type,
                 name: file.name
             };
-            handleGraphicAdd(objectUrl, 0);
+            handleGraphicAdd(objectUrl);
         }
     };
 

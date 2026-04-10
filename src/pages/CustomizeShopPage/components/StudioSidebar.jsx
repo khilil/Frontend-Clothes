@@ -46,13 +46,13 @@ export default function StudioSidebar() {
     };
 
     return (
-        <aside className="h-full flex flex-col">
-            <div data-lenis-prevent className="flex-1 overflow-y-auto py-8 pr-2">
+        <aside className="h-full min-h-0 flex flex-col">
+            <div data-lenis-prevent className="flex-1 overflow-y-auto py-4 md:py-8 pr-1 md:pr-2">
                 {renderTabContent()}
             </div>
 
             {/* STICKY BOTTOM ACTIONS */}
-            <div className="pt-2 md:pt-6 border-t border-black/5 bg-[#f4f2ee]">
+            <div className="pt-3 md:pt-6 border-t border-black/5 bg-[#f4f2ee]/95 backdrop-blur-md sticky bottom-0">
                 <BottomCTA />
             </div>
         </aside>

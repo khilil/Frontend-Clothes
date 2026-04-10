@@ -15,7 +15,7 @@ function HeaderControls() {
     const { undo, redo, canUndo, canRedo } = useFabric();
 
     return (
-        <div className="flex items-center gap-2 mr-4">
+        <div className="flex items-center gap-1 md:gap-2 mr-0 md:mr-4">
             <button
                 onClick={undo}
                 disabled={!canUndo}
@@ -53,7 +53,9 @@ export default function CustomizeEditorLayout() {
 function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }) {
     const navigate = useNavigate();
     // Mobile state
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(() =>
+        typeof window !== "undefined" ? window.innerWidth >= 768 : true
+    );
     const { setGarmentColor } = useFabric();
 
     useEffect(() => {
@@ -83,7 +85,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
             <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
                 {/* HEADER / NAV */}
-                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-6 bg-white z-50 shrink-0">
+                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white z-50 shrink-0">
                     <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
                         <button 
                             onClick={() => navigate(-1)}
@@ -112,7 +114,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[55vh] md:mb-0" : "mb-[100px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[62dvh] md:mb-0" : "mb-[88px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
@@ -133,21 +135,21 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                     }
                                 }}
                                 className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
-                                    transition-all duration-500 ease-in-out border-t border-black/5
+                                    transition-all duration-500 ease-in-out border-t border-black/5 bg-[#f4f2ee]/95 backdrop-blur-xl
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? "h-[55vh] translate-y-0" : "h-[100px] translate-y-0"} 
-                                    rounded-t-[2.5rem] md:rounded-t-none shadow-[0_-15px_50px_rgba(0,0,0,0.08)] md:shadow-none
+                                    ${isExpanded ? "h-[62dvh] translate-y-0" : "h-[88px] translate-y-0"} 
+                                    rounded-t-[2rem] md:rounded-t-none shadow-[0_-15px_50px_rgba(0,0,0,0.08)] md:shadow-none
                                     flex flex-col`}
                             >
                                 {/* Drag Handle - Mobile Only */}
                                 <div
-                                    className="w-full py-2 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
+                                    className="w-full py-3 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
                                     onClick={() => setIsExpanded(!isExpanded)}
                                 >
                                     <div className="w-12 h-1 bg-black/10 rounded-full mb-1"></div>
                                     {!isExpanded && (
-                                        <span className="text-[7px] font-black uppercase tracking-[0.2em] text-[#d4c4b1] animate-pulse">
-                                            Open Editor
+                                        <span className="text-[8px] font-black uppercase tracking-[0.24em] text-[#8b7e6d] animate-pulse">
+                                            Open Studio Tools
                                         </span>
                                     )}
                                 </div>
@@ -160,7 +162,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                 )}
 
                                 {/* Sidebar Content */}
-                                <div className={`flex-1 overflow-hidden px-6 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
+                                <div className={`flex-1 overflow-hidden px-4 md:px-6 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:pb-0 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
                                     <StudioSidebar />
                                 </div>
                             </motion.div>

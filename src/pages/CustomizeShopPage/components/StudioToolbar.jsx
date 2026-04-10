@@ -1,4 +1,4 @@
-import { FiTrash2, FiLayers, FiMaximize2, FiMinimize2, FiChevronUp, FiChevronDown, FiCopy, FiAlignCenter } from "react-icons/fi";
+import { FiTrash2, FiChevronUp, FiChevronDown, FiCopy, FiAlignCenter } from "react-icons/fi";
 import { useFabric } from "../../../context/FabricContext";
 import { FONT_FAMILIES as INITIAL_FONTS } from "../fabric/fontRegistry";
 import { waitForFont, loadGoogleFont } from "../fabric/fontUtils";
@@ -108,14 +108,14 @@ export default function StudioToolbar() {
     };
 
     return (
-        <div className="absolute bottom-4 md:bottom-auto md:top-6 left-1/2 -translate-x-1/2 flex items-center bg-white/40 backdrop-blur-2xl border border-black/5 rounded-2xl px-4 md:px-6 py-2.5 gap-3 md:gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-40 animate-slideUp max-w-[95vw] overflow-x-auto no-scrollbar">
+        <div className="absolute top-3 md:top-6 left-1/2 -translate-x-1/2 flex flex-wrap items-center justify-center bg-white/55 backdrop-blur-2xl border border-black/5 rounded-2xl px-3 md:px-6 py-2.5 gap-2 md:gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-40 w-[calc(100vw-1rem)] max-w-max md:max-w-[95vw] animate-slideUp">
 
             {/* DYNAMIC CONTROLS */}
             {canHaveColor && (
                 <>
                     {selectedObject.type === "textbox" && (
                         <select
-                            className="bg-transparent text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer border-r border-black/10 pr-2 md:pr-4 mr-1 max-w-[80px] md:max-w-none font-primary uppercase tracking-widest"
+                            className="bg-transparent text-[9px] md:text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer border-r border-black/10 pr-2 md:pr-4 mr-1 max-w-[108px] md:max-w-none font-primary uppercase tracking-widest"
                             value={selectedObject.fontFamily}
                             onChange={handleFontChange}
                         >
