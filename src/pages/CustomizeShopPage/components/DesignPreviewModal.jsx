@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
 import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "fabric";
+import { Canvas as ThreeCanvas } from "@react-three/fiber";
+import { Environment, ContactShadows } from "@react-three/drei";
+import TShirtModel from "./3D/TShirtModel";
 
 export default function DesignPreviewModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +20,7 @@ export default function DesignPreviewModal() {
 
     const {
         fabricCanvas,
+        wrapperRef,
         frontDesignRef,
         backDesignRef,
         productDataRef,
@@ -29,7 +33,8 @@ export default function DesignPreviewModal() {
         uploadedAssetsMetadataRef,
         initialVariantIdRef,
         initialSizeRef,
-        initialColorRef
+        initialColorRef,
+        garmentColor
     } = useFabric();
 
     const { addToCart } = useCart();
@@ -75,6 +80,11 @@ export default function DesignPreviewModal() {
     };
 
     const renderSideAssets = async (side, designJSON, productData) => {
+        const editorCanvas = fabricCanvas.current;
+        const editorWrapper = wrapperRef.current;
+        const overlayWidth = Math.max(1, Math.round(editorWrapper?.clientWidth || editorCanvas?.getWidth?.() || 475));
+        const overlayHeight = Math.max(1, Math.round(editorWrapper?.clientHeight || editorCanvas?.getHeight?.() || 420));
+
         const hiddenEl = document.createElement("canvas");
         hiddenEl.width = 500;
         hiddenEl.height = 600;
@@ -89,6 +99,30 @@ export default function DesignPreviewModal() {
         const designOnlyJSON = getDesignOnlyJSON(designJSON) || { objects: [] };
         await hiddenCanvas.loadFromJSON(designOnlyJSON);
         hiddenCanvas.renderAll();
+
+        const overlayEl = document.createElement("canvas");
+        overlayEl.width = overlayWidth;
+        overlayEl.height = overlayHeight;
+
+        const overlayCanvas = new Canvas(overlayEl, {
+            width: overlayWidth,
+            height: overlayHeight,
+            skipOffscreen: true,
+            backgroundColor: null
+        });
+
+        await overlayCanvas.loadFromJSON(designOnlyJSON);
+        if (editorCanvas?.viewportTransform) {
+            overlayCanvas.setViewportTransform([...editorCanvas.viewportTransform]);
+        } else if (editorCanvas?.getZoom) {
+            overlayCanvas.setZoom(editorCanvas.getZoom());
+        }
+        overlayCanvas.renderAll();
+
+        const overlayFile = overlayCanvas.toDataURL({
+            format: "png",
+            quality: 1
+        });
 
         const printFile = hiddenCanvas.toDataURL({
             format: "png",
@@ -120,8 +154,9 @@ export default function DesignPreviewModal() {
         });
 
         hiddenCanvas.dispose();
+        overlayCanvas.dispose();
 
-        return { mockup, thumbnail, printFile };
+        return { mockup, thumbnail, printFile, overlayFile };
     };
 
     const generateFullPreviews = async () => {
@@ -131,13 +166,15 @@ export default function DesignPreviewModal() {
                 front: null,
                 back: null,
                 thumbnails: { front: null, back: null },
-                printFiles: { front: null, back: null }
+                printFiles: { front: null, back: null },
+                overlayFiles: { front: null, back: null }
             };
         }
 
         const results = { front: null, back: null };
         const thumbnails = { front: null, back: null };
         const printFiles = { front: null, back: null };
+        const overlayFiles = { front: null, back: null };
         const activeSide = viewSideRef.current;
 
         const currentCanvasJSON = mainCanvas.toJSON([
@@ -160,9 +197,10 @@ export default function DesignPreviewModal() {
             results[side] = rendered.mockup;
             thumbnails[side] = rendered.thumbnail;
             printFiles[side] = rendered.printFile;
+            overlayFiles[side] = rendered.overlayFile;
         }
 
-        return { ...results, thumbnails, printFiles };
+        return { ...results, thumbnails, printFiles, overlayFiles };
     };
 
     const currentType = printingMethods?.find(t => t.id === printingType);
@@ -328,17 +366,48 @@ export default function DesignPreviewModal() {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     className="w-full h-full flex items-center justify-center"
                                 >
-                                    {previews?.[currentSide] ? (
-                                        <img
-                                            src={previews[currentSide]}
-                                            alt={`${currentSide} design preview`}
-                                            className="max-w-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
-                                        />
-                                    ) : (
-                                        <div className="text-[8px] text-black/10 font-bold uppercase tracking-widest">
-                                            Awaiting Render...
+                                    <div
+                                        className="relative w-full max-w-[500px] aspect-[500/600] rounded-[2rem] overflow-hidden"
+                                        style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
+                                    >
+                                        <div className="absolute inset-0 pointer-events-none blueprint-grid-dark" />
+
+                                        <ThreeCanvas
+                                            dpr={[1, 2]}
+                                            gl={{
+                                                antialias: false,
+                                                powerPreference: "high-performance",
+                                                preserveDrawingBuffer: true
+                                            }}
+                                            camera={{ position: [0, 0, 10], fov: 26 }}
+                                            className="w-full h-full"
+                                        >
+                                            <ambientLight intensity={0.4} />
+                                            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
+                                            <pointLight position={[-10, 5, -5]} intensity={1.5} color="#ffffff" />
+                                            <pointLight position={[10, 5, -5]} intensity={1.5} color="#ffffff" />
+                                            <pointLight position={[0, -5, 5]} intensity={0.5} />
+                                            <Suspense fallback={null}>
+                                                <TShirtModel color={garmentColor} viewSide={currentSide} />
+                                                <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.4} far={10} color="#000000" />
+                                                <Environment preset="city" />
+                                            </Suspense>
+                                        </ThreeCanvas>
+
+                                        <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none">
+                                            <div className="relative w-[95%] h-full flex items-center justify-center pointer-events-none">
+                                                {previews?.overlayFiles?.[currentSide] ? (
+                                                    <img
+                                                        src={previews.overlayFiles[currentSide]}
+                                                        alt={`${currentSide} design overlay`}
+                                                        className="block w-full h-full mix-blend-normal pointer-events-none opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
+                                                    />
+                                                ) : null}
+                                            </div>
                                         </div>
-                                    )}
+
+                                        <div className="absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.15)_100%)] pointer-events-none" />
+                                    </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
