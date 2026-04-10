@@ -106,7 +106,7 @@ export function FabricProvider({ children }) {
         if (historyIndex <= 0 || !fabricCanvas.current) return;
         const canvas = fabricCanvas.current;
         const newIndex = historyIndex - 1;
-        
+
         canvas.isRestoring = true;
         await canvas.loadFromJSON(JSON.parse(historyRef.current[newIndex]));
         canvas.isRestoring = false;

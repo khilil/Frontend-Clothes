@@ -1,30 +1,30 @@
 import * as fabric from "fabric";
 
-export function addPrintArea(canvas) {
-    const screenWidth = window.innerWidth;
+export function addPrintArea(canvas, isMobile = false) {
+    const canvasWidth = canvas.getWidth();
+    const zoom = canvas.getZoom();
+
+    // Unified logical width (matching CanvasArea's baseWidth)
+    const baseWidth = 500;
 
     let width;
     let height;
     let top;
 
-    if (screenWidth < 768) {
-        // Mobile: start near chest and stop a little above the bottom hem.
-        width = 199;
-        height = 250;
-        top = 355;
-    } else if (screenWidth < 1024) {
-        // Tablet: keep the same vertical intent with a slightly wider safe zone.
-        width = 198;
-        height = 224;
-        top = 318;
+    // Syncing with TShirtModel.jsx logic (1024px breakpoint)
+    if (isMobile) {
+        // Mobile calibrated: T-shirt is scaled 4.6 and at y: -6.6
+        width = 230;
+        height = 295;
+        top = 390; // Adjusted to match chest at scale 4.6
     } else {
-        // Desktop: preserve the original print area exactly as before.
+        // Desktop calibrated: T-shirt is scaled 5.4 and at y: -7.8
         width = 200;
-        height = 190;
-        top = 290;
+        height = 240;
+        top = 290; // Original desktop top
     }
 
-    const left = 250;
+    const left = baseWidth / 2;
 
     const rect = new fabric.Rect({
         left,

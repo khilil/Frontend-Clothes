@@ -71,7 +71,7 @@ export default function CanvasArea() {
 
         // 2. Always fetch full document for metadata (_id, variants, etc)
         setLoading(true);
-        
+
         // INTERCEPT FOR PREMIUM MOCKUP TEST
         if (slug === "premium-oversized-tshirt-mockup") {
             setIsPremiumMode(true);
@@ -343,7 +343,7 @@ export default function CanvasArea() {
             if (!canvas || !entries[0]) return;
 
             const { width, height } = entries[0].contentRect;
-            
+
             // Standardizing based on original 500x600 coordinate system
             const baseWidth = 500;
             const zoom = width / baseWidth;
@@ -407,22 +407,22 @@ export default function CanvasArea() {
        RENDER (v7.7 - High Contrast Studio)
     ============================= */
     return (
-        <div 
+        <div
             className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden transition-colors duration-1000"
             style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
         >
             {/* 🕸️ TECHNICAL HIGH-VISIBILITY GRID */}
             <div className="absolute inset-0 pointer-events-none blueprint-grid-dark" />
-            
+
             {/* 🛡️ SVG ALPHA MASK ENGINE (Invisible) */}
             <svg width="0" height="0" className="absolute pointer-events-none">
                 <defs>
                     <mask id="garmentMask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
                         {/* No filter needed because we use Alpha PNGs now */}
-                        <image 
+                        <image
                             href={viewSide === "front" ? productData?.frontImage : productData?.backImage}
-                            width="100%" 
-                            height="100%" 
+                            width="100%"
+                            height="100%"
                             preserveAspectRatio="xMidYMid meet"
                         />
                     </mask>
@@ -444,8 +444,8 @@ export default function CanvasArea() {
             <div className="absolute bottom-6 sm:bottom-auto sm:top-20 md:top-24 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-6 z-[100]">
                 <div className="flex bg-white/60 backdrop-blur-xl border border-black/5 
                     rounded-2xl p-1.5 shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative overflow-hidden">
-                    
-                    <motion.div 
+
+                    <motion.div
                         animate={{ x: viewSide === "front" ? 0 : "100%" }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         className="absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] bg-[#d4c4b1] rounded-xl shadow-lg shadow-[#d4c4b1]/20 z-0"
@@ -475,18 +475,18 @@ export default function CanvasArea() {
 
             {/* MAIN 3D ATELIER STACK (v7.15 Balanced Mobile) */}
             <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center p-2 sm:p-6 md:p-12 font-primary z-10">
-                <div 
+                <div
                     className="relative w-full h-full lg:max-w-[500px] lg:aspect-[500/600] studio-card-shadow rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-transparent shrink-0"
                     style={{ touchAction: "none" }}
                 >
-                    
+
                     {/* ⚙️ 3D WEBGL STAGE */}
-                    <Canvas 
+                    <Canvas
                         dpr={[1, 2]}
-                        gl={{ 
-                            antialias: false, 
+                        gl={{
+                            antialias: false,
                             powerPreference: "high-performance",
-                            preserveDrawingBuffer: true 
+                            preserveDrawingBuffer: true
                         }}
                         camera={{ position: [0, 0, 10], fov: 26 }}
                         className="w-full h-full"
@@ -494,12 +494,12 @@ export default function CanvasArea() {
                         {/* 💡 ENHANCED LIGHTING FOR CONTRAST */}
                         <ambientLight intensity={0.4} />
                         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
-                        
+
                         {/* 🌟 RIM LIGHTS (Separates garment from background) */}
                         <pointLight position={[-10, 5, -5]} intensity={1.5} color="#ffffff" />
                         <pointLight position={[10, 5, -5]} intensity={1.5} color="#ffffff" />
                         <pointLight position={[0, -5, 5]} intensity={0.5} />
-                        
+
                         <Suspense fallback={null}>
                             <TShirtModel color={garmentColor} viewSide={viewSide} />
                             <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.4} far={10} color="#000000" />
@@ -508,12 +508,12 @@ export default function CanvasArea() {
                     </Canvas>
 
                     {/* 🧶 REALISM GRAIN (OVERLAY) */}
-                    <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none" 
-                         style={{ perspective: "1500px" }}>
-                        <motion.div 
+                    <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none"
+                        style={{ perspective: "1500px" }}>
+                        <motion.div
                             ref={wrapperRef}
-                            style={{ 
-                                perspective: "1500px", 
+                            style={{
+                                perspective: "1500px",
                                 transform: "translateZ(20px)",
                                 width: "95%", // Maximized
                                 height: "100%" // Full vertical range

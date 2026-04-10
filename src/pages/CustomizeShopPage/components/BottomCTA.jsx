@@ -14,7 +14,7 @@ export default function BottomCTA() {
     };
 
     return (
-        <div className="mt-0 md:mt-12 pt-1 md:pt-12 space-y-3 md:space-y-6">
+        <div className="mt-0 pt-1 md:pt-7 space-y-3 md:space-y-6">
             <div className="flex justify-between items-center md:items-end gap-4">
                 <div className="space-y-0.5 md:space-y-1">
                     <span className="uppercase text-[8px] md:text-[9px] font-black tracking-[0.2em] text-[#0A0A0A] block">Total</span>

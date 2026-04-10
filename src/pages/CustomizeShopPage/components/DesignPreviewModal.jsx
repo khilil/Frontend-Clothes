@@ -17,6 +17,7 @@ export default function DesignPreviewModal() {
     const [addingToCart, setAddingToCart] = useState(false);
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+    const isMobilePreview = typeof window !== "undefined" && window.innerWidth < 768;
 
     const {
         fabricCanvas,
@@ -124,6 +125,11 @@ export default function DesignPreviewModal() {
             quality: 1
         });
 
+        const previewFile = hiddenCanvas.toDataURL({
+            format: "png",
+            multiplier: 2
+        });
+
         const printFile = hiddenCanvas.toDataURL({
             format: "png",
             multiplier: 4.5
@@ -156,7 +162,7 @@ export default function DesignPreviewModal() {
         hiddenCanvas.dispose();
         overlayCanvas.dispose();
 
-        return { mockup, thumbnail, printFile, overlayFile };
+        return { mockup, thumbnail, previewFile, printFile, overlayFile };
     };
 
     const generateFullPreviews = async () => {
@@ -166,6 +172,7 @@ export default function DesignPreviewModal() {
                 front: null,
                 back: null,
                 thumbnails: { front: null, back: null },
+                previewFiles: { front: null, back: null },
                 printFiles: { front: null, back: null },
                 overlayFiles: { front: null, back: null }
             };
@@ -173,6 +180,7 @@ export default function DesignPreviewModal() {
 
         const results = { front: null, back: null };
         const thumbnails = { front: null, back: null };
+        const previewFiles = { front: null, back: null };
         const printFiles = { front: null, back: null };
         const overlayFiles = { front: null, back: null };
         const activeSide = viewSideRef.current;
@@ -196,16 +204,20 @@ export default function DesignPreviewModal() {
 
             results[side] = rendered.mockup;
             thumbnails[side] = rendered.thumbnail;
+            previewFiles[side] = rendered.previewFile;
             printFiles[side] = rendered.printFile;
             overlayFiles[side] = rendered.overlayFile;
         }
 
-        return { ...results, thumbnails, printFiles, overlayFiles };
+        return { ...results, thumbnails, previewFiles, printFiles, overlayFiles };
     };
 
     const currentType = printingMethods?.find(t => t.id === printingType);
     const garmentBasePrice = productDataRef.current?.price || 1700;
     const grandTotal = garmentBasePrice + customizationPrice;
+    const previewOverlaySrc = isMobilePreview
+        ? (previews?.previewFiles?.[currentSide] || previews?.overlayFiles?.[currentSide] || previews?.printFiles?.[currentSide])
+        : (previews?.overlayFiles?.[currentSide] || previews?.previewFiles?.[currentSide] || previews?.printFiles?.[currentSide]);
 
     const generateTechnicalReport = () => {
         const report = [];
@@ -396,11 +408,11 @@ export default function DesignPreviewModal() {
 
                                         <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none">
                                             <div className="relative w-[95%] h-full flex items-center justify-center pointer-events-none">
-                                                {previews?.overlayFiles?.[currentSide] ? (
+                                                {previewOverlaySrc ? (
                                                     <img
-                                                        src={previews.overlayFiles[currentSide]}
+                                                        src={previewOverlaySrc}
                                                         alt={`${currentSide} design overlay`}
-                                                        className="block w-full h-full mix-blend-normal pointer-events-none opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
+                                                        className="block w-full h-full object-contain mix-blend-normal pointer-events-none opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
                                                     />
                                                 ) : null}
                                             </div>
