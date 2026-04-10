@@ -23,7 +23,16 @@ export function addPrintArea(canvas) {
     }
 
     // 🎯 COORDINATE FIX: Centered in 500x600 space
-    const left = 250;
+    const canvasWidth = canvas.getWidth();
+    const canvasHeight = canvas.getHeight();
+    const isCompactCanvas = canvasWidth < 420 || canvasHeight < 520;
+
+    width = canvasWidth * (isCompactCanvas ? 0.4 : 0.38);
+    height = canvasHeight * (isCompactCanvas ? 0.335 : 0.325);
+    top = canvasHeight * (isCompactCanvas ? 0.5 : 0.495);
+
+    const left = canvasWidth / 2;
+    const strokeWidth = Math.max(1, Math.round(Math.min(canvasWidth, canvasHeight) * 0.0025));
 
     // 🛡️ MAIN BOUNDARY (High Contrast Technical Dashed)
     const rect = new fabric.Rect({
@@ -36,7 +45,7 @@ export function addPrintArea(canvas) {
         fill: "transparent",
         stroke: "#000000",
         strokeDashArray: [6, 4],
-        strokeWidth: 1,
+        strokeWidth,
         opacity: 0.15,
         selectable: false,
         evented: false,
@@ -45,7 +54,7 @@ export function addPrintArea(canvas) {
     });
 
     // 🌟 CORNER MARKERS (Professional Drafting Look)
-    const markerSize = 12;
+    const markerSize = Math.max(10, Math.round(Math.min(width, height) * 0.06));
     const markers = [];
 
     const createMarker = (x, y, angle) => new fabric.Polyline([
@@ -56,7 +65,7 @@ export function addPrintArea(canvas) {
         left: x,
         top: y,
         stroke: "#000000",
-        strokeWidth: 1.5,
+        strokeWidth: strokeWidth + 0.5,
         fill: "transparent",
         opacity: 0.25,
         angle,

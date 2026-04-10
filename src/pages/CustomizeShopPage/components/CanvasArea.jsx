@@ -174,7 +174,7 @@ export default function CanvasArea() {
             canvas.sendObjectToBack(baseImg);
         }
 
-        const { addPrintArea } = await import("../fabric/printArea");
+        const { addPrintArea } = await import("../fabric/printAreaResponsive");
         const isMobile = window.innerWidth < 1024;
         addPrintArea(canvas, isMobile);
 
@@ -229,7 +229,7 @@ export default function CanvasArea() {
             const baseImg = canvas.getObjects().find(o => o.excludeFromExport);
             if (baseImg) canvas.sendObjectToBack(baseImg);
 
-            const { addPrintArea } = await import("../fabric/printArea");
+            const { addPrintArea } = await import("../fabric/printAreaResponsive");
             const isMobile = window.innerWidth < 1024;
             addPrintArea(canvas, isMobile);
 
@@ -353,7 +353,7 @@ export default function CanvasArea() {
             canvas.setZoom(zoom);
 
             // 📐 RE-CALIBRATE PRO BOUNDARY ON RESIZE
-            const { addPrintArea } = await import("../fabric/printArea");
+            const { addPrintArea } = await import("../fabric/printAreaResponsive");
             // Remove old markers and rect first to avoid duplication
             const objectsToRemove = canvas.getObjects().filter(o => o.excludeFromExport && !o.isBaseImage);
             objectsToRemove.forEach(o => canvas.remove(o));

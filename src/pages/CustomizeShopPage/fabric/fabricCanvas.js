@@ -1,6 +1,6 @@
 // fabricCanvas.js
 import { Canvas } from "fabric";
-import { addPrintArea } from "./printArea";
+import { addPrintArea } from "./printAreaResponsive";
 
 export function initFabric(
     canvasEl,
