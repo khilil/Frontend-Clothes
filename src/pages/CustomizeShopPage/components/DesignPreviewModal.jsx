@@ -1,13 +1,10 @@
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
 import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "fabric";
-import { Canvas as ThreeCanvas } from "@react-three/fiber";
-import { Environment, ContactShadows } from "@react-three/drei";
-import TShirtModel from "./3D/TShirtModel";
 
 export default function DesignPreviewModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,8 +29,7 @@ export default function DesignPreviewModal() {
         uploadedAssetsMetadataRef,
         initialVariantIdRef,
         initialSizeRef,
-        initialColorRef,
-        garmentColor
+        initialColorRef
     } = useFabric();
 
     const { addToCart } = useCart();
@@ -69,71 +65,101 @@ export default function DesignPreviewModal() {
         return () => window.removeEventListener('open-design-preview', handleOpen);
     }, [fabricCanvas]);
 
-    const generateFullPreviews = async () => {
-        const mainCanvas = fabricCanvas.current;
-        if (!mainCanvas || !productDataRef.current) return { front: null, back: null, thumbnails: { front: null, back: null }, printFiles: { front: null, back: null } };
+    const getDesignOnlyJSON = (designJSON) => {
+        if (!designJSON) return null;
+
+        return {
+            ...designJSON,
+            objects: (designJSON.objects || []).filter((obj) => !obj.excludeFromExport)
+        };
+    };
+
+    const renderSideAssets = async (side, designJSON, productData) => {
+        const hiddenEl = document.createElement("canvas");
+        hiddenEl.width = 500;
+        hiddenEl.height = 600;
+
+        const hiddenCanvas = new Canvas(hiddenEl, {
+            width: 500,
+            height: 600,
+            skipOffscreen: true,
+            backgroundColor: null
+        });
+
+        const designOnlyJSON = getDesignOnlyJSON(designJSON) || { objects: [] };
+        await hiddenCanvas.loadFromJSON(designOnlyJSON);
+        hiddenCanvas.renderAll();
+
+        const printFile = hiddenCanvas.toDataURL({
+            format: "png",
+            multiplier: 4.5
+        });
 
         const { addBaseImage } = await import("../fabric/baseImage");
+        const baseURL = side === "front" ? productData.frontImage : productData.backImage;
+
+        if (baseURL) {
+            const baseImg = await addBaseImage(hiddenCanvas, baseURL);
+            if (baseImg) {
+                baseImg.set({ opacity: 1, visible: true });
+                hiddenCanvas.sendObjectToBack(baseImg);
+            }
+            hiddenCanvas.renderAll();
+        }
+
+        const mockup = hiddenCanvas.toDataURL({
+            format: "png",
+            quality: 1,
+            multiplier: 4.5
+        });
+
+        const thumbnail = hiddenCanvas.toDataURL({
+            format: "jpeg",
+            quality: 0.8,
+            multiplier: 0.6
+        });
+
+        hiddenCanvas.dispose();
+
+        return { mockup, thumbnail, printFile };
+    };
+
+    const generateFullPreviews = async () => {
+        const mainCanvas = fabricCanvas.current;
+        if (!mainCanvas || !productDataRef.current) {
+            return {
+                front: null,
+                back: null,
+                thumbnails: { front: null, back: null },
+                printFiles: { front: null, back: null }
+            };
+        }
+
         const results = { front: null, back: null };
         const thumbnails = { front: null, back: null };
         const printFiles = { front: null, back: null };
         const activeSide = viewSideRef.current;
 
-        // --- 1. CAPTURE ACTIVE SIDE ---
-        const activeObjects = mainCanvas.getObjects();
-        const activePrintArea = activeObjects.find(o => o.excludeFromExport && o.type === 'rect');
-        const activeBaseImg = activeObjects.find(o => o.excludeFromExport && o.type === 'image');
+        const currentCanvasJSON = mainCanvas.toJSON([
+            "id",
+            "price",
+            "excludeFromExport",
+            "isBaseImage"
+        ]);
 
-        // A. Capture Mockup (with shirt, no stroke)
-        if (activePrintArea) activePrintArea.set({ stroke: 'transparent' });
-        if (activeBaseImg) activeBaseImg.set({ opacity: 1, visible: true }); // 👕 Show shirt for mockup
+        if (activeSide === "front") {
+            frontDesignRef.current = currentCanvasJSON;
+        } else {
+            backDesignRef.current = currentCanvasJSON;
+        }
 
-        results[activeSide] = mainCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 4.5 });
-        thumbnails[activeSide] = mainCanvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 0.6 });
+        for (const side of ["front", "back"]) {
+            const sideDesignJSON = side === "front" ? frontDesignRef.current : backDesignRef.current;
+            const rendered = await renderSideAssets(side, sideDesignJSON, productDataRef.current);
 
-        // B. Capture Print File (no shirt, high-res)
-        if (activeBaseImg) activeBaseImg.set({ visible: false, opacity: 0 }); // 🚫 Hide shirt for print file
-        printFiles[activeSide] = mainCanvas.toDataURL({ format: 'png', multiplier: 4.5 });
-        
-        // Restore for editor
-        if (activeBaseImg) activeBaseImg.set({ visible: true, opacity: 0 }); 
-        if (activePrintArea) activePrintArea.set({ stroke: 'rgba(0,0,0,0.3)' });
-        mainCanvas.requestRenderAll();
-
-        // --- 2. CAPTURE BACKGROUND SIDE ---
-        for (const side of ['front', 'back']) {
-            if (side === activeSide) continue;
-
-            const sideDesignJSON = side === 'front' ? frontDesignRef.current : backDesignRef.current;
-            if (sideDesignJSON) {
-                const hiddenEl = document.createElement('canvas');
-                hiddenEl.width = 500; // 🎯 Standard 500x600 for coordinate parity
-                hiddenEl.height = 600;
-                const hiddenCanvas = new Canvas(hiddenEl, { skipOffscreen: true });
-
-                await hiddenCanvas.loadFromJSON(sideDesignJSON);
-
-                // Capture Print File first (Design only)
-                printFiles[side] = hiddenCanvas.toDataURL({ format: 'png', multiplier: 4.5 });
-
-                // Add Base Image for Mockup
-                const baseURL = side === 'front' ? productDataRef.current.frontImage : productDataRef.current.backImage;
-                await addBaseImage(hiddenCanvas, baseURL);
-
-                const baseImg = hiddenCanvas.getObjects().find(o => o.excludeFromExport && o.type === 'image');
-                if (baseImg) {
-                    baseImg.set({ opacity: 1, visible: true }); // 👕 Ensure shirt visible in mockup
-                    hiddenCanvas.sendObjectToBack(baseImg);
-                }
-
-                const sPrintArea = hiddenCanvas.getObjects().find(o => o.excludeFromExport && o.type === 'rect');
-                if (sPrintArea) sPrintArea.set({ stroke: 'transparent' });
-
-                results[side] = hiddenCanvas.toDataURL({ format: 'png', quality: 1, multiplier: 4.5 });
-                thumbnails[side] = hiddenCanvas.toDataURL({ format: 'jpeg', quality: 0.8, multiplier: 0.6 });
-
-                hiddenCanvas.dispose();
-            }
+            results[side] = rendered.mockup;
+            thumbnails[side] = rendered.thumbnail;
+            printFiles[side] = rendered.printFile;
         }
 
         return { ...results, thumbnails, printFiles };
@@ -300,50 +326,19 @@ export default function DesignPreviewModal() {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
-                                    className="w-full h-full relative"
+                                    className="w-full h-full flex items-center justify-center"
                                 >
-                                    {/* ⚙️ 3D WEBGL STAGE */}
-                                    <ThreeCanvas
-                                        dpr={[1, 2]}
-                                        gl={{
-                                            antialias: false,
-                                            powerPreference: "high-performance",
-                                            preserveDrawingBuffer: true
-                                        }}
-                                        camera={{ position: [0, 0, 10], fov: 26 }}
-                                        className="w-full h-full"
-                                    >
-                                        <ambientLight intensity={0.4} />
-                                        <spotLight position={[10, 10, 10]} intensity={1.5} />
-                                        <Suspense fallback={null}>
-                                            <TShirtModel color={garmentColor} viewSide={currentSide} />
-                                            <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.3} far={10} color="#000000" />
-                                            <Environment preset="city" />
-                                        </Suspense>
-                                    </ThreeCanvas>
-
-                                    {/* 📦 DESIGN OVERLAY (Atelier Sync) */}
-                                    <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none">
-                                        <motion.div
-                                            key={`${currentSide}-design`}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="relative w-[95%] h-full flex items-center justify-center pointer-events-none"
-                                        >
-                                            {previews?.printFiles?.[currentSide] ? (
-                                                <img
-                                                    src={previews.printFiles[currentSide]}
-                                                    className="w-full h-full object-contain mix-blend-normal opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"
-                                                    alt="Design Snapshot"
-                                                />
-                                            ) : (
-                                                <div className="text-[8px] text-black/10 font-bold uppercase tracking-widest">Awaiting Render...</div>
-                                            )}
-                                        </motion.div>
-                                    </div>
-
-                                    {/* 🌫️ STUDIO VIGNETTE */}
-                                    <div className="absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.15)_100%)] pointer-events-none rounded-3xl" />
+                                    {previews?.[currentSide] ? (
+                                        <img
+                                            src={previews[currentSide]}
+                                            alt={`${currentSide} design preview`}
+                                            className="max-w-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)]"
+                                        />
+                                    ) : (
+                                        <div className="text-[8px] text-black/10 font-bold uppercase tracking-widest">
+                                            Awaiting Render...
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
                         </AnimatePresence>
