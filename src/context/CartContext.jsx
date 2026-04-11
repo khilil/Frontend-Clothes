@@ -82,7 +82,7 @@ export function CartProvider({ children }) {
                 }
               }
 
-              const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url;
+              const rawImage = item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || variant?.images?.[0]?.url || product.frontImage || product.images?.[0]?.url;
 
               return {
                 cartItemId: item._id,
@@ -165,7 +165,7 @@ export function CartProvider({ children }) {
                     customizationCost += mappedItem.customizations.technicalReport.reduce((acc, el) => acc + (Number(el.price) || 0), 0);
                   }
                 }
-                const rawImage = mappedItem.customizations?.previews?.front || variant?.images?.[0]?.url || product.images?.[0]?.url;
+                const rawImage = mappedItem.customizations?.displayPreviews?.front || mappedItem.customizations?.displayImage || mappedItem.customizations?.previews?.front || variant?.images?.[0]?.url || product.frontImage || product.images?.[0]?.url;
                 return {
                   cartItemId: mappedItem._id,
                   id: product._id,
@@ -220,7 +220,7 @@ export function CartProvider({ children }) {
             }
 
             const isNewItem = item.variantId === variantId;
-            const rawImage = item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.images?.[0]?.url;
+            const rawImage = item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || variant?.images?.[0]?.url || prod.frontImage || prod.images?.[0]?.url;
 
             return {
               cartItemId: item._id,
@@ -271,7 +271,7 @@ export function CartProvider({ children }) {
           title: product.title,
           basePrice: basePrice,
           price: basePrice + customizationCost,
-          image: ensureAbsoluteUrl(customizations?.previews?.front || product.images?.[0]?.url),
+          image: ensureAbsoluteUrl(customizations?.displayPreviews?.front || customizations?.displayImage || customizations?.previews?.front || product.frontImage || product.images?.[0]?.url),
           qty: 1,
           variantId: variantId,
           size: options.size || "N/A",

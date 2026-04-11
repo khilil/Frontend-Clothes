@@ -173,7 +173,7 @@ const Orders = () => {
                           <img
                             alt="Item"
                             className="w-full h-full object-cover rounded-xl sm:rounded-3xl group-hover:scale-110 transition-all duration-1000"
-                            src={item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
+                            src={item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
                           />
                         </div>
                       ))}

@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
 import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader, FiRefreshCw } from "react-icons/fi";
@@ -16,6 +16,8 @@ export default function DesignPreviewModal() {
     const [loading, setLoading] = useState(false);
     const [addingToCart, setAddingToCart] = useState(false);
     const [success, setSuccess] = useState(false);
+    const previewStageRef = useRef(null);
+    const overlayImageRef = useRef(null);
     const navigate = useNavigate();
     const isMobilePreview = typeof window !== "undefined" && window.innerWidth < 768;
 
@@ -225,7 +227,7 @@ export default function DesignPreviewModal() {
 
         const scanDesign = (design) => {
             if (!design || !design.objects) return;
-            design.objects.forEach(obj => {
+            design.objects.filter((obj) => !obj.excludeFromExport).forEach(obj => {
                 const assetKey = obj.src || obj.id;
                 if (assetKey) {
                     const meta = metadataMap[assetKey] || {
@@ -257,6 +259,93 @@ export default function DesignPreviewModal() {
         return report;
     };
 
+    const waitForPreviewPaint = (delay = 120) =>
+        new Promise((resolve) => {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    window.setTimeout(resolve, delay);
+                });
+            });
+        });
+
+    const captureCurrentDisplayMockup = () => {
+        const stageEl = previewStageRef.current;
+        if (!stageEl) return null;
+
+        const webglCanvas = stageEl.querySelector("canvas");
+        const stageRect = stageEl.getBoundingClientRect();
+        if (!webglCanvas || !stageRect.width || !stageRect.height) return null;
+
+        const scale = 2;
+        const exportCanvas = document.createElement("canvas");
+        exportCanvas.width = Math.max(1, Math.round(stageRect.width * scale));
+        exportCanvas.height = Math.max(1, Math.round(stageRect.height * scale));
+
+        const ctx = exportCanvas.getContext("2d");
+        if (!ctx) return null;
+
+        const centerX = exportCanvas.width / 2;
+        const centerY = exportCanvas.height / 2;
+        const baseGradient = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            exportCanvas.width * 0.08,
+            centerX,
+            centerY,
+            exportCanvas.width * 0.75
+        );
+        baseGradient.addColorStop(0, "#8e8e8e");
+        baseGradient.addColorStop(1, "#4a4a4a");
+        ctx.fillStyle = baseGradient;
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+        ctx.drawImage(webglCanvas, 0, 0, exportCanvas.width, exportCanvas.height);
+
+        const overlayImg = overlayImageRef.current;
+        if (overlayImg?.complete && overlayImg.naturalWidth && overlayImg.naturalHeight) {
+            const overlayRect = overlayImg.getBoundingClientRect();
+            const drawX = ((overlayRect.left - stageRect.left) / stageRect.width) * exportCanvas.width;
+            const drawY = ((overlayRect.top - stageRect.top) / stageRect.height) * exportCanvas.height;
+            const drawWidth = (overlayRect.width / stageRect.width) * exportCanvas.width;
+            const drawHeight = (overlayRect.height / stageRect.height) * exportCanvas.height;
+
+            if (drawWidth > 0 && drawHeight > 0) {
+                ctx.drawImage(overlayImg, drawX, drawY, drawWidth, drawHeight);
+            }
+        }
+
+        const vignette = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            exportCanvas.width * 0.25,
+            centerX,
+            centerY,
+            exportCanvas.width * 0.7
+        );
+        vignette.addColorStop(0, "rgba(0,0,0,0)");
+        vignette.addColorStop(1, "rgba(0,0,0,0.15)");
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+        return exportCanvas.toDataURL("image/png", 1);
+    };
+
+    const captureDisplayPreviews = async () => {
+        const previousSide = currentSide;
+        const captures = {};
+
+        for (const side of ["front", "back"]) {
+            setCurrentSide(side);
+            await waitForPreviewPaint();
+            captures[side] = captureCurrentDisplayMockup();
+        }
+
+        setCurrentSide(previousSide);
+        await waitForPreviewPaint(0);
+
+        return captures;
+    };
+
     const handleAddToBag = async () => {
         if (!productDataRef.current) {
             console.error("❌ Add to Bag failed: productDataRef.current is empty");
@@ -271,11 +360,26 @@ export default function DesignPreviewModal() {
 
         setAddingToCart(true);
         try {
+            const displayPreviews = await captureDisplayPreviews();
+            const displayImage = displayPreviews[currentSide] || displayPreviews.front || displayPreviews.back || captureCurrentDisplayMockup();
+            const cartPreviews = {
+                front: previews?.thumbnails?.front || previews?.front || previews?.previewFiles?.front || null,
+                back: previews?.thumbnails?.back || previews?.back || previews?.previewFiles?.back || null
+            };
+            const productionPrintFiles = {
+                front: previews?.previewFiles?.front || previews?.printFiles?.front || null,
+                back: previews?.previewFiles?.back || previews?.printFiles?.back || null
+            };
             const customizations = {
-                frontDesign: frontDesignRef.current,
-                backDesign: backDesignRef.current,
-                previews: previews, // Using full res mockups for cart/admin list (formerly thumbnails)
-                printFiles: previews.printFiles, // high-res for printing
+                frontDesign: getDesignOnlyJSON(frontDesignRef.current),
+                backDesign: getDesignOnlyJSON(backDesignRef.current),
+                displayImage,
+                displayPreviews: {
+                    front: displayPreviews.front || cartPreviews.front || null,
+                    back: displayPreviews.back || cartPreviews.back || null
+                },
+                previews: cartPreviews,
+                printFiles: productionPrintFiles,
                 printingMethod: currentType,
                 technicalReport: generateTechnicalReport()
             };
@@ -304,7 +408,7 @@ export default function DesignPreviewModal() {
             setTimeout(() => {
                 setSuccess(false);
                 setIsOpen(false);
-                navigate("/"); // Redirect to home page
+                navigate("/cart");
             }, 2000);
         } catch (err) {
             console.error("Failed to add to bag:", err);
@@ -393,6 +497,7 @@ export default function DesignPreviewModal() {
                                     className="w-full h-full flex items-center justify-center"
                                 >
                                     <div
+                                        ref={previewStageRef}
                                         className="relative w-full max-w-[340px] sm:max-w-[420px] md:max-w-[500px] aspect-[500/600] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden"
                                         style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
                                     >
@@ -424,6 +529,7 @@ export default function DesignPreviewModal() {
                                             <div className="relative w-[95%] h-full flex items-center justify-center pointer-events-none">
                                                 {previewOverlaySrc ? (
                                                     <img
+                                                        ref={overlayImageRef}
                                                         src={previewOverlaySrc}
                                                         alt={`${currentSide} design overlay`}
                                                         className="block w-full h-full object-contain mix-blend-normal pointer-events-none opacity-[0.92] drop-shadow-[0_4px_10px_rgba(0,0,0,0.15)]"

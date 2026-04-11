@@ -163,7 +163,7 @@ export default function CartPage() {
                                     <div
                                         className="w-24 md:w-40 aspect-[3/4] bg-secondary rounded-2xl overflow-hidden flex-shrink-0 relative cursor-zoom-in group shadow-sm border border-border-subtle/50"
                                         onClick={() => {
-                                            if (item.customizations?.previews) {
+                                            if (item.customizations?.displayPreviews || item.customizations?.previews) {
                                                 setSelectedItemForPreview(item);
                                                 setPreviewSide("front");
                                             }
@@ -174,7 +174,7 @@ export default function CartPage() {
                                             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                                             src={item.image}
                                         />
-                                        {item.customizations?.previews && (
+                                        {(item.customizations?.displayPreviews || item.customizations?.previews) && (
                                             <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                                                 <span className="material-symbols-outlined text-text-primary text-2xl">zoom_in</span>
                                             </div>
@@ -203,10 +203,10 @@ export default function CartPage() {
                                                 )}
                                             </div>
 
-                                            {item.customizations?.previews && (
+                                            {(item.customizations?.displayPreviews || item.customizations?.previews) && (
                                                 <div className="flex gap-1.5 md:gap-2">
                                                     {['front', 'back'].map(side => (
-                                                        item.customizations.previews[side] && (
+                                                        (item.customizations?.displayPreviews?.[side] || item.customizations?.previews?.[side]) && (
                                                             <div
                                                                 key={side}
                                                                 className="w-8 h-10 md:w-12 md:h-16 rounded-lg border border-border-subtle/50 bg-background p-0.5 group/thumb relative transition-transform hover:scale-105 overflow-hidden cursor-pointer"
@@ -216,7 +216,7 @@ export default function CartPage() {
                                                                 }}
                                                             >
                                                                 <img
-                                                                    src={item.customizations.previews[side]}
+                                                                    src={item.customizations?.displayPreviews?.[side] || item.customizations?.previews?.[side]}
                                                                     className="w-full h-full object-contain"
                                                                     alt={side}
                                                                 />
@@ -493,9 +493,9 @@ export default function CartPage() {
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 className="w-full h-full flex items-center justify-center"
                             >
-                                {selectedItemForPreview.customizations?.previews?.[previewSide] ? (
+                                {(selectedItemForPreview.customizations?.displayPreviews?.[previewSide] || selectedItemForPreview.customizations?.previews?.[previewSide]) ? (
                                     <img
-                                        src={selectedItemForPreview.customizations.previews[previewSide]}
+                                        src={selectedItemForPreview.customizations?.displayPreviews?.[previewSide] || selectedItemForPreview.customizations?.previews?.[previewSide]}
                                         className="max-w-full max-h-full object-contain rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-text-primary/5"
                                         alt={`${previewSide} view`}
                                     />

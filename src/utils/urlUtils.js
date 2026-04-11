@@ -4,7 +4,12 @@ export const ensureAbsoluteUrl = (url) => {
     if (!url) return "/images/product_placeholder.png";
 
     // If it's already an absolute URL, return it
-    if (url.startsWith("http://") || url.startsWith("https://")) {
+    if (
+        url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("data:") ||
+        url.startsWith("blob:")
+    ) {
         return url;
     }
 

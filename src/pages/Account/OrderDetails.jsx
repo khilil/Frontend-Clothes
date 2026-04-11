@@ -357,12 +357,35 @@ const OrderDetails = () => {
                         <div className="divide-y divide-black/[0.03]">
                             {order.items?.map((item, idx) => (
                                 <div key={idx} className="p-6 sm:p-10 md:p-14 flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start group/item hover:bg-black/[0.01] transition-all">
-                                    <div className="w-24 h-32 sm:w-28 sm:h-36 md:w-40 md:h-52 bg-black/[0.02] rounded-2xl sm:rounded-3xl overflow-hidden border border-black/5 flex-shrink-0 group-hover/item:border-black/10 transition-all duration-1000 p-2">
-                                        <img
-                                            alt={item.title}
-                                            className="w-full h-full object-cover rounded-xl sm:rounded-2xl grayscale group-hover/item:grayscale-0 group-hover/item:scale-110 transition-all duration-1000"
-                                            src={item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
-                                        />
+                                    <div className="flex flex-col items-center gap-3 flex-shrink-0">
+                                        <div className="w-24 h-32 sm:w-28 sm:h-36 md:w-40 md:h-52 bg-black/[0.02] rounded-2xl sm:rounded-3xl overflow-hidden border border-black/5 group-hover/item:border-black/10 transition-all duration-1000 p-2">
+                                            <img
+                                                alt={item.title}
+                                                className="w-full h-full object-cover rounded-xl sm:rounded-2xl grayscale group-hover/item:grayscale-0 group-hover/item:scale-110 transition-all duration-1000"
+                                                src={item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
+                                            />
+                                        </div>
+                                        {(item.customizations?.displayPreviews?.front || item.customizations?.displayPreviews?.back || item.customizations?.previews?.front || item.customizations?.previews?.back) && (
+                                            <div className="flex gap-2">
+                                                {["front", "back"].map((side) => {
+                                                    const sideImage = item.customizations?.displayPreviews?.[side] || item.customizations?.previews?.[side];
+                                                    if (!sideImage) return null;
+
+                                                    return (
+                                                        <div
+                                                            key={side}
+                                                            className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl overflow-hidden border border-black/5 bg-black/[0.02] p-1"
+                                                        >
+                                                            <img
+                                                                src={sideImage}
+                                                                alt={`${item.title} ${side}`}
+                                                                className="w-full h-full object-cover rounded-lg"
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between h-full py-2 sm:py-4 text-center sm:text-left w-full">
                                         <div>
