@@ -178,7 +178,7 @@ export default function Checkout() {
           state: newAddrData.state,
           pincode: newAddrData.pinCode
         };
-      } else {
+      } else if (formData.deliveryMethod === "DELIVERY") {
         const selectedAddr = user.addresses.find(a => a._id === selectedAddressId);
         shippingAddress = {
           fullName: selectedAddr.fullName,
@@ -203,22 +203,25 @@ export default function Checkout() {
         } : undefined
       };
 
-      let result;
-      if (directBuy) {
-        result = await orderService.directBuy({
+      const result = directBuy
+        ? await orderService.directBuy({
           ...orderData,
           productId: directBuy.productId,
           variantId: directBuy.variantId,
           quantity: directBuy.quantity
-        });
-      } else {
-        result = await orderService.cartCheckout(orderData);
-      }
+        })
+        : await orderService.cartCheckout(orderData);
 
       const orderId = result.data._id;
       setCompletedOrderId(orderId);
 
       // 💳 Razorpay Integration for Online Payments
+      if (formData.paymentMethod !== "ONLINE") {
+        if (!directBuy) clearCart();
+        setCheckoutStep("done");
+        return;
+      }
+
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         alert("Razorpay SDK failed to load. Are you online?");
@@ -227,16 +230,14 @@ export default function Checkout() {
       }
 
       // Create Razorpay Order in Backend
-      const razorpayOrder = await paymentService.createRazorpayOrder({
-        orderId: result.data._id
-      });
+      const razorpayOrder = await paymentService.createRazorpayOrder({ orderId });
 
       const options = {
         key: "rzp_test_SKiQG78TfTVFU7", // Test Key ID
         amount: razorpayOrder.data.amount,
         currency: razorpayOrder.data.currency,
         name: "Fenrir Era",
-        description: "Payment for Order #" + result.data._id,
+        description: "Payment for Order #" + orderId,
         order_id: razorpayOrder.data.id,
         handler: async function (response) {
           try {
@@ -245,7 +246,7 @@ export default function Checkout() {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              orderId: result.data._id
+              orderId
             };
 
             // Verify Signature in Backend
@@ -261,9 +262,9 @@ export default function Checkout() {
           }
         },
         prefill: {
-          name: user.fullName,
-          email: user.email,
-          contact: shippingAddress.phone
+          name: user?.fullName || shippingAddress?.fullName || "",
+          email: user?.email || "",
+          contact: shippingAddress?.phone || ""
         },
         theme: {
           color: "#000000"

@@ -3,6 +3,7 @@ import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
 import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader, FiRefreshCw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { flushSync } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "fabric";
 import { Canvas as ThreeCanvas } from "@react-three/fiber";
@@ -259,6 +260,55 @@ export default function DesignPreviewModal() {
         return report;
     };
 
+    const normalizeValue = (value) => String(value || "").trim().toLowerCase();
+
+    const isVariantAvailable = (variant, product) => {
+        if (!variant) return false;
+        if (!product?.trackInventory) return true;
+        if (variant.allowBackorder) return true;
+
+        const stock = Number(variant.stock || 0);
+        const reservedStock = Number(variant.reservedStock || 0);
+        return stock - reservedStock > 0;
+    };
+
+    const getVariantIdentifier = (variant) =>
+        variant?.sku || variant?._id || variant?.id || null;
+
+    const resolveCartVariant = (product) => {
+        const variants = product?.variants || [];
+        if (!variants.length) return null;
+
+        const desiredVariantId = normalizeValue(initialVariantIdRef.current);
+        const desiredSize = normalizeValue(initialSizeRef.current);
+        const desiredColor = normalizeValue(initialColorRef.current);
+
+        const preferredVariant = variants.find((variant) =>
+            [variant?.sku, variant?._id, variant?.id].some(
+                (value) => normalizeValue(value) === desiredVariantId
+            )
+        );
+
+        if (preferredVariant && isVariantAvailable(preferredVariant, product)) {
+            return preferredVariant;
+        }
+
+        const exactMatch = variants.find((variant) => {
+            const sameSize = !desiredSize || normalizeValue(variant?.size?.name) === desiredSize;
+            const sameColor = !desiredColor || normalizeValue(variant?.color?.name) === desiredColor;
+            return sameSize && sameColor && isVariantAvailable(variant, product);
+        });
+        if (exactMatch) return exactMatch;
+
+        const sizeMatch = variants.find((variant) => {
+            const sameSize = !desiredSize || normalizeValue(variant?.size?.name) === desiredSize;
+            return sameSize && isVariantAvailable(variant, product);
+        });
+        if (sizeMatch) return sizeMatch;
+
+        return variants.find((variant) => isVariantAvailable(variant, product)) || preferredVariant || variants[0] || null;
+    };
+
     const waitForPreviewPaint = (delay = 120) =>
         new Promise((resolve) => {
             window.requestAnimationFrame(() => {
@@ -335,13 +385,17 @@ export default function DesignPreviewModal() {
         const captures = {};
 
         for (const side of ["front", "back"]) {
-            setCurrentSide(side);
-            await waitForPreviewPaint();
+            flushSync(() => {
+                setCurrentSide(side);
+            });
+            await waitForPreviewPaint(220);
             captures[side] = captureCurrentDisplayMockup();
         }
 
-        setCurrentSide(previousSide);
-        await waitForPreviewPaint(0);
+        flushSync(() => {
+            setCurrentSide(previousSide);
+        });
+        await waitForPreviewPaint(80);
 
         return captures;
     };
@@ -387,9 +441,10 @@ export default function DesignPreviewModal() {
             // Find a default variant if none selected
             // ✅ USE PRESERVED SELECTION IF AVAILABLE
             const product = productDataRef.current;
-            const finalVariantId = initialVariantIdRef.current || (product.variants?.length > 0 ? (product.variants[0].sku || product.variants[0]._id) : null);
-            const finalSize = initialSizeRef.current || (product.variants?.length > 0 ? product.variants[0].size?.name : "N/A");
-            const finalColor = initialColorRef.current || (product.variants?.length > 0 ? product.variants[0].color?.name : "N/A");
+            const resolvedVariant = resolveCartVariant(product);
+            const finalVariantId = getVariantIdentifier(resolvedVariant) || initialVariantIdRef.current;
+            const finalSize = resolvedVariant?.size?.name || initialSizeRef.current || "N/A";
+            const finalColor = resolvedVariant?.color?.name || initialColorRef.current || "N/A";
 
             if (!finalVariantId) {
                 console.error("❌ No variant found to add to bag");
