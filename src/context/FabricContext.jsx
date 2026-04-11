@@ -30,9 +30,7 @@ export function FabricProvider({ children }) {
         imagePricePerElement: 80,
         printingMethods: [
             { id: "dtf", label: "DTF Printing", price: 150, description: "Direct to Film - Vibrant & Durable" },
-            { id: "screen", label: "Screen Print", price: 100, description: "Classic & Long-lasting" },
-            { id: "embroidery", label: "Embroidery", price: 250, description: "Premium Stitched Design" },
-            { id: "sublimation", label: "Sublimation", price: 120, description: "Full Color & Breathable" }
+            { id: "embroidery", label: "Embroidery", price: 250, description: "Premium Stitched Design" }
         ]
     });
 
@@ -40,7 +38,15 @@ export function FabricProvider({ children }) {
         const fetchPricing = async () => {
             try {
                 const settings = await getSettings();
-                if (settings) setPricingSettings(settings);
+                if (settings) {
+                    const filteredMethods = settings.printingMethods?.filter(m => 
+                        ["dtf", "embroidery"].includes(m.id.toLowerCase())
+                    );
+                    setPricingSettings({
+                        ...settings,
+                        printingMethods: filteredMethods || []
+                    });
+                }
             } catch (error) {
                 console.error("Failed to fetch pricing settings:", error);
             }

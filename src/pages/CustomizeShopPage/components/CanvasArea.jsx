@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { FiRefreshCw, FiEye } from "react-icons/fi";
 import { useFabric } from "../../../context/FabricContext";
 import { initFabric } from "../fabric/fabricCanvas.js";
 import { clampToPrintArea } from "../../../utils/printAreaClamp.js";
@@ -440,37 +441,42 @@ export default function CanvasArea() {
                 </div>
             </div>
 
-            {/* FLOATING FRONT / BACK TOGGLE (Bottom Position On Mobile) */}
-            <div className="absolute bottom-6 sm:bottom-auto sm:top-20 md:top-24 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-6 z-[100]">
-                <div className="flex bg-white/60 backdrop-blur-xl border border-black/5 
-                    rounded-2xl p-1.5 shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative overflow-hidden">
+            {/* FLOATING PREVIEW TOGGLE (Bottom Right - Above Flip on Mobile) */}
+            <div className="absolute bottom-[90px] right-4 md:hidden z-[100]">
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-design-preview'))}
+                    className="group flex items-center gap-3 bg-[#0A0A0A] text-white 
+                    rounded-2xl p-2.5 px-6 shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:bg-black transition-all active:scale-95 overflow-hidden relative"
+                >
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Preview</span>
+                    <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                        <FiEye size={14} className="text-white group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                </button>
+            </div>
 
-                    <motion.div
-                        animate={{ x: viewSide === "front" ? 0 : "100%" }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] bg-[#d4c4b1] rounded-xl shadow-lg shadow-[#d4c4b1]/20 z-0"
-                    />
-
-                    <button
-                        onClick={() => switchSide("front")}
-                        className={`relative z-10 px-6 py-2.5 text-[9px] sm:text-[10px] md:text-[11px] 
-                            font-black uppercase tracking-[0.3em] 
-                            transition-colors duration-500 w-24 sm:w-28
-                            ${viewSide === "front" ? "text-black" : "text-[#4A4A4A] hover:text-[#0A0A0A]"}`}
-                    >
-                        Front
-                    </button>
-
-                    <button
-                        onClick={() => switchSide("back")}
-                        className={`relative z-10 px-6 py-2.5 text-[9px] sm:text-[10px] md:text-[11px] 
-                            font-black uppercase tracking-[0.3em] 
-                            transition-colors duration-500 w-24 sm:w-28
-                            ${viewSide === "back" ? "text-black" : "text-[#4A4A4A] hover:text-[#0A0A0A]"}`}
-                    >
-                        Back
-                    </button>
-                </div>
+            {/* FLOATING FLIP TOGGLE (Bottom Right Position On Mobile) */}
+            <div className="absolute bottom-6 right-4 sm:bottom-auto sm:top-20 md:top-24 sm:left-6 sm:right-auto z-[100]">
+                <button
+                    onClick={() => switchSide(viewSide === "front" ? "back" : "front")}
+                    className="group flex items-center gap-2.5 sm:gap-4 bg-white/60 backdrop-blur-xl border border-black/5 
+                    rounded-2xl p-1.5 px-4 sm:p-2.5 sm:px-6 shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:bg-white/80 transition-all active:scale-95 overflow-hidden relative"
+                >
+                    <div className="flex flex-col items-start">
+                        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-black/30 leading-none mb-1">View</span>
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-black leading-none">{viewSide}</span>
+                    </div>
+                    
+                    <div className="w-px h-6 bg-black/10 mx-1" />
+                    
+                    <div className="flex items-center gap-2 sm:gap-2.5">
+                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-black/60">Flip</span>
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#d4c4b1] flex items-center justify-center shadow-lg shadow-[#d4c4b1]/20">
+                            <FiRefreshCw size={12} className="text-black sm:hidden group-hover:rotate-180 transition-transform duration-700 ease-in-out" />
+                            <FiRefreshCw size={14} className="text-black hidden sm:block group-hover:rotate-180 transition-transform duration-700 ease-in-out" />
+                        </div>
+                    </div>
+                </button>
             </div>
 
             {/* MAIN 3D ATELIER STACK (v7.15 Balanced Mobile) */}

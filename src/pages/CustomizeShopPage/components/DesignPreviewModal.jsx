@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useFabric } from "../../../context/FabricContext";
 import { useCart } from "../../../context/CartContext";
-import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader } from "react-icons/fi";
+import { FiX, FiCheck, FiDownload, FiShoppingCart, FiLoader, FiRefreshCw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "fabric";
@@ -344,17 +344,31 @@ export default function DesignPreviewModal() {
                     <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-black/5 bg-white/40 shrink-0">
                         <div className="flex items-center gap-4">
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Final Review</span>
-                            <div className="flex bg-black/5 rounded-full p-1">
-                                {['front', 'back'].map(side => (
-                                    <button
-                                        key={side}
-                                        onClick={() => setCurrentSide(side)}
-                                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${currentSide === side ? 'bg-[#0A0A0A] text-white shadow-lg' : 'text-[#4A4A4A] hover:text-[#0A0A0A]'}`}
-                                    >
-                                        {side}
-                                    </button>
-                                ))}
-                            </div>
+                            <button
+                                onClick={() => setCurrentSide(currentSide === 'front' ? 'back' : 'front')}
+                                className="group flex items-center gap-3 bg-black/5 rounded-full px-4 py-2 hover:bg-black/10 transition-all active:scale-95"
+                            >
+                                <span className="text-[9px] font-black uppercase tracking-widest text-[#0A0A0A]">
+                                    Viewing: {currentSide}
+                                </span>
+                                <div className="w-px h-3 bg-black/10 mx-1" />
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-[#4A4A4A] group-hover:text-[#0A0A0A]">Flip</span>
+                                    <FiRefreshCw size={12} className="text-[#4A4A4A] group-hover:text-[#0A0A0A] group-hover:rotate-180 transition-transform duration-500" />
+                                </div>
+                            </button>
+
+
+
+
+
+
+
+
+
+
+
+
                         </div>
                     </div>
 

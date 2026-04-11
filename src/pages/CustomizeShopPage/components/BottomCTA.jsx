@@ -32,7 +32,7 @@ export default function BottomCTA() {
             <div className="grid grid-cols-1 gap-3">
                 <button
                     onClick={handlePreview}
-                    className="h-12 md:h-16 border border-black/10 rounded-xl flex items-center justify-center gap-3 hover:bg-black/5 active:scale-[0.99] transition-all group bg-white"
+                    className="hidden md:flex h-12 md:h-16 border border-black/10 rounded-xl items-center justify-center gap-3 hover:bg-black/5 active:scale-[0.99] transition-all group bg-white"
                 >
                     <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-[#0A0A0A] group-hover:bg-[#0A0A0A] group-hover:text-white group-hover:px-4 group-hover:py-2 group-hover:rounded-lg transition-all duration-300">
                         Preview
