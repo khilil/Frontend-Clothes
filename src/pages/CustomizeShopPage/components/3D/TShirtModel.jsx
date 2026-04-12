@@ -3,7 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-export default function TShirtModel({ color, viewSide }) {
+export default function TShirtModel({ color, viewSide, instantViewSwitch = false }) {
     // Load the model from the public folder
     const { nodes, materials } = useGLTF("/t_shirt.glb");
     const groupRef = useRef();
@@ -28,8 +28,19 @@ export default function TShirtModel({ color, viewSide }) {
     // 🔄 NATIVE THREE.JS ROTATION ANIMATION (Instead of framer-motion-3d)
     const targetRotationY = viewSide === "front" ? 0 : Math.PI;
 
-    useFrame((state, delta) => {
+    useEffect(() => {
+        if (instantViewSwitch && groupRef.current) {
+            groupRef.current.rotation.y = targetRotationY;
+        }
+    }, [instantViewSwitch, targetRotationY]);
+
+    useFrame(() => {
         if (groupRef.current) {
+            if (instantViewSwitch) {
+                groupRef.current.rotation.y = targetRotationY;
+                return;
+            }
+
             // Smoothly interpolate the rotation over time
             groupRef.current.rotation.y = THREE.MathUtils.lerp(
                 groupRef.current.rotation.y,

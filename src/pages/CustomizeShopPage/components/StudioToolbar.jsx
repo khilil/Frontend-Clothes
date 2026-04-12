@@ -1,4 +1,4 @@
-import { FiTrash2, FiChevronUp, FiChevronDown, FiCopy, FiAlignCenter } from "react-icons/fi";
+import { FiTrash2, FiChevronUp, FiChevronDown, FiCopy, FiAlignCenter, FiRotateCcw, FiRotateCw } from "react-icons/fi";
 import { useFabric } from "../../../context/FabricContext";
 import { FONT_FAMILIES as INITIAL_FONTS } from "../fabric/fontRegistry";
 import { waitForFont, loadGoogleFont } from "../fabric/fontUtils";
@@ -92,6 +92,7 @@ export default function StudioToolbar() {
         const clamped = Math.max(8, Math.min(200, newSize));
         selectedObject.set({ fontSize: clamped });
         fabricCanvas.current.requestRenderAll();
+        saveHistory(fabricCanvas.current);
     };
 
     const adjustFontSize = (delta) => {
@@ -99,6 +100,16 @@ export default function StudioToolbar() {
         const newSize = Math.max(8, Math.min(200, currentSize + delta));
         selectedObject.set({ fontSize: newSize });
         fabricCanvas.current.requestRenderAll();
+        saveHistory(fabricCanvas.current);
+    };
+
+
+    const handleRotationChange = (delta) => {
+        if (!selectedObject) return;
+        const currentAngle = selectedObject.angle || 0;
+        selectedObject.rotate((currentAngle + delta) % 360);
+        fabricCanvas.current.requestRenderAll();
+        saveHistory(fabricCanvas.current);
     };
 
     const handleCenter = () => {
@@ -112,7 +123,7 @@ export default function StudioToolbar() {
     return (
         <>
             {/* DESKTOP: Floating toolbar chip — unchanged */}
-            <div className="hidden md:flex absolute top-6 left-1/2 -translate-x-1/2 items-center bg-white/55 backdrop-blur-2xl border border-black/5 rounded-2xl px-6 py-2.5 gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-40 animate-slideUp">
+            <div className="hidden md:flex absolute top-6 left-1/2 -translate-x-1/2 items-center bg-white/55 backdrop-blur-2xl border border-black/5 rounded-2xl px-6 py-2.5 gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-40 animate-slideUp mt-7">
                 {canHaveColor && (
                     <>
                         {selectedObject.type === "textbox" && (
@@ -152,6 +163,18 @@ export default function StudioToolbar() {
                         </div>
                     </>
                 )}
+
+
+                {/* Rotation Stepper */}
+                <div className="flex items-center gap-1 border-r border-black/10 pr-4 shrink-0">
+                    <button onClick={() => handleRotationChange(-45)} className="p-2 text-[#4A4A4A] hover:text-[#0A0A0A] hover:bg-black/5 rounded-lg transition-colors" title="Rotate -45°">
+                        <FiRotateCcw size={14} className="rotate-45" />
+                    </button>
+                    <button onClick={() => handleRotationChange(45)} className="p-2 text-[#4A4A4A] hover:text-[#0A0A0A] hover:bg-black/5 rounded-lg transition-colors" title="Rotate 45°">
+                        <FiRotateCw size={14} className="-rotate-45" />
+                    </button>
+                </div>
+
                 <div className="flex items-center gap-2 shrink-0">
                     <button onClick={handleCenter} className="p-2.5 text-[#4A4A4A] hover:text-[#0A0A0A] hover:bg-[#d4c4b1]/20 rounded-xl transition-all" title="Center">
                         <FiAlignCenter size={16} />
@@ -165,77 +188,86 @@ export default function StudioToolbar() {
                 </div>
             </div>
 
-            {/* MOBILE: Flat slim action bar pinned to top of the canvas column */}
-            <div className={`md:hidden absolute top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-b border-black/8 px-3 py-2 flex flex-col gap-2 animate-slideDown shadow-sm ${selectedObject.type === "textbox" ? "h-auto" : "h-[48px] justify-center"}`}>
-                
-                {/* TEXTBOX SPECIAL ROW (Row 1) */}
-                {selectedObject.type === "textbox" && (
-                    <div className="flex items-center justify-between border-b border-black/5 pb-2">
-                        <select
-                            className="bg-transparent text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer font-primary uppercase tracking-tight max-w-[120px]"
-                            value={selectedObject.fontFamily}
-                            onChange={handleFontChange}
-                        >
-                            {fonts.map(f => (
-                                <option key={f.value} value={f.value} className="bg-white text-black">{f.label}</option>
-                            ))}
-                        </select>
-                        
-                        <div className="flex items-center gap-2">
-                            {/* Font Size Stepper */}
-                            <div className="flex items-center bg-black/5 rounded-lg overflow-hidden h-7 border border-black/5">
-                                <button onClick={() => adjustFontSize(-2)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">-</button>
-                                <input
-                                    type="number"
-                                    value={Math.round(selectedObject.fontSize || 32)}
-                                    onChange={handleFontSizeChange}
-                                    className="w-7 text-[9px] bg-transparent text-center font-black outline-none"
-                                />
-                                <button onClick={() => adjustFontSize(2)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">+</button>
-                            </div>
-                            
-                            {/* Color Picker for Text */}
-                            <div className="flex items-center pl-2 border-l border-black/10">
-                                <input
-                                    type="color"
-                                    className="w-5 h-5 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0"
-                                    value={selectedObject.fill?.length === 4 ? selectedObject.fill.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : selectedObject.fill}
-                                    onChange={handleColorChange}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
+            {/* MOBILE: Sticky action bar sitting below the main header */}
+            <div className={`md:hidden sticky top-0 left-0 right-0 z-[60] bg-white border-b border-black/10 px-3 py-2 flex flex-col gap-2 animate-slideDown shadow-sm shrink-0`}>
 
-                {/* COMMON ACTIONS ROW (or Single Row for Shapes) */}
-                <div className="flex items-center w-full justify-between">
-                    {/* Non-Textbox Color Picker */}
-                    {selectedObject.type !== "textbox" && canHaveColor && (
-                        <div className="flex items-center gap-2 mr-2">
-                            <input
-                                type="color"
-                                className="w-6 h-6 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0 shadow-sm"
-                                value={selectedObject.fill?.length === 4 ? selectedObject.fill.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : selectedObject.fill}
-                                onChange={handleColorChange}
-                            />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Color</span>
+                {/* PRIMARY CONTROL ROW (Font/Size or Opacity for Graphics) */}
+                <div className="flex items-center justify-between border-b border-black/5 pb-2">
+                    {selectedObject.type === "textbox" ? (
+                        <>
+                            <select
+                                className="bg-transparent text-[10px] font-black text-[#0A0A0A] outline-none cursor-pointer font-primary uppercase tracking-tight max-w-[100px]"
+                                value={selectedObject.fontFamily}
+                                onChange={handleFontChange}
+                            >
+                                {fonts.map(f => (
+                                    <option key={f.value} value={f.value} className="bg-white text-black">{f.label}</option>
+                                ))}
+                            </select>
+
+                            <div className="flex items-center gap-1.5">
+                                <div className="flex items-center bg-black/5 rounded-lg overflow-hidden h-7 border border-black/5">
+                                    <button onClick={() => adjustFontSize(-2)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">-</button>
+                                    <input
+                                        type="number"
+                                        value={Math.round(selectedObject.fontSize || 32)}
+                                        onChange={handleFontSizeChange}
+                                        className="w-7 text-[9px] bg-transparent text-center font-black outline-none"
+                                    />
+                                    <button onClick={() => adjustFontSize(2)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">+</button>
+                                </div>
+                                <div className="flex items-center pl-1.5 border-l border-black/10">
+                                    <input
+                                        type="color"
+                                        className="w-5 h-5 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0"
+                                        value={selectedObject.fill?.length === 4 ? selectedObject.fill.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : selectedObject.fill}
+                                        onChange={handleColorChange}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-2">
+                                {canHaveColor && (
+                                    <input
+                                        type="color"
+                                        className="w-6 h-6 bg-transparent border-none cursor-pointer rounded-full overflow-hidden shrink-0 shadow-sm"
+                                        value={selectedObject.fill?.length === 4 ? selectedObject.fill.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : selectedObject.fill}
+                                        onChange={handleColorChange}
+                                    />
+                                )}
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#0A0A0A]">{selectedObject.type}</span>
+                            </div>
+
                         </div>
                     )}
+                </div>
 
-                    {/* Shared Utility Actions */}
+                {/* SECONDARY UTILITY ROW */}
+                <div className="flex items-center w-full justify-between">
+                    {/* Rotation Stepper (Mobile) */}
                     <div className="flex items-center gap-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-[#d4c4b1] mr-1">Actions</span>
-                        <button onClick={handleCenter} className="p-2 text-[#4A4A4A] hover:text-[#0A0A0A] rounded-xl transition-all active:bg-black/5" title="Center">
-                            <FiAlignCenter size={16} />
+                        <button onClick={() => handleRotationChange(-45)} className="p-1.5 text-[#4A4A4A] rounded-lg active:bg-black/5">
+                            <FiRotateCcw size={14} className="rotate-45" />
                         </button>
-                        <button onClick={handleDuplicate} className="p-2 text-[#4A4A4A] hover:text-[#0A0A0A] rounded-xl transition-all active:bg-black/5" title="Duplicate">
-                            <FiCopy size={16} />
+                        <button onClick={() => handleRotationChange(45)} className="p-1.5 text-[#4A4A4A] rounded-lg active:bg-black/5">
+                            <FiRotateCw size={14} className="-rotate-45" />
                         </button>
                     </div>
 
-                    <button onClick={handleDelete} className="p-2 text-[#4A4A4A] hover:text-red-600 rounded-xl transition-all active:bg-red-50" title="Delete">
-                        <FiTrash2 size={16} />
-                    </button>
+                    {/* Shared Actions */}
+                    <div className="flex items-center gap-0.5 ml-auto">
+                        <button onClick={handleCenter} className="p-2 text-[#4A4A4A] rounded-xl active:bg-black/5" title="Center">
+                            <FiAlignCenter size={16} />
+                        </button>
+                        <button onClick={handleDuplicate} className="p-2 text-[#4A4A4A] rounded-xl active:bg-black/5" title="Duplicate">
+                            <FiCopy size={16} />
+                        </button>
+                        <button onClick={handleDelete} className="p-2 text-[#4A4A4A] hover:text-red-600 rounded-xl active:bg-red-50" title="Delete">
+                            <FiTrash2 size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
         </>

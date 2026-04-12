@@ -415,7 +415,6 @@ export default function DesignPreviewModal() {
         setAddingToCart(true);
         try {
             const displayPreviews = await captureDisplayPreviews();
-            const displayImage = displayPreviews[currentSide] || displayPreviews.front || displayPreviews.back || captureCurrentDisplayMockup();
             const cartPreviews = {
                 front: previews?.thumbnails?.front || previews?.front || previews?.previewFiles?.front || null,
                 back: previews?.thumbnails?.back || previews?.back || previews?.previewFiles?.back || null
@@ -424,15 +423,20 @@ export default function DesignPreviewModal() {
                 front: previews?.previewFiles?.front || previews?.printFiles?.front || null,
                 back: previews?.previewFiles?.back || previews?.printFiles?.back || null
             };
+            const savedDisplayPreviews = {
+                front: displayPreviews.front || cartPreviews.front || null,
+                back: (displayPreviews.back && displayPreviews.back !== displayPreviews.front)
+                    ? displayPreviews.back
+                    : (cartPreviews.back || displayPreviews.back || null)
+            };
+            const displayImage = savedDisplayPreviews[currentSide] || savedDisplayPreviews.front || savedDisplayPreviews.back || captureCurrentDisplayMockup();
             const customizations = {
                 frontDesign: getDesignOnlyJSON(frontDesignRef.current),
                 backDesign: getDesignOnlyJSON(backDesignRef.current),
                 displayImage,
-                displayPreviews: {
-                    front: displayPreviews.front || cartPreviews.front || null,
-                    back: displayPreviews.back || cartPreviews.back || null
-                },
-                previews: cartPreviews,
+                displayPreviews: savedDisplayPreviews,
+                previews: savedDisplayPreviews,
+                editorPreviews: cartPreviews,
                 printFiles: productionPrintFiles,
                 printingMethod: currentType,
                 technicalReport: generateTechnicalReport()
@@ -574,7 +578,7 @@ export default function DesignPreviewModal() {
                                             <pointLight position={[10, 5, -5]} intensity={1.5} color="#ffffff" />
                                             <pointLight position={[0, -5, 5]} intensity={0.5} />
                                             <Suspense fallback={null}>
-                                                <TShirtModel color={garmentColor} viewSide={currentSide} />
+                                                <TShirtModel color={garmentColor} viewSide={currentSide} instantViewSwitch />
                                                 <ContactShadows resolution={1024} scale={15} blur={2.5} opacity={0.4} far={10} color="#000000" />
                                                 <Environment preset="city" />
                                             </Suspense>
