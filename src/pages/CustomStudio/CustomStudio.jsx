@@ -113,7 +113,7 @@ const CustomStudio = () => {
                     {loading ? (
                         <SkeletonCards count={8} />
                     ) : products.length > 0 ? (
-                        <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12">
+                        <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12 studio-product-grid">
                             {products.map((product, idx) => (
                                 <ProductCard key={product._id || idx} product={product} />
                             ))}

@@ -83,17 +83,17 @@ const ProductCard = React.memo(({ product, activeColor }) => {
           {/* Badges - Premium Soft Glass */}
           <div className="absolute top-[16px] left-[16px] md:top-[20px] md:left-[20px] z-[20] flex flex-col gap-[6px] md:gap-[8px]">
             {product.isCustomizable && (
-              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
+              <span className="product-card-badge text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
                 CUSTOMIZE
               </span>
             )}
             {product.isNewArrival && (
-              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-black text-white rounded-full shadow-lg">
+              <span className="product-card-badge text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-black text-white rounded-full shadow-lg">
                 NEW
               </span>
             )}
             {(product.isOnSale || hasActiveOffer) && (
-              <span className="text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
+              <span className="product-card-badge text-[8px] md:text-[9px] font-black tracking-[0.2em] py-[4px] px-[10px] md:py-[6px] md:px-[12px] uppercase backdrop-blur-xl bg-accent text-white rounded-full shadow-lg">
                 {activeOffer?.offerType ? activeOffer.offerType.replace(/_/g, ' ') : 'SALE'}
               </span>
             )}
@@ -158,16 +158,16 @@ const ProductCard = React.memo(({ product, activeColor }) => {
               <span className="text-[8px] md:text-[10px] font-black text-accent tracking-[0.2em] md:tracking-[0.4em] uppercase opacity-40 group-hover:opacity-100 transition-opacity">
                 {product.brand || "FENRIR ERA"}
               </span>
-              <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-900 leading-tight uppercase tracking-widest group-hover:text-black transition-colors duration-500 line-clamp-2">
+              <h3 className="product-card-title text-[11px] md:text-[13px] font-bold text-neutral-900 leading-tight uppercase tracking-widest group-hover:text-black transition-colors duration-500 line-clamp-2">
                 {product.title}
               </h3>
             </div>
             <div className="flex flex-col items-start sm:items-end gap-[1px] shrink-0">
-              <span className="text-[14px] md:text-lg font-[1000] text-black tracking-tighter italic">
+              <span className="product-card-price text-[14px] md:text-lg font-[1000] text-black tracking-tighter italic">
                 ₹{hasActiveOffer ? finalPrice : product.price}
               </span>
               {displayCompareAtPrice && (
-                <span className="text-[9px] md:text-[10px] text-neutral-400 line-through font-medium tracking-tighter">
+                <span className="product-card-price text-[9px] md:text-[10px] text-neutral-400 line-through font-medium tracking-tighter">
                   ₹{displayCompareAtPrice}
                 </span>
               )}

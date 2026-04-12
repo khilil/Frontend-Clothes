@@ -433,47 +433,44 @@ export default function CanvasArea() {
             {/* SAFE AREA TOP PADDING (Mobile Notch Support) */}
             <div className="h-[env(safe-area-inset-top,1.5rem)] lg:hidden" />
 
-            {/* ARCHITECTURAL METADATA - TOP LEFT (Responsive) */}
-            <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-6 z-50 pointer-events-none">
-                <div className="flex flex-col items-center sm:items-start gap-1">
-                    <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-[#000000]/60 whitespace-nowrap">Atelier Protocol v7.14 (High Performance)</span>
-                    <span className="text-[6px] sm:text-[7px] font-medium uppercase tracking-[0.2em] text-[#000000]/30 whitespace-nowrap">Direct Material Dyeing // {slug?.toUpperCase()}</span>
+            {/* ARCHITECTURAL METADATA - Hidden on mobile to free up canvas space */}
+            <div className="hidden sm:block absolute top-6 left-6 z-50 pointer-events-none">
+                <div className="flex flex-col items-start gap-1">
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-[#000000]/60 whitespace-nowrap">Atelier Protocol v7.14</span>
+                    <span className="text-[7px] font-medium uppercase tracking-[0.2em] text-[#000000]/30 whitespace-nowrap">Direct Material Dyeing // {slug?.toUpperCase()}</span>
                 </div>
             </div>
 
-            {/* FLOATING PREVIEW TOGGLE (Bottom Right - Above Flip on Mobile) */}
-            <div className="absolute bottom-[90px] right-4 md:hidden z-[100]">
+            {/* FLOATING PREVIEW TOGGLE - Compact icon-only pill on mobile */}
+            <div className="absolute bottom-[84px] right-3 md:hidden z-[100]">
                 <button
                     onClick={() => window.dispatchEvent(new CustomEvent('open-design-preview'))}
-                    className="group flex items-center gap-3 bg-[#0A0A0A] text-white 
-                    rounded-2xl p-2.5 px-6 shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:bg-black transition-all active:scale-95 overflow-hidden relative"
+                    className="flex items-center gap-2 bg-[#0A0A0A] text-white rounded-2xl py-2 px-3.5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] active:scale-95 transition-all"
                 >
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Preview</span>
-                    <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
-                        <FiEye size={14} className="text-white group-hover:scale-110 transition-transform duration-500" />
-                    </div>
+                    <FiEye size={15} className="text-white" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.25em]">Preview</span>
                 </button>
             </div>
 
-            {/* FLOATING FLIP TOGGLE (Bottom Right Position On Mobile) */}
-            <div className="absolute bottom-6 right-4 sm:bottom-auto sm:top-20 md:top-24 sm:left-6 sm:right-auto z-[100]">
+            {/* FLOATING FLIP TOGGLE - Compact on mobile, full on sm+ */}
+            <div className="absolute bottom-3 right-3 sm:bottom-auto sm:top-20 md:top-24 sm:left-6 sm:right-auto z-[100]">
                 <button
                     onClick={() => switchSide(viewSide === "front" ? "back" : "front")}
-                    className="group flex items-center gap-2.5 sm:gap-4 bg-white/60 backdrop-blur-xl border border-black/5 
-                    rounded-2xl p-1.5 px-4 sm:p-2.5 sm:px-6 shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:bg-white/80 transition-all active:scale-95 overflow-hidden relative"
+                    className="group flex items-center gap-2 sm:gap-4 bg-white/75 backdrop-blur-xl border border-black/8
+                    rounded-2xl p-2 px-3 sm:p-2.5 sm:px-6 shadow-[0_8px_30px_rgba(0,0,0,0.1)] active:scale-95 transition-all"
                 >
-                    <div className="flex flex-col items-start">
-                        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-black/30 leading-none mb-1">View</span>
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-black leading-none">{viewSide}</span>
-                    </div>
-                    
-                    <div className="w-px h-6 bg-black/10 mx-1" />
-                    
-                    <div className="flex items-center gap-2 sm:gap-2.5">
-                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-black/60">Flip</span>
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#d4c4b1] flex items-center justify-center shadow-lg shadow-[#d4c4b1]/20">
-                            <FiRefreshCw size={12} className="text-black sm:hidden group-hover:rotate-180 transition-transform duration-700 ease-in-out" />
-                            <FiRefreshCw size={14} className="text-black hidden sm:block group-hover:rotate-180 transition-transform duration-700 ease-in-out" />
+                    {/* Mobile: compact icon + side name */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex flex-col items-start sm:block">
+                            <span className="hidden sm:block text-[8px] font-black uppercase tracking-[0.3em] text-black/30 leading-none mb-1">View</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-black leading-none">{viewSide}</span>
+                        </div>
+                        <div className="hidden sm:block w-px h-6 bg-black/10" />
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="hidden sm:block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-black/60">Flip</span>
+                            <div className="w-7 h-7 rounded-lg bg-[#d4c4b1] flex items-center justify-center shadow-md shadow-[#d4c4b1]/20">
+                                <FiRefreshCw size={13} className="text-black group-hover:rotate-180 transition-transform duration-700 ease-in-out" />
+                            </div>
                         </div>
                     </div>
                 </button>
@@ -539,8 +536,8 @@ export default function CanvasArea() {
                 </div>
             </div>
 
-            {/* STUDIO FOCUS ICON */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5">
+            {/* STUDIO FOCUS ICON - Hidden on mobile to free canvas space */}
+            <div className="hidden sm:flex absolute bottom-10 left-1/2 -translate-x-1/2 items-center gap-3 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5">
                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                 <span className="text-[8px] font-black uppercase tracking-widest text-black">Live HD Render Active</span>
             </div>

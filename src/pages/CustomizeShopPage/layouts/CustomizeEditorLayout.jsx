@@ -85,7 +85,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
             <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
                 {/* HEADER / NAV */}
-                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white z-50 shrink-0">
+                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white z-50 shrink-0 studio-header">
                     <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
                         <button 
                             onClick={() => navigate(-1)}
@@ -95,7 +95,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                             <FiArrowLeft size={20} />
                         </button>
                         <div className="h-4 w-px bg-black/10" />
-                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap">FENRIR Era</span>
+                        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap studio-brand-text">FENRIR Era</span>
                         <div className="h-4 w-px bg-black/10 hidden xs:block" />
                         <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-black/40 hidden md:inline">Custom Apparel Design</span>
                     </div>
@@ -114,7 +114,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[62dvh] md:mb-0" : "mb-[88px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[58dvh] md:mb-0" : "mb-[96px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
@@ -135,34 +135,40 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                     }
                                 }}
                                 className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
-                                    transition-all duration-500 ease-in-out border-t border-black/5 bg-[#f4f2ee]/95 backdrop-blur-xl
+                                    transition-all duration-500 ease-in-out border-t border-black/5 bg-[#f4f2ee]/97 backdrop-blur-xl
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? "h-[62dvh] translate-y-0" : "h-[88px] translate-y-0"} 
-                                    rounded-t-[2rem] md:rounded-t-none shadow-[0_-15px_50px_rgba(0,0,0,0.08)] md:shadow-none
+                                    ${isExpanded ? "h-[58dvh] translate-y-0" : "h-[96px] translate-y-0"} 
+                                    rounded-t-[1.5rem] md:rounded-t-none shadow-[0_-20px_60px_rgba(0,0,0,0.12)] md:shadow-none
                                     flex flex-col`}
                             >
-                                {/* Drag Handle - Mobile Only */}
+                                {/* Drag Handle + Quick Tab Row - Mobile Only */}
                                 <div
-                                    className="w-full py-3 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
+                                    className="w-full pt-2.5 pb-1 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
                                     onClick={() => setIsExpanded(!isExpanded)}
                                 >
-                                    <div className="w-12 h-1 bg-black/10 rounded-full mb-1"></div>
+                                    {/* pill handle */}
+                                    <div className="w-10 h-1 bg-black/15 rounded-full mb-2.5" />
+                                    {/* Quick tab row — always visible on mobile when collapsed */}
                                     {!isExpanded && (
-                                        <span className="text-[8px] font-black uppercase tracking-[0.24em] text-[#8b7e6d] animate-pulse">
-                                            Open Studio Tools
-                                        </span>
+                                        <div className="w-full px-4 flex items-center justify-between">
+                                            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[#8b7e6d]">Studio Tools</span>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-black/30">Tap to open</span>
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="text-black/30">
+                                                    <path d="M6 2L10 6L6 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="rotate(-90 6 6)" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
 
-                                {/* Mobile Navbar - Only visible on mobile AND when expanded */}
-                                {isExpanded && (
-                                    <div className="md:hidden shrink-0 border-b border-black/5 animate-slideUp">
-                                        <StudioNavbar />
-                                    </div>
-                                )}
+                                {/* Mobile Navbar - Always visible on mobile */}
+                                <div className="md:hidden shrink-0 border-b border-black/5">
+                                    <StudioNavbar />
+                                </div>
 
                                 {/* Sidebar Content */}
-                                <div className={`flex-1 overflow-hidden px-4 md:px-6 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:pb-0 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
+                                <div className={`flex-1 overflow-hidden px-4 md:px-6 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:pb-0 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 md:opacity-100 pointer-events-none"}`}>
                                     <StudioSidebar />
                                 </div>
                             </motion.div>

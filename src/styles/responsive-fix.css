@@ -1,0 +1,143 @@
+/* 
+  Ultra-Small Screen Responsiveness Fixes (< 350px)
+  Targeting devices like smartwatches or extremely narrow browser windows.
+  Using Vanilla CSS as requested to ensure maximum compatibility and precision.
+*/
+
+/* --- Global Layout Fixes --- */
+@media (max-width: 350px) {
+    :root {
+        /* Scale down spacing */
+        --spacing-unit: 8px;
+    }
+
+    body {
+        overflow-x: hidden !important;
+        width: 100vw;
+    }
+
+    /* Prevent text overflow in general containers */
+    * {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* --- Custom Studio Grid Fix --- */
+@media (max-width: 450px) {
+    .studio-product-grid {
+        grid-template-cols: 1fr !important;
+    }
+}
+
+/* --- Product Card Adjustments --- */
+@media (max-width: 350px) {
+    .product-card-title {
+        font-size: 11px !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    .product-card-price {
+        font-size: 14px !important;
+    }
+
+    .product-card-badge {
+        font-size: 7px !important;
+        padding: 2px 6px !important;
+    }
+}
+
+/* --- Customize Editor Header --- */
+@media (max-width: 350px) {
+    .studio-header {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        gap: 4px !important;
+    }
+
+    .studio-brand-text {
+        font-size: 8px !important;
+        letter-spacing: 0.2em !important;
+    }
+}
+
+/* --- Studio Navbar (Tabs) --- */
+@media (max-width: 350px) {
+    .studio-tabs-container {
+        gap: 4px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    .studio-tab-button {
+        padding: 6px 8px !important;
+        min-width: unset !important;
+    }
+
+    .studio-tab-label {
+        font-size: 8px !important;
+        letter-spacing: 0 !important;
+    }
+}
+
+/* --- Studio Toolbar (Dynamic) --- */
+@media (max-width: 350px) {
+    .studio-floating-toolbar {
+        width: calc(100vw - 8px) !important;
+        padding: 8px 10px !important;
+        gap: 6px !important;
+        border-radius: 12px !important;
+    }
+
+    .studio-toolbar-select {
+        max-width: 80px !important;
+        font-size: 8px !important;
+    }
+}
+
+/* --- Canvas Area Floating Controls --- */
+@media (max-width: 350px) {
+    .floating-preview-btn {
+        right: 8px !important;
+        bottom: 80px !important;
+        padding: 6px 12px !important;
+    }
+
+    .floating-flip-btn {
+        right: 8px !important;
+        bottom: 20px !important;
+        padding: 6px 12px !important;
+        gap: 8px !important;
+    }
+
+    .floating-btn-text-small {
+        font-size: 8px !important;
+    }
+
+    .floating-btn-text-large {
+        font-size: 10px !important;
+    }
+
+    /* Stack them vertically if height is also small */
+    @media (max-height: 500px) {
+        .floating-preview-btn {
+            bottom: 130px !important;
+        }
+    }
+}
+
+/* --- Initial Config Overlay --- */
+@media (max-width: 350px) {
+    .initial-config-modal {
+        padding: 12px !important;
+        gap: 12px !important;
+    }
+
+    .initial-config-image {
+        height: 140px !important;
+    }
+
+    .initial-config-title {
+        font-size: 16px !important;
+    }
+}

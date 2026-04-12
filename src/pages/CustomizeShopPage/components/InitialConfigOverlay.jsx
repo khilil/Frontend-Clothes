@@ -97,7 +97,7 @@ export default function InitialConfigOverlay({ slug }) {
 
     if (loading) {
         return (
-            <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
             </div>
         );
@@ -105,7 +105,7 @@ export default function InitialConfigOverlay({ slug }) {
 
     if (!productData) {
         return (
-            <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center">
                 <div className="bg-white p-6 rounded-2xl max-w-sm w-full text-center">
                     <p className="text-black font-semibold mb-4">Product not found.</p>
                     <button onClick={() => navigate('/shop/all')} className="px-6 py-2 bg-black text-white rounded-lg">Go Back</button>
@@ -115,14 +115,14 @@ export default function InitialConfigOverlay({ slug }) {
     }
 
     return (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-t-[28px] sm:rounded-[20px] overflow-hidden shadow-2xl max-w-[420px] w-full flex flex-col max-h-[92dvh] sm:max-h-none"
+                className="bg-white rounded-t-[28px] sm:rounded-[20px] overflow-hidden shadow-2xl max-w-[420px] w-full flex flex-col max-h-[92dvh] sm:max-h-none initial-config-modal"
             >
                 {/* Header Image Area */}
-                <div className="relative h-[170px] sm:h-[200px] w-full bg-[#f4f2ee] flex items-center justify-center overflow-hidden border-b border-black/5 shrink-0">
+                <div className="relative h-[170px] sm:h-[200px] w-full bg-[#f4f2ee] flex items-center justify-center overflow-hidden border-b border-black/5 shrink-0 initial-config-image">
                     <img 
                         src={productData.frontImage} 
                         alt="Product Preview" 
@@ -132,7 +132,7 @@ export default function InitialConfigOverlay({ slug }) {
 
                 <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-5 overflow-y-auto">
                     <div className="text-center space-y-1">
-                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-black">{productData.title}</h2>
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-black initial-config-title">{productData.title}</h2>
                         <p className="text-[11px] font-bold text-black/40 uppercase tracking-widest">Select Base Options</p>
                     </div>
 

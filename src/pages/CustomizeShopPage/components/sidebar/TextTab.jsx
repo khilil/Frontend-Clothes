@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFabric } from "../../../../context/FabricContext";
 import { FONT_FAMILIES as INITIAL_FONTS } from "../../fabric/fontRegistry";
 import { addOrUpdateText, applyTextAlignment, applyTextKerning } from "../../fabric/textActions";
 import { waitForFont, loadGoogleFont } from "../../fabric/fontUtils";
-import { FiPlus, FiAlignLeft, FiAlignCenter, FiAlignRight, FiLoader } from "react-icons/fi";
-import { useEffect } from "react";
+import { FiPlus, FiAlignLeft, FiAlignCenter, FiAlignRight, FiLoader, FiMinus } from "react-icons/fi";
 import { getFonts } from "../../../../services/customizationService";
+
+const PRESET_SIZES = [12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80, 96];
 
 export default function TextTab() {
     const { fabricCanvas, activeTextRef, printAreaRef, setSelectedObject } = useFabric();
     const [fontFamily, setFontFamily] = useState("Oswald");
+    const [fontSize, setFontSize] = useState(32);
     const [kerning, setKerning] = useState(20);
     const [fonts, setFonts] = useState([...INITIAL_FONTS]);
     const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +22,6 @@ export default function TextTab() {
             try {
                 const data = await getFonts();
                 if (data?.length > 0) {
-                    // Combine initial fonts with fetched fonts, avoiding duplicates
                     const fetched = data.map(f => ({ label: f.label, value: f.value, google: true }));
                     const combined = [...INITIAL_FONTS];
                     fetched.forEach(f => {
@@ -36,15 +37,22 @@ export default function TextTab() {
                 setIsLoading(false);
             }
         };
-
         fetchFonts();
     }, []);
+
+    // Sync fontSize state when user selects an existing text object
+    useEffect(() => {
+        if (activeTextRef.current) {
+            const size = activeTextRef.current.fontSize;
+            if (size) setFontSize(size);
+        }
+    }, [activeTextRef.current]);
 
     const handleTextAdd = () => {
         addOrUpdateText(
             fabricCanvas.current,
             activeTextRef,
-            { text: "Double Click to Edit" },
+            { text: "Double Click to Edit", fontSize },
             printAreaRef.current
         );
         setSelectedObject(activeTextRef.current);
@@ -59,7 +67,6 @@ export default function TextTab() {
     const handleFontChange = async (font) => {
         setFontFamily(font);
         if (!fabricCanvas.current || !activeTextRef.current) return;
-
         try {
             await loadGoogleFont(font);
             await waitForFont(font);
@@ -68,6 +75,14 @@ export default function TextTab() {
         } catch (error) {
             console.error("Failed to load font:", error);
         }
+    };
+
+    const handleFontSizeChange = (newSize) => {
+        const clamped = Math.max(8, Math.min(200, newSize));
+        setFontSize(clamped);
+        if (!fabricCanvas.current || !activeTextRef.current) return;
+        activeTextRef.current.set({ fontSize: clamped });
+        fabricCanvas.current.renderAll();
     };
 
     function handleAlignment(type) {
@@ -98,11 +113,12 @@ export default function TextTab() {
 
             {/* QUICK EDIT (If text selected) */}
             {activeTextRef.current && (
-                <div className="space-y-6">
+                <div className="space-y-5">
                     <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
                         Quick Edit
                     </h3>
 
+                    {/* Edit Content */}
                     <div className="space-y-3">
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                             Edit Content
@@ -115,6 +131,55 @@ export default function TextTab() {
                         />
                     </div>
 
+                    {/* Font Size Control */}
+                    <div className="space-y-3">
+                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
+                            Font Size
+                        </label>
+
+                        {/* Size stepper + input */}
+                        <div className="flex items-center gap-2 bg-white border border-black/20 rounded-xl overflow-hidden shadow-sm h-12">
+                            <button
+                                onClick={() => handleFontSizeChange(fontSize - 1)}
+                                className="h-full px-4 text-[#4A4A4A] hover:bg-black/5 hover:text-[#0A0A0A] transition-all active:bg-black/10 flex items-center justify-center border-r border-black/10 text-lg font-bold"
+                            >
+                                <FiMinus size={14} />
+                            </button>
+                            <input
+                                type="number"
+                                min="8"
+                                max="200"
+                                value={fontSize}
+                                onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+                                className="flex-1 text-center bg-transparent outline-none text-sm font-black text-[#0A0A0A] tracking-widest [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <button
+                                onClick={() => handleFontSizeChange(fontSize + 1)}
+                                className="h-full px-4 text-[#4A4A4A] hover:bg-black/5 hover:text-[#0A0A0A] transition-all active:bg-black/10 flex items-center justify-center border-l border-black/10 text-lg font-bold"
+                            >
+                                <span className="text-base leading-none">+</span>
+                            </button>
+                        </div>
+
+                        {/* Preset sizes quick-select */}
+                        <div className="flex flex-wrap gap-1.5">
+                            {PRESET_SIZES.map((s) => (
+                                <button
+                                    key={s}
+                                    onClick={() => handleFontSizeChange(s)}
+                                    className={`h-7 px-2.5 rounded-lg text-[9px] font-black tracking-widest transition-all active:scale-95 ${
+                                        fontSize === s
+                                            ? "bg-[#d4c4b1] text-black shadow-sm"
+                                            : "bg-white border border-black/10 text-black/50 hover:border-[#d4c4b1]/50 hover:text-[#0A0A0A]"
+                                    }`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Alignment + Kerning row */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-3">
                             <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
