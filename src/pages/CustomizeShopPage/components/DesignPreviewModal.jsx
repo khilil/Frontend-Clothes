@@ -584,7 +584,7 @@ export default function DesignPreviewModal() {
                                             </Suspense>
                                         </ThreeCanvas>
 
-                                        <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none">
+                                        <div className="absolute inset-x-0 top-[5%] bottom-[5%] z-20 flex items-center justify-center pointer-events-none">
                                             <div className="relative w-[95%] h-full flex items-center justify-center pointer-events-none">
                                                 {previewOverlaySrc ? (
                                                     <img
