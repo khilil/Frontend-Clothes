@@ -218,9 +218,12 @@ export default function DesignPreviewModal() {
     const currentType = printingMethods?.find(t => t.id === printingType);
     const garmentBasePrice = productDataRef.current?.price || 1700;
     const grandTotal = garmentBasePrice + customizationPrice;
-    const previewOverlaySrc = isMobilePreview
-        ? (previews?.previewFiles?.[currentSide] || previews?.overlayFiles?.[currentSide] || previews?.printFiles?.[currentSide])
-        : (previews?.overlayFiles?.[currentSide] || previews?.previewFiles?.[currentSide] || previews?.printFiles?.[currentSide]);
+    const getPreviewOverlaySrcForSide = (side) => (
+        isMobilePreview
+            ? (previews?.previewFiles?.[side] || previews?.overlayFiles?.[side] || previews?.printFiles?.[side])
+            : (previews?.overlayFiles?.[side] || previews?.previewFiles?.[side] || previews?.printFiles?.[side])
+    );
+    const previewOverlaySrc = getPreviewOverlaySrcForSide(currentSide);
 
     const generateTechnicalReport = () => {
         const report = [];
@@ -318,6 +321,35 @@ export default function DesignPreviewModal() {
             });
         });
 
+    const waitForOverlayReady = (expectedSrc, timeout = 1200) =>
+        new Promise((resolve) => {
+            if (!expectedSrc) {
+                resolve();
+                return;
+            }
+
+            const start = Date.now();
+
+            const check = () => {
+                const overlayImg = overlayImageRef.current;
+                const currentSrc = overlayImg?.currentSrc || overlayImg?.src || "";
+                const isReady =
+                    overlayImg &&
+                    currentSrc === expectedSrc &&
+                    overlayImg.complete &&
+                    overlayImg.naturalWidth > 0;
+
+                if (isReady || Date.now() - start >= timeout) {
+                    resolve();
+                    return;
+                }
+
+                window.requestAnimationFrame(check);
+            };
+
+            check();
+        });
+
     const captureCurrentDisplayMockup = () => {
         const stageEl = previewStageRef.current;
         if (!stageEl) return null;
@@ -388,8 +420,20 @@ export default function DesignPreviewModal() {
             flushSync(() => {
                 setCurrentSide(side);
             });
-            await waitForPreviewPaint(220);
+            await waitForPreviewPaint(120);
+            await waitForOverlayReady(getPreviewOverlaySrcForSide(side));
+            await waitForPreviewPaint(180);
             captures[side] = captureCurrentDisplayMockup();
+        }
+
+        if (captures.front && captures.back && captures.front === captures.back) {
+            flushSync(() => {
+                setCurrentSide("back");
+            });
+            await waitForPreviewPaint(160);
+            await waitForOverlayReady(getPreviewOverlaySrcForSide("back"), 1600);
+            await waitForPreviewPaint(220);
+            captures.back = captureCurrentDisplayMockup();
         }
 
         flushSync(() => {
@@ -549,7 +593,7 @@ export default function DesignPreviewModal() {
                                 </motion.div>
                             ) : (
                                 <motion.div
-                                    key={currentSide}
+                                    key="preview-stage"
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
