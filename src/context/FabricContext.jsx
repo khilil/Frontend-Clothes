@@ -163,6 +163,11 @@ export function FabricProvider({ children }) {
     const viewSideRef = useRef("front");
     const isCanvasReadyRef = useRef(false);
 
+    // Sidebar Visibility State
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => 
+        typeof window !== "undefined" ? window.innerWidth >= 768 : true
+    );
+
     function syncLayers(canvas) {
         if (!canvas) return;
         layersRef.current = canvas
@@ -216,7 +221,9 @@ export function FabricProvider({ children }) {
                 garmentColor,
                 setGarmentColor,
                 isPremiumMode,
-                setIsPremiumMode
+                setIsPremiumMode,
+                isSidebarOpen,
+                setIsSidebarOpen
             }}
         >
             {children}

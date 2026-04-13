@@ -60,14 +60,14 @@ export default function ElementsTab() {
     };
 
     return (
-        <div className="space-y-8 animate-slideUp">
-            <div className="space-y-2">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Geometric Library</h3>
-                <p className="text-[9px] text-[#4A4A4A] uppercase tracking-widest leading-relaxed font-black">Add architectural shapes to your design.</p>
+        <div className="space-y-4 md:space-y-8 animate-slideUp">
+            <div className="space-y-1 md:space-y-2">
+                <h3 className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#0A0A0A]">Geometric Library</h3>
+                <p className="text-[8px] md:text-[9px] text-[#4A4A4A] uppercase tracking-widest leading-relaxed font-black">Add architectural shapes to your design.</p>
             </div>
 
             {/* COLOR SELECTION */}
-            <div className="space-y-4 p-5 bg-white border border-black/5 rounded-2xl shadow-sm">
+            <div className="space-y-2 md:space-y-4 p-3 md:p-5 bg-white border border-black/5 rounded-2xl shadow-sm">
                 <div className="flex items-center justify-between">
                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">Fill Color</span>
                     <input 

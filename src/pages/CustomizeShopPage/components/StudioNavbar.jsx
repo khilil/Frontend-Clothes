@@ -14,7 +14,19 @@ const TABS = [
 ];
 
 export default function StudioNavbar() {
-    const { activeTab, setActiveTab } = useFabric();
+    const { activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen } = useFabric();
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+    const handleTabClick = (tabId) => {
+        if (activeTab === tabId && isSidebarOpen) {
+            // Toggle close if same tab is clicked while open
+            setIsSidebarOpen(false);
+        } else {
+            // Switch tab and ensure it's open
+            setActiveTab(tabId);
+            setIsSidebarOpen(true);
+        }
+    };
 
     return (
         <nav className="w-full md:w-20 bg-[#fcfbf9] border-t md:border-t-0 md:border-r border-black/5 flex md:flex-col items-stretch md:items-center justify-around md:justify-start py-1 md:py-6 md:gap-8 z-50">
@@ -27,7 +39,7 @@ export default function StudioNavbar() {
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => handleTabClick(tab.id)}
                             className={`group relative flex flex-1 md:flex-none flex-col items-center justify-center gap-1 py-1.5 md:py-3 px-2 md:px-0 rounded-xl transition-all duration-300 ${isActive
                                 ? "text-[#8b7e6d]"
                                 : "text-black/30 hover:text-[#1a1a1a]"

@@ -52,11 +52,7 @@ export default function CustomizeEditorLayout() {
 
 function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }) {
     const navigate = useNavigate();
-    // Mobile state
-    const [isExpanded, setIsExpanded] = useState(() =>
-        typeof window !== "undefined" ? window.innerWidth >= 768 : true
-    );
-    const { setGarmentColor } = useFabric();
+    const { setGarmentColor, isSidebarOpen, setIsSidebarOpen } = useFabric();
 
     useEffect(() => {
         if (locationState?.hexColor) {
@@ -116,7 +112,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? (isShortScreen ? "mb-[48dvh] md:mb-0" : "mb-[58dvh] md:mb-0") : "mb-[96px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isSidebarOpen ? (isShortScreen ? "mb-[30dvh] md:mb-0" : "mb-[42dvh] md:mb-0") : "mb-[96px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
@@ -132,26 +128,26 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                 dragConstraints={{ top: 0, bottom: 0 }}
                                 onDragEnd={(e, info) => {
                                     if (window.innerWidth < 768) {
-                                        if (info.offset.y > 50) setIsExpanded(false);
-                                        if (info.offset.y < -50) setIsExpanded(true);
+                                        if (info.offset.y > 50) setIsSidebarOpen(false);
+                                        if (info.offset.y < -50) setIsSidebarOpen(true);
                                     }
                                 }}
                                 className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
                                     transition-all duration-500 ease-in-out border-t border-black/5 bg-[#f4f2ee]/97 backdrop-blur-xl
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? (isShortScreen ? "h-[48dvh]" : "h-[58dvh]") : "h-[96px]"} 
+                                    ${isSidebarOpen ? (isShortScreen ? "h-[30dvh]" : "h-[42dvh]") : "h-[96px]"} 
                                     rounded-t-[1.5rem] md:rounded-t-none shadow-[0_-20px_60px_rgba(0,0,0,0.12)] md:shadow-none
                                     flex flex-col`}
                             >
                                 {/* Drag Handle + Quick Tab Row - Mobile Only */}
                                 <div
                                     className="w-full pt-2.5 pb-1 cursor-grab active:cursor-grabbing flex flex-col items-center md:hidden shrink-0"
-                                    onClick={() => setIsExpanded(!isExpanded)}
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                                 >
                                     {/* pill handle */}
                                     <div className="w-10 h-1 bg-black/15 rounded-full mb-2.5" />
                                     {/* Quick tab row — always visible on mobile when collapsed */}
-                                    {!isExpanded && (
+                                    {!isSidebarOpen && (
                                         <div className="w-full px-4 flex items-center justify-between">
                                             <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[#8b7e6d]">Studio Tools</span>
                                             <div className="flex items-center gap-1">
@@ -170,7 +166,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                 </div>
 
                                 {/* Sidebar Content */}
-                                <div className={`flex-1 overflow-hidden px-4 md:px-6 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:pb-0 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-0 md:opacity-100 pointer-events-none"}`}>
+                                <div className={`flex-1 overflow-hidden px-4 md:px-6 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:pb-0 transition-opacity duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 md:opacity-100 pointer-events-none"}`}>
                                     <StudioSidebar />
                                 </div>
                             </motion.div>

@@ -4,6 +4,7 @@ import GraphicsTab from "./sidebar/GraphicsTab";
 import LayersTab from "./sidebar/LayersTab";
 import ElementsTab from "./sidebar/ElementsTab";
 import BottomCTA from "./BottomCTA";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function StudioSidebar() {
     const { activeTab } = useFabric();
@@ -11,16 +12,22 @@ export default function StudioSidebar() {
     const renderTabContent = () => {
         switch (activeTab) {
             case "text":
-                return <TextTab />;
+                return <TextTab key="text" />;
             case "graphics":
-                return <GraphicsTab />;
+                return <GraphicsTab key="graphics" />;
             case "layers":
-                return <LayersTab />;
+                return <LayersTab key="layers" />;
             case "elements":
-                return <ElementsTab />;
+                return <ElementsTab key="elements" />;
             default:
                 return (
-                    <div className="space-y-8 animate-slideUp">
+                    <motion.div 
+                        key="default"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="space-y-8"
+                    >
                         <div className="relative pl-4 border-l-2 border-[#d4c4b1]/30 py-1">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-[#0A0A0A]">
                                 Design Protocol
@@ -40,15 +47,26 @@ export default function StudioSidebar() {
                                 Utilize the <span className="text-[#0A0A0A]">Layers Panel</span> to orchestrate complex design architectures and toggle element visibility.
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
                 );
         }
     };
 
     return (
         <aside className="h-full min-h-0 flex flex-col">
-            <div data-lenis-prevent className="flex-1 overflow-y-auto py-4 md:py-8 pr-1 md:pr-2">
-                {renderTabContent()}
+            <div data-lenis-prevent className="flex-1 overflow-x-hidden overflow-y-auto py-2 md:py-8 pr-1 md:pr-2">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                        className="h-full"
+                    >
+                        {renderTabContent()}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
             {/* STICKY BOTTOM ACTIONS */}

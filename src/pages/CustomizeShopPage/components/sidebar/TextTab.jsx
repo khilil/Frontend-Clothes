@@ -96,16 +96,16 @@ export default function TextTab() {
     }
 
     return (
-        <div className="space-y-8 animate-slideUp">
-            <div className="space-y-2">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
+        <div className="space-y-4 md:space-y-8 animate-slideUp">
+            <div className="space-y-1.5 md:space-y-2">
+                <h3 className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
                     Text Assets
                 </h3>
                 <button
                     onClick={handleTextAdd}
-                    className="w-full h-16 bg-[#d4c4b1] hover:bg-[#c4b4a1] text-black font-black uppercase tracking-widest text-[10px] rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-[#d4c4b1]/10"
+                    className="w-full h-12 md:h-16 bg-[#d4c4b1] hover:bg-[#c4b4a1] text-black font-black uppercase tracking-widest text-[9px] md:text-[10px] rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-[#d4c4b1]/10"
                 >
-                    <FiPlus size={18} /> Add Heading
+                    <FiPlus size={16} /> Add Heading
                 </button>
             </div>
 
@@ -119,26 +119,26 @@ export default function TextTab() {
                     </h3>
 
                     {/* Edit Content */}
-                    <div className="space-y-3">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
+                    <div className="space-y-2 md:space-y-3">
+                        <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                             Edit Content
                         </label>
                         <input
                             type="text"
                             placeholder="Type here..."
                             onChange={handleTextChange}
-                            className="w-full bg-white border border-black/20 p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-[#0A0A0A] outline-none focus:border-[#d4c4b1] transition-all font-primary shadow-sm"
+                            className="w-full bg-white border border-black/20 p-3 md:p-4 rounded-xl text-xs font-bold tracking-widest uppercase text-[#0A0A0A] outline-none focus:border-[#d4c4b1] transition-all font-primary shadow-sm"
                         />
                     </div>
 
                     {/* Font Size Control */}
-                    <div className="space-y-3">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
+                    <div className="space-y-2 md:space-y-3">
+                        <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] text-[#0A0A0A]">
                             Font Size
                         </label>
 
                         {/* Size stepper + input */}
-                        <div className="flex items-center gap-2 bg-white border border-black/20 rounded-xl overflow-hidden shadow-sm h-12">
+                        <div className="flex items-center gap-2 bg-white border border-black/20 rounded-xl overflow-hidden shadow-sm h-10 md:h-12">
                             <button
                                 onClick={() => handleFontSizeChange(fontSize - 1)}
                                 className="h-full px-4 text-[#4A4A4A] hover:bg-black/5 hover:text-[#0A0A0A] transition-all active:bg-black/10 flex items-center justify-center border-r border-black/10 text-lg font-bold"
@@ -224,11 +224,11 @@ export default function TextTab() {
                 </div>
             )}
 
-            <div className="space-y-4">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
+            <div className="space-y-2 md:space-y-4">
+                <h3 className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#d4c4b1] opacity-50">
                     Typography
                 </h3>
-                <div data-lenis-prevent className="grid grid-cols-1 gap-2 h-[300px] overflow-y-auto pr-2">
+                <div data-lenis-prevent className="grid grid-cols-1 gap-1.5 md:gap-2 h-[200px] md:h-[300px] overflow-y-auto pr-2">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-12 gap-3 text-black/20">
                             <FiLoader className="animate-spin" size={24} />

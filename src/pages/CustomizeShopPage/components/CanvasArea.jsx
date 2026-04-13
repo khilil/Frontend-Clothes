@@ -34,7 +34,9 @@ export default function CanvasArea() {
         garmentColor,
         setGarmentColor,
         isPremiumMode,
-        setIsPremiumMode
+        setIsPremiumMode,
+        isSidebarOpen,
+        setIsSidebarOpen
     } = useFabric();
 
     const location = useLocation();
@@ -408,8 +410,13 @@ export default function CanvasArea() {
     ============================= */
     return (
         <div
-            className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden transition-colors duration-1000"
+            className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden transition-colors duration-1000 cursor-default"
             style={{ background: "radial-gradient(circle at 50% 50%, #8e8e8e 0%, #4a4a4a 100%)" }}
+            onClick={() => {
+                if (window.innerWidth < 768 && isSidebarOpen) {
+                    setIsSidebarOpen(false);
+                }
+            }}
         >
             {/* 🕸️ TECHNICAL HIGH-VISIBILITY GRID */}
             <div className="absolute inset-0 pointer-events-none blueprint-grid-dark" />
