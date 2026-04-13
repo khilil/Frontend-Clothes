@@ -13,15 +13,15 @@ export function addPrintArea(canvas, isMobile = false) {
     if (isMobile) {
         // One shared mobile print area across all phones.
         // Keep dimensions fixed in logical stage units so tall/short devices look consistent.
-        width = 208;
+        width = 195;
         height = 252;
-        top = (logicalHeight / 2) + 28;
+        top = 344;
     } else {
         // Desktop calibrated: keep original stable layout
         width = 200;
         height = 240;
         top = 310;
-    }
+    }   
 
     const left = logicalWidth / 2;
 
