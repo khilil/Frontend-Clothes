@@ -13,15 +13,15 @@ export function addPrintArea(canvas, isMobile = false) {
 
     // Syncing with TShirtModel.jsx logic (1024px breakpoint)
     if (isMobile) {
-        // Mobile calibrated: T-shirt is scaled 4.6 and at y: -6.6
-        width = 230;
-        height = 295;
-        top = 390; // Adjusted to match chest at scale 4.6
+        // Mobile calibrated: Matching desktop chest placement
+        width = 240;
+        height = 320;
+        top = 600; // Stabilized chest position for expanded canvas
     } else {
-        // Desktop calibrated: T-shirt is scaled 5.4 and at y: -7.8
+        // Desktop calibrated: Pulled down to chest area
         width = 200;
         height = 240;
-        top = 290; // Original desktop top
+        top = 310;
     }
 
     const left = baseWidth / 2;
@@ -40,6 +40,13 @@ export function addPrintArea(canvas, isMobile = false) {
         opacity: 0.15,
         selectable: false,
         evented: false,
+        lockMovementX: true,
+        lockMovementY: true,
+        lockRotation: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        hoverCursor: "default",
+        moveCursor: "default",
         excludeFromExport: true,
         id: "print-area-main"
     });
@@ -64,6 +71,13 @@ export function addPrintArea(canvas, isMobile = false) {
                 angle,
                 selectable: false,
                 evented: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                hoverCursor: "default",
+                moveCursor: "default",
                 excludeFromExport: true,
                 originX: "center",
                 originY: "center"

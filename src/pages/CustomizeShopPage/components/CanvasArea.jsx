@@ -511,7 +511,7 @@ export default function CanvasArea() {
                     </Canvas>
 
                     {/* 🧶 REALISM GRAIN (OVERLAY) */}
-                    <div className="absolute inset-x-0 top-[15%] bottom-[15%] z-20 flex items-center justify-center pointer-events-none"
+                    <div className="absolute inset-x-0 top-[5%] bottom-[5%] z-20 flex items-center justify-center pointer-events-none"
                         style={{ perspective: "1500px" }}>
                         <motion.div
                             ref={wrapperRef}
