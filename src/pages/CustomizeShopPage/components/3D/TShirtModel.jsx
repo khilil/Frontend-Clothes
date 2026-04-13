@@ -53,16 +53,22 @@ export default function TShirtModel({ color, viewSide, instantViewSwitch = false
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Use one shared mobile framing so print area stays consistent across devices.
+    const modelScale = isMobile ? 4.35 : 5.4;
+    const modelY = isMobile ? -6.1 : -7.8;
+
     return (
         <group
             ref={groupRef}
-            scale={isMobile ? 4.6 : 5.4} // v7.23 Zoom-Max
-            position={isMobile ? [0, -6.6, 0] : [0, -7.8, 0]} // Relocated chest to viewport center
+            scale={modelScale}
+            position={[0, modelY, 0]}
         >
             {Object.keys(nodes).map((key) => {
                 const node = nodes[key];

@@ -77,6 +77,8 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
         }
     }, [locationState?.color, locationState?.hexColor, setGarmentColor]);
 
+    const isShortScreen = typeof window !== "undefined" && window.innerHeight < 700;
+
     return (
         <>
             {!isConfigured && !isPreview && (
@@ -85,14 +87,14 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
             <div className="bg-[#fcfbf9] h-[100dvh] overflow-hidden flex flex-col relative text-[#1a1a1a]">
 
                 {/* HEADER / NAV */}
-                <div className="h-14 border-b border-black/5 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white z-50 shrink-0 studio-header">
+                <div className={`${isShortScreen ? "h-11" : "h-14"} border-b border-black/5 flex items-center justify-between px-3 sm:px-4 md:px-6 bg-white z-50 shrink-0 studio-header`}>
                     <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
                         <button 
                             onClick={() => navigate(-1)}
                             className="p-2 -ml-2 rounded-full hover:bg-black/5 transition-all text-[#1a1a1a] flex items-center justify-center"
                             title="Go Back"
                         >
-                            <FiArrowLeft size={20} />
+                            <FiArrowLeft size={isShortScreen ? 18 : 20} />
                         </button>
                         <div className="h-4 w-px bg-black/10" />
                         <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-[#0A0A0A] whitespace-nowrap studio-brand-text">FENRIR Era</span>
@@ -114,7 +116,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                             </div>
 
                             {/* MAIN CANVAS AREA */}
-                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? "mb-[58dvh] md:mb-0" : "mb-[96px] md:mb-0"}`}>
+                            <div className={`relative flex-1 flex flex-col transition-all duration-500 ease-in-out bg-[#f0f0f0] ${isExpanded ? (isShortScreen ? "mb-[48dvh] md:mb-0" : "mb-[58dvh] md:mb-0") : "mb-[96px] md:mb-0"}`}>
 
                                 {/* CONTEXTUAL TOOLBAR */}
                                 <StudioToolbar />
@@ -137,7 +139,7 @@ function CustomizeEditorContent({ isPreview, isConfigured, slug, locationState }
                                 className={`fixed bottom-0 left-0 right-0 w-full bg-[#f4f2ee] z-[60] 
                                     transition-all duration-500 ease-in-out border-t border-black/5 bg-[#f4f2ee]/97 backdrop-blur-xl
                                     md:relative md:w-[320px] lg:w-[400px] md:h-full md:translate-y-0 md:border-t-0 md:border-l
-                                    ${isExpanded ? "h-[58dvh] translate-y-0" : "h-[96px] translate-y-0"} 
+                                    ${isExpanded ? (isShortScreen ? "h-[48dvh]" : "h-[58dvh]") : "h-[96px]"} 
                                     rounded-t-[1.5rem] md:rounded-t-none shadow-[0_-20px_60px_rgba(0,0,0,0.12)] md:shadow-none
                                     flex flex-col`}
                             >

@@ -1,11 +1,9 @@
 import * as fabric from "fabric";
 
 export function addPrintArea(canvas, isMobile = false) {
-    const canvasWidth = canvas.getWidth();
-    const zoom = canvas.getZoom();
-
-    // Unified logical width (matching CanvasArea's baseWidth)
-    const baseWidth = 500;
+    const zoom = canvas.getZoom() || 1;
+    const logicalWidth = canvas.getWidth() / zoom || 500;
+    const logicalHeight = canvas.getHeight() / zoom || 600;
 
     let width;
     let height;
@@ -13,18 +11,19 @@ export function addPrintArea(canvas, isMobile = false) {
 
     // Syncing with TShirtModel.jsx logic (1024px breakpoint)
     if (isMobile) {
-        // Mobile calibrated: Matching desktop chest placement
-        width = 240;
-        height = 320;
-        top = 600; // Stabilized chest position for expanded canvas
+        // One shared mobile print area across all phones.
+        // Keep dimensions fixed in logical stage units so tall/short devices look consistent.
+        width = 208;
+        height = 252;
+        top = (logicalHeight / 2) + 28;
     } else {
-        // Desktop calibrated: Pulled down to chest area
+        // Desktop calibrated: keep original stable layout
         width = 200;
         height = 240;
         top = 310;
     }
 
-    const left = baseWidth / 2;
+    const left = logicalWidth / 2;
 
     const rect = new fabric.Rect({
         left,

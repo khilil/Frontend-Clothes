@@ -28,7 +28,7 @@ export default function StudioNavbar() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`group relative flex flex-1 md:flex-none flex-col items-center justify-center gap-1 py-2.5 md:py-3 px-2 md:px-0 rounded-xl transition-all duration-300 ${isActive
+                            className={`group relative flex flex-1 md:flex-none flex-col items-center justify-center gap-1 py-1.5 md:py-3 px-2 md:px-0 rounded-xl transition-all duration-300 ${isActive
                                 ? "text-[#8b7e6d]"
                                 : "text-black/30 hover:text-[#1a1a1a]"
                                 }`}

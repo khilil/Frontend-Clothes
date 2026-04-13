@@ -44,6 +44,7 @@ export default function CanvasArea() {
     const [productData, setProductData] = useState(null);
     const [loading, setLoading] = useState(true);
     const isInternalChange = useRef(false);
+    const isMobileViewport = () => window.innerWidth < 1024;
 
     /* =============================
        FETCH PRODUCT DATA
@@ -176,8 +177,7 @@ export default function CanvasArea() {
         }
 
         const { addPrintArea } = await import("../fabric/printAreaResponsive");
-        const isMobile = window.innerWidth < 1024;
-        addPrintArea(canvas, isMobile);
+        addPrintArea(canvas, isMobileViewport());
 
         canvas.renderAll();
         updatePrice(canvas);
@@ -204,7 +204,7 @@ export default function CanvasArea() {
             printAreaRef,
             activeTextRef,
             syncLayers,
-            window.innerWidth < 1024 // isMobile parity with TShirtModel
+            isMobileViewport()
         );
 
         const canvas = fabricCanvas.current;
@@ -231,8 +231,7 @@ export default function CanvasArea() {
             if (baseImg) canvas.sendObjectToBack(baseImg);
 
             const { addPrintArea } = await import("../fabric/printAreaResponsive");
-            const isMobile = window.innerWidth < 1024;
-            addPrintArea(canvas, isMobile);
+            addPrintArea(canvas, isMobileViewport());
 
             canvas.renderAll();
             updatePrice(canvas);
@@ -348,7 +347,7 @@ export default function CanvasArea() {
             // Standardizing based on original 500x600 coordinate system
             const baseWidth = 500;
             const zoom = width / baseWidth;
-            const isMobile = window.innerWidth < 1024;
+            const isMobile = isMobileViewport();
 
             canvas.setDimensions({ width, height });
             canvas.setZoom(zoom);
@@ -479,7 +478,7 @@ export default function CanvasArea() {
             {/* MAIN 3D ATELIER STACK (v7.15 Balanced Mobile) */}
             <div className="w-full h-full flex flex-col lg:flex-row items-center justify-center p-2 sm:p-6 md:p-12 font-primary z-10">
                 <div
-                    className="relative w-full h-full lg:max-w-[500px] lg:aspect-[500/600] studio-card-shadow rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-transparent shrink-0"
+                    className="relative w-full max-w-[500px] aspect-[500/600] lg:h-full studio-card-shadow rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-transparent shrink-0"
                     style={{ touchAction: "none" }}
                 >
 

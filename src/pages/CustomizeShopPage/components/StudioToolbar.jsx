@@ -189,10 +189,10 @@ export default function StudioToolbar() {
             </div>
 
             {/* MOBILE: Sticky action bar sitting below the main header */}
-            <div className={`md:hidden sticky top-0 left-0 right-0 z-[60] bg-white border-b border-black/10 px-3 py-2 flex flex-col gap-2 animate-slideDown shadow-sm shrink-0`}>
+            <div className={`md:hidden sticky top-0 left-0 right-0 z-[60] bg-white border-b border-black/10 px-3 py-1 flex flex-col gap-1.5 animate-slideDown shadow-sm shrink-0`}>
 
                 {/* PRIMARY CONTROL ROW (Font/Size or Opacity for Graphics) */}
-                <div className="flex items-center justify-between border-b border-black/5 pb-2">
+                <div className="flex items-center justify-between border-b border-black/5 pb-1">
                     {selectedObject.type === "textbox" ? (
                         <>
                             <select
