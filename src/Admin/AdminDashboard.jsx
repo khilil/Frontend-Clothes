@@ -19,6 +19,8 @@ import OrderHub from './components/OrderHub';
 import OrderDetailView from './Pages/OrderDetailView';
 import { formatCurrency } from '../utils/formatCurrency';
 import { KPICardSkeleton, ChartSkeleton, TableSkeleton } from './components/SkeletonLoader';
+import * as settingsService from '../services/settingsService';
+import { Power, MapPin, Truck } from 'lucide-react';
 
 
 // --- Sub-components ---
@@ -341,6 +343,110 @@ const RecentActivityWidget = ({ activities = [] }) => {
     </div>
   );
 };
+
+const StoreOperationsWidget = () => {
+    const [settings, setSettings] = useState({ isCodEnabled: true, isStorePickupEnabled: true });
+    const [loading, setLoading] = useState(true);
+    const [updating, setUpdating] = useState({ cod: false, pickup: false });
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const res = await settingsService.getStoreSettings();
+            setSettings(res.data);
+        } catch (err) {
+            console.error("Failed to fetch settings", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleToggle = async (key) => {
+        const isCod = key === 'isCodEnabled';
+        setUpdating(prev => ({ ...prev, [isCod ? 'cod' : 'pickup']: true }));
+
+        try {
+            const newValue = !settings[key];
+            const res = await settingsService.updateStoreSettings({ [key]: newValue });
+            setSettings(res.data);
+        } catch (err) {
+            console.error(`Status sync failed for ${key}`, err);
+            alert("Operational Conflict: Status sync failed. Please try again.");
+        } finally {
+            setUpdating(prev => ({ ...prev, [isCod ? 'cod' : 'pickup']: false }));
+        }
+    };
+
+    if (loading) return <div className="h-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl animate-pulse" />;
+
+    return (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col font-sans">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Store Operations</h3>
+                    <p className="text-[10px] text-slate-500 font-medium mt-0.5">Quick checkout controls</p>
+                </div>
+                <Power size={18} className="text-slate-400" />
+            </div>
+
+            <div className="flex-1 p-6 space-y-6">
+                {/* COD Toggle */}
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600`}>
+                            <Truck size={18} />
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-slate-900 dark:text-white">Cash on Delivery</p>
+                            <p className="text-[10px] text-slate-500">Enable/Disable COD orders</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => handleToggle('isCodEnabled')}
+                        disabled={updating.cod}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.isCodEnabled ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'} ${updating.cod ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        <span
+                            className={`${settings.isCodEnabled ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                        />
+                        {updating.cod && <div className="absolute inset-0 flex items-center justify-center"><div className="w-2 h-2 border border-white border-t-transparent rounded-full animate-spin" /></div>}
+                    </button>
+                </div>
+
+                {/* Store Pickup Toggle */}
+                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600`}>
+                            <MapPin size={18} />
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-slate-900 dark:text-white">Store Pickup</p>
+                            <p className="text-[10px] text-slate-500">Enable/Disable in-store pickup</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => handleToggle('isStorePickupEnabled')}
+                        disabled={updating.pickup}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${settings.isStorePickupEnabled ? 'bg-emerald-600' : 'bg-slate-200 dark:bg-slate-700'} ${updating.pickup ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        <span
+                            className={`${settings.isStorePickupEnabled ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                        />
+                        {updating.pickup && <div className="absolute inset-0 flex items-center justify-center"><div className="w-2 h-2 border border-white border-t-transparent rounded-full animate-spin" /></div>}
+                    </button>
+                </div>
+            </div>
+
+            <div className="p-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
+                <p className="text-[9px] font-bold text-slate-400 text-center uppercase tracking-widest leading-none">Settings apply globally in real-time</p>
+            </div>
+        </div>
+    );
+};
+
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const { data: dashboardData, loading, error } = useSelector((state) => state.dashboard);
@@ -512,7 +618,7 @@ export default function AdminDashboard() {
            <BestSellingProductsWidget products={topProducts} />
          </div>
          <div className="lg:col-span-1">
-           <StockIntelligenceWidget items={forecastingItems} loading={isLowStockLoading} />
+           <StoreOperationsWidget />
          </div>
          <div className="lg:col-span-1">
            <RecentActivityWidget />

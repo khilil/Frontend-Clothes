@@ -7,6 +7,7 @@ import * as orderService from "../../services/orderService";
 import { motion, AnimatePresence } from "framer-motion";
 
 import * as paymentService from "../../services/paymentService";
+import * as settingsService from "../../services/settingsService";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function Checkout() {
   const [checkoutStep, setCheckoutStep] = useState("shipping");
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [completedOrderId, setCompletedOrderId] = useState(null);
+  const [storeSettings, setStoreSettings] = useState({ isCodEnabled: true, isStorePickupEnabled: true });
 
   // 🛡️ Load Razorpay Script Dynamically
   const loadRazorpayScript = () => {
@@ -53,6 +55,23 @@ export default function Checkout() {
     mapLink: "https://maps.google.com/?q=245+Fifth+Avenue+New+York",
     hours: "10:00 AM - 08:00 PM",
   });
+
+  // 🔄 Fetch Store Settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await settingsService.getStoreSettings();
+        setStoreSettings(res.data);
+        // Auto-fallback if currently selected is disabled
+        if (!res.data.isStorePickupEnabled && formData.deliveryMethod === "PICKUP") {
+          setFormData(prev => ({ ...prev, deliveryMethod: "DELIVERY" }));
+        }
+      } catch (error) {
+        console.error("Error fetching store settings:", error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   // 🔝 Auto-scroll to top on step change and mount
   useEffect(() => {
@@ -371,7 +390,7 @@ export default function Checkout() {
                     className="relative"
                   >
                     {/* DELIVERY METHOD SELECTION */}
-                    <div className="grid grid-cols-2 gap-4 mb-10">
+                    <div className={`grid ${storeSettings.isStorePickupEnabled ? 'grid-cols-2' : 'grid-cols-1'} gap-4 mb-10`}>
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, deliveryMethod: "DELIVERY" })}
@@ -381,15 +400,17 @@ export default function Checkout() {
                         <p className="text-[10px] font-black uppercase tracking-widest">Home Delivery</p>
                         <p className="text-[8px] text-text-muted uppercase mt-1">3-5 Nodes Commitment</p>
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, deliveryMethod: "PICKUP" })}
-                        className={`p-6 border-2 rounded-2xl transition-all duration-300 text-left relative overflow-hidden luxury-card ${formData.deliveryMethod === "PICKUP" ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle opacity-60 hover:opacity-100'}`}
-                      >
-                        <span className="material-symbols-outlined text-accent mb-2">storefront</span>
-                        <p className="text-[10px] font-black uppercase tracking-widest">Store Pickup</p>
-                        <p className="text-[8px] text-accent uppercase mt-1 font-bold">Ready in 2 Hours</p>
-                      </button>
+                      {storeSettings.isStorePickupEnabled && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, deliveryMethod: "PICKUP" })}
+                          className={`p-6 border-2 rounded-2xl transition-all duration-300 text-left relative overflow-hidden luxury-card ${formData.deliveryMethod === "PICKUP" ? 'border-accent bg-secondary shadow-lg' : 'border-border-subtle opacity-60 hover:opacity-100'}`}
+                        >
+                          <span className="material-symbols-outlined text-accent mb-2">storefront</span>
+                          <p className="text-[10px] font-black uppercase tracking-widest">Store Pickup</p>
+                          <p className="text-[8px] text-accent uppercase mt-1 font-bold">Ready in 2 Hours</p>
+                        </button>
+                      )}
                     </div>
 
                     {formData.deliveryMethod === "DELIVERY" ? (
@@ -611,7 +632,7 @@ export default function Checkout() {
 
                     <section className="relative">
                       <div className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className={`grid grid-cols-1 ${storeSettings.isCodEnabled ? 'md:grid-cols-2' : ''} gap-4`}>
                           <PaymentOption
                             id="ONLINE"
                             title="Online Payment"
@@ -620,24 +641,26 @@ export default function Checkout() {
                             active={formData.paymentMethod === "ONLINE"}
                             onClick={() => setFormData({ ...formData, paymentMethod: "ONLINE" })}
                           />
-                          {formData.deliveryMethod === "PICKUP" ? (
-                            <PaymentOption
-                              id="CASH_ON_PICKUP"
-                              title="Cash on Pickup"
-                              desc="Pay at store during pickup"
-                              icon="payments"
-                              active={formData.paymentMethod === "CASH_ON_PICKUP"}
-                              onClick={() => setFormData({ ...formData, paymentMethod: "CASH_ON_PICKUP" })}
-                            />
-                          ) : (
-                            <PaymentOption
-                              id="COD"
-                              title="Cash on Delivery"
-                              desc="Pay when delivered"
-                              icon="payments"
-                              active={formData.paymentMethod === "COD"}
-                              onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
-                            />
+                          {storeSettings.isCodEnabled && (
+                            formData.deliveryMethod === "PICKUP" ? (
+                              <PaymentOption
+                                id="CASH_ON_PICKUP"
+                                title="Cash on Pickup"
+                                desc="Pay at store during pickup"
+                                icon="payments"
+                                active={formData.paymentMethod === "CASH_ON_PICKUP"}
+                                onClick={() => setFormData({ ...formData, paymentMethod: "CASH_ON_PICKUP" })}
+                              />
+                            ) : (
+                              <PaymentOption
+                                id="COD"
+                                title="Cash on Delivery"
+                                desc="Pay when delivered"
+                                icon="payments"
+                                active={formData.paymentMethod === "COD"}
+                                onClick={() => setFormData({ ...formData, paymentMethod: "COD" })}
+                              />
+                            )
                           )}
                         </div>
                       </div>
