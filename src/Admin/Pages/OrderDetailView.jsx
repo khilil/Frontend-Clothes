@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   ArrowLeft, User, MapPin, Phone, Mail, 
   CreditCard, Package, Ruler, Info, CheckCircle, 
-  Clock, Truck, Download, FileText, Send, Trash2
+  Clock, Truck, Download, FileText, Send, Trash2,
+  Layers
 } from 'lucide-react';
 import { StatusBadge, PriorityBadge, CustomDesignBadge } from '../components/OrderBadges';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -223,7 +224,7 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                    <div className="flex gap-6 pb-6 border-b border-slate-100 dark:border-slate-800 last:border-0 last:pb-0">
                       <div className="w-24 h-24 rounded-2xl bg-slate-50 overflow-hidden relative group">
                         <img src={item.imageURL || item.image} className="w-full h-full object-cover" alt={item.title || item.name} />
-                        {item.isCustom && <div className="absolute top-2 right-2"><CustomDesignBadge /></div>}
+                        {(item.isCustom || item.customDesign || item.customizations) && <div className="absolute top-2 right-2"><CustomDesignBadge /></div>}
                       </div>
                       <div className="flex-1 flex justify-between items-start">
                         <div>
@@ -239,7 +240,7 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                    </div>
 
                    {/* Custom Design System (If Custom) */}
-                   {item.isCustom && (
+                   {(item.isCustom || item.customDesign || item.customizations) && (
                      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/50">
                         <div className="flex items-center justify-between mb-6">
                           <h5 className="text-xs font-bold uppercase tracking-widest text-indigo-600 flex items-center gap-2">
@@ -248,32 +249,34 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                           <button className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold hover:bg-slate-50 transition-all">
                              <Download size={14} /> Download Ready-to-Print
                           </button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                            <div>
                              <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Front Preview</p>
                              <div className="aspect-square rounded-xl bg-white border border-slate-200 overflow-hidden p-2">
-                                <img src={item.customDesign?.frontPreview} className="w-full h-full object-contain" alt="Front" />
+                                <img src={item.customDesign?.frontPreview || item.customizations?.displayPreviews?.front || item.customizations?.previews?.front || item.customizations?.displayImage} className="w-full h-full object-contain" alt="Front" />
                              </div>
                            </div>
                            <div>
                              <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Back Preview</p>
                              <div className="aspect-square rounded-xl bg-white border border-slate-200 overflow-hidden p-2">
-                                <img src={item.customDesign?.backPreview} className="w-full h-full object-contain" alt="Back" />
+                                <img src={item.customDesign?.backPreview || item.customizations?.displayPreviews?.back || item.customizations?.previews?.back} className="w-full h-full object-contain" alt="Back" />
                              </div>
-                           </div>
+                           </div>iv>
                            <div className="space-y-4">
                               <div>
                                 <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Design Metadata</p>
                                 <div className="space-y-2">
                                    <div className="flex justify-between items-center text-xs">
+                                      <span className="text-slate-500">Method</span>
+                                      <span className="font-bold text-indigo-600">{(item.customDesign?.printingMethod?.label || item.customizations?.printingMethod?.label || "DTF").toUpperCase()}</span>
+                                   </div>
+                                   <div className="flex justify-between items-center text-xs">
                                       <span className="text-slate-500">Res</span>
-                                      <span className="font-bold">{item.customDesign?.metadata?.resolution}</span>
+                                      <span className="font-bold">{item.customDesign?.metadata?.resolution || "High"}</span>
                                    </div>
                                    <div className="flex justify-between items-center text-xs">
                                       <span className="text-slate-500">DPI</span>
-                                      <span className="font-bold">{item.customDesign?.metadata?.dpi} DP</span>
+                                      <span className="font-bold">{item.customDesign?.metadata?.dpi || "300"} DP</span>
                                    </div>
                                    <div className="flex justify-between items-center text-xs">
                                       <span className="text-slate-500">Transparency</span>
@@ -286,6 +289,54 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                               </button>
                            </div>
                         </div>
+
+                        {/* Graphic Inventory Table */}
+                        {(item.customDesign?.technicalReport || item.customizations?.technicalReport) && (
+                          <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700/50">
+                             <h6 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Layers size={14} className="text-indigo-500" />
+                                Graphic Inventory & Layout
+                             </h6>
+                             <div className="overflow-x-auto">
+                               <table className="w-full text-left">
+                                 <thead>
+                                   <tr className="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                                     <th className="px-2 py-3">Side</th>
+                                     <th className="px-2 py-3">Element Name/Type</th>
+                                     <th className="px-2 py-3">Dimensions (px)</th>
+                                     <th className="px-2 py-3 text-right">Identifier</th>
+                                   </tr>
+                                 </thead>
+                                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                                   {(item.customDesign?.technicalReport || item.customizations?.technicalReport).map((element, eIdx) => (
+                                     <tr key={eIdx} className="text-xs">
+                                       <td className="px-2 py-4">
+                                          <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
+                                            element.side === 'Back' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'
+                                          }`}>
+                                            {element.side || 'Front'}
+                                          </span>
+                                       </td>
+                                       <td className="px-2 py-4">
+                                          <p className="font-bold text-slate-900 dark:text-white">{element.name || 'Unknown Element'}</p>
+                                          <p className="text-[9px] text-slate-400 font-medium uppercase tracking-tighter">
+                                            {element.hasAlpha ? 'Alpha Channel OK' : 'Solid Background'}
+                                          </p>
+                                       </td>
+                                       <td className="px-2 py-4 text-slate-500 font-medium">
+                                          {element.canvasWidth} × {element.canvasHeight}
+                                       </td>
+                                       <td className="px-2 py-4 text-right font-mono text-[10px] text-slate-400">
+                                          #{String(eIdx + 1).padStart(2, '0')}
+                                       </td>
+                                     </tr>
+                                   ))}
+                                 </tbody>
+                               </table>
+                             </div>
+                          </div>
+                        )}
+
                      </div>
                    )}
                  </div>

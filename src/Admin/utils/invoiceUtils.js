@@ -21,7 +21,7 @@ const getInvoiceBody = (order) => {
                 </div>
                 <div style="text-align: right;">
                     <h1 style="margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.05em; color: #1A1A1A;">OFFICIAL INVOICE</h1>
-                    <p style="font-size: 11px; color: #888; margin: 4px 0; font-weight: 800;">HUB_OP_ID: ${order._id.toString().toUpperCase()}</p>
+                    <p style="font-size: 11px; color: #888; margin: 4px 0; font-weight: 800;">ORDER_REF: ${order.orderNumber || order._id.toString().toUpperCase()}</p>
                     <p style="font-size: 11px; color: #1A1A1A; margin: 0; font-weight: 700;">ISSUED: ${date}</p>
                 </div>
             </div>

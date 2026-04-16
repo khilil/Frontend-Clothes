@@ -44,6 +44,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Products',       path: '/admin/products',       icon: ShoppingBasket              },
         { name: 'Inventory',      path: '/admin/inventory',      icon: Package                     },
         { name: 'Orders',         path: '/admin/orders',         icon: ShoppingCart                },
+        { name: 'Custom Orders',  path: '/admin/custom-orders',  icon: Palette,                    },
         { name: 'Store Pickups',  path: '/admin/pickups',        icon: Store                      },
         { name: 'Attributes',     path: '/admin/attributes',     icon: Palette                     },
         { name: 'Customization',  path: '/admin/customization',  icon: Settings                    },

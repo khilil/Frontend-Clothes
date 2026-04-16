@@ -30,6 +30,7 @@ import MainLayout from "../pages/MainLayout";
 import AdminProducts from "../Admin/Pages/Product/AdminProducts";
 import ProductDetailsPage from "../Admin/Pages/Product/ProductDetailsPage";
 import OrderManagement from "../Admin/Pages/Orders/OrderManagement";
+import CustomOrderManagement from "../Admin/Pages/Orders/CustomOrderManagement";
 import AdminOrderDetails from "../Admin/Pages/Orders/AdminOrderDetails";
 import PickupManagement from "../Admin/Pages/Orders/PickupManagement";
 import AdminCustomers from "../Admin/Pages/Customer/AdminCustomers";
@@ -113,6 +114,7 @@ export default function AppRoutes() {
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderManagement />} />
+                <Route path="custom-orders" element={<CustomOrderManagement />} />
                 <Route path="pickups" element={<PickupManagement />} />
                 <Route path="pickups/handover/:orderId" element={<PickupHandover />} />
                 <Route path="attributes" element={<AttributeManagement />} />

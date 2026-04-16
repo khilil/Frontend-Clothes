@@ -5,10 +5,10 @@ import { getAllOrders, bulkUpdateOrders, updateOrderStatus } from '../../service
 import { generateInvoiceHTML, generateBulkInvoiceHTML, generatePickingListHTML } from '../utils/invoiceUtils';
 import { exportOrdersToCSV } from '../utils/exportUtils';
 
-export default function OrderHub({ onSelectOrder, orderType: propOrderType }) {
+export default function OrderHub({ onSelectOrder, orderType: propOrderType, defaultTab = 'All' }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('All');
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -555,7 +555,7 @@ export default function OrderHub({ onSelectOrder, orderType: propOrderType }) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
-                      <span className="font-bold text-sm text-indigo-600 dark:text-indigo-400">#{order._id.toString().slice(-6).toUpperCase()}</span>
+                      <span className="font-bold text-sm text-indigo-600 dark:text-indigo-400">{order.orderNumber || `#${order._id.toString().slice(-6).toUpperCase()}`}</span>
                       {order.orderType === 'PICKUP' ? (
                         <div className="flex items-center gap-1.5 bg-purple-500/10 text-purple-600 px-1.5 py-0.5 rounded text-[9px] font-black w-fit uppercase tracking-tighter">
                           <CheckSquare size={10} /> Store Pickup

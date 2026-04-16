@@ -146,7 +146,7 @@ const Orders = () => {
                       <div className="text-right sm:text-left">
                         <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Protocol ID</p>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">#MM-{order._id.slice(-8).toUpperCase()}</p>
+                          <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">{order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}</p>
                           {order.orderType === 'PICKUP' && (
                             <span className="text-[7px] font-black uppercase bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded tracking-widest w-fit">Pickup</span>
                           )}

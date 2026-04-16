@@ -60,6 +60,29 @@ const AdminOrderDetails = () => {
         }
     };
 
+    const handleDownload = async (url, fileName) => {
+        if (!url) {
+            alert("No download URL available.");
+            return;
+        }
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = fileName || 'design-asset.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error("Download failed", error);
+            window.open(url, '_blank');
+        }
+    };
+
     const handleSaveLogistics = async () => {
         try {
             setIsUpdating(true);
@@ -121,7 +144,7 @@ const AdminOrderDetails = () => {
                             Orders List
                         </button>
                         <div className="flex flex-wrap items-center gap-4">
-                            <h1 className="text-3xl font-bold tracking-tight uppercase">Order #{order._id.slice(-8)}</h1>
+                            <h1 className="text-3xl font-bold tracking-tight uppercase">Order {order.orderNumber || `#${order._id.slice(-8)}`}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${order.orderStatus === 'placed' ? 'bg-blue-100 text-blue-700 border-blue-200' :
                                 ['in-production', 'processing'].includes(order.orderStatus) ? 'bg-purple-100 text-purple-700 border-purple-200' :
                                     order.orderStatus === 'shipped' ? 'bg-amber-100 text-amber-700 border-amber-200' :
@@ -374,12 +397,7 @@ const AdminOrderDetails = () => {
                                                                             {/* High-Res Downloads */}
                                                                             {item.customizations?.printFiles?.front && (
                                                                                 <button
-                                                                                    onClick={() => {
-                                                                                        const link = document.createElement('a');
-                                                                                        link.href = item.customizations.printFiles.front;
-                                                                                        link.download = `Front_Print_Ready_${order._id.slice(-6)}.png`;
-                                                                                        link.click();
-                                                                                    }}
+                                                                                    onClick={() => handleDownload(item.customizations.printFiles.front, `Front_Print_Ready_${order._id.slice(-6)}.png`)}
                                                                                     className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
                                                                                 >
                                                                                     <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">download</span>
@@ -388,12 +406,7 @@ const AdminOrderDetails = () => {
                                                                             )}
                                                                             {item.customizations?.printFiles?.back && (
                                                                                 <button
-                                                                                    onClick={() => {
-                                                                                        const link = document.createElement('a');
-                                                                                        link.href = item.customizations.printFiles.back;
-                                                                                        link.download = `Back_Print_Ready_${order._id.slice(-6)}.png`;
-                                                                                        link.click();
-                                                                                    }}
+                                                                                    onClick={() => handleDownload(item.customizations.printFiles.back, `Back_Print_Ready_${order._id.slice(-6)}.png`)}
                                                                                     className="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-accent hover:text-accent transition-all text-[11px] font-bold shadow-sm group"
                                                                                 >
                                                                                     <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">download</span>
@@ -403,12 +416,7 @@ const AdminOrderDetails = () => {
 
                                                                             {/* Full Mockup Download */}
                                                                             <button
-                                                                                onClick={() => {
-                                                                                    const link = document.createElement('a');
-                                                                                    link.href = item.customizations.previews?.front || item.imageURL;
-                                                                                    link.download = `Full_Mockup_${order._id.slice(-6)}.png`;
-                                                                                    link.click();
-                                                                                }}
+                                                                                onClick={() => handleDownload(item.customizations.previews?.front || item.imageURL, `Full_Mockup_${order._id.slice(-6)}.png`)}
                                                                                 className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-slate-900 border border-transparent rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition-all text-[11px] font-bold shadow-sm group col-span-full"
                                                                             >
                                                                                 <span className="material-symbols-outlined text-sm">image</span>

@@ -229,7 +229,7 @@ export default function DesignPreviewModal() {
         const report = [];
         const metadataMap = uploadedAssetsMetadataRef.current || {};
 
-        const scanDesign = (design) => {
+        const scanDesign = (design, side) => {
             if (!design || !design.objects) return;
             design.objects.filter((obj) => !obj.excludeFromExport).forEach(obj => {
                 const assetKey = obj.src || obj.id;
@@ -250,6 +250,7 @@ export default function DesignPreviewModal() {
 
                     report.push({
                         ...meta,
+                        side: side.charAt(0).toUpperCase() + side.slice(1), // Capitalize Front/Back
                         price: elementPrice,
                         canvasWidth: (obj.width * (obj.scaleX || 1)).toFixed(0),
                         canvasHeight: (obj.height * (obj.scaleY || 1)).toFixed(0),
@@ -258,8 +259,8 @@ export default function DesignPreviewModal() {
             });
         };
 
-        scanDesign(frontDesignRef.current);
-        scanDesign(backDesignRef.current);
+        scanDesign(frontDesignRef.current, "front");
+        scanDesign(backDesignRef.current, "back");
         return report;
     };
 
@@ -483,7 +484,8 @@ export default function DesignPreviewModal() {
                 editorPreviews: cartPreviews,
                 printFiles: productionPrintFiles,
                 printingMethod: currentType,
-                technicalReport: generateTechnicalReport()
+                technicalReport: generateTechnicalReport(),
+                isCustom: true
             };
 
             // Find a default variant if none selected

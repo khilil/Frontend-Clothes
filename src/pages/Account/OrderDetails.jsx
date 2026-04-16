@@ -196,7 +196,7 @@ const OrderDetails = () => {
                         <span className="material-symbols-outlined text-base group-hover/back:-translate-x-1 transition-transform">arrow_back</span>
                         Archive Retrieval
                     </Link>
-                    <h2 className="text-4xl md:text-5xl font-impact tracking-tight mb-2 text-black">Protocol #MM-{order._id.slice(-8).toUpperCase()}</h2>
+                    <h2 className="text-4xl md:text-5xl font-impact tracking-tight mb-2 text-black">Protocol {order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}</h2>
                     <p className="text-black/20 text-[10px] uppercase tracking-[0.4em] font-black">
                         Logged on {new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} // {new Date(order.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                     </p>
