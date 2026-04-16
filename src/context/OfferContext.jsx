@@ -7,11 +7,34 @@ export const OfferProvider = ({ children }) => {
     const [activeOffers, setActiveOffers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchOffers = async () => {
+    const fetchOffers = async (force = false) => {
+        // Only show loading if we don't have cached data
+        const cached = sessionStorage.getItem('active_offers');
+        if (cached && !force) {
+            try {
+                const { data, timestamp } = JSON.parse(cached);
+                const isExpired = Date.now() - timestamp > 5 * 60 * 1000; // 5 min TTL
+                if (!isExpired) {
+                    setActiveOffers(data);
+                    setIsLoading(false);
+                    return;
+                }
+            } catch (e) {
+                console.warn("Failed to parse cached offers", e);
+            }
+        }
+
         setIsLoading(true);
         try {
             const res = await getActiveOffers();
-            setActiveOffers(res.data || []);
+            const offers = res.data || [];
+            setActiveOffers(offers);
+            
+            // Store in sessionStorage
+            sessionStorage.setItem('active_offers', JSON.stringify({
+                data: offers,
+                timestamp: Date.now()
+            }));
         } catch (error) {
             console.error("Failed to fetch active offers:", error);
         } finally {
@@ -21,8 +44,8 @@ export const OfferProvider = ({ children }) => {
 
     useEffect(() => {
         fetchOffers();
-        // Refresh every 5 minutes to catch newly activated/expired offers
-        const interval = setInterval(fetchOffers, 5 * 60 * 1000);
+        // Refresh every 5 minutes - passes force=true to bypass cache on interval
+        const interval = setInterval(() => fetchOffers(true), 5 * 60 * 1000);
         return () => clearInterval(interval);
     }, []);
 
@@ -76,7 +99,10 @@ export const OfferProvider = ({ children }) => {
             getProductOffer, 
             getCartOffers, 
             activeBanners,
-            refreshOffers: fetchOffers
+            getProductOffer, 
+            getCartOffers, 
+            activeBanners,
+            refreshOffers: () => fetchOffers(true)
         }}>
             {children}
         </OfferContext.Provider>

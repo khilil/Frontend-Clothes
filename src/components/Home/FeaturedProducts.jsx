@@ -14,7 +14,8 @@ function FeaturedProducts() {
         const fetchProductsData = async () => {
             setIsLoading(true);
             try {
-                const response = await getProducts();
+                // Fetch a limited set of products that could fit into our tabs
+                const response = await getProducts({ limit: 40 }); 
                 setProducts(response.products || []);
             } catch (error) {
                 console.error("Error fetching featured products:", error);
