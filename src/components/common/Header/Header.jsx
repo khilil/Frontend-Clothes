@@ -187,7 +187,7 @@ export default function Header({ forceSolid = false }) {
               </Link>
 
               <Link className="relative text-text-secondary no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] py-2.5 text-[10px] font-black uppercase tracking-[0.3em] hover:text-accent after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:w-0 after:h-0.5 after:bg-accent after:rounded after:-translate-x-1/2 after:transition-all after:duration-500 after:ease-[cubic-bezier(0.16,1,0.3,1)] after:shadow-[0_0_10px_var(--color-accent)] hover:after:w-4" to="/custom-studio">
-                Customizable
+                ATELIER
               </Link>
 
               {/* CLOTHING MEGA MENU TRIGGER */}
@@ -287,9 +287,10 @@ export default function Header({ forceSolid = false }) {
                   width: isSearchExpanded
                     ? (window.innerWidth < 768 ? 'calc(100vw - 120px)' : '320px')
                     : '40px',
-                  backgroundColor: isSearchExpanded ? 'var(--color-secondary)' : 'rgba(26, 26, 26, 0.05)'
+                  backgroundColor: isSearchExpanded ? 'var(--color-secondary)' : 'transparent',
+                  borderColor: isSearchExpanded ? 'var(--color-border-subtle)' : 'transparent'
                 }}
-                className="flex items-center rounded-full border border-border-subtle overflow-hidden group/search pr-1"
+                className={`flex items-center rounded-full border overflow-hidden group/search pr-1 transition-colors ${!isSearchExpanded ? 'hover:bg-text-primary/5' : ''}`}
               >
                 <button
                   className="w-10 h-10 flex items-center justify-center shrink-0 transition-colors hover:text-accent"
@@ -448,7 +449,7 @@ export default function Header({ forceSolid = false }) {
             )}
             <Link
               to="/account/wishlist"
-              className="relative w-10 h-10 flex items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors group"
+              className="relative w-10 h-10 hidden md:flex items-center justify-center hover:bg-text-primary/5 rounded-full transition-colors group"
             >
               <span className="material-symbols-outlined text-[20px] group-hover:scale-110 group-hover:opacity-100 group-hover:text-accent group-hover:-translate-y-[1px]">favorite</span>
               {wishlist.length > 0 && (
@@ -647,7 +648,7 @@ export default function Header({ forceSolid = false }) {
               <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
 
                 <nav className="flex flex-col gap-6">
-                  {['New Arrivals', 'FENRIR Era', 'Collections', 'Sale', 'About', 'Contact'].map((item, i) => (
+                  {['New Arrivals', 'ATELIER', 'Collections', 'Wishlist', 'Sale', 'About', 'Contact'].map((item, i) => (
                     <motion.div
                       key={item}
                       initial={{ opacity: 0, x: -20 }}
@@ -655,11 +656,21 @@ export default function Header({ forceSolid = false }) {
                       transition={{ delay: 0.3 + i * 0.05 }}
                     >
                       <Link
-                        className={`text-2xl font-primary uppercase tracking-wider transition-colors hover:text-accent ${item === 'Sale' ? 'text-accent' : 'text-text-primary'}`}
-                        to={item === 'Collections' ? '/shop' : item === 'FENRIR Era' ? '/custom-studio' : `/${item.toLowerCase().replace(' ', '-')}`}
+                        className={`text-2xl font-primary uppercase tracking-wider transition-colors hover:text-accent flex items-center gap-3 ${item === 'Sale' ? 'text-accent' : 'text-text-primary'}`}
+                        to={
+                          item === 'Collections' ? '/shop' :
+                          item === 'ATELIER' ? '/custom-studio' :
+                          item === 'Wishlist' ? '/account/wishlist' :
+                          `/${item.toLowerCase().replace(' ', '-')}`
+                        }
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item}
+                        {item === 'Wishlist' && wishlist.length > 0 && (
+                          <span className="flex items-center justify-center bg-accent text-primary text-[10px] font-black w-5 h-5 rounded-full shadow-[0_0_15px_rgba(197,160,89,0.3)] ring-1 ring-border-subtle animate-in fade-in zoom-in duration-300">
+                            {wishlist.length}
+                          </span>
+                        )}
                       </Link>
                     </motion.div>
                   ))}
