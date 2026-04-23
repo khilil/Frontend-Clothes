@@ -10,6 +10,7 @@ import { getProductBySlug } from "../../../services/productService";
 import { OffersSection } from "./OffersSection";
 import { getActiveOffers } from "../../../services/offerService";
 import SizeGuideModal from "./SizeGuideModal";
+import SEO from "../../../components/common/SEO";
 
 export default function ProductDetailPage() {
     const { slug } = useParams();
@@ -345,6 +346,34 @@ export default function ProductDetailPage() {
 
     return (
         <main className="pt-12 md:pt-20 bg-background text-text-primary selection:bg-accent selection:text-white overflow-x-hidden">
+            <SEO 
+                title={product.title} 
+                description={product.description?.substring(0, 160) || `Buy ${product.title} at Fenrir Era. Premium quality modern apparel.`}
+                image={images[0]}
+                type="product"
+            />
+            {/* JSON-LD Product Schema */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org/",
+                    "@type": "Product",
+                    "name": product.title,
+                    "image": images,
+                    "description": product.description,
+                    "sku": selectedVariant?.sku || product._id,
+                    "brand": {
+                        "@type": "Brand",
+                        "name": "Fenrir Era"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "url": window.location.href,
+                        "priceCurrency": "INR",
+                        "price": product.price,
+                        "availability": isOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
+                    }
+                })}
+            </script>
             <div className="max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 py-2 md:py-12">
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-20 items-start">
 

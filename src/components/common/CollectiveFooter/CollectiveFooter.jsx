@@ -35,17 +35,13 @@ function CollectiveFooter() {
         {/* BRAND PHILOSOPHY & LOGO */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 mb-20 md:mb-32">
           <div className="lg:col-span-6 space-y-10 md:space-y-12 text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="font-primary text-5xl sm:text-7xl lg:text-8xl tracking-tighter uppercase mb-6 md:mb-8 transition-all duration-700">FENRIR ERA</h2>
-              <p className="archival-text text-text-primary text-[10px] md:text-xs max-w-[450px] mx-auto lg:mx-0 leading-relaxed opacity-80 px-4 md:px-0">
-                WE ENGINEER ARMOR FOR THE MODERN ICON. HIGH-STREET UTILITY / ARCHIVAL LUXURY. 
-                DESIGNED TO WITHSTAND THE URBAN VORTEX. THE PROTOCOL IS LIVE.
-              </p>
-            </motion.div>
+            <div className="flex justify-center lg:justify-start mb-6 md:mb-8">
+              <img src="/assets/main-logo.png" alt="FENRIR ERA" className="h-24 md:h-32 lg:h-40 w-auto object-contain opacity-90 transition-opacity duration-500 hover:opacity-100" />
+            </div>
+            <p className="archival-text text-text-primary text-[10px] md:text-xs max-w-[450px] mx-auto lg:mx-0 leading-relaxed opacity-80 px-4 md:px-0">
+              WE ENGINEER ARMOR FOR THE MODERN ICON. HIGH-STREET UTILITY / ARCHIVAL LUXURY. 
+              DESIGNED TO WITHSTAND THE URBAN VORTEX. THE PROTOCOL IS LIVE.
+            </p>
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 md:gap-8">
                <div className="flex items-center gap-2 md:gap-3">

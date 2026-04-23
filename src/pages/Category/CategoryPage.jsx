@@ -11,6 +11,7 @@ import CategoryHero from "./CategoryHero";
 import CollectiveFooter from "../../components/common/CollectiveFooter/CollectiveFooter";
 import { TOPWEAR_SIZES, BOTTOMWEAR_SIZES, isBottomwear } from "../../utils/sizeConstants";
 import { COLOR_CATEGORIES, getColorCategoryInfo, getMainColorFromHex } from "../../utils/colorUtils";
+import SEO from "../../components/common/SEO";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -236,6 +237,10 @@ export default function CategoryPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-text-primary">
+      <SEO 
+        title={slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : "All Collections"} 
+        description={`Explore our ${slug || 'all'} collection at Fenrir Era. Discover modern, premium apparel tailored for the next generation.`}
+      />
 
       <main className="flex-1 flex flex-col lg:flex-row pt-5 lg:pt-20">
 

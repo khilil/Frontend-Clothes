@@ -125,9 +125,7 @@ export default function LoginAuth() {
                         className="relative z-20"
                     >
                         <Link to="/" className="inline-block mb-12">
-                            <span className="text-4xl font-['Oswald'] tracking-[-0.05em] uppercase">
-                                Fenrir <span className="text-accent italic font-['Bodoni_Moda'] lowercase">era</span>
-                            </span>
+                            <img src="/assets/main-logo.png" alt="Fenrir Era" className="h-20 md:h-32 opacity-90 hover:opacity-100 transition-all" />
                         </Link>
                         
                         <h1 className="text-6xl xl:text-8xl font-['Bodoni_Moda'] italic mb-8 leading-[0.9] tracking-tight text-text-primary/90">
@@ -151,10 +149,8 @@ export default function LoginAuth() {
                     <div className="w-full max-w-[480px]">
                         
                         {/* Mobile Logo */}
-                        <div className="lg:hidden mb-12 text-center">
-                            <span className="text-3xl font-['Oswald'] tracking-tighter uppercase">
-                                Fenrir <span className="text-accent">era</span>
-                            </span>
+                        <div className="lg:hidden mb-12 text-center flex justify-center">
+                            <img src="/assets/main-logo.png" alt="Fenrir era" className="h-20 opacity-90" />
                         </div>
 
                         {/* Title Toggle */}

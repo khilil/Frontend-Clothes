@@ -176,7 +176,13 @@ export default function Header({ forceSolid = false }) {
 
           {/* LOGO (Center absolutely on mobile, inline on desktop) */}
           <div className={`z-[110] transition-all duration-500 absolute left-1/2 -translate-x-1/2 lg:static lg:transform-none`}>
-            <Link className="text-xl md:text-2xl font-primary tracking-tighter text-text-primary transition-all hover:scale-105 active:scale-95 whitespace-nowrap" to="/" onClick={() => setIsMobileMenuOpen(false)}>F E N R I R</Link>
+            <Link className="flex items-center" to="/" onClick={() => setIsMobileMenuOpen(false)}>
+              <img 
+                src="/assets/main-logo.png" 
+                alt="FENRIR" 
+                className="h-10 md:h-14 w-auto object-contain" 
+              />
+            </Link>
           </div>
 
           {/* DESKTOP NAV */}
@@ -645,7 +651,11 @@ export default function Header({ forceSolid = false }) {
               transition={{ type: "spring", damping: 30, stiffness: 200 }}
               className="fixed top-0 left-0 w-full max-w-[320px] h-full bg-background z-[105] shadow-[0_0_50px_rgba(0,0,0,0.8)] lg:hidden flex flex-col border-r border-border-subtle"
             >
-              <div className="drawer-inner p-8 pt-24 space-y-10 h-full overflow-y-auto custom-scrollbar">
+              <div className="drawer-inner p-8 pt-10 space-y-10 h-full overflow-y-auto custom-scrollbar">
+                {/* Drawer Branding */}
+                <div className="flex justify-start mb-8">
+                  <img src="/assets/main-logo.png" alt="FENRIR" className="h-12 w-auto object-contain opacity-80" />
+                </div>
 
                 <nav className="flex flex-col gap-6">
                   {['New Arrivals', 'ATELIER', 'Collections', 'Wishlist', 'Sale', 'About', 'Contact'].map((item, i) => (

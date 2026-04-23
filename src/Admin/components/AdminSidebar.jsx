@@ -78,12 +78,11 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="p-6 pb-4 shrink-0">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3 px-2 group cursor-pointer" onClick={() => navigate('/admin')}>
-                        <div className="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300">
-                            <LayoutGrid size={22} strokeWidth={2.5} />
-                        </div>
-                        <span className="font-black text-2xl tracking-tighter text-slate-900 dark:text-white font-display">
-                            T-Dash
-                        </span>
+                        <img 
+                            src="/assets/main-logo.png" 
+                            alt="FENRIR" 
+                            className="h-20 w-auto object-contain transition-all duration-300 group-hover:scale-110" 
+                        />
                     </div>
                     {/* Mobile Close */}
                     <button

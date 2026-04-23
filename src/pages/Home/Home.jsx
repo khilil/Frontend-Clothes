@@ -12,6 +12,7 @@ import { useOffers } from "../../context/OfferContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useNavigate } from "react-router-dom";
+import SEO from "../../components/common/SEO";
 
 const PromotionalBanner = ({ banner }) => {
   const navigate = useNavigate();
@@ -74,6 +75,10 @@ function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: "easeOut" }}
     >
+      <SEO 
+        title="Home" 
+        description="Welcome to Fenrir Era - Architecture of Modern Fashion. Explore our latest trends, customized apparel, and premium streetwear collection."
+      />
       {heroBanner && <PromotionalBanner banner={heroBanner} />}
       <Hero />
       {topGridBanners.length > 0 && topGridBanners.map(b => (
