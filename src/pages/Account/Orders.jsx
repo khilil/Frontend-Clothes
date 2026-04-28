@@ -9,9 +9,19 @@ const Orders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 3;
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
+  const [activeOrderId, setActiveOrderId] = useState(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const reasons = [
+      "Changed my mind",
+      "Found a better price",
+      "Incorrect size / color selected",
+      "Shipping taking too long",
+      "Other (please specify)"
+  ];
 
   const fetchOrders = async () => {
     try {
@@ -24,14 +34,35 @@ const Orders = () => {
     }
   };
 
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to abort this transaction?")) return;
-    try {
-      await orderService.cancelOrder(orderId);
-      fetchOrders();
-    } catch (error) {
-      alert(error.message || "Failed to cancel order");
-    }
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const handleCancelClick = (orderId) => {
+      setActiveOrderId(orderId);
+      setShowCancelModal(true);
+  };
+
+  const handleCancelSubmit = async () => {
+      const finalReason = selectedReason === "Other (please specify)" ? customReason : selectedReason;
+      if (!finalReason) {
+          alert("Please select or type a reason for cancellation");
+          return;
+      }
+
+      setIsCancelling(true);
+      try {
+          await orderService.cancelOrder(activeOrderId, finalReason);
+          setShowCancelModal(false);
+          setSelectedReason("");
+          setCustomReason("");
+          fetchOrders();
+      } catch (error) {
+          console.error("Cancel order failed:", error);
+          alert(error.message || "Failed to cancel order");
+      } finally {
+          setIsCancelling(false);
+      }
   };
 
   const loadMore = () => {
@@ -103,7 +134,7 @@ const Orders = () => {
   const hasMore = orders.length > currentOrders.length;
 
   return (
-    <div className="flex-1 pb-20">
+    <div className="flex-1 pb-20 relative">
       {/* HEADER */}
       <header className="mb-16">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-impact tracking-tight mb-3 text-black">Order History</h2>
@@ -190,16 +221,14 @@ const Orders = () => {
                       <p className="text-[9px] sm:text-[11px] text-black/30 md:max-w-md uppercase tracking-[0.3em] font-black leading-relaxed">
                         {order.orderStatus === 'delivered' ? `Transaction finalized on ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : `Active logistics protocol: ${order.orderStatus} state.`}
                       </p>
+                      {order.orderStatus === 'cancelled' && order.cancellationReason && (
+                        <p className="text-[9px] sm:text-[10px] text-rose-500/80 uppercase tracking-[0.2em] font-black bg-rose-500/5 px-4 py-2 rounded-xl border border-rose-500/10 w-fit">
+                          Reason: {order.cancellationReason}
+                        </p>
+                      )}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full lg:w-auto">
-                      {(order.orderStatus === 'processing' || order.orderStatus === 'placed') && order.orderStatus !== 'ready-for-pickup' ? (
-                        <button
-                          onClick={() => handleCancelOrder(order._id)}
-                          className="flex-1 lg:flex-none px-6 sm:px-10 py-4 sm:py-5 border border-rose-500/20 text-rose-500/60 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rose-500/10 hover:text-rose-600 transition-all"
-                        >
-                          Abort
-                        </button>
-                      ) : (
+                      {['shipped', 'delivered', 'cancelled'].includes(order.orderStatus?.toLowerCase()) && (
                         <button className="flex-1 lg:flex-none px-6 sm:px-10 py-4 sm:py-5 border border-black/10 text-black/60 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black/5 hover:text-black transition-all">
                           {order.orderType === 'PICKUP' ? 'Store Location' : 'Track'}
                         </button>
@@ -229,7 +258,82 @@ const Orders = () => {
             Load More Orders
           </button>
         </div>
-      )}
+      )}      {/* CANCELLATION MODAL */}
+      {showCancelModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 transform transition-all scale-100">
+                  {/* Header */}
+                  <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-gray-900">Cancel Order</h3>
+                      <button 
+                          onClick={() => setShowCancelModal(false)}
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                          <span className="material-symbols-outlined text-xl">close</span>
+                      </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6">
+                      <p className="text-sm text-gray-600 mb-4">
+                          Please select the reason for cancellation:
+                      </p>
+
+                      <div className="space-y-3 mb-6">
+                          {reasons.map((reason) => (
+                              <label 
+                                  key={reason}
+                                  className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${selectedReason === reason ? 'border-indigo-600 bg-indigo-50/30 text-indigo-900' : 'border-gray-100 hover:border-gray-200 text-gray-700'}`}
+                              >
+                                  <input 
+                                      type="radio" 
+                                      name="cancelReason" 
+                                      value={reason} 
+                                      checked={selectedReason === reason}
+                                      onChange={(e) => setSelectedReason(e.target.value)}
+                                      className="hidden"
+                                  />
+                                  <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedReason === reason ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
+                                      {selectedReason === reason && (
+                                          <span className="w-2 h-2 bg-white rounded-full"></span>
+                                      )}
+                                  </span>
+                                  <span className="text-sm font-medium">{reason}</span>
+                              </label>
+                          ))}
+                      </div>
+
+                      {selectedReason === "Other (please specify)" && (
+                          <div className="mb-6">
+                              <textarea 
+                                  placeholder="Please provide cancellation details..."
+                                  value={customReason}
+                                  onChange={(e) => setCustomReason(e.target.value)}
+                                  className="w-full h-24 p-3.5 border border-gray-200 rounded-xl text-sm font-normal focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none resize-none bg-gray-50/50"
+                              />
+                          </div>
+                      )}
+
+                      {/* Footer */}
+                      <div className="flex gap-3">
+                          <button 
+                              onClick={() => setShowCancelModal(false)}
+                              className="flex-1 py-3 px-4 border border-gray-200 hover:bg-gray-50 rounded-xl text-sm font-bold text-gray-700 transition-all text-center"
+                          >
+                              Don't Cancel
+                          </button>
+                          <button 
+                              onClick={handleCancelSubmit}
+                              disabled={isCancelling || !selectedReason || (selectedReason === "Other (please specify)" && !customReason)}
+                              className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white rounded-xl text-sm font-bold transition-all disabled:cursor-not-allowed shadow-md shadow-red-500/10"
+                          >
+                              {isCancelling ? "Processing..." : "Cancel Order"}
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      )})}
     </div>
   );
 };

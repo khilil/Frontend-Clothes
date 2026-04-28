@@ -41,9 +41,9 @@ export const getMyOrders = async () => {
 /**
  * ✅ Cancel Order
  */
-export const cancelOrder = async (orderId) => {
+export const cancelOrder = async (orderId, cancellationReason) => {
     try {
-        const response = await api.put(`/orders/cancel/${orderId}`);
+        const response = await api.put(`/orders/cancel/${orderId}`, { cancellationReason });
         return response.data;
     } catch (error) {
         throw error.response?.data || error;

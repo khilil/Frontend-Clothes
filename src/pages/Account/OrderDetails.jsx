@@ -9,6 +9,38 @@ const OrderDetails = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [selectedReason, setSelectedReason] = useState("");
+    const [customReason, setCustomReason] = useState("");
+
+    const reasons = [
+        "Changed my mind",
+        "Found a better price",
+        "Incorrect size / color selected",
+        "Shipping taking too long",
+        "Other (please specify)"
+    ];
+
+    const handleCancelSubmit = async () => {
+        const finalReason = selectedReason === "Other (please specify)" ? customReason : selectedReason;
+        if (!finalReason) {
+            alert("Please select or type a reason for cancellation");
+            return;
+        }
+
+        setIsCancelling(true);
+        try {
+            await orderService.cancelOrder(orderId, finalReason);
+            setOrder(prev => ({ ...prev, orderStatus: 'cancelled', cancellationReason: finalReason }));
+            setShowCancelModal(false);
+        } catch (error) {
+            console.error("Cancel order failed:", error);
+            alert(error.message || "Failed to cancel order");
+        } finally {
+            setIsCancelling(false);
+        }
+    };
 
     useEffect(() => {
         const fetchOrderDetails = async () => {
@@ -76,6 +108,16 @@ const OrderDetails = () => {
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto mt-6 md:mt-0">
+                    {!['shipped', 'delivered', 'cancelled'].includes(order.orderStatus?.toLowerCase()) && (
+                        <button 
+                            onClick={() => navigate(`/account/orders/cancel/${orderId}`)}
+                            disabled={isCancelling}
+                            className="flex items-center justify-center gap-3 px-8 py-4 border border-red-500/20 bg-red-500/10 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] text-red-600 hover:bg-red-500 hover:text-white transition-all group w-full sm:w-auto disabled:opacity-50 shadow-[0_10px_30px_rgba(239,68,68,0.1)]"
+                        >
+                            <span className="material-symbols-outlined text-base group-hover:rotate-90 transition-transform">close</span>
+                            {isCancelling ? "Terminating..." : "Cancel Protocol"}
+                        </button>
+                    )}
                     <button className="flex items-center justify-center gap-3 px-8 py-4 border border-black/5 bg-black/5 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] text-black/60 hover:bg-black/10 hover:text-black transition-all group w-full sm:w-auto">
                         <span className="material-symbols-outlined text-base group-hover:translate-y-0.5 transition-transform">download</span>
                         Export Manifest
@@ -87,67 +129,83 @@ const OrderDetails = () => {
             </header>
 
             {/* TIMELINE */}
-            <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-14 mb-10 relative overflow-hidden group/timeline shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-                <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black hidden sm:block">Status Stream active</div>
-                
-                {/* Desktop Horizontal Timeline */}
-                <div className="hidden sm:flex relative justify-between gap-4">
-                    <div className="absolute top-[7px] left-0 w-full h-[1px] bg-black/5 -z-0"></div>
-                    {order.orderType === 'PICKUP' ? (
-                        ['Placed', 'Processing', 'Ready for Pickup', 'Finalized'].map((step, idx) => {
+            {order.orderStatus?.toLowerCase() === 'cancelled' ? (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-14 flex items-center gap-6 mb-10 shadow-[0_20px_50px_rgba(239,68,68,0.05)] relative overflow-hidden group/cancelled">
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent"></div>
+                    <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center text-red-600 shadow-lg shadow-red-500/20 group-hover/cancelled:scale-110 transition-transform duration-700">
+                        <span className="material-symbols-outlined text-3xl">cancel</span>
+                    </div>
+                    <div className="relative z-10">
+                        <h3 className="text-2xl md:text-3xl font-impact tracking-tight text-red-600 uppercase">Order Cancelled</h3>
+                        <p className="text-red-500/60 text-[10px] uppercase tracking-[0.3em] font-black mt-2">
+                            This protocol has been terminated. Stock has been restored to inventory.
+                        </p>
+                    </div>
+                </div>
+            ) : (
+                /* TIMELINE */
+                <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-14 mb-10 relative overflow-hidden group/timeline shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+                    <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black hidden sm:block">Status Stream active</div>
+                    
+                    {/* Desktop Horizontal Timeline */}
+                    <div className="hidden sm:flex relative justify-between gap-4">
+                        <div className="absolute top-[7px] left-0 w-full h-[1px] bg-black/5 -z-0"></div>
+                        {order.orderType === 'PICKUP' ? (
+                            ['Placed', 'Processing', 'Ready for Pickup', 'Finalized'].map((step, idx) => {
+                                const isComplete = idx < currentIdx;
+                                const isActive = idx === currentIdx;
+                                return (
+                                    <div key={step} className={`relative z-10 flex flex-col items-center gap-5 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
+                                        <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-purple-500 scale-125 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
+                                        <div className="text-center">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
+                                            {isActive && (
+                                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            ['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
+                                const isComplete = idx < currentIdx;
+                                const isActive = idx === currentIdx;
+
+                                return (
+                                    <div key={step} className={`relative z-10 flex flex-col items-center gap-5 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
+                                        <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
+                                        <div className="text-center">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
+                                            {isActive && (
+                                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#8b7e6d] rounded-full animate-ping"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+
+                    {/* Mobile Vertical Timeline */}
+                    <div className="sm:hidden space-y-8 relative">
+                        <div className="absolute left-[7px] top-0 bottom-0 w-[1px] bg-black/5 -z-0"></div>
+                        {['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
                             const isComplete = idx < currentIdx;
                             const isActive = idx === currentIdx;
+
                             return (
-                                <div key={step} className={`relative z-10 flex flex-col items-center gap-5 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
-                                    <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-purple-500 scale-125 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
-                                    <div className="text-center">
-                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
-                                        {isActive && (
-                                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping"></div>
-                                        )}
+                                <div key={step} className={`relative z-10 flex items-center gap-6 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
+                                    <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-white transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">{step}</p>
+                                        {isActive && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[#8b7e6d] mt-1">Active Protocol Stage</p>}
                                     </div>
                                 </div>
                             );
-                        })
-                    ) : (
-                        ['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
-                            const isComplete = idx < currentIdx;
-                            const isActive = idx === currentIdx;
-
-                            return (
-                                <div key={step} className={`relative z-10 flex flex-col items-center gap-5 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
-                                    <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
-                                    <div className="text-center">
-                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
-                                        {isActive && (
-                                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#8b7e6d] rounded-full animate-ping"></div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
+                        })}
+                    </div>
                 </div>
-
-                {/* Mobile Vertical Timeline */}
-                <div className="sm:hidden space-y-8 relative">
-                    <div className="absolute left-[7px] top-0 bottom-0 w-[1px] bg-black/5 -z-0"></div>
-                    {['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
-                        const isComplete = idx < currentIdx;
-                        const isActive = idx === currentIdx;
-
-                        return (
-                            <div key={step} className={`relative z-10 flex items-center gap-6 ${isActive ? 'text-black' : isComplete ? 'text-black/60' : 'text-black/20'} transition-colors duration-700`}>
-                                <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-white transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
-                                <div className="flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em]">{step}</p>
-                                    {isActive && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[#8b7e6d] mt-1">Active Protocol Stage</p>}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
+            )}
 
             {/* DIGITAL PICKUP PASS (If Pickup & Ready) */}
             {order.orderType === 'PICKUP' && order.orderStatus === 'ready-for-pickup' && (
@@ -375,6 +433,82 @@ const OrderDetails = () => {
                     </div>
                 </div>
             </div>
+            {/* CANCELLATION MODAL */}
+            {showCancelModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 transform transition-all scale-100">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-gray-900">Cancel Order</h3>
+                            <button 
+                                onClick={() => setShowCancelModal(false)}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-6">
+                            <p className="text-sm text-gray-600 mb-4">
+                                Please select the reason for cancellation:
+                            </p>
+
+                            <div className="space-y-3 mb-6">
+                                {reasons.map((reason) => (
+                                    <label 
+                                        key={reason}
+                                        className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${selectedReason === reason ? 'border-indigo-600 bg-indigo-50/30 text-indigo-900' : 'border-gray-100 hover:border-gray-200 text-gray-700'}`}
+                                    >
+                                        <input 
+                                            type="radio" 
+                                            name="cancelReason" 
+                                            value={reason} 
+                                            checked={selectedReason === reason}
+                                            onChange={(e) => setSelectedReason(e.target.value)}
+                                            className="hidden"
+                                        />
+                                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${selectedReason === reason ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
+                                            {selectedReason === reason && (
+                                                <span className="w-2 h-2 bg-white rounded-full"></span>
+                                            )}
+                                        </span>
+                                        <span className="text-sm font-medium">{reason}</span>
+                                    </label>
+                                ))}
+                            </div>
+
+                            {selectedReason === "Other (please specify)" && (
+                                <div className="mb-6">
+                                    <textarea 
+                                        placeholder="Please provide cancellation details..."
+                                        value={customReason}
+                                        onChange={(e) => setCustomReason(e.target.value)}
+                                        className="w-full h-24 p-3.5 border border-gray-200 rounded-xl text-sm font-normal focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none resize-none bg-gray-50/50"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Footer */}
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={() => setShowCancelModal(false)}
+                                    className="flex-1 py-3 px-4 border border-gray-200 hover:bg-gray-50 rounded-xl text-sm font-bold text-gray-700 transition-all text-center"
+                                >
+                                    Don't Cancel
+                                </button>
+                                <button 
+                                    onClick={handleCancelSubmit}
+                                    disabled={isCancelling || !selectedReason || (selectedReason === "Other (please specify)" && !customReason)}
+                                    className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white rounded-xl text-sm font-bold transition-all disabled:cursor-not-allowed shadow-md shadow-red-500/10"
+                                >
+                                    {isCancelling ? "Processing..." : "Cancel Order"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

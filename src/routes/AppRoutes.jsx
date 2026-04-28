@@ -12,6 +12,7 @@ import Wishlist from "../pages/Account/Wishlist/Wishlist";
 import Addresses from "../pages/Account/Addresses/Addresses";
 import Profile from "../pages/Account/Profile/Profile";
 import OrderDetails from "../pages/Account/OrderDetails";
+import CancelOrder from "../pages/Account/CancelOrder";
 import About from "../pages/About";
 import ContactUs from "../pages/ContactUs";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
@@ -30,6 +31,7 @@ import MainLayout from "../pages/MainLayout";
 import AdminProducts from "../Admin/Pages/Product/AdminProducts";
 import ProductDetailsPage from "../Admin/Pages/Product/ProductDetailsPage";
 import OrderManagement from "../Admin/Pages/Orders/OrderManagement";
+import CancelledOrderManagement from "../Admin/Pages/Orders/CancelledOrderManagement";
 import CustomOrderManagement from "../Admin/Pages/Orders/CustomOrderManagement";
 import AdminOrderDetails from "../Admin/Pages/Orders/AdminOrderDetails";
 import PickupManagement from "../Admin/Pages/Orders/PickupManagement";
@@ -114,6 +116,7 @@ export default function AppRoutes() {
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderManagement />} />
+                <Route path="orders/cancelled" element={<CancelledOrderManagement />} />
                 <Route path="custom-orders" element={<CustomOrderManagement />} />
                 <Route path="pickups" element={<PickupManagement />} />
                 <Route path="pickups/handover/:orderId" element={<PickupHandover />} />
@@ -199,6 +202,7 @@ export default function AppRoutes() {
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orders/:orderId" element={<OrderDetails />} />
+                    <Route path="orders/cancel/:orderId" element={<CancelOrder />} />
                     <Route path="wishlist" element={<Wishlist />} />
                     <Route path="addresses" element={<Addresses />} />
                     <Route path="profile" element={<Profile />} />

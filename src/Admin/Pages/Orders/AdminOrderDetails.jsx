@@ -207,6 +207,18 @@ const AdminOrderDetails = () => {
                     </div>
                 </div>
 
+                {order.orderStatus === 'cancelled' && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 mb-8 flex items-start gap-4">
+                        <span className="material-symbols-outlined text-red-500 text-3xl">error</span>
+                        <div>
+                            <h3 className="text-lg font-bold text-red-700 dark:text-red-400">Order Cancelled</h3>
+                            <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">
+                                <strong>Reason:</strong> {order.cancellationReason || "No reason provided."}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* --- MAIN GRID --- */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 

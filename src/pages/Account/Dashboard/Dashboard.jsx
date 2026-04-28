@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useWishlist } from "../../../context/WishlistContext";
 import * as orderService from "../../../services/orderService";
+import { getProducts } from "../../../services/productService";
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -13,6 +14,7 @@ const Dashboard = () => {
     activeOrders: 0,
   });
   const [recentOrder, setRecentOrder] = useState(null);
+  const [recentDiscoveries, setRecentDiscoveries] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -30,6 +32,14 @@ const Dashboard = () => {
 
       if (orders.length > 0) {
         setRecentOrder(orders[0]);
+      }
+
+      // Fetch dynamic products for Recent Discoveries
+      const productsRes = await getProducts();
+      if (productsRes && productsRes.products) {
+         setRecentDiscoveries(productsRes.products.slice(0, 4));
+      } else if (Array.isArray(productsRes)) {
+         setRecentDiscoveries(productsRes.slice(0, 4));
       }
     } catch (error) {
       console.error("Dashboard data fetch failed:", error);
@@ -154,26 +164,30 @@ const Dashboard = () => {
       <section className="pt-16">
         <h2 className="text-3xl font-impact tracking-tight mb-10 text-black uppercase">Recent Discoveries</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
-          {[1, 2].map((i) => (
+          {recentDiscoveries.length > 0 ? recentDiscoveries.map((product, i) => (
             <motion.div
-              key={i}
+              key={product._id || i}
               whileHover={{ y: -5 }}
               className="group cursor-pointer"
             >
-              <div className="aspect-[3/4] rounded-[2rem] bg-black/[0.02] mb-6 overflow-hidden border border-black/[0.03] relative shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
-                <img loading="lazy" 
-                  src={`https://picsum.photos/seed/${i + 10}/400/600`}
-                  alt="Product"
-                  className="w-full h-full object-cover opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="material-symbols-outlined text-white text-3xl">visibility</span>
+              <Link to={`/product/${product.slug}`}>
+                <div className="aspect-[3/4] rounded-[2rem] bg-black/[0.02] mb-6 overflow-hidden border border-black/[0.03] relative shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
+                  <img loading="lazy" 
+                    src={product.displayPreviews?.front || product.displayImage || product.images?.[0] || `https://picsum.photos/seed/${i + 10}/400/600`}
+                    alt={product.title}
+                    className="w-full h-full object-cover opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="material-symbols-outlined text-white text-3xl">visibility</span>
+                  </div>
                 </div>
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/20">Discovery Protocol 00{i}</p>
-              <p className="text-[15px] font-impact mt-2 text-black tracking-tight">₹4,990</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/20 truncate">{product.title || `Discovery Protocol 00${i+1}`}</p>
+                <p className="text-[15px] font-impact mt-2 text-black tracking-tight">₹{product.price || '4,990'}</p>
+              </Link>
             </motion.div>
-          ))}
+          )) : (
+            <p className="text-[11px] text-black/20 uppercase tracking-[0.5em] py-10 col-span-full text-center">Awaiting discovery parameters...</p>
+          )}
         </div>
       </section>
     </motion.div>

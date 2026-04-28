@@ -15,7 +15,8 @@ import {
     X,
     UsersRound,
     Crown,
-    Store
+    Store,
+    Trash2
 } from 'lucide-react';
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -44,6 +45,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Products',       path: '/admin/products',       icon: ShoppingBasket              },
         { name: 'Inventory',      path: '/admin/inventory',      icon: Package                     },
         { name: 'Orders',         path: '/admin/orders',         icon: ShoppingCart                },
+        { name: 'Cancelled Orders', path: '/admin/orders/cancelled', icon: Trash2                  },
         { name: 'Custom Orders',  path: '/admin/custom-orders',  icon: Palette,                    },
         { name: 'Store Pickups',  path: '/admin/pickups',        icon: Store                      },
         { name: 'Attributes',     path: '/admin/attributes',     icon: Palette                     },
