@@ -23,33 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 
-# Playwright & Cypress
+# Playwright & Cypress Artifacts
 test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
-cypress/
-cypress.config.js
-playwright.config.js
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
 
-# Vitest and general tests
-vitest.config.js
-tests/
-**/__tests__/
-**/*.test.js
-**/*.test.jsx
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.js
-**/*.spec.jsx
-**/*.spec.ts
-**/*.spec.tsx
-src/setupTests.js
-src/test-utils.jsx
-src/mocks/
-
-# Scratch & Test results
-test.html
-test_render_connection.js
-test_results.txt
 
