@@ -18,7 +18,11 @@
     "test:load:checkout": "k6 run tests/load/scenarios/checkout.load.js",
     "test:load:db": "k6 run tests/load/scenarios/db-bottleneck.js",
     "test:load:pro": "k6 run tests/load/ecommerce_main.js",
-    "test:load:report": "node tests/load/generate-report.js"
+    "test:load:report": "node tests/load/generate-report.js",
+    "test:unit": "vitest",
+    "test:ui": "vitest --ui",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",
@@ -42,7 +46,6 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.8.0",
-    "socket.io-client": "^4.8.3",
     "three": "^0.183.2"
   },
   "devDependencies": {
@@ -52,19 +55,23 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitejs/plugin-react-swc": "^4.2.3",
+    "@vitest/ui": "^4.1.5",
     "autoprefixer": "^10.4.24",
+    "cypress": "^15.14.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "jsdom": "^28.1.0",
+    "msw": "^2.13.6",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "vite": "^7.2.4",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.5"
   }
 }

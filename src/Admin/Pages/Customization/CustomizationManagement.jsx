@@ -323,7 +323,7 @@ const CustomizationManagement = () => {
                                                 className="group relative bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 transition-all hover:border-indigo-400 dark:hover:border-indigo-500/50 shadow-sm overflow-hidden"
                                             >
                                                 <div className="aspect-square flex items-center justify-center mb-4 bg-white dark:bg-slate-900 rounded-xl p-2">
-                                                    <img src={item.url} alt={item.name} className="max-w-full max-h-full object-contain" />
+                                                    <img loading="lazy" src={item.url} alt={item.name} className="max-w-full max-h-full object-contain" />
                                                 </div>
                                                 <div className="px-1 text-center">
                                                     <p className="text-[10px] font-bold text-slate-900 dark:text-white uppercase truncate mb-1">{item.name}</p>

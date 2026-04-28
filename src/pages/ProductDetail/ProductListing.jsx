@@ -102,37 +102,54 @@ const ProductListing = () => {
 
   // Sync state with URL category changes
   useEffect(() => {
-    const currentCategory = urlCategory || searchParams.get('category') || 'all';
-    if (filters.category !== currentCategory) {
+    const urlParams = {
+      category: urlCategory || searchParams.get('category') || 'all',
+      brand: searchParams.getAll('brand') || [],
+      size: searchParams.get('size') || null,
+      color: searchParams.get('color') || null,
+      price: parseInt(searchParams.get('price')) || 10000,
+      sort: searchParams.get('sort') || 'newest',
+      search: searchParams.get('q') || '',
+      isCustomizable: searchParams.get('isCustomizable') === 'true'
+    };
+
+    // Deep compare to avoid unnecessary state updates
+    const hasChanged = 
+      filters.category !== urlParams.category ||
+      JSON.stringify(filters.brand) !== JSON.stringify(urlParams.brand) ||
+      filters.size !== urlParams.size ||
+      filters.color !== urlParams.color ||
+      filters.price !== urlParams.price ||
+      filters.sort !== urlParams.sort ||
+      filters.search !== urlParams.search ||
+      filters.isCustomizable !== urlParams.isCustomizable;
+
+    if (hasChanged) {
       setFilters(prev => ({
         ...prev,
-        category: currentCategory,
-        brand: [],
-        size: null,
-        color: null,
-        price: 10000,
-        search: searchParams.get('q') || ''
+        ...urlParams
       }));
-    } else if (filters.search !== (searchParams.get('q') || '')) {
-      setFilters(prev => ({ ...prev, search: searchParams.get('q') || '' }));
-    } else if (filters.isCustomizable !== (searchParams.get('isCustomizable') === 'true')) {
-      setFilters(prev => ({ ...prev, isCustomizable: searchParams.get('isCustomizable') === 'true' }));
     }
   }, [urlCategory, searchParams]);
+
+  const isFetching = useRef(false);
 
   // Initial Fetch & Filter Change
   useEffect(() => {
     const loadInitialProducts = async () => {
+      if (isFetching.current) return;
+      isFetching.current = true;
+      
       setLoading(true);
       setPage(1);
       try {
         const data = await fetchProducts({
           page: 1,
           limit: 12,
-          category: filters.category === 'all' ? null : filters.category,
-          brand: filters.brand,
-          size: filters.size, // Added size
-          color: filters.color,
+          category: filters.category === 'all' ? undefined : filters.category,
+          brand: filters.brand.length > 0 ? filters.brand.join(',') : undefined,
+          size: filters.size || undefined,
+          color: filters.color || undefined,
           minPrice: 0,
           maxPrice: filters.price,
           sort: filters.sort,
@@ -161,6 +178,7 @@ const ProductListing = () => {
         console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
+        isFetching.current = false;
       }
     };
 
@@ -340,7 +358,7 @@ const ProductListing = () => {
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Brand: {brand}</span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
 
@@ -350,7 +368,7 @@ const ProductListing = () => {
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Size: {filters.size}</span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                   </button>
                 )}
 
@@ -366,7 +384,7 @@ const ProductListing = () => {
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">
                       Color: {getColorDetail(filters.color)?.name || filters.color}
                     </span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                   </button>
                 )}
 
@@ -401,7 +419,7 @@ const ProductListing = () => {
                   <div className="p-4 px-6 flex justify-between items-center border-b border-border-subtle relative">
                     <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-border-subtle rounded-full"></div>
                     <h3 className="text-sm font-black uppercase tracking-[0.2em]">Filters</h3>
-                    <button onClick={() => setIsDrawerOpen(false)} className="bg-transparent border-none text-text-primary cursor-pointer">
+                    <button aria-label="Close Filters" onClick={() => setIsDrawerOpen(false)} className="bg-transparent border-none text-text-primary cursor-pointer">
                       <span className="material-symbols-outlined">close</span>
                     </button>
                   </div>
@@ -438,36 +456,58 @@ const ProductListing = () => {
             )}
           </AnimatePresence>
 
-          {loading && page === 1 ? (
-            <SkeletonCards count={8} />
-          ) : products.length > 0 ? (
-            <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-[35px] gap-y-[30px] lg:gap-y-[50px]">
-              {products.map((product, index) => {
-                if (products.length === index + 1) {
-                  return (
-                    <div ref={lastProductElementRef} key={product._id || index}>
-                      <ProductCard product={product} />
-                    </div>
-                  );
-                } else {
-                  return <ProductCard key={product._id || index} product={product} />;
-                }
-              })}
-            </div>
-          ) : (
-            <div className="flex justify-center items-center min-h-[400px]">
+          <AnimatePresence mode="wait">
+            {loading && page === 1 ? (
               <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <SkeletonCards 
+                  count={8} 
+                  gridClass="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-[35px] gap-y-[30px] lg:gap-y-[50px]"
+                />
+              </motion.div>
+            ) : products.length > 0 ? (
+              <motion.div
+                key="products"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-[35px] gap-y-[30px] lg:gap-y-[50px]"
+              >
+                {products.map((product, index) => {
+                  if (products.length === index + 1) {
+                    return (
+                      <div ref={lastProductElementRef} key={product.slug || product._id || index}>
+                        <ProductCard product={product} />
+                      </div>
+                    );
+                  } else {
+                    return <ProductCard key={product.slug || product._id || index} product={product} />;
+                  }
+                })}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-results"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center flex flex-col items-center gap-[15px]"
+                exit={{ opacity: 0 }}
+                className="flex justify-center items-center min-h-[400px]"
               >
-                <span className="material-symbols-outlined text-[64px] text-text-secondary/20">sentiment_dissatisfied</span>
-                <h3 className="text-2xl font-black uppercase tracking-[0.1em]">No products found</h3>
-                <p className="text-text-secondary text-sm">Try adjusting your filters or category.</p>
-                <button onClick={handleClearFilters} className="mt-[15px] bg-transparent border border-text-primary text-text-primary py-3 px-[30px] rounded-full text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 ease hover:bg-text-primary hover:text-background">Clear All Filters</button>
+                <div className="text-center flex flex-col items-center gap-[15px]">
+                  <span className="material-symbols-outlined text-[64px] text-text-secondary/80">sentiment_dissatisfied</span>
+                  <h3 className="text-2xl font-black uppercase tracking-[0.1em]">No products found</h3>
+                  <p className="text-text-secondary text-sm">Try adjusting your filters or category.</p>
+                  <button onClick={handleClearFilters} className="mt-[15px] bg-transparent border border-text-primary text-text-primary py-3 px-[30px] rounded-full text-[10px] font-black uppercase tracking-[0.2em] cursor-pointer transition-all duration-300 ease hover:bg-text-primary hover:text-background">Clear All Filters</button>
+                </div>
               </motion.div>
-            </div>
-          )}
+            )}
+          </AnimatePresence>
 
           {loadingMore && (
             <div className="flex justify-center py-[50px]">
@@ -481,7 +521,7 @@ const ProductListing = () => {
 
           {!hasMore && products.length > 0 && (
             <div className="text-center py-[80px] border-t border-border-subtle mt-[50px]">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-text-secondary/40 font-extrabold">You've reached the end of the collection.</p>
+              <p className="text-[11px] uppercase tracking-[0.4em] text-text-secondary/70 font-extrabold">You've reached the end of the collection.</p>
             </div>
           )}
         </section>

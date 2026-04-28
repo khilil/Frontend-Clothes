@@ -1,14 +1,25 @@
 import React from 'react';
-const SkeletonCards = ({ count = 8 }) => {
+
+const SkeletonCards = ({ count = 8, gridClass = "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" }) => {
     return (
-        <div className="w-full grid grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] md:gap-[30px]">
+        <div className={`w-full ${gridClass}`}>
             {Array(count).fill(0).map((_, index) => (
-                <div key={index} className="relative h-[320px] md:h-[450px] bg-text-primary/10 rounded-2xl overflow-hidden">
-                    <div className="h-[75%] bg-[linear-gradient(90deg,#1a1a1a_25%,#2a2a2a_50%,#1a1a1a_75%)] bg-[length:200%_100%] animate-[loading-shimmer_1.5s_infinite]"></div>
-                    <div className="p-5 flex flex-col gap-2.5">
-                        <div className="bg-[linear-gradient(90deg,#1a1a1a_25%,#2a2a2a_50%,#1a1a1a_75%)] bg-[length:200%_100%] animate-[loading-shimmer_1.5s_infinite] rounded h-4 w-[80%]"></div>
-                        <div className="bg-[linear-gradient(90deg,#1a1a1a_25%,#2a2a2a_50%,#1a1a1a_75%)] bg-[length:200%_100%] animate-[loading-shimmer_1.5s_infinite] rounded h-3 w-[40%]"></div>
-                        <div className="bg-[linear-gradient(90deg,#1a1a1a_25%,#2a2a2a_50%,#1a1a1a_75%)] bg-[length:200%_100%] animate-[loading-shimmer_1.5s_infinite] rounded h-[14px] w-[30%]"></div>
+                <div key={index} className="luxury-card group h-full bg-white overflow-hidden rounded-[24px] border border-neutral-100 flex flex-col">
+                    {/* Image Aspect Box Skeleton */}
+                    <div className="relative aspect-[4/5] md:aspect-[3/3.8] bg-neutral-50 overflow-hidden">
+                        <div className="absolute inset-0 bg-[linear-gradient(90deg,#f0f0f0_25%,#f8f8f8_50%,#f0f0f0_75%)] bg-[length:200%_100%] animate-[loading-shimmer_2s_infinite]"></div>
+                    </div>
+                    
+                    {/* Info Section Skeleton */}
+                    <div className="p-3.5 md:p-6 bg-white grow flex flex-col gap-2 md:gap-4 border-t border-neutral-100">
+                        <div className="flex flex-col gap-2">
+                             {/* Brand Skeleton */}
+                            <div className="bg-neutral-100 h-2 w-[30%] rounded animate-pulse"></div>
+                             {/* Title Skeleton */}
+                            <div className="bg-neutral-200 h-4 w-[80%] rounded animate-pulse"></div>
+                             {/* Price Skeleton */}
+                            <div className="bg-neutral-200 h-5 w-[40%] rounded animate-pulse mt-1"></div>
+                        </div>
                     </div>
                 </div>
             ))}

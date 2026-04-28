@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProducts } from '../../api/products.api';
 import ProductCard from '../../components/product/ProductCard/ProductCard';
 import SkeletonCards from '../../components/product/Skeleton/SkeletonCards';
@@ -37,8 +37,13 @@ const HomeInfiniteScroll = () => {
         };
     }, [hasMore, loading, loadingMore]);
 
+    const isFetching = useRef(false);
+
     useEffect(() => {
         const loadProducts = async () => {
+            if (isFetching.current) return;
+            
+            isFetching.current = true;
             if (page === 1) setLoading(true);
             else setLoadingMore(true);
 
@@ -63,6 +68,7 @@ const HomeInfiniteScroll = () => {
             } finally {
                 setLoading(false);
                 setLoadingMore(false);
+                isFetching.current = false;
             }
         };
 
@@ -87,15 +93,35 @@ const HomeInfiniteScroll = () => {
 
                 {/* GRID */}
                 <div className="relative">
-                    {loading && page === 1 ? (
-                        <SkeletonCards count={8} />
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
-                            {products.map((product, index) => (
-                                <ProductCard key={product._id || `p-${index}`} product={product} />
-                            ))}
-                        </div>
-                    )}
+                    <AnimatePresence mode="wait">
+                        {loading && page === 1 ? (
+                            <motion.div
+                                key="skeleton"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                <SkeletonCards 
+                                    count={8} 
+                                    gridClass="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16" 
+                                />
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="products"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16"
+                            >
+                                {products.map((product, index) => (
+                                    <ProductCard key={product.slug || product._id || `p-${index}`} product={product} />
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* SENTINEL */}
                     <div ref={sentinelRef} className="h-10 w-full pointer-events-none" />
@@ -110,7 +136,7 @@ const HomeInfiniteScroll = () => {
                                     transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
                                 />
                             </div>
-                            <span className="text-[10px] font-black tracking-[0.4em] text-text-secondary/40 uppercase">Expanding Archive...</span>
+                            <span className="text-[10px] font-black tracking-[0.4em] text-text-secondary/70 uppercase">Expanding Archive...</span>
                         </div>
                     )}
 

@@ -96,7 +96,7 @@ const Header = ({ title = "Dashboard Overview", subtitle, onMenuClick, isDarkMod
                 {/* User Avatar */}
                 <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 ml-1">
                     <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-[2px]">
-                        <img
+                        <img loading="lazy" 
                             src={
                                 user?.avatar ||
                                 `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=fff&color=6366f1`

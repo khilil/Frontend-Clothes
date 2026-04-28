@@ -45,7 +45,7 @@ function BrandStory() {
                             viewport={{ once: true }}
                             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            <img src="https://images.unsplash.com/photo-1550928431-ee0ec6db30d3?q=80&w=1974&auto=format&fit=crop" alt="Craftsmanship" className="w-full h-full object-cover" />
+                            <img loading="lazy" src="https://images.unsplash.com/photo-1550928431-ee0ec6db30d3?q=80&w=1974&auto=format&fit=crop" alt="Craftsmanship" className="w-full h-full object-cover" />
                         </motion.div>
 
                         <motion.div
@@ -80,15 +80,15 @@ function BrandStory() {
                 >
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
                         <span className="font-oswald text-[40px] font-black text-text-primary">100%</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">ORIGINAL ARCHIVE</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/60 uppercase">ORIGINAL ARCHIVE</span>
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
                         <span className="font-oswald text-[40px] font-black text-text-primary">EST.</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">2024 / MUMBAI</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/60 uppercase">2024 / MUMBAI</span>
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-[45%] lg:w-auto">
                         <span className="font-oswald text-[40px] font-black text-text-primary">GLOBAL</span>
-                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/30 uppercase">DISPATCH AVAILABLE</span>
+                        <span className="text-[10px] font-black tracking-[0.3em] text-text-secondary/60 uppercase">DISPATCH AVAILABLE</span>
                     </div>
                 </motion.div>
             </div>

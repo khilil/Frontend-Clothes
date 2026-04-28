@@ -2,27 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import * as orderService from "../../services/orderService";
 import { QRCodeCanvas } from "qrcode.react";
-import { useSocket } from "../../context/SocketContext";
-import confetti from "canvas-confetti";
-import { motion, AnimatePresence } from "framer-motion";
+
 
 const OrderDetails = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
-    const socket = useSocket();
     const [order, setOrder] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isPickedUp, setIsPickedUp] = useState(false);
 
     useEffect(() => {
         const fetchOrderDetails = async () => {
             try {
                 const res = await orderService.getOrderById(orderId);
                 setOrder(res.data);
-                // If it's already delivered, don't show the initial animation but set state
-                if (res.data.orderStatus === 'delivered') {
-                    setIsPickedUp(true);
-                }
+
             } catch (error) {
                 console.error("Fetch order details failed:", error);
             } finally {
@@ -32,55 +25,7 @@ const OrderDetails = () => {
         fetchOrderDetails();
     }, [orderId]);
 
-    // 📡 Socket Subscription for Real-time Pickup
-    useEffect(() => {
-        if (!socket || !orderId) return;
 
-        // Join the specific order room
-        socket.emit("join-room", orderId);
-
-        // Listen for pickup event
-        socket.on("ORDER_PICKED_UP", (data) => {
-            console.log("🎊 ORDER PICKED UP! Starting celebration...", data);
-            
-            // 🚀 Trigger Confetti
-            const duration = 5 * 1000;
-            const animationEnd = Date.now() + duration;
-            // 🎨 BRAND COLORS: BLACK, GOLD (#D4AF37), BEIGE, PURPLE
-            const brandColors = ['#000000', '#8b7e6d', '#A855F7', '#D4AF37', '#FFFFFF'];
-            const defaults = { 
-                startVelocity: 30, 
-                spread: 360, 
-                ticks: 80, 
-                zIndex: 9999, 
-                colors: brandColors 
-            };
-
-            const randomInRange = (min, max) => Math.random() * (max - min) + min;
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                const particleCount = 60 * (timeLeft / duration);
-                
-                // Blast from left & right with stylized colors
-                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
-                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-            }, 250);
-
-            // Update UI
-            setIsPickedUp(true);
-            setOrder(prev => ({ ...prev, orderStatus: 'delivered' }));
-        });
-
-        return () => {
-            socket.off("ORDER_PICKED_UP");
-        };
-    }, [socket, orderId]);
 
     if (isLoading) {
         return (
@@ -116,78 +61,7 @@ const OrderDetails = () => {
 
     return (
         <div className="flex-1 pb-20 relative">
-            {/* 🎊 REAL-TIME SUCCESS OVERLAY */}
-            <AnimatePresence>
-                {isPickedUp && order.orderStatus === 'delivered' && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-3xl"
-                    >
-                        {/* ⚡ Human Background */}
-                        <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
-                            <h1 className="text-[20vw] font-impact text-white/5 whitespace-nowrap leading-none grayscale">FENRIR ERA FENRIR ERA FENRIR ERA</h1>
-                        </div>
 
-                        <motion.div 
-                            initial={{ scale: 0.9, y: 40, rotateX: 20 }}
-                            animate={{ scale: 1, y: 0, rotateX: 0 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                            className="bg-zinc-900 border border-white/5 rounded-[3.5rem] p-10 md:p-16 max-w-2xl w-full text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] relative overflow-hidden group/success"
-                        >
-                            {/* Corner Accents */}
-                            <div className="absolute top-0 left-0 w-20 h-20 border-t border-l border-white/10 rounded-tl-[3.5rem]" />
-                            <div className="absolute bottom-0 right-0 w-20 h-20 border-b border-r border-white/10 rounded-br-[3.5rem]" />
-                            
-                            {/* Scanning Animation Line */}
-                            <motion.div 
-                                animate={{ top: ["0%", "100%", "0%"] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute left-0 w-full h-20 bg-gradient-to-b from-transparent via-purple-600/10 to-transparent pointer-events-none opacity-40"
-                            />
-
-                            <div className="mb-12 relative">
-                                <motion.div 
-                                    className="w-32 h-32 bg-black rounded-[2.5rem] flex items-center justify-center text-white mx-auto relative z-10"
-                                >
-                                    <span className="material-symbols-outlined text-6xl font-light">shopping_bag</span>
-                                </motion.div>
-                            </div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                <h3 className="text-7xl md:text-8xl font-impact tracking-normal text-white uppercase mb-4 leading-none">
-                                    IT'S <span className="text-[#D4AF37]">YOURS!</span>
-                                </h3>
-                                <p className="text-white/40 text-[12px] font-black uppercase tracking-[0.4em] mb-12">
-                                    Your order was picked up successfully.
-                                </p>
-                            </motion.div>
-                            
-                            <div className="bg-white/5 rounded-[2.5rem] p-10 mb-12 border border-white/5 text-center">
-                                <p className="text-xl md:text-2xl font-impact italic text-white leading-tight mb-4">
-                                    "Hope you love your new pieces as much as we loved making them. Tag us @FENRIR_Era so we can see the fit!"
-                                </p>
-                                <div className="h-[1px] w-20 bg-[#D4AF37] mx-auto my-6" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">
-                                    — Happy Styling!
-                                </p>
-                            </div>
-
-                            <button 
-                                onClick={() => setIsPickedUp(false)}
-                                className="w-full py-6 bg-white text-black rounded-3xl text-[12px] font-black uppercase tracking-[0.3em] transition-all hover:bg-[#D4AF37] active:scale-95 shadow-2xl shadow-white/10"
-                            >
-                                DONE
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* HEADER */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
@@ -359,7 +233,7 @@ const OrderDetails = () => {
                                 <div key={idx} className="p-6 sm:p-10 md:p-14 flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start group/item hover:bg-black/[0.01] transition-all">
                                     <div className="flex flex-col items-center gap-3 flex-shrink-0">
                                         <div className="w-24 h-32 sm:w-28 sm:h-36 md:w-40 md:h-52 bg-black/[0.02] rounded-2xl sm:rounded-3xl overflow-hidden border border-black/5 group-hover/item:border-black/10 transition-all duration-1000 p-2">
-                                            <img
+                                            <img loading="lazy" 
                                                 alt={item.title}
                                                 className="w-full h-full object-cover rounded-xl sm:rounded-2xl grayscale group-hover/item:grayscale-0 group-hover/item:scale-110 transition-all duration-1000"
                                                 src={item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}
@@ -376,7 +250,7 @@ const OrderDetails = () => {
                                                             key={side}
                                                             className="w-10 h-12 sm:w-12 sm:h-14 rounded-xl overflow-hidden border border-black/5 bg-black/[0.02] p-1"
                                                         >
-                                                            <img
+                                                            <img loading="lazy" 
                                                                 src={sideImage}
                                                                 alt={`${item.title} ${side}`}
                                                                 className="w-full h-full object-cover rounded-lg"

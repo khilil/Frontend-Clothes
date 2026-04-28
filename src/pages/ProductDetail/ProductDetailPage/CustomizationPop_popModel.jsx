@@ -61,7 +61,7 @@ const CustomizationModal = ({ isOpen, onClose, onContinue }) => {
                             className="group relative flex flex-col text-left rounded-xl overflow-hidden transition-all duration-300 border border-white/10 bg-white/5 hover:border-[#C5A059] hover:scale-[1.02]"
                         >
                             <div className="aspect-[4/3] overflow-hidden">
-                                <img
+                                <img loading="lazy" 
                                     alt={option.title}
                                     src={option.image}
                                     className="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0"

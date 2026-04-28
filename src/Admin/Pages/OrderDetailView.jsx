@@ -223,7 +223,7 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                  <div key={idx} className="flex flex-col gap-6">
                    <div className="flex gap-6 pb-6 border-b border-slate-100 dark:border-slate-800 last:border-0 last:pb-0">
                       <div className="w-24 h-24 rounded-2xl bg-slate-50 overflow-hidden relative group">
-                        <img src={item.imageURL || item.image} className="w-full h-full object-cover" alt={item.title || item.name} />
+                        <img loading="lazy" src={item.imageURL || item.image} className="w-full h-full object-cover" alt={item.title || item.name} />
                         {(item.isCustom || item.customDesign || item.customizations) && <div className="absolute top-2 right-2"><CustomDesignBadge /></div>}
                       </div>
                       <div className="flex-1 flex justify-between items-start">
@@ -253,13 +253,13 @@ export default function OrderDetailView({ order: initialOrder, onBack }) {
                            <div>
                              <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Front Preview</p>
                              <div className="aspect-square rounded-xl bg-white border border-slate-200 overflow-hidden p-2">
-                                <img src={item.customDesign?.frontPreview || item.customizations?.displayPreviews?.front || item.customizations?.previews?.front || item.customizations?.displayImage} className="w-full h-full object-contain" alt="Front" />
+                                <img loading="lazy" src={item.customDesign?.frontPreview || item.customizations?.displayPreviews?.front || item.customizations?.previews?.front || item.customizations?.displayImage} className="w-full h-full object-contain" alt="Front" />
                              </div>
                            </div>
                            <div>
                              <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Back Preview</p>
                              <div className="aspect-square rounded-xl bg-white border border-slate-200 overflow-hidden p-2">
-                                <img src={item.customDesign?.backPreview || item.customizations?.displayPreviews?.back || item.customizations?.previews?.back} className="w-full h-full object-contain" alt="Back" />
+                                <img loading="lazy" src={item.customDesign?.backPreview || item.customizations?.displayPreviews?.back || item.customizations?.previews?.back} className="w-full h-full object-contain" alt="Back" />
                              </div>
                            </div>iv>
                            <div className="space-y-4">

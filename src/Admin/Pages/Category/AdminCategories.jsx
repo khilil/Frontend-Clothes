@@ -347,7 +347,7 @@ export default function AdminCategories() {
                                             <div className="relative flex h-24 w-40 items-center justify-center overflow-hidden rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/50">
                                                 {imagePreview ? (
                                                     <>
-                                                        <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+                                                        <img loading="lazy" src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
                                                         <button
                                                             type="button"
                                                             onClick={(e) => { e.preventDefault(); setImage(null); setImagePreview(null); }}

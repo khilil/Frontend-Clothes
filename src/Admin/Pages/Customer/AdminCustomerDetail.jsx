@@ -118,7 +118,7 @@ const AdminCustomerDetail = () => {
                         {/* Summary Card */}
                         <section className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
                             <div className="mb-6 flex flex-col items-center text-center">
-                                <img
+                                <img loading="lazy" 
                                     src={customer.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
                                     alt={customer.name}
                                     className="mb-4 h-32 w-32 rounded-full border-4 border-white dark:border-slate-800 shadow-md ring-1 ring-slate-200 dark:ring-slate-700 object-cover"

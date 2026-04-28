@@ -257,7 +257,7 @@ export default function Header({ forceSolid = false }) {
                           transition={{ duration: 0.8, ease: "easeOut" }}
                           className="relative overflow-hidden group/promo"
                         >
-                          <img alt="Fenrir Era Atelier Collection" className="w-full h-full object-cover grayscale brightness-50 group-hover/promo:scale-110 group-hover/promo:grayscale-0 group-hover/promo:brightness-100 transition-all duration-[2s] ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCDaHXAgfnZZMJ5PJyJlJu2htQPWM6diBOxWwEZCVgRqK2NioQJtdBpkA898DJ8jaVUX8zXqiqMulmIS-p9A6Vvw60YVvk7uOoV_7doTOJ1sNlbE0RcmuvhwJ2LrbI9PBFadnFpLV-RUa4tq9StHqLjSSOJHeeWnbhzilO_f0RDPVlLJFH-Gjgj2ltfyvxQ9Enril9a9C-hcpECVdFnYR7c4QcBOmkqdxTf4IDpIVmtgWbA9rPF_OT7g9mJuNlKudYCzeL9_ieJpz" />
+                          <img loading="lazy" alt="Fenrir Era Atelier Collection" className="w-full h-full object-cover grayscale brightness-50 group-hover/promo:scale-110 group-hover/promo:grayscale-0 group-hover/promo:brightness-100 transition-all duration-[2s] ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCDaHXAgfnZZMJ5PJyJlJu2htQPWM6diBOxWwEZCVgRqK2NioQJtdBpkA898DJ8jaVUX8zXqiqMulmIS-p9A6Vvw60YVvk7uOoV_7doTOJ1sNlbE0RcmuvhwJ2LrbI9PBFadnFpLV-RUa4tq9StHqLjSSOJHeeWnbhzilO_f0RDPVlLJFH-Gjgj2ltfyvxQ9Enril9a9C-hcpECVdFnYR7c4QcBOmkqdxTf4IDpIVmtgWbA9rPF_OT7g9mJuNlKudYCzeL9_ieJpz" />
                           <div className="absolute inset-0 bg-background/60 flex flex-col items-center justify-center text-center p-8 backdrop-blur-[2px] group-hover/promo:backdrop-blur-0 transition-all duration-1000">
                             <p className="text-[9px] font-black uppercase tracking-[0.5em] mb-4 text-text-primary/60">The Atelier Series</p>
                             <h5 className="text-3xl font-primary tracking-tighter mb-8 text-text-primary scale-90 group-hover/promo:scale-100 transition-transform duration-1000">ESSENCE OF ETERNITY<br />SS24</h5>
@@ -323,7 +323,7 @@ export default function Header({ forceSolid = false }) {
                       navigate(`/shop/all?q=${searchQuery}`);
                     }
                   }}
-                  className={`bg-transparent border-none outline-none text-[10px] font-black tracking-widest text-text-primary w-full pr-2 transition-opacity duration-300 placeholder:text-text-secondary/50 ${isSearchExpanded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`bg-transparent border-none outline-none text-[10px] font-black tracking-widest text-text-primary w-full pr-2 transition-opacity duration-300 placeholder:text-text-secondary/80 ${isSearchExpanded ? 'opacity-100' : 'opacity-0'}`}
                 />
 
                 {/* CLOSE BUTTON */}
@@ -338,7 +338,7 @@ export default function Header({ forceSolid = false }) {
                         setSearchQuery('');
                         setLiveResults([]);
                       }}
-                      className="w-8 h-8 flex items-center justify-center shrink-0 text-text-secondary/40 hover:text-accent transition-colors"
+                      className="w-8 h-8 flex items-center justify-center shrink-0 text-text-secondary/70 hover:text-accent transition-colors"
                     >
                       <X className="h-3.5 w-3.5" />
                     </motion.button>
@@ -358,7 +358,7 @@ export default function Header({ forceSolid = false }) {
                     {/* KEYWORD SUGGESTION */}
                     {searchQuery.length > 0 && (
                       <div className="p-4 border-b border-border-subtle">
-                        <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-2">Suggestions</div>
+                        <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/70 uppercase mb-2">Suggestions</div>
                         <button
                           onClick={() => {
                             setIsSearchExpanded(false);
@@ -376,7 +376,7 @@ export default function Header({ forceSolid = false }) {
                     )}
 
                     <div className="p-4 py-2 border-b border-border-subtle flex justify-between items-center bg-secondary/30">
-                      <span className="text-[9px] font-black tracking-[0.2em] text-text-secondary/40 uppercase">Product Results</span>
+                      <span className="text-[9px] font-black tracking-[0.2em] text-text-secondary/70 uppercase">Product Results</span>
                       {isSearching && (
                         <div className="flex gap-1">
                           <span className="w-1 h-1 bg-accent rounded-full animate-bounce"></span>
@@ -398,7 +398,7 @@ export default function Header({ forceSolid = false }) {
                             className="w-full flex items-center gap-4 p-3 hover:bg-text-primary/5 transition-colors group text-left"
                           >
                             <div className="h-12 w-12 rounded-lg overflow-hidden bg-secondary border border-border-subtle shrink-0">
-                              <img
+                              <img loading="lazy" 
                                 src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"}
                                 alt={product.title}
                                 className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -408,19 +408,19 @@ export default function Header({ forceSolid = false }) {
                               <div className="text-[10px] font-bold text-text-primary truncate uppercase tracking-tight">{product.title}</div>
                               <div className="text-[9px] text-accent font-black tracking-widest mt-0.5">₹{product.price}</div>
                             </div>
-                            <ArrowRight className="h-3 w-3 text-text-secondary/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                            <ArrowRight className="h-3 w-3 text-text-secondary/80 group-hover:text-accent group-hover:translate-x-1 transition-all" />
                           </button>
                         ))
                       ) : !isSearching && searchQuery.length > 1 ? (
                         <div className="p-8 text-center">
-                          <div className="text-[10px] font-black text-text-secondary/30 uppercase tracking-widest">No products found</div>
+                          <div className="text-[10px] font-black text-text-secondary/60 uppercase tracking-widest">No products found</div>
                         </div>
                       ) : null}
                     </div>
 
                     {/* POPULAR CATEGORIES */}
                     <div className="p-4 bg-secondary/50 border-t border-border-subtle">
-                      <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-3">Quick Collections</div>
+                      <div className="text-[8px] font-black tracking-[0.2em] text-text-secondary/70 uppercase mb-3">Quick Collections</div>
                       <div className="flex flex-wrap gap-2">
                         {['New arrivals', 'Essentials', 'Accessories'].map(cat => (
                           <button
@@ -501,11 +501,11 @@ export default function Header({ forceSolid = false }) {
                   autoFocus
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent border-none outline-none text-xs font-black tracking-widest text-text-primary placeholder:text-text-secondary/30"
+                  className="flex-1 bg-transparent border-none outline-none text-xs font-black tracking-widest text-text-primary placeholder:text-text-secondary/60"
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')}>
-                    <X className="h-4 w-4 text-text-secondary/30" />
+                  <button aria-label="Clear Search" onClick={() => setSearchQuery('')}>
+                    <X className="h-4 w-4 text-text-secondary/60" />
                   </button>
                 )}
               </div>
@@ -522,7 +522,7 @@ export default function Header({ forceSolid = false }) {
               {/* Keyword Suggestion */}
               {searchQuery.length > 0 && (
                 <div className="p-6 border-b border-border-subtle">
-                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-4">Suggestions</div>
+                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/70 uppercase mb-4">Suggestions</div>
                   <button
                     onClick={() => {
                       setIsMobileSearchOpen(false);
@@ -544,7 +544,7 @@ export default function Header({ forceSolid = false }) {
               {/* Product Results */}
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase">
+                  <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/70 uppercase">
                     {searchQuery.length > 1 ? "Product Results" : "Trending Now"}
                   </div>
                   {isSearching && (
@@ -567,7 +567,7 @@ export default function Header({ forceSolid = false }) {
                         className="w-full flex items-center gap-5 p-3 hover:bg-secondary rounded-2xl transition-all text-left border border-transparent hover:border-border-subtle"
                       >
                         <div className="h-20 w-20 rounded-xl overflow-hidden bg-secondary border border-border-subtle shrink-0">
-                          <img
+                          <img loading="lazy" 
                             src={product.listImage || (product.images?.[0]?.url) || "/placeholder.jpg"}
                             alt={product.title}
                             className="h-full w-full object-cover"
@@ -580,12 +580,12 @@ export default function Header({ forceSolid = false }) {
                             <span className="text-[9px] px-2 py-0.5 bg-secondary text-text-secondary rounded uppercase font-bold">{product.brand}</span>
                           </div>
                         </div>
-                        <ArrowRight size={16} className="text-text-secondary/30" />
+                        <ArrowRight size={16} className="text-text-secondary/60" />
                       </button>
                     ))
                   ) : searchQuery.length > 1 && !isSearching ? (
                     <div className="py-20 text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary mb-4 text-text-secondary/20">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary mb-4 text-text-secondary/80">
                         <Search size={32} />
                       </div>
                       <div className="text-xs font-black text-text-primary/40 uppercase tracking-[0.2em]">No results found</div>
@@ -609,7 +609,7 @@ export default function Header({ forceSolid = false }) {
 
               {/* Quick links */}
               <div className="p-6 pt-0">
-                <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/40 uppercase mb-4">Quick Links</div>
+                <div className="text-[10px] font-black tracking-[0.2em] text-text-secondary/70 uppercase mb-4">Quick Links</div>
                 <div className="flex flex-wrap gap-2">
                   {['Shop All', 'New Arrivals', 'Best Sellers', 'Sale'].map(link => (
                     <button

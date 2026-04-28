@@ -65,7 +65,7 @@ export const OffersSection = ({ offers = [] }) => {
                                                         initial={{ opacity: 0 }}
                                                         animate={{ opacity: 1 }}
                                                         exit={{ opacity: 0 }}
-                                                        className="material-symbols-outlined text-sm text-text-secondary/40 group-hover:text-text-primary"
+                                                        className="material-symbols-outlined text-sm text-text-secondary/70 group-hover:text-text-primary"
                                                     >
                                                         content_copy
                                                     </motion.span>

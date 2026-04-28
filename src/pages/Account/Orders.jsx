@@ -170,7 +170,7 @@ const Orders = () => {
                     <div className="flex gap-4 sm:gap-6 flex-shrink-0 w-full lg:w-auto justify-center lg:justify-start">
                       {order.items.slice(0, 2).map((item, idx) => (
                         <div key={idx} className="w-20 h-28 sm:w-32 sm:h-44 bg-black/[0.02] rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-black/5 group-hover:border-black/10 transition-all duration-700 p-1.5 sm:p-2">
-                          <img
+                          <img loading="lazy" 
                             alt="Item"
                             className="w-full h-full object-cover rounded-xl sm:rounded-3xl group-hover:scale-110 transition-all duration-1000"
                             src={item.customizations?.displayPreviews?.front || item.customizations?.displayImage || item.customizations?.previews?.front || item.imageURL || "https://placeholder.com/100"}

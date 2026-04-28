@@ -38,7 +38,7 @@ const PromotionalBanner = ({ banner }) => {
       onClick={handleClaim}
     >
       <div className="relative h-[200px] md:h-[300px] rounded-3xl overflow-hidden group cursor-pointer">
-        <img 
+        <img loading="lazy" 
           src={banner.imageUrl || "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=2070"} 
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
           alt={banner.title} 

@@ -204,7 +204,7 @@ const Payment = ({ title, subtitle, icon, badge, active, onClick }) => (
 
 const SummaryItem = ({ title, size, price, image }) => (
     <div className="flex gap-4">
-        <img src={image} alt={title} className="w-20 aspect-[3/4] bg-white border border-[#ddd] rounded-xl object-cover" />
+        <img loading="lazy" src={image} alt={title} className="w-20 aspect-[3/4] bg-white border border-[#ddd] rounded-xl object-cover" />
         <div>
             <p className="text-[11px] font-black tracking-[0.15em] uppercase">{title}</p>
             <span className="text-[10px] text-[#717171] leading-loose">Size: {size} | Qty: 1</span>

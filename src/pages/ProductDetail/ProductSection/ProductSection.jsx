@@ -15,7 +15,7 @@ export default function ProductSection({ products = [], activeColor }) {
       <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8">
         {products.map((product) => (
           <ProductCard
-            key={product._id}
+            key={product.slug || product._id}
             product={product}
             addToCart={addToCart}
             activeColor={activeColor}

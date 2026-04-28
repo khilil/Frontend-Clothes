@@ -42,7 +42,7 @@ const SaveYourBagModal = ({
         </div>
 
         <div className="mt-8 pt-6 border-t border-border-subtle">
-          <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-text-secondary/50 leading-[1.8]">
+          <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-text-secondary/80 leading-[1.8]">
             No account needed to place an order. <br />
             Secure checkout guaranteed.
           </p>

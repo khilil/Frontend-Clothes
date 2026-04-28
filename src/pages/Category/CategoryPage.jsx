@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { fetchProducts } from "../../api/products.api";
 import { fetchCategories } from "../../api/categories.api";
@@ -12,6 +12,7 @@ import CollectiveFooter from "../../components/common/CollectiveFooter/Collectiv
 import { TOPWEAR_SIZES, BOTTOMWEAR_SIZES, isBottomwear } from "../../utils/sizeConstants";
 import { COLOR_CATEGORIES, getColorCategoryInfo, getMainColorFromHex } from "../../utils/colorUtils";
 import SEO from "../../components/common/SEO";
+import SkeletonCards from "../../components/product/Skeleton/SkeletonCards";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -167,8 +168,13 @@ export default function CategoryPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isFetching = useRef(false);
+
   /* FETCH API */
   useEffect(() => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+    
     setIsLoading(true);
     fetchProducts({ category: slug }).then(data => {
       setAllProducts(data?.products || []);
@@ -181,6 +187,8 @@ export default function CategoryPage() {
     }).catch(err => {
       console.error("Fetch products error:", err);
       setIsLoading(false);
+    }).finally(() => {
+        isFetching.current = false;
     });
   }, [slug]);
 
@@ -381,7 +389,7 @@ export default function CategoryPage() {
                 key={filtered.length}
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-[9px] font-black uppercase tracking-[0.4em] text-text-secondary/40"
+                className="text-[9px] font-black uppercase tracking-[0.4em] text-text-secondary/70"
               >
                 {filtered.length} PRODUCTS FOUND
               </motion.span>
@@ -389,7 +397,7 @@ export default function CategoryPage() {
 
             <div className="flex items-center gap-6">
               <div className="hidden sm:flex items-center gap-4">
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-secondary/40">Sort By</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-text-secondary/70">Sort By</span>
                 <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent transition-colors">
                   Featured
                   <span className="material-symbols-outlined text-[16px]">keyboard_arrow_down</span>
@@ -414,7 +422,7 @@ export default function CategoryPage() {
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Size: {size}</span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
                 {filters.fit.map(fit => (
@@ -424,7 +432,7 @@ export default function CategoryPage() {
                     className="flex items-center gap-2 px-3 py-1.5 bg-secondary border border-border-subtle hover:border-accent rounded-full transition-colors group"
                   >
                     <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">Fit: {fit}</span>
-                    <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                    <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                   </button>
                 ))}
                                 {filters.color && (
@@ -439,7 +447,7 @@ export default function CategoryPage() {
                                         <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary/60 group-hover:text-text-primary">
                                             Color: {getColorCategoryInfo(filters.color).name}
                                         </span>
-                                        <span className="material-symbols-outlined text-[14px] text-text-secondary/40 group-hover:text-text-primary">close</span>
+                                        <span className="material-symbols-outlined text-[14px] text-text-secondary/70 group-hover:text-text-primary">close</span>
                                     </button>
                                 )}
                 <button
@@ -453,25 +461,50 @@ export default function CategoryPage() {
           </AnimatePresence>
 
           <div className="min-h-[60vh] px-6 md:px-12 py-10">
-            {filtered.length > 0 ? (
-              <ProductSection products={filtered} activeColor={filters.color} />
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-40 text-center"
-              >
-                <span className="material-symbols-outlined text-[64px] text-text-secondary/20 mb-6">inventory_2</span>
-                <h3 className="text-xl font-impact tracking-widest text-text-secondary/60 mb-2">NO PRODUCTS MATCH YOUR FILTERS</h3>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/40 mb-8">Try adjusting your filters or clearing all to see more products</p>
-                <button
-                  onClick={handleClear}
-                  className="px-10 py-4 bg-accent text-background text-[10px] font-black uppercase tracking-[0.3em] hover:bg-text-primary hover:text-background transition-all transform hover:scale-105"
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
                 >
-                  Reset All Filters
-                </button>
-              </motion.div>
-            )}
+                  <SkeletonCards 
+                    count={9} 
+                    gridClass="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8" 
+                  />
+                </motion.div>
+              ) : filtered.length > 0 ? (
+                <motion.div
+                  key="content"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <ProductSection products={filtered} activeColor={filters.color} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="no-match"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center py-40 text-center"
+                >
+                  <span className="material-symbols-outlined text-[64px] text-text-secondary/80 mb-6">inventory_2</span>
+                  <h3 className="text-xl font-impact tracking-widest text-text-secondary/60 mb-2">NO PRODUCTS MATCH YOUR FILTERS</h3>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/70 mb-8">Try adjusting your filters or clearing all to see more products</p>
+                  <button
+                    onClick={handleClear}
+                    className="px-10 py-4 bg-accent text-background text-[10px] font-black uppercase tracking-[0.3em] hover:bg-text-primary hover:text-background transition-all transform hover:scale-105"
+                  >
+                    Reset All Filters
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           {/* <CollectiveFooter /> */}
         </div>

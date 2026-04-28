@@ -123,7 +123,7 @@ export default function InitialConfigOverlay({ slug }) {
             >
                 {/* Header Image Area */}
                 <div className="relative h-[170px] sm:h-[200px] w-full bg-[#f4f2ee] flex items-center justify-center overflow-hidden border-b border-black/5 shrink-0 initial-config-image">
-                    <img 
+                    <img loading="lazy" 
                         src={productData.frontImage} 
                         alt="Product Preview" 
                         className="h-full object-cover mix-blend-multiply opacity-90 p-4"

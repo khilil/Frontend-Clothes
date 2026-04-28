@@ -36,7 +36,7 @@ function CollectiveFooter() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 mb-20 md:mb-32">
           <div className="lg:col-span-6 space-y-10 md:space-y-12 text-center lg:text-left">
             <div className="flex justify-center lg:justify-start mb-6 md:mb-8">
-              <img src="/assets/main-logo.png" alt="FENRIR ERA" className="h-24 md:h-32 lg:h-40 w-auto object-contain opacity-90 transition-opacity duration-500 hover:opacity-100" />
+              <img loading="lazy" src="/assets/main-logo.png" alt="FENRIR ERA" className="h-24 md:h-32 lg:h-40 w-auto object-contain opacity-90 transition-opacity duration-500 hover:opacity-100" />
             </div>
             <p className="archival-text text-text-primary text-[10px] md:text-xs max-w-[450px] mx-auto lg:mx-0 leading-relaxed opacity-80 px-4 md:px-0">
               WE ENGINEER ARMOR FOR THE MODERN ICON. HIGH-STREET UTILITY / ARCHIVAL LUXURY. 
@@ -167,8 +167,8 @@ function CollectiveFooter() {
           </div>
 
           <div className="flex items-center gap-10 grayscale opacity-30 hover:opacity-100 transition-all duration-700">
-             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-2" />
-             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
+             <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-2" />
+             <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
              <div className="h-4 w-[1px] bg-border-subtle" />
              <button onClick={scrollToTop} className="archival-text text-[8px] hover:text-accent transition-colors flex items-center gap-2">
                ↑ BACK TO TOP

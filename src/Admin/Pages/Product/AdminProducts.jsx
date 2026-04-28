@@ -592,7 +592,7 @@ function ProductRow({ product, isSelected, onToggle, onView, onEdit, onDelete })
             <td className="px-6 py-4">
                 <div className="flex items-center gap-4">
                     <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-1">
-                        <img className="h-full w-full rounded-lg object-cover" src={displayImage} alt={displayName} />
+                        <img loading="lazy" className="h-full w-full rounded-lg object-cover" src={displayImage} alt={displayName} />
                     </div>
                     <div>
                         <p className="text-sm font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors uppercase tracking-tight">{displayName}</p>

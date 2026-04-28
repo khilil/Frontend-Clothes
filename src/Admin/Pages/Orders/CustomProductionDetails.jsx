@@ -158,7 +158,7 @@ export default function CustomProductionDetails({ order, onBack }) {
                         </div>
                      </div>
                      <div className="aspect-[3/4] rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 relative group">
-                        <img 
+                        <img loading="lazy" 
                           src={currentOrder.items[0]?.customizations?.displayPreviews?.front || currentOrder.items[0]?.customDesign?.frontPreview} 
                           className="w-full h-full object-contain" 
                           alt="Front" 
@@ -183,7 +183,7 @@ export default function CustomProductionDetails({ order, onBack }) {
                      <div className="aspect-[3/4] rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 relative group">
                         {currentOrder.items[0]?.customizations?.displayPreviews?.back || currentOrder.items[0]?.customDesign?.backPreview ? (
                            <>
-                             <img 
+                             <img loading="lazy" 
                                src={currentOrder.items[0]?.customizations?.displayPreviews?.back || currentOrder.items[0]?.customDesign?.backPreview} 
                                className="w-full h-full object-contain" 
                                alt="Back" 

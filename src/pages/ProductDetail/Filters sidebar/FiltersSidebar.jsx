@@ -139,12 +139,12 @@ export default function FiltersSidebar({
             {/* Topwear Categories */}
             {(showTopwear && availableCategories.filter(cat => !bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3 pl-2">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-1 block">Topwear</span>
-                {availableCategories.filter(cat => !bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-1 block">Topwear</span>
+                {availableCategories.filter(Boolean).filter(cat => !bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
                   const catName = typeof cat === 'string' ? cat : cat.name;
                   const catSlug = typeof cat === 'string' ? cat.toLowerCase() : (cat.slug || cat.name.toLowerCase());
                   return (
-                    <label key={catSlug} className="flex items-center group cursor-pointer py-1">
+                    <label key={`cat-top-${catSlug}`} className="flex items-center group cursor-pointer py-1">
                       <input
                         type="radio"
                         name="category"
@@ -177,12 +177,12 @@ export default function FiltersSidebar({
             {/* Bottomwear Categories */}
             {(showBottomwear && availableCategories.filter(cat => bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3 pl-2">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-1 block">Bottomwear</span>
-                {availableCategories.filter(cat => bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-1 block">Bottomwear</span>
+                {availableCategories.filter(Boolean).filter(cat => bottomwearKeywords.some(id => (typeof cat === 'string' ? cat : cat.name).toLowerCase().includes(id))).map(cat => {
                   const catName = typeof cat === 'string' ? cat : cat.name;
                   const catSlug = typeof cat === 'string' ? cat.toLowerCase() : (cat.slug || cat.name.toLowerCase());
                   return (
-                    <label key={catSlug} className="flex items-center group cursor-pointer py-1">
+                    <label key={`cat-bottom-${catSlug}`} className="flex items-center group cursor-pointer py-1">
                       <input
                         type="radio"
                         name="category"
@@ -229,8 +229,8 @@ export default function FiltersSidebar({
           </button>
 
           <div className={`space-y-3 transition-all duration-300 overflow-hidden ${activeSections.brand ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            {availableBrands.map(brand => (
-              <label key={brand} className="flex items-center group cursor-pointer py-1">
+            {availableBrands.filter(Boolean).map(brand => (
+              <label key={`brand-${brand}`} className="flex items-center group cursor-pointer py-1">
                 <input
                   type="checkbox"
                   className="hidden"
@@ -276,9 +276,9 @@ export default function FiltersSidebar({
             {/* Topwear Fits */}
             {(showTopwear && availableFits.filter(f => !bottomwearKeywords.some(id => f.toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>
-                {availableFits.filter(f => !bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
-                  <label key={fit} className="flex items-center group cursor-pointer py-1">
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">Topwear</span>
+                {availableFits.filter(Boolean).filter(f => !bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
+                  <label key={`fit-top-${fit}`} className="flex items-center group cursor-pointer py-1">
                     <input
                       type="checkbox"
                       className="hidden"
@@ -309,9 +309,9 @@ export default function FiltersSidebar({
             {/* Bottomwear Fits */}
             {(showBottomwear && availableFits.filter(f => bottomwearKeywords.some(id => f.toLowerCase().includes(id))).length > 0) && (
               <div className="space-y-3">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>
-                {availableFits.filter(f => bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
-                  <label key={fit} className="flex items-center group cursor-pointer py-1">
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">Bottomwear</span>
+                {availableFits.filter(Boolean).filter(f => bottomwearKeywords.some(id => f.toLowerCase().includes(id))).map(fit => (
+                  <label key={`fit-bottom-${fit}`} className="flex items-center group cursor-pointer py-1">
                     <input
                       type="checkbox"
                       className="hidden"
@@ -359,30 +359,33 @@ export default function FiltersSidebar({
             {/* Topwear Colors */}
             {showTopwear && (availableColors?.top?.length > 0 || Array.isArray(availableColors)) && (
               <div className="space-y-3">
-                {showBottomwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>}
+                {showBottomwear && <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">Topwear</span>}
                 <div className="grid grid-cols-5 gap-4">
-                  {(Array.isArray(availableColors) ? availableColors : (availableColors.top || [])).map(color => (
-                    <button
-                      key={color.id}
-                      onClick={() => onColorChange(color.id)}
-                      className="group/color relative flex flex-col items-center gap-2"
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.id
-                          ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
-                          : "border-border-subtle group-hover/color:border-accent"
-                          }`}
-                        style={{ background: color.hex }}
+                  {(Array.isArray(availableColors) ? availableColors : (availableColors?.top || [])).filter(Boolean).map((color, idx) => {
+                    const colorId = color?.id || color?._id || `color-${idx}`;
+                    return (
+                      <button
+                        key={`color-top-${colorId}`}
+                        onClick={() => onColorChange(colorId)}
+                        className="group/color relative flex flex-col items-center gap-2"
                       >
-                        {filters?.color === color.id && (
-                          <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
-                        )}
-                      </div>
-                      <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.id ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
-                        {color.name}
-                      </span>
-                    </button>
-                  ))}
+                        <div
+                          className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === colorId
+                            ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
+                            : "border-border-subtle group-hover/color:border-accent"
+                            }`}
+                          style={{ background: color.hex }}
+                        >
+                          {filters?.color === colorId && (
+                            <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
+                          )}
+                        </div>
+                        <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === colorId ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
+                          {color.name}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -390,32 +393,35 @@ export default function FiltersSidebar({
             {/* Bottomwear Colors */}
             {(showBottomwear && (availableColors?.bottom?.length > 0)) && (
                 <div className="space-y-3">
-                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">
+                    <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">
                         {(showTopwear || filters?.category === 'all') ? "Bottomwear" : "Available Colors"}
                     </span>
                     <div className="grid grid-cols-5 gap-4">
-                        {(availableColors.bottom || []).map(color => (
-                            <button
-                                key={color.id}
-                                onClick={() => onColorChange(color.id)}
-                                className="group/color relative flex flex-col items-center gap-2"
-                            >
-                                <div
-                                    className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === color.id
-                                        ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
-                                        : "border-border-subtle group-hover/color:border-accent"
-                                        }`}
-                                    style={{ background: color.hex }}
+                        {(availableColors?.bottom || []).filter(Boolean).map((color, idx) => {
+                            const colorId = color?.id || color?._id || `bot-color-${idx}`;
+                            return (
+                                <button
+                                    key={`color-bottom-${colorId}`}
+                                    onClick={() => onColorChange(colorId)}
+                                    className="group/color relative flex flex-col items-center gap-2"
                                 >
-                                    {filters?.color === color.id && (
-                                        <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
-                                    )}
-                                </div>
-                                <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === color.id ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
-                                    {color.name}
-                                </span>
-                            </button>
-                        ))}
+                                    <div
+                                        className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${filters?.color === colorId
+                                            ? "border-accent scale-110 shadow-[0_0_15px_rgba(184,134,11,0.4)]"
+                                            : "border-border-subtle group-hover/color:border-accent"
+                                            }`}
+                                        style={{ background: color.hex }}
+                                    >
+                                        {filters?.color === colorId && (
+                                            <span className="material-symbols-outlined text-[14px] text-white drop-shadow-md">check</span>
+                                        )}
+                                    </div>
+                                    <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${filters?.color === colorId ? "text-accent" : "text-text-secondary/60 group-hover/color:text-accent"}`}>
+                                        {color.name}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             )}
@@ -437,14 +443,14 @@ export default function FiltersSidebar({
 
         <div className={`space-y-6 transition-all duration-300 overflow-hidden ${activeSections.size ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
           {/* Topwear Sizes */}
-          {(showTopwear && availableSizes.filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).length > 0) && (
+          {(showTopwear && availableSizes.filter(Boolean).filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).length > 0) && (
             <div className="space-y-3">
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Topwear</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">Topwear</span>
               <div className="grid grid-cols-4 gap-2">
-                {availableSizes.filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).map(size => (
-                  <button
-                    key={size}
-                    onClick={() => onSizeChange(size)}
+                  {availableSizes.filter(Boolean).filter(s => isNaN(s) || s.match(/^[XSML]+$/i)).map(size => (
+                    <button
+                      key={`size-alpha-${size}`}
+                      onClick={() => onSizeChange(size)}
                     className={`h-12 flex items-center justify-center text-[10px] font-black transition-all border ${filters?.sizes?.includes(size) || filters?.size === size
                       ? "bg-accent border-accent text-background shadow-[0_0_20px_rgba(184,134,11,0.3)]"
                       : "bg-secondary border-border-subtle text-text-secondary hover:border-accent hover:text-text-primary"
@@ -458,14 +464,14 @@ export default function FiltersSidebar({
           )}
 
           {/* Bottomwear Sizes */}
-          {(showBottomwear && availableSizes.filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).length > 0) && (
+          {(showBottomwear && availableSizes.filter(Boolean).filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).length > 0) && (
             <div className="space-y-3">
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/40 mb-2 block">Bottomwear</span>
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-text-secondary/70 mb-2 block">Bottomwear</span>
               <div className="grid grid-cols-4 gap-2">
-                {availableSizes.filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).map(size => (
-                  <button
-                    key={size}
-                    onClick={() => onSizeChange(size)}
+                  {availableSizes.filter(Boolean).filter(s => !isNaN(s) && !s.match(/^[XSML]+$/i)).map(size => (
+                    <button
+                      key={`size-num-${size}`}
+                      onClick={() => onSizeChange(size)}
                     className={`h-12 flex items-center justify-center text-[10px] font-black transition-all border ${filters?.sizes?.includes(size) || filters?.size === size
                       ? "bg-accent border-accent text-background shadow-[0_0_20px_rgba(184,134,11,0.3)]"
                       : "bg-secondary border-border-subtle text-text-secondary hover:border-accent hover:text-text-primary"
@@ -548,11 +554,11 @@ export default function FiltersSidebar({
 
               <div className="flex justify-between">
                 <div className="flex flex-col">
-                  <span className="text-[8px] text-text-secondary/40 uppercase font-black tracking-widest mb-1">Min</span>
+                  <span className="text-[8px] text-text-secondary/70 uppercase font-black tracking-widest mb-1">Min</span>
                   <span className="text-[13px] font-impact text-text-secondary/60">₹0</span>
                 </div>
                 <div className="flex flex-col text-right">
-                  <span className="text-[8px] text-text-secondary/40 uppercase font-black tracking-widest mb-1">Max</span>
+                  <span className="text-[8px] text-text-secondary/70 uppercase font-black tracking-widest mb-1">Max</span>
                   <span className="text-[13px] font-impact text-accent">₹{filters?.price || maxPrice}</span>
                 </div>
               </div>

@@ -78,7 +78,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="p-6 pb-4 shrink-0">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3 px-2 group cursor-pointer" onClick={() => navigate('/admin')}>
-                        <img 
+                        <img loading="lazy" 
                             src="/assets/main-logo.png" 
                             alt="FENRIR" 
                             className="h-20 w-auto object-contain transition-all duration-300 group-hover:scale-110" 
@@ -151,7 +151,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-100/50 dark:bg-slate-800/30 border border-transparent hover:border-indigo-500/30 transition-all group">
                     <div className="relative">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 p-[2px]">
-                            <img
+                            <img loading="lazy" 
                                 src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=fff&color=6366f1`}
                                 alt="User"
                                 className="w-full h-full rounded-[10px] object-cover border-2 border-white dark:border-slate-800"

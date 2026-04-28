@@ -105,7 +105,7 @@ export default function LayersPanel() {
     function renderIcon(obj) {
         if (obj.type === "image") {
             return (
-                <img
+                <img loading="lazy" 
                     src={obj._originalElement?.src}
                     alt=""
                     className="w-8 h-8 object-cover border border-white/10"

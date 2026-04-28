@@ -66,7 +66,7 @@ export default function MiniCart({ open, onClose }) {
                     YOUR BAG <span className="font-[Inter] text-sm text-accent-contrast ml-2 font-light">[{cart.length}]</span>
                   </h2>
 
-                  <button className="w-10 h-10 rounded-full border border-border-subtle bg-secondary text-text-primary flex items-center justify-center cursor-pointer transition-all duration-400 hover:bg-accent hover:text-white hover:rotate-90" onClick={onClose}>
+                  <button aria-label="Close" className="w-10 h-10 rounded-full border border-border-subtle bg-secondary text-text-primary flex items-center justify-center cursor-pointer transition-all duration-400 hover:bg-accent hover:text-white hover:rotate-90" onClick={onClose}>
                     <span className="material-symbols-outlined">close</span>
                   </button>
                 </div>
@@ -134,7 +134,7 @@ export default function MiniCart({ open, onClose }) {
                               }
                             }}
                           >
-                            <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-800 group-hover/thumb:scale-110" style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }} />
+                            <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-800 group-hover/thumb:scale-110" style={{ transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)" }} />
                             {item.customizations?.previews ? (
                               <div className="absolute inset-0 bg-background/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
                                 <span className="material-symbols-outlined text-text-primary text-lg">zoom_in</span>
@@ -276,7 +276,7 @@ export default function MiniCart({ open, onClose }) {
                 className="w-full h-full flex items-center justify-center"
               >
                 {selectedItemForPreview.customizations?.previews?.[previewSide] ? (
-                  <img
+                  <img loading="lazy" 
                     src={selectedItemForPreview.customizations.previews[previewSide]}
                     className="max-w-full max-h-full object-contain rounded-3xl"
                     alt={`${previewSide} view`}

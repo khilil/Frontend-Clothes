@@ -95,7 +95,7 @@ const AdminCustomers = () => {
                             <p className="text-xs font-bold leading-none dark:text-white">Admin User</p>
                             <p className="text-[10px] text-slate-500 uppercase tracking-tighter">Super Admin</p>
                         </div>
-                        <img 
+                        <img loading="lazy" 
                             className="size-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" 
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" 
                             alt="Admin" 
@@ -183,7 +183,7 @@ const AdminCustomers = () => {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="relative">
-                                                            <img className="size-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-sm" src={customer.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={customer.name} />
+                                                            <img loading="lazy" className="size-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-sm" src={customer.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={customer.name} />
                                                             {customer.isVerified && <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-emerald-500 border border-white dark:border-slate-800 rounded-full" />}
                                                         </div>
                                                         <div>

@@ -110,7 +110,7 @@ const Dashboard = () => {
             <div className="bg-white border border-black/[0.03] p-5 sm:p-10 rounded-[2.5rem] flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-10 shadow-[0_20px_50px_rgba(0,0,0,0.02)] transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.06)] group">
               <div className="flex items-center gap-5 sm:gap-10 flex-1 min-w-0">
                 <div className="w-20 h-28 sm:w-28 sm:h-36 bg-black/[0.02] rounded-2xl sm:rounded-3xl overflow-hidden flex-shrink-0 border border-black/5 p-2">
-                  <img
+                  <img loading="lazy" 
                     src={recentOrder.items?.[0]?.customizations?.previews?.front || recentOrder.items?.[0]?.imageURL || "https://placeholder.com/100"}
                     alt="Order Item"
                     className="w-full h-full object-cover rounded-xl sm:rounded-2xl group-hover:scale-110 transition-transform duration-700"
@@ -161,7 +161,7 @@ const Dashboard = () => {
               className="group cursor-pointer"
             >
               <div className="aspect-[3/4] rounded-[2rem] bg-black/[0.02] mb-6 overflow-hidden border border-black/[0.03] relative shadow-[0_10px_30px_rgba(0,0,0,0.02)]">
-                <img
+                <img loading="lazy" 
                   src={`https://picsum.photos/seed/${i + 10}/400/600`}
                   alt="Product"
                   className="w-full h-full object-cover opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000"

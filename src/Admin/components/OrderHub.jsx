@@ -575,7 +575,7 @@ export default function OrderHub({ onSelectOrder, orderType: propOrderType, defa
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <img 
+                        <img loading="lazy" 
                           src={order.items[0]?.imageURL || order.items[0]?.image} 
                           className="w-10 h-10 rounded-lg object-cover bg-slate-100" 
                           alt="Product"

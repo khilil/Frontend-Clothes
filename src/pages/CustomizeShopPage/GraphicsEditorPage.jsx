@@ -84,7 +84,7 @@ export default function GraphicsEditorPage() {
                             className="group relative bg-[#1a1a1a]/50 aspect-square border border-white/5 flex items-center justify-center hover:border-[#d4c4b1]/50 hover:bg-[#d4c4b1]/5 transition-all duration-500 rounded-xl overflow-hidden"
                         >
                             <div className="absolute inset-0 bg-gradient-to-tr from-[#d4c4b1]/0 to-[#d4c4b1]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <img
+                            <img loading="lazy" 
                                 src={item.file}
                                 alt={item.name}
                                 className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-500"

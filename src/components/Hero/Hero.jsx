@@ -93,7 +93,7 @@ function Hero() {
           exit={{ opacity: 0, transition: { duration: 1 } }}
           transition={{ duration: 7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <img 
+          <img loading="lazy" 
             src={slides[currentSlide].image} 
             alt={slides[currentSlide].heading}
             className="w-full h-full object-cover object-center"

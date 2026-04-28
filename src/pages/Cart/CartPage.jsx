@@ -144,7 +144,7 @@ export default function CartPage() {
                             </div>
                         </div>
                         <div className="max-w-md mx-auto">
-                            <h2 className="text-3xl md:text-5xl font-primary uppercase tracking-tighter leading-none mb-4">Your Bag is Empty</h2>
+                            <h1 className="text-3xl md:text-5xl font-primary uppercase tracking-tighter leading-none mb-4">Your Bag is Empty</h1>
                             <p className="text-text-muted uppercase tracking-[0.2em] text-[10px] font-black px-8">Elevate your style with our latest premium drop.</p>
                         </div>
                         <Link to="/" className="inline-flex items-center gap-4 px-10 py-5 bg-text-primary text-primary text-[11px] font-black uppercase tracking-[0.4em] hover:bg-accent hover:shadow-2xl hover:shadow-accent/20 transition-all duration-500 rounded-2xl group active:scale-95">
@@ -169,7 +169,7 @@ export default function CartPage() {
                                             }
                                         }}
                                     >
-                                        <img
+                                        <img loading="lazy" 
                                             alt={item.title}
                                             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                                             src={item.image}
@@ -215,7 +215,7 @@ export default function CartPage() {
                                                                     setPreviewSide(side);
                                                                 }}
                                                             >
-                                                                <img
+                                                                <img loading="lazy" 
                                                                     src={item.customizations?.displayPreviews?.[side] || item.customizations?.previews?.[side]}
                                                                     className="w-full h-full object-contain"
                                                                     alt={side}
@@ -261,7 +261,7 @@ export default function CartPage() {
                         {/* Order Summary Sidebar */}
                         <div className="lg:w-[400px]">
                             <div className="sticky top-32 bg-secondary border border-text-primary/5 p-8 rounded-2xl shadow-sm">
-                                <h3 className="text-2xl font-primary uppercase tracking-tight mb-8">Order Summary</h3>
+                                <h2 className="text-2xl font-primary uppercase tracking-tight mb-8">Order Summary</h2>
 
                                 <div className="mb-8">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-text-muted block mb-3">Promo Code</label>
@@ -391,7 +391,7 @@ export default function CartPage() {
                                 >
                                     <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-border-subtle rounded-full" />
                                     
-                                    <h3 className="text-xl font-primary uppercase tracking-tight mb-8 mt-2">Bag Summary</h3>
+                                    <h2 className="text-xl font-primary uppercase tracking-tight mb-8 mt-2">Bag Summary</h2>
 
                                     <div className="space-y-5">
                                         <div className="flex justify-between text-[11px] font-black uppercase tracking-widest text-text-muted">
@@ -494,7 +494,7 @@ export default function CartPage() {
                                 className="w-full h-full flex items-center justify-center"
                             >
                                 {(selectedItemForPreview.customizations?.displayPreviews?.[previewSide] || selectedItemForPreview.customizations?.previews?.[previewSide]) ? (
-                                    <img
+                                    <img loading="lazy" 
                                         src={selectedItemForPreview.customizations?.displayPreviews?.[previewSide] || selectedItemForPreview.customizations?.previews?.[previewSide]}
                                         className="max-w-full max-h-full object-contain rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-text-primary/5"
                                         alt={`${previewSide} view`}
@@ -511,7 +511,7 @@ export default function CartPage() {
                         {/* Info Header */}
                         <div className="absolute top-10 left-10 text-left">
                             <p className="text-accent text-[9px] font-black uppercase tracking-[0.5em] mb-2">Item Inspection</p>
-                            <h3 className="text-text-primary font-primary uppercase tracking-tighter text-3xl leading-none">{selectedItemForPreview.title}</h3>
+                            <h2 className="text-text-primary font-primary uppercase tracking-tighter text-3xl leading-none">{selectedItemForPreview.title}</h2>
                         </div>
                     </motion.div>
                 )}

@@ -36,7 +36,7 @@ function SalePage() {
                     animate={{ scale: 1, opacity: 0.6 }}
                     transition={{ duration: 2, ease: "easeOut" }}
                 >
-                    <img
+                    <img loading="lazy" 
                         src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop"
                         alt="Sale Hero"
                         className="w-full h-full object-cover grayscale"
@@ -84,7 +84,7 @@ function SalePage() {
                         <h2 className="text-[80px] md:text-4xl font-impact tracking-tight mb-2 uppercase">The Sale Collection</h2>
                         <div className="flex items-center gap-4">
                             <span className="h-px w-12 bg-accent"></span>
-                            <span className="font-[Inter] text-[10px] font-black tracking-[0.5em] text-text-secondary/40 uppercase">
+                            <span className="font-[Inter] text-[10px] font-black tracking-[0.5em] text-text-secondary/70 uppercase">
                                 {isLoading ? "Synchronizing..." : `${products.length} Masterpieces Found`}
                             </span>
                         </div>
@@ -103,7 +103,7 @@ function SalePage() {
                     </div>
                 ) : (
                     <div className="py-20 md:py-40 text-center border border-border-subtle rounded-[3rem] bg-secondary mt-10 md:mt-20">
-                        <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-text-secondary/40">The Archive is Empty</h3>
+                        <h3 className="text-2xl font-impact tracking-tight mb-4 uppercase text-text-secondary/70">The Archive is Empty</h3>
                         <p className="font-[Inter] text-text-secondary/60 text-[14px] tracking-[0.1em]">New Items Arriving Shortly</p>
                     </div>
                 )}

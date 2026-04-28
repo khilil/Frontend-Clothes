@@ -166,7 +166,7 @@ export default function ProductDetailsPage() {
                                 onClick={() => setActiveImage(img.url)}
                                 className={`relative aspect-square overflow-hidden rounded-2xl border-2 transition-all ${activeImage === img.url ? 'border-indigo-500 ring-4 ring-indigo-500/20' : 'border-slate-800 hover:border-slate-600'}`}
                             >
-                                <img src={img.url} className="h-full w-full object-cover grayscale-[0.5] hover:grayscale-0 transition-all" alt="" />
+                                <img loading="lazy" src={img.url} className="h-full w-full object-cover grayscale-[0.5] hover:grayscale-0 transition-all" alt="" />
                                 {img.isMain && (
                                     <div className="absolute top-1 right-1 h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
                                 )}
@@ -349,7 +349,7 @@ export default function ProductDetailsPage() {
                                                             onClick={() => setActiveImage(img.url)}
                                                             className="h-10 w-10 shrink-0 cursor-pointer rounded-lg border-2 border-slate-900 bg-slate-800 shadow-xl overflow-hidden"
                                                         >
-                                                            <img src={img.url} className="h-full w-full object-cover" alt="" />
+                                                            <img loading="lazy" src={img.url} className="h-full w-full object-cover" alt="" />
                                                         </motion.div>
                                                     ))}
                                                     {v.images?.length > 4 && (

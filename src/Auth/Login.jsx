@@ -125,7 +125,7 @@ export default function LoginAuth() {
                         className="relative z-20"
                     >
                         <Link to="/" className="inline-block mb-12">
-                            <img src="/assets/main-logo.png" alt="Fenrir Era" className="h-20 md:h-32 opacity-90 hover:opacity-100 transition-all" />
+                            <img loading="lazy" src="/assets/main-logo.png" alt="Fenrir Era" className="h-20 md:h-32 opacity-90 hover:opacity-100 transition-all" />
                         </Link>
                         
                         <h1 className="text-6xl xl:text-8xl font-['Bodoni_Moda'] italic mb-8 leading-[0.9] tracking-tight text-text-primary/90">
@@ -134,7 +134,7 @@ export default function LoginAuth() {
                         
                         <div className="h-px w-24 bg-accent mb-8" />
                         
-                        <p className="text-sm font-light text-text-secondary/40 max-w-sm leading-relaxed tracking-wide uppercase">
+                        <p className="text-sm font-light text-text-secondary/70 max-w-sm leading-relaxed tracking-wide uppercase">
                             Join our exclusive community and experience the finest curation of modern aesthetics.
                         </p>
                     </motion.div>
@@ -150,7 +150,7 @@ export default function LoginAuth() {
                         
                         {/* Mobile Logo */}
                         <div className="lg:hidden mb-12 text-center flex justify-center">
-                            <img src="/assets/main-logo.png" alt="Fenrir era" className="h-20 opacity-90" />
+                            <img loading="lazy" src="/assets/main-logo.png" alt="Fenrir era" className="h-20 opacity-90" />
                         </div>
 
                         {/* Title Toggle */}
@@ -167,7 +167,7 @@ export default function LoginAuth() {
                                         {isLogin ? "Welcome" : "Connect"}
                                     </h2>
                                     <div className="flex items-center gap-3">
-                                        <p className="text-[10px] uppercase tracking-[0.4em] text-text-secondary/40 font-bold">
+                                        <p className="text-[10px] uppercase tracking-[0.4em] text-text-secondary/70 font-bold">
                                             {isLogin ? "Secure Entry Interface" : "Create Modern Profile"}
                                         </p>
                                         <div className="h-px w-8 bg-accent/30" />
@@ -205,14 +205,14 @@ export default function LoginAuth() {
                                         <div className="space-y-2">
                                             <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Full Identity</label>
                                             <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
+                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/70" size={16} />
                                                 <input
                                                     type="text"
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleChange}
                                                     placeholder="Enter your name"
-                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/80"
                                                     required
                                                 />
                                             </div>
@@ -222,14 +222,14 @@ export default function LoginAuth() {
                                     <div className="space-y-2">
                                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Secure Channel</label>
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/70" size={16} />
                                             <input
                                                 type="email"
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleChange}
                                                 placeholder="email@example.com"
-                                                className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
+                                                className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/80"
                                                 required
                                             />
                                         </div>
@@ -244,14 +244,14 @@ export default function LoginAuth() {
                                                         type="button"
                                                         onClick={handleSendOTP}
                                                         disabled={timer > 0 || isSubmitting}
-                                                        className="text-[8px] font-bold uppercase text-accent disabled:text-text-secondary/20 transition-colors"
+                                                        className="text-[8px] font-bold uppercase text-accent disabled:text-text-secondary/80 transition-colors"
                                                     >
                                                         {timer > 0 ? `Resend in ${timer}s` : "Resend Code"}
                                                     </button>
                                                 )}
                                             </div>
                                             <div className="relative">
-                                                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
+                                                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/70" size={16} />
                                                 <input
                                                     type="text"
                                                     name="otp"
@@ -259,7 +259,7 @@ export default function LoginAuth() {
                                                     onChange={handleChange}
                                                     placeholder="• • • • • •"
                                                     disabled={!otpSent}
-                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm tracking-[0.5em] font-mono focus:border-accent focus:bg-background transition-all outline-none disabled:opacity-20 placeholder:text-text-secondary/20"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm tracking-[0.5em] font-mono focus:border-accent focus:bg-background transition-all outline-none disabled:opacity-20 placeholder:text-text-secondary/80"
                                                     required={otpSent}
                                                     maxLength={6}
                                                 />
@@ -269,14 +269,14 @@ export default function LoginAuth() {
                                         <div className="space-y-2">
                                             <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-primary/70 ml-1">Access Pass</label>
                                             <div className="relative">
-                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/40" size={16} />
+                                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/70" size={16} />
                                                 <input
                                                     type="password"
                                                     name="password"
                                                     value={formData.password}
                                                     onChange={handleChange}
                                                     placeholder="••••••••"
-                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/20"
+                                                    className="w-full bg-secondary/50 border border-border-subtle rounded-2xl py-4 pl-12 pr-6 text-text-primary text-sm focus:border-accent focus:bg-background transition-all outline-none placeholder:text-text-secondary/80"
                                                     required
                                                 />
                                             </div>
@@ -347,7 +347,7 @@ export default function LoginAuth() {
                                     setError("");
                                     setOtpSent(false);
                                 }}
-                                className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/40 hover:text-text-primary transition-all"
+                                className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary/70 hover:text-text-primary transition-all"
                             >
                                 {isLogin ? "Become a Member" : "Existing Member Login"}
                                 <div className="h-px w-4 bg-accent transition-all group-hover:w-8" />
@@ -358,7 +358,7 @@ export default function LoginAuth() {
             </div>
 
             {/* Subtle Footer */}
-            <div className="absolute bottom-6 w-full px-12 hidden lg:flex justify-between items-center text-[7px] font-bold uppercase tracking-[0.5em] text-text-secondary/20 pointer-events-none">
+            <div className="absolute bottom-6 w-full px-12 hidden lg:flex justify-between items-center text-[7px] font-bold uppercase tracking-[0.5em] text-text-secondary/80 pointer-events-none">
                 <p>© 2024 Fenrir era / All Rights Reserved</p>
                 <div className="flex gap-8 pointer-events-auto">
                     <a href="#" className="hover:text-text-primary transition-colors">Digital Atelier</a>

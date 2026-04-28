@@ -782,7 +782,7 @@ export default function Checkout() {
                     {checkoutItems.map((item, idx) => (
                       <div key={idx} className="flex gap-4 group">
                         <div className="w-20 aspect-[3/4] rounded-2xl overflow-hidden bg-background border border-border-subtle/50 flex-shrink-0 relative shadow-sm">
-                          <img
+                          <img loading="lazy" 
                             src={item.image}
                             alt={item.title}
                             className="w-full h-full object-cover transition-all duration-700"

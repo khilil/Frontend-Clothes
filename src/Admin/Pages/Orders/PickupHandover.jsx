@@ -190,7 +190,7 @@ export default function PickupHandover() {
                     <div key={idx} className="flex items-center gap-6 p-5 bg-slate-50 dark:bg-slate-950/50 rounded-3xl border border-slate-100 dark:border-slate-800 group hover:border-purple-500/30 transition-all hover:translate-x-1 duration-300">
                        <div className="w-24 h-24 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden flex-shrink-0 shadow-sm border border-slate-100 dark:border-slate-800 p-1 group-hover:scale-105 transition-transform duration-500">
                           {item.imageURL ? (
-                            <img src={item.imageURL} alt={item.title} className="w-full h-full object-cover rounded-xl" />
+                            <img loading="lazy" src={item.imageURL} alt={item.title} className="w-full h-full object-cover rounded-xl" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300">
                               <Package size={32} />

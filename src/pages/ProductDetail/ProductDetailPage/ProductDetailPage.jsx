@@ -390,7 +390,7 @@ export default function ProductDetailPage() {
                                             ${i === activeImage ? "border-accent ring-1 ring-accent ring-offset-2 ring-offset-[#0a0a0a]" : "border-white/10 opacity-40 hover:opacity-100 hover:border-white/30"}
                                         `}
                                     >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                        <img loading="lazy" src={img} alt="" className="w-full h-full object-cover" />
                                         {i === activeImage && (
                                             <motion.div layoutId="thumb-active" className="absolute inset-0 bg-accent/5" />
                                         )}
@@ -491,7 +491,7 @@ export default function ProductDetailPage() {
                                             ${i === activeImage ? "border-accent" : "border-white/5 opacity-50"}
                                         `}
                                     >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                        <img loading="lazy" src={img} alt="" className="w-full h-full object-cover" />
                                     </button>
                                 ))}
                             </div>
@@ -541,7 +541,7 @@ export default function ProductDetailPage() {
                             {uniqueColors.length > 0 && (
                                 <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="space-y-4">
                                     <div className="flex justify-between items-center pr-4 border-b border-border-subtle pb-2">
-                                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-text-primary">Select Palette</h4>
+                                        <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-text-primary">Select Palette</h2>
                                         <span className="text-[11px] font-black uppercase tracking-widest text-accent-contrast drop-shadow-[0_0_8px_rgba(184,134,11,0.1)]">{selectedColor?.name}</span>
                                     </div>
                                     <div className="flex gap-4">
@@ -573,7 +573,7 @@ export default function ProductDetailPage() {
                             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="space-y-6">
                                 <div className="flex justify-between items-center pr-4">
                                     <div className="flex items-center gap-2">
-                                        <h4 className="text-2xl font-impact uppercase tracking-tight text-text-primary">Select Size</h4>
+                                        <h2 className="text-2xl font-impact uppercase tracking-tight text-text-primary">Select Size</h2>
                                         <span className="text-[9px] font-bold uppercase tracking-widest text-accent-contrast/70">• {selectedColor?.name}</span>
                                     </div>
                                     <button 
@@ -732,7 +732,7 @@ export default function ProductDetailPage() {
                                 {benefits.map((b, i) => (
                                     <div key={i} className="text-center space-y-2 group">
                                         <span className="material-symbols-outlined text-accent group-hover:scale-110 transition-transform">{b.icon}</span>
-                                        <h5 className="text-[10px] font-black uppercase tracking-widest leading-none text-text-primary">{b.title}</h5>
+                                        <h3 className="text-[10px] font-black uppercase tracking-widest leading-none text-text-primary">{b.title}</h3>
                                         <p className="text-[9px] text-text-muted uppercase font-bold tracking-widest">{b.desc}</p>
                                     </div>
                                 ))}
@@ -831,7 +831,7 @@ export default function ProductDetailPage() {
                         className="fixed bottom-0 left-0 right-0 z-[60] bg-background/95 backdrop-blur-2xl border-t border-border-subtle p-4 px-6 flex items-center justify-between lg:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.1)] pb-[calc(1rem+env(safe-area-inset-bottom))]"
                     >
                         <div className="flex flex-col flex-1 min-w-0 pr-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest truncate text-text-primary">{product.title}</h4>
+                            <h2 className="text-[10px] font-black uppercase tracking-widest truncate text-text-primary">{product.title}</h2>
                             <div className="flex items-center gap-2 mt-0.5">
                                 <p className="text-accent font-impact text-lg">₹{product.price}</p>
                                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-text-secondary/60 truncate">

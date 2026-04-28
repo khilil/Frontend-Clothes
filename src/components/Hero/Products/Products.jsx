@@ -31,8 +31,8 @@ function AdminProducts() {
         {products.map((p, i) => (
           <div className="bg-black border border-white/5 overflow-hidden group" key={i}>
             <div className="relative aspect-[4/5] overflow-hidden">
-              <img src={p.img1} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease group-hover:opacity-0" />
-              <img src={p.img2} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease opacity-0 group-hover:opacity-100" />
+              <img loading="lazy" src={p.img1} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease group-hover:opacity-0" />
+              <img loading="lazy" src={p.img2} alt={p.title} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease opacity-0 group-hover:opacity-100" />
 
               <button className="absolute left-0 right-0 bottom-0 h-14 bg-white text-black text-[10px] font-black tracking-[0.3em] uppercase border-none cursor-pointer opacity-0 translate-y-3 transition-all duration-[0.35s] ease group-hover:opacity-100 group-hover:translate-y-0 hover:!bg-accent">ADD TO BAG</button>
             </div>

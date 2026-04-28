@@ -104,7 +104,7 @@ const VariantImages = ({ variants, onAddImage, onDeleteImage, onSetPrimary, avai
                             {activeVariant.images.map((img, index) => (
                                 <div key={img.id} className={`group relative aspect-square overflow-hidden rounded-xl bg-slate-950 ring-2 transition-all duration-300 ${img.isPrimary ? 'ring-indigo-500 shadow-xl shadow-indigo-500/20' : 'ring-white/5 hover:ring-white/20'}`}>
                                     <div className="h-full w-full">
-                                        <img src={img.url} alt={`Variant ${index}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <img loading="lazy" src={img.url} alt={`Variant ${index}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
 
                                         {img.isPrimary && (
                                             <div className="absolute left-3 top-3 z-20 flex h-6 items-center rounded-md bg-indigo-600 px-2 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">Primary</div>

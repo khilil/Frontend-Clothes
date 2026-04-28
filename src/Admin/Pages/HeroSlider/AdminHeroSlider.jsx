@@ -192,7 +192,7 @@ const AdminHeroSlider = () => {
                             className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 group"
                         >
                             <div className="relative aspect-[16/9] overflow-hidden">
-                                <img src={slide.image} alt={slide.heading} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <img loading="lazy" src={slide.image} alt={slide.heading} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-between">
                                     <div className="flex justify-between items-start">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${slide.isActive ? 'bg-emerald-500 text-white' : 'bg-slate-500 text-white'}`}>
@@ -263,7 +263,7 @@ const AdminHeroSlider = () => {
                                     <div className="relative group aspect-[16/6] bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center transition-all hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                         {preview ? (
                                             <>
-                                                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                                <img loading="lazy" src={preview} alt="Preview" className="w-full h-full object-cover" />
                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                                                     <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30 flex items-center gap-2">
                                                         <ImageIcon size={14} className="text-white" />

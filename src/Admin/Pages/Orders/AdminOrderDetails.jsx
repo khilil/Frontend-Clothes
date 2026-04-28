@@ -336,7 +336,7 @@ const AdminOrderDetails = () => {
                                                 <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors">
                                                     <td className="px-6 py-5">
                                                         <div className="flex items-center gap-4">
-                                                            <img
+                                                            <img loading="lazy" 
                                                                 src={item.imageURL || item.product?.images?.[0]?.url}
                                                                 alt={item.title}
                                                                 className="w-14 h-14 rounded-lg object-cover border border-slate-200 dark:border-slate-600 shadow-sm"
@@ -370,7 +370,7 @@ const AdminOrderDetails = () => {
                                                                     {item.customizations.previews.front && (
                                                                         <div className="space-y-1">
                                                                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Front View</p>
-                                                                            <img
+                                                                            <img loading="lazy" 
                                                                                 src={item.customizations.previews.front}
                                                                                 className="w-24 h-32 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-contain p-1"
                                                                                 alt="Front Preview"
@@ -380,7 +380,7 @@ const AdminOrderDetails = () => {
                                                                     {item.customizations.previews.back && (
                                                                         <div className="space-y-1">
                                                                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Back View</p>
-                                                                            <img
+                                                                            <img loading="lazy" 
                                                                                 src={item.customizations.previews.back}
                                                                                 className="w-24 h-32 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 object-contain p-1"
                                                                                 alt="Back Preview"

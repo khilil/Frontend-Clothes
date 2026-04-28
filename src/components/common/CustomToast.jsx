@@ -22,7 +22,7 @@ const CustomToast = ({ t, product, actionType = 'cart' }) => {
       <div className="flex p-3 sm:p-4 gap-4 items-center">
         {/* Product Image */}
         <div className="relative h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 rounded-xl overflow-hidden bg-white/5 border border-white/10">
-          <img 
+          <img loading="lazy" 
             src={productImage} 
             alt={product.title} 
             className="h-full w-full object-cover"

@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
         <div className="max-w-4xl mx-auto">
           <nav className="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-8 opacity-60 flex items-center space-x-3">
             <Link to="/" className="text-text-secondary hover:text-accent transition-colors duration-300">Home</Link>
-            <span className="text-text-secondary/50">/</span>
+            <span className="text-text-secondary/80">/</span>
             <strong className="text-accent font-medium">Privacy Policy</strong>
           </nav>
           <h1 className="font-display italic text-5xl md:text-6xl text-text-primary mb-4">

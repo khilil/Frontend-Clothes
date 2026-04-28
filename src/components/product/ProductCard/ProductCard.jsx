@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../../../context/WishlistContext';
@@ -8,6 +8,7 @@ import { getMainColorFromHex } from '../../../utils/colorUtils';
 
 const ProductCard = React.memo(({ product, activeColor }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { toggleItem, isInWishlist } = useWishlist();
   const { getProductOffer } = useOffers();
   const isLiked = isInWishlist(product._id || product.id);
@@ -61,10 +62,11 @@ const ProductCard = React.memo(({ product, activeColor }) => {
       }
     }
     return primary || "/images/product_placeholder.png";
-  }, [product, activeColor]);
+  }, [product?.slug || product?._id, activeColor]);
 
   return (
     <motion.div
+      data-testid="product-card"
       className="luxury-card group h-full bg-white overflow-hidden rounded-[24px] border border-neutral-100 transition-all duration-700"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -122,11 +124,18 @@ const ProductCard = React.memo(({ product, activeColor }) => {
             src={primaryImage}
             alt={product.title}
             className="w-full h-full object-cover"
+            initial={{ opacity: 0 }}
             animate={{
+              opacity: isImageLoaded ? 1 : 0,
               scale: isHovered ? 1.05 : 1,
               y: isHovered ? -8 : 0
             }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ 
+              opacity: { duration: 0.5 },
+              scale: { duration: 1.2, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 1.2, ease: [0.16, 1, 0.3, 1] }
+            }}
+            onLoad={() => setIsImageLoaded(true)}
           />
 
           {/* Quick Sizes Glass Bar - Frosted Light Reveal */}

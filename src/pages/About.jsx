@@ -11,7 +11,7 @@ const About = () => {
         <div className="relative z-10 max-w-4xl mx-auto animate-fade-in-up">
           <nav className="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-8 opacity-60 flex items-center justify-center space-x-3">
             <Link to="/" className="text-text-secondary hover:text-accent transition-colors duration-300">Home</Link>
-            <span className="text-text-secondary/50">/</span>
+            <span className="text-text-secondary/80">/</span>
             <strong className="text-accent font-medium">About Us</strong>
           </nav>
           <h1 className="font-display italic text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-accent mb-6 leading-none tracking-tight shadow-accent/10 drop-shadow-sm">
@@ -41,7 +41,7 @@ const About = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="order-2 lg:order-1 relative group rounded-2xl overflow-hidden shadow-2xl shadow-primary/50">
             <div className="absolute inset-0 bg-accent/10 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
-            <img 
+            <img loading="lazy" 
               src="https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1600&auto=format&fit=crop" 
               alt="Fenrir Era Craftsmanship" 
               className="w-full h-[500px] md:h-[600px] object-cover grayscale-[0.8] brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"

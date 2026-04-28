@@ -132,7 +132,7 @@ export default function GraphicsTab() {
                         className="group relative bg-white aspect-square border border-black/5 flex flex-col items-center justify-center hover:border-[#d4c4b1]/30 hover:bg-[#d4c4b1]/5 transition-all duration-500 rounded-2xl overflow-hidden shadow-sm"
                     >
                         <div className="absolute inset-0 bg-gradient-to-tr from-[#d4c4b1]/0 to-[#d4c4b1]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <img
+                        <img loading="lazy" 
                             src={item.file}
                             alt={item.name}
                             className="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-500 mb-2 p-2"

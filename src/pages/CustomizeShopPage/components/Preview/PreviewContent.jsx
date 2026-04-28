@@ -267,7 +267,7 @@ export default function PreviewContent() {
 
                 {/* T-Shirt Display */}
                 <div className="relative w-full max-w-2xl aspect-[4/5] flex items-center justify-center">
-                    {/* <img
+                    {/* <img loading="lazy" 
                         alt="T-Shirt Base"
                         src={mockups[baseColor][viewSide]}
                         className={`w-full h-full object-contain transition-all duration-500 ${baseColor === 'black' ? 'brightness-75' : 'brightness-100'} drop-shadow-[0_35px_35px_rgba(0,0,0,0.6)]`}
@@ -276,7 +276,7 @@ export default function PreviewContent() {
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="w-[70%] h-[60%] relative flex items-center justify-center">
                             {previewImage ? (
-                                <img
+                                <img loading="lazy" 
                                     src={previewImage}
                                     alt="User Design"
                                     className="max-w-full max-h-full object-contain opacity-90"

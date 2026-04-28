@@ -39,7 +39,7 @@ const ContactUs = () => {
         <div className="relative z-10 max-w-4xl mx-auto animate-fade-in-up">
           <nav className="text-[10px] sm:text-xs tracking-[0.3em] uppercase mb-8 opacity-60 flex items-center justify-center space-x-3">
             <Link to="/" className="text-text-secondary hover:text-accent transition-colors duration-300">Home</Link>
-            <span className="text-text-secondary/50">/</span>
+            <span className="text-text-secondary/80">/</span>
             <strong className="text-accent font-medium">Contact Us</strong>
           </nav>
           <h1 className="font-display italic text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-accent mb-6 leading-none tracking-tight shadow-accent/10 drop-shadow-sm">
@@ -100,7 +100,7 @@ const ContactUs = () => {
           {/* Left: Image / Branding */}
           <div className="relative group rounded-2xl overflow-hidden shadow-2xl shadow-primary/50 h-full min-h-[500px]">
             <div className="absolute inset-0 bg-accent/10 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
-            <img 
+            <img loading="lazy" 
               src="https://images.unsplash.com/photo-1555529771-835f59fc5efe?q=80&w=1600&auto=format&fit=crop" 
               alt="Fenrir Era Support" 
               className="w-full h-full object-cover grayscale-[0.8] brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] absolute inset-0"
@@ -144,7 +144,7 @@ const ContactUs = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/40 text-sm rounded-xl"
+                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/70 text-sm rounded-xl"
                   required
                 />
               </div>
@@ -158,7 +158,7 @@ const ContactUs = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="john@example.com"
-                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/40 text-sm rounded-xl"
+                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/70 text-sm rounded-xl"
                   required
                 />
               </div>
@@ -172,7 +172,7 @@ const ContactUs = () => {
                   onChange={handleChange}
                   placeholder="How can we help you?"
                   rows="5"
-                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/40 text-sm rounded-xl resize-none"
+                  className="w-full bg-primary border border-[#2a2a2a] px-5 py-4 focus:border-accent focus:outline-none transition-colors duration-300 text-text-primary placeholder:text-text-secondary/70 text-sm rounded-xl resize-none"
                   required
                 ></textarea>
               </div>

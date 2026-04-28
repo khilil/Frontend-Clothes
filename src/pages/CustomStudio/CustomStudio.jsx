@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Palette, Wand2, Star, CheckCircle2, ShoppingBag, ArrowRight, Sparkles, Layout, MousePointer2, CheckCircle } from 'lucide-react';
@@ -11,8 +11,13 @@ const CustomStudio = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const isFetching = useRef(false);
+
     useEffect(() => {
         const loadCustomProducts = async () => {
+            if (isFetching.current) return;
+            isFetching.current = true;
+            
             setLoading(true);
             try {
                 const data = await fetchProducts({
@@ -24,6 +29,7 @@ const CustomStudio = () => {
                 console.error("Error fetching custom products:", error);
             } finally {
                 setLoading(false);
+                isFetching.current = false;
             }
         };
         loadCustomProducts();
@@ -110,20 +116,45 @@ const CustomStudio = () => {
                         </div>
                     </div>
 
-                    {loading ? (
-                        <SkeletonCards count={8} />
-                    ) : products.length > 0 ? (
-                        <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12 studio-product-grid">
-                            {products.map((product, idx) => (
-                                <ProductCard key={product._id || idx} product={product} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-32 text-center border border-dashed border-border-subtle rounded-3xl">
-                            <ShoppingBag className="w-12 h-12 text-text-secondary/20 mb-4" />
-                            <p className="text-sm uppercase tracking-widest text-text-secondary">No customizable products found at the moment.</p>
-                        </div>
-                    )}
+                    <AnimatePresence mode="wait">
+                        {loading ? (
+                            <motion.div
+                                key="skeleton"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.4 }}
+                            >
+                                <SkeletonCards 
+                                    count={8} 
+                                    gridClass="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12 studio-product-grid" 
+                                />
+                            </motion.div>
+                        ) : products.length > 0 ? (
+                            <motion.div
+                                key="products"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[15px] lg:gap-8 lg:gap-y-12 studio-product-grid"
+                            >
+                                {products.map((product, idx) => (
+                                    <ProductCard key={product.slug || product._id || idx} product={product} />
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="empty"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex flex-col items-center justify-center py-32 text-center border border-dashed border-border-subtle rounded-3xl"
+                            >
+                                <ShoppingBag className="w-12 h-12 text-text-secondary/80 mb-4" />
+                                <p className="text-sm uppercase tracking-widest text-text-secondary">No customizable products found at the moment.</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </section>
 

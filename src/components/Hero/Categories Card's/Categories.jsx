@@ -46,7 +46,7 @@ function Categories() {
             viewport={{ once: true }}
           >
             <span className="text-[10px] font-black tracking-[0.5em] text-accent uppercase mb-2 md:mb-6 block">STUDIO SPECIFICATIONS</span>
-            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black text-text-primary">SERIES 01 <br /> <span className="font-light text-text-secondary/40">// VANGUARD</span></h2>
+            <h2 className="font-oswald text-4xl md:text-[64px] lg:text-[80px] leading-[0.9] tracking-[-0.02em] uppercase font-black text-text-primary">SERIES 01 <br /> <span className="font-light text-text-secondary/70">// VANGUARD</span></h2>
           </motion.div>
 
           <motion.div
@@ -88,7 +88,7 @@ function Categories() {
                 onClick={() => navigate(`/category/${item.slug}`)}
               >
                 <div className="relative w-full h-full overflow-hidden">
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
+                  <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/90 opacity-100 transition-opacity duration-[0.4s] ease-in"></div>
 
                   <div className="absolute inset-0 p-4 md:p-10 flex flex-col justify-between z-10">

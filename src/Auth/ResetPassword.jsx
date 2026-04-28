@@ -68,7 +68,7 @@ export default function ResetPassword() {
                                     <CheckCircle2 className="text-accent" size={24} />
                                 </div>
                                 <p className="text-sm text-text-secondary/60 mb-8">{message}</p>
-                                <p className="text-[9px] uppercase tracking-widest text-text-secondary/40">Redirecting to login...</p>
+                                <p className="text-[9px] uppercase tracking-widest text-text-secondary/70">Redirecting to login...</p>
                             </motion.div>
                         ) : (
                             <motion.form
@@ -99,13 +99,13 @@ export default function ResetPassword() {
                                             required
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full bg-secondary border border-border-subtle rounded-xl px-5 py-4 text-text-primary text-xs tracking-wider focus:outline-none focus:border-accent focus:bg-background transition-all placeholder:text-text-secondary/20 pr-12"
+                                            className="w-full bg-secondary border border-border-subtle rounded-xl px-5 py-4 text-text-primary text-xs tracking-wider focus:outline-none focus:border-accent focus:bg-background transition-all placeholder:text-text-secondary/80 pr-12"
                                             placeholder="Enter new private key"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary/40 hover:text-text-primary transition-colors"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary/70 hover:text-text-primary transition-colors"
                                         >
                                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
@@ -121,7 +121,7 @@ export default function ResetPassword() {
                                         required
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="w-full bg-secondary border border-border-subtle rounded-xl px-5 py-4 text-text-primary text-xs tracking-wider focus:outline-none focus:border-accent focus:bg-background transition-all placeholder:text-text-secondary/20"
+                                        className="w-full bg-secondary border border-border-subtle rounded-xl px-5 py-4 text-text-primary text-xs tracking-wider focus:outline-none focus:border-accent focus:bg-background transition-all placeholder:text-text-secondary/80"
                                         placeholder="Repeat private key"
                                     />
                                 </div>
