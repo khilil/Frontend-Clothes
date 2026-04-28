@@ -49,33 +49,32 @@ const Profile = () => {
         <h2 className="text-5xl font-impact tracking-tight mb-3 text-black">Identity Registry</h2>
         <p className="text-black/30 text-[10px] uppercase tracking-[0.4em] font-black">
           {isEditing
-            ? "Modification in progress // Synchronizing personal parameters"
-            : "Authorized access // Personal security protocols active"}
+            ? "Update your personal information"
+            : "Manage your personal information"}
         </p>
       </div>
 
       {/* 📑 DATA CARD */}
       <div className="relative bg-white border border-black/[0.03] shadow-[0_40px_100px_rgba(0,0,0,0.03)] rounded-[2.5rem] p-6 sm:p-10 md:p-14 overflow-hidden group/card before:content-[''] before:absolute before:top-0 before:left-0 before:w-[2px] before:h-full before:bg-[#8b7e6d] before:shadow-[0_0_20px_rgba(139,126,109,0.2)] before:opacity-30">
-        <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black">Registry Level 01</div>
-        <h3 className="text-2xl font-impact tracking-tight text-black mb-12 uppercase">Principal Parameters</h3>
+        <h3 className="text-2xl font-impact tracking-tight text-black mb-12 uppercase">Personal Details</h3>
 
         {!isEditing ? (
           /* ================= VIEW MODE ================= */
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 md:gap-x-20 gap-y-8 md:gap-y-10">
-              <ViewField label="Identity Index" value={profile.fullName} />
-              <ViewField label="Communication Node" value={profile.email} />
-              <ViewField label="Mobile Signal" value={profile.mobile} />
-              <ViewField label="Access Protocol" value={profile.password} />
+              <ViewField label="Full Name" value={profile.fullName} />
+              <ViewField label="Email Address" value={profile.email} />
+              <ViewField label="Mobile Number" value={profile.mobile} />
+              <ViewField label="Password" value={"••••••••"} />
               <ViewField
-                label="Existence Timestamp"
-                value={new Date(profile.dob).toLocaleDateString("en-GB", {
+                label="Date of Birth"
+                value={profile.dob ? new Date(profile.dob).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
-                })}
+                }) : "N/A"}
               />
-              <ViewField label="Genetic Trait" value={profile.gender} />
+              <ViewField label="Gender" value={profile.gender || "N/A"} />
             </div>
 
             <div className="mt-14 pt-10 border-t border-black/[0.03] flex flex-wrap gap-10">
@@ -84,7 +83,7 @@ const Profile = () => {
                 onClick={() => setIsEditing(true)}
               >
                 <span className="material-symbols-outlined text-xl group-hover/btn:rotate-12 transition-transform">edit_note</span>
-                Modify Registry
+                Edit Profile
               </button>
 
               <button className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-black/30 hover:text-black transition-all group/btn">
@@ -94,7 +93,7 @@ const Profile = () => {
 
               <button className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/60 hover:text-rose-600 transition-all group/btn ml-auto" onClick={handleLogout}>
                 <span className="material-symbols-outlined text-xl group-hover/btn:translate-x-1 transition-transform">logout</span>
-                Terminal Shutdown
+                Logout
               </button>
             </div>
 
@@ -104,34 +103,34 @@ const Profile = () => {
           <form onSubmit={handleSave}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 md:gap-x-20 gap-y-8 md:gap-y-10">
               <EditField
-                label="Identity Index"
+                label="Full Name"
                 name="fullName"
                 value={draft.fullName}
                 onChange={handleChange}
               />
 
               <EditField
-                label="Communication Node"
+                label="Email Address"
                 value={draft.email}
                 disabled
               />
 
               <EditField
-                label="Mobile Signal"
+                label="Mobile Number"
                 name="mobile"
                 value={draft.mobile}
                 onChange={handleChange}
               />
 
               <EditField
-                label="Access Protocol"
-                value={draft.password}
+                label="Password"
+                value={"••••••••"}
                 disabled
                 type="password"
               />
 
               <EditField
-                label="Existence Timestamp"
+                label="Date of Birth"
                 type="date"
                 name="dob"
                 value={draft.dob}
@@ -139,7 +138,7 @@ const Profile = () => {
               />
 
               <div className="flex flex-col gap-4">
-                <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Genetic Trait</label>
+                <label className="text-[9px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Gender</label>
                 <select
                   name="gender"
                   value={draft.gender}
@@ -149,21 +148,21 @@ const Profile = () => {
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Non-binary">Non-binary</option>
-                  <option value="Redacted">Redacted</option>
+                  <option value="Rather not say">Rather not say</option>
                 </select>
               </div>
             </div>
 
             <div className="mt-8 md:mt-[60px] pt-10 border-t border-black/[0.03] flex flex-col md:flex-row items-center gap-5 md:gap-8">
               <button type="submit" className="w-full md:w-auto bg-black text-white px-12 py-4.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] cursor-pointer shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-all duration-500 hover:bg-[#8b7e6d] hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(139,126,109,0.3)]">
-                SYNCHRONIZE
+                Save Changes
               </button>
               <button
                 type="button"
                 className="w-full md:w-auto bg-transparent border border-black/10 text-black/40 px-12 py-4.5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] cursor-pointer transition-all duration-300 hover:border-black hover:text-black hover:bg-black/[0.02]"
                 onClick={handleCancel}
               >
-                ABORT
+                Cancel
               </button>
             </div>
           </form>
@@ -178,13 +177,13 @@ const Profile = () => {
               <div className="w-[52px] h-[52px] bg-black/[0.02] border border-black/[0.03] rounded-xl flex items-center justify-center text-[#8b7e6d] transition-all duration-500 group-hover/opt:bg-black group-hover/opt:border-black group-hover/opt:text-white group-hover/opt:rotate-12">
                 <span className="material-symbols-outlined">alternate_email</span>
               </div>
-              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Signal Preferences</h4>
+              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Notification Preferences</h4>
             </div>
 
             <p className="text-[11px] text-black/30 leading-[1.8] mb-8 uppercase font-bold tracking-[0.1em]">
-              Control incoming data regarding marketing synchronizations and transaction alerts.
+              Manage your marketing and order update emails.
             </p>
-            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Configure Signals</a>
+            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Manage Notifications</a>
           </div>
 
           <div className="bg-white border border-black/[0.03] rounded-3xl md:rounded-[32px] p-8 md:p-10 relative overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.02)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(0,0,0,0.05)] hover:border-black/[0.06] group/opt">
@@ -192,13 +191,13 @@ const Profile = () => {
               <div className="w-[52px] h-[52px] bg-black/[0.02] border border-black/[0.03] rounded-xl flex items-center justify-center text-[#8b7e6d] transition-all duration-500 group-hover/opt:bg-black group-hover/opt:border-black group-hover/opt:text-white group-hover/opt:rotate-12">
                 <span className="material-symbols-outlined">fingerprint</span>
               </div>
-              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Biometric Security</h4>
+              <h4 className="font-impact text-xl uppercase tracking-[0.05em] text-black">Account Security</h4>
             </div>
 
             <p className="text-[11px] text-black/30 leading-[1.8] mb-8 uppercase font-bold tracking-[0.1em]">
-              Multi-factor authentication and management of active session traces across nodes.
+              Manage your login sessions and account security.
             </p>
-            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Verify Identity</a>
+            <a href="#" className="text-[9px] font-black tracking-[0.3em] uppercase text-[#8b7e6d] flex items-center gap-3 transition-all duration-300 group-hover/opt:text-black group-hover/opt:gap-4 after:content-['→'] after:text-[14px]">Manage Security</a>
           </div>
         </div>
       )}

@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <aside className="hidden lg:block w-72 flex-shrink-0 sticky top-40 h-fit">
             <div className="border-r border-black/[0.03] pr-5 space-y-2">
                 <div className="px-6 mb-8">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30 animate-pulse">Management Protocol</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Account Menu</h3>
                 </div>
 
                 {navLinks.map((link) => (
@@ -55,7 +55,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                         className="w-full flex items-center gap-5 px-8 py-5 rounded-2xl text-rose-500/60 hover:text-rose-600 hover:bg-rose-500/5 transition-all group"
                     >
                         <span className="material-symbols-outlined text-[22px] group-hover:rotate-12 transition-transform">logout</span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Deactivate Session</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Logout</span>
                     </button>
                 </div>
             </div>

@@ -47,7 +47,7 @@ const AccountLayout = () => {
           </div>
           <div>
             <p className="text-black text-[14px] font-black uppercase tracking-tight">{user?.name || 'User'}</p>
-            <p className="text-[#8b7e6d] text-[10px] font-black uppercase tracking-[0.3em]">Architect Member</p>
+            <p className="text-[#8b7e6d] text-[10px] font-black uppercase tracking-[0.3em]">Premium Member</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ const AccountLayout = () => {
             className="w-full flex items-center gap-5 py-5 px-6 rounded-2xl text-rose-500/60 hover:text-rose-600 hover:bg-rose-500/5 transition-all group"
           >
             <span className="material-symbols-outlined text-[20px] group-hover:rotate-12 transition-transform">logout</span>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Logout Protocol</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Logout</span>
           </button>
         </div>
       </aside>

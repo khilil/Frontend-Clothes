@@ -138,7 +138,7 @@ const Orders = () => {
       {/* HEADER */}
       <header className="mb-16">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-impact tracking-tight mb-3 text-black">Order History</h2>
-        <p className="text-black/30 text-[9px] sm:text-[10px] uppercase tracking-[0.4em] font-black">Archive Trace: Tracking your luxury acquisitions</p>
+        <p className="text-black/30 text-[9px] sm:text-[10px] uppercase tracking-[0.4em] font-black">Track your orders and purchases</p>
       </header>
 
       {orders.length === 0 ? (
@@ -148,10 +148,10 @@ const Orders = () => {
           className="py-40 text-center bg-white border border-dashed border-gray-200 rounded-3xl"
         >
           <p className="text-black/20 uppercase tracking-[0.5em] text-[10px] font-black">
-            Empty Archive: No Transaction Traces Detected
+            No orders found
           </p>
           <Link to="/" className="inline-block mt-8 text-[9px] font-black uppercase tracking-widest bg-black text-white px-8 py-4 rounded-xl hover:bg-accent hover:text-black transition-all">
-            Initiate New Transaction
+            Start Shopping
           </Link>
         </motion.div>
       ) : (
@@ -171,11 +171,11 @@ const Orders = () => {
                   <div className="p-5 sm:p-6 md:p-12 bg-black/[0.01] border-b border-black/[0.03] flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-10">
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 md:gap-20">
                       <div>
-                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Cycle Log</p>
+                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Order Date</p>
                         <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">{new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                       </div>
                       <div className="text-right sm:text-left">
-                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Protocol ID</p>
+                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2">Order ID</p>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                           <p className="text-[11px] sm:text-[13px] font-black uppercase text-black">{order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}</p>
                           {order.orderType === 'PICKUP' && (
@@ -184,7 +184,7 @@ const Orders = () => {
                         </div>
                       </div>
                       <div className="col-span-2 lg:col-span-1 border-t sm:border-t-0 pt-4 sm:pt-0">
-                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2 text-center lg:text-left">Investment</p>
+                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/20 mb-1 sm:mb-2 text-center lg:text-left">Total Amount</p>
                         <p className="text-[18px] sm:text-[20px] md:text-[24px] font-impact tracking-tight text-black text-center lg:text-left leading-none">₹{order.totalAmount.toLocaleString()}</p>
                       </div>
                     </div>
@@ -219,7 +219,7 @@ const Orders = () => {
                         {order.items[0]?.title} {order.items.length > 1 && `[ +${order.items.length - 1} MORE ]`}
                       </p>
                       <p className="text-[9px] sm:text-[11px] text-black/30 md:max-w-md uppercase tracking-[0.3em] font-black leading-relaxed">
-                        {order.orderStatus === 'delivered' ? `Transaction finalized on ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : `Active logistics protocol: ${order.orderStatus} state.`}
+                        {order.orderStatus === 'delivered' ? `Delivered on ${new Date(order.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : `Current status: ${order.orderStatus}.`}
                       </p>
                       {order.orderStatus === 'cancelled' && order.cancellationReason && (
                         <p className="text-[9px] sm:text-[10px] text-rose-500/80 uppercase tracking-[0.2em] font-black bg-rose-500/5 px-4 py-2 rounded-xl border border-rose-500/10 w-fit">
@@ -237,7 +237,7 @@ const Orders = () => {
                         to={`/account/orders/${order._id}`}
                         className="flex-1 lg:flex-none px-8 sm:px-12 py-4 sm:py-5 bg-black text-white text-center rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#8b7e6d] transition-all hover:scale-105 active:scale-95 shadow-[0_15px_30px_rgba(0,0,0,0.1)]"
                       >
-                        View Protocol
+                        View Details
                       </Link>
                     </div>
                   </div>

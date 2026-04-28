@@ -15,11 +15,11 @@ import SEO from "../../../components/common/SEO";
 export default function ProductDetailPage() {
     const { slug } = useParams();
     const [product, setProduct] = useState(null);
+    const [productReviews, setProductReviews] = useState([]);
     const [offers, setOffers] = useState([]);
     const [page, setPage] = useState(0);
     const [direction, setDirection] = useState(0);
     const activeImage = page;
-
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedColor, setSelectedColor] = useState(null);
     const [pincode, setPincode] = useState("");
@@ -528,11 +528,14 @@ export default function ProductDetailPage() {
                                     <div className="w-px h-6 bg-border-subtle"></div>
                                     <div className="flex items-center gap-3">
                                         <div className="flex text-accent-contrast">
-                                            {[1, 2, 3, 4, 5].map(n => (
-                                                <span key={n} className="material-symbols-outlined !text-sm">star</span>
+                                            {Array.from({ length: productReviews.length ? Math.round(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length) : 5 }).map((_, n) => (
+                                                <span key={n} className="material-symbols-outlined !text-sm fill-star">star</span>
+                                            ))}
+                                            {Array.from({ length: 5 - (productReviews.length ? Math.round(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length) : 5) }).map((_, n) => (
+                                                <span key={n} className="material-symbols-outlined !text-sm">star_border</span>
                                             ))}
                                         </div>
-                                        <span className="text-[10px] font-black tracking-widest text-text-muted">15.2K REVIEWS</span>
+                                        <span className="text-[10px] font-black tracking-widest text-text-muted">{productReviews.length} REVIEWS</span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -870,7 +873,7 @@ export default function ProductDetailPage() {
 
             {/* Bottom Sections */}
             <div className="mt-20 border-t border-border-subtle">
-                <Reviews />
+                <Reviews productId={product._id} onReviewsLoaded={setProductReviews} />
                 <CollectiveFooter />
             </div>
 

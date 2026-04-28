@@ -61,7 +61,7 @@ const CancelOrder = () => {
             <div className="flex-1 pb-20 flex items-center justify-center min-h-[400px]">
                 <div className="animate-pulse flex flex-col items-center gap-4">
                     <div className="w-12 h-12 rounded-full border-4 border-black/10 border-t-black animate-spin"></div>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-black/40">Loading Protocol...</p>
+                    <p className="text-[10px] uppercase font-black tracking-widest text-black/40">Loading...</p>
                 </div>
             </div>
         );
@@ -70,9 +70,9 @@ const CancelOrder = () => {
     if (!order) {
         return (
             <div className="flex-1 pb-20 text-center py-40">
-                <p className="text-black/20 uppercase tracking-[0.5em] text-[10px] font-black">Order Not Found</p>
+                <p className="text-black/20 uppercase tracking-[0.5em] text-[10px] font-black">Order not found</p>
                 <Link to="/account/orders" className="inline-block mt-8 text-[9px] font-black uppercase tracking-widest bg-black text-white px-8 py-4 rounded-xl hover:bg-accent hover:text-black transition-all">
-                    Return to Archive
+                    Back to Orders
                 </Link>
             </div>
         );
@@ -86,7 +86,7 @@ const CancelOrder = () => {
                     <Link to={`/account/orders/${orderId}`} className="text-[9px] font-black uppercase tracking-widest text-black/40 hover:text-black flex items-center gap-2 mb-4 transition-colors">
                         <span className="material-symbols-outlined text-sm">arrow_back</span> Back to Details
                     </Link>
-                    <h2 className="text-3xl sm:text-4xl font-impact tracking-tight mb-2 text-black uppercase">Cancel Protocol</h2>
+                    <h2 className="text-3xl sm:text-4xl font-impact tracking-tight mb-2 text-black uppercase">Cancel Order</h2>
                     <p className="text-black/30 text-[9px] uppercase tracking-[0.4em] font-black">
                         Order ID: {order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}
                     </p>
@@ -166,7 +166,7 @@ const CancelOrder = () => {
                         onClick={() => navigate(`/account/orders/${orderId}`)}
                         className="flex-1 py-4 border border-black/10 hover:bg-black/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-black/40 hover:text-black transition-all text-center"
                     >
-                        Retain Transaction
+                        Keep Order
                     </button>
                     <button 
                         onClick={handleCancelSubmit}

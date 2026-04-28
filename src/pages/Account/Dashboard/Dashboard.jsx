@@ -55,7 +55,7 @@ const Dashboard = () => {
     >
       <header className="pr-4">
         <h1 className="text-2xl sm:text-4xl md:text-5xl font-impact tracking-tight mb-3 text-black leading-tight sm:leading-none">Welcome back, {user?.name?.split(" ")[0] || "Friend"}!</h1>
-        <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.4em] text-black/40">Operational Status: Optimal // Core Member</p>
+        <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.4em] text-black/40">Premium Member</p>
       </header>
 
       {/* STATS GRID */}
@@ -96,7 +96,7 @@ const Dashboard = () => {
         >
           <div className="flex justify-between items-start mb-4 sm:mb-6">
             <span className="material-symbols-outlined text-3xl sm:text-4xl text-[#8b7e6d] group-hover:scale-110 transition-transform">favorite_border</span>
-            <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-[#8b7e6d]">Archive</span>
+            <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-[#8b7e6d]">Wishlist</span>
           </div>
           <p className="text-3xl sm:text-4xl font-impact tracking-tight text-black">{(wishlist?.length || 0).toString().padStart(2, '0')}</p>
           <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-black/30 mt-2">Wishlist Items</p>
@@ -111,7 +111,7 @@ const Dashboard = () => {
             to="/account/orders"
             className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 hover:text-black transition-colors"
           >
-            Access Full Logs
+            View All Orders
           </Link>
         </div>
 
@@ -128,7 +128,7 @@ const Dashboard = () => {
                 </div>
                 <div className="space-y-2 sm:space-y-3 flex-1 min-w-0">
                   <div className="flex items-center gap-3">
-                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-black/20">Protocol #{recentOrder._id.slice(-8).toUpperCase()}</p>
+                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-black/20">Order #{recentOrder._id.slice(-8).toUpperCase()}</p>
                     <span className={`sm:hidden px-3 py-1 text-[7px] font-black uppercase tracking-[0.2em] rounded-full border ${recentOrder.orderStatus === 'delivered' ? 'bg-black/5 text-black/40 border-black/5' : 'bg-[#8b7e6d]/10 text-[#8b7e6d] border-[#8b7e6d]/20'}`}>
                       {recentOrder.orderStatus}
                     </span>
@@ -136,7 +136,7 @@ const Dashboard = () => {
                   <p className="text-[13px] sm:text-[15px] font-black uppercase tracking-tight text-black truncate pr-2">
                     {recentOrder.items?.[0]?.title} {recentOrder.items?.length > 1 && `+${recentOrder.items.length - 1}`}
                   </p>
-                  <p className="text-[9px] sm:text-[10px] text-black/40 uppercase tracking-[0.2em] font-black">Logged: {new Date(recentOrder.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p>
+                  <p className="text-[9px] sm:text-[10px] text-black/40 uppercase tracking-[0.2em] font-black">Placed: {new Date(recentOrder.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-10 border-t border-black/[0.03] pt-5 sm:pt-0 sm:border-0">
@@ -150,12 +150,12 @@ const Dashboard = () => {
                   to="/account/orders"
                   className={`flex-1 sm:flex-none text-center px-10 py-5 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 ${recentOrder.orderStatus === 'delivered' ? 'border border-black/10 text-black hover:bg-black hover:text-white' : 'bg-black text-white hover:bg-[#8b7e6d]'}`}
                 >
-                  {recentOrder.orderStatus === 'delivered' ? 'Review Log' : 'Trace Order'}
+                  {recentOrder.orderStatus === 'delivered' ? 'Leave Review' : 'Track Order'}
                 </Link>
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-black/20 uppercase tracking-[0.5em] py-20 text-center bg-white border border-dashed border-black/10 rounded-[3rem]">No transactions detected in primary archive.</p>
+            <p className="text-[11px] text-black/20 uppercase tracking-[0.5em] py-20 text-center bg-white border border-dashed border-black/10 rounded-[3rem]">No orders placed yet.</p>
           )}
         </div>
       </section>
@@ -181,12 +181,12 @@ const Dashboard = () => {
                     <span className="material-symbols-outlined text-white text-3xl">visibility</span>
                   </div>
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/20 truncate">{product.title || `Discovery Protocol 00${i+1}`}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/20 truncate">{product.title || `Product 00${i+1}`}</p>
                 <p className="text-[15px] font-impact mt-2 text-black tracking-tight">₹{product.price || '4,990'}</p>
               </Link>
             </motion.div>
           )) : (
-            <p className="text-[11px] text-black/20 uppercase tracking-[0.5em] py-10 col-span-full text-center">Awaiting discovery parameters...</p>
+            <p className="text-[11px] text-black/20 uppercase tracking-[0.5em] py-10 col-span-full text-center">No items found.</p>
           )}
         </div>
       </section>

@@ -63,7 +63,7 @@ const OrderDetails = () => {
         return (
             <div className="flex items-center justify-center py-40 min-h-screen">
                 <div className="animate-pulse text-black uppercase tracking-[0.6em] font-black text-[10px]">
-                    [ RETRIEVING PROTOCOL DATA ]
+                    Loading order details...
                 </div>
             </div>
         );
@@ -73,10 +73,10 @@ const OrderDetails = () => {
         return (
             <div className="flex flex-col items-center justify-center py-40 min-h-screen">
                 <p className="text-black/20 uppercase tracking-[0.5em] text-[10px] font-black">
-                    Error: Protocol Trace Not Found
+                    Order not found
                 </p>
                 <Link to="/account/orders" className="inline-block mt-8 text-[9px] font-black uppercase tracking-widest bg-black text-white px-8 py-4 rounded-xl hover:bg-accent hover:text-black transition-all">
-                    Return to Archives
+                    Back to Orders
                 </Link>
             </div>
         );
@@ -100,11 +100,11 @@ const OrderDetails = () => {
                 <div>
                     <Link to="/account/orders" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-black/30 hover:text-black mb-6 transition-all group/back">
                         <span className="material-symbols-outlined text-base group-hover/back:-translate-x-1 transition-transform">arrow_back</span>
-                        Archive Retrieval
+                        Back to Orders
                     </Link>
-                    <h2 className="text-4xl md:text-5xl font-impact tracking-tight mb-2 text-black">Protocol {order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}</h2>
+                    <h2 className="text-4xl md:text-5xl font-impact tracking-tight mb-2 text-black">Order {order.orderNumber || `#MM-${order._id.slice(-8).toUpperCase()}`}</h2>
                     <p className="text-black/20 text-[10px] uppercase tracking-[0.4em] font-black">
-                        Logged on {new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} // {new Date(order.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                        Placed on {new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} // {new Date(order.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto mt-6 md:mt-0">
@@ -115,15 +115,15 @@ const OrderDetails = () => {
                             className="flex items-center justify-center gap-3 px-8 py-4 border border-red-500/20 bg-red-500/10 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] text-red-600 hover:bg-red-500 hover:text-white transition-all group w-full sm:w-auto disabled:opacity-50 shadow-[0_10px_30px_rgba(239,68,68,0.1)]"
                         >
                             <span className="material-symbols-outlined text-base group-hover:rotate-90 transition-transform">close</span>
-                            {isCancelling ? "Terminating..." : "Cancel Protocol"}
+                            {isCancelling ? "Cancelling..." : "Cancel Order"}
                         </button>
                     )}
                     <button className="flex items-center justify-center gap-3 px-8 py-4 border border-black/5 bg-black/5 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] text-black/60 hover:bg-black/10 hover:text-black transition-all group w-full sm:w-auto">
                         <span className="material-symbols-outlined text-base group-hover:translate-y-0.5 transition-transform">download</span>
-                        Export Manifest
+                        Download Invoice
                     </button>
                     <button className="px-10 py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-[#8b7e6d] transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.1)] w-full sm:w-auto">
-                        Acquire Again
+                        Buy Again
                     </button>
                 </div>
             </header>
@@ -138,20 +138,20 @@ const OrderDetails = () => {
                     <div className="relative z-10">
                         <h3 className="text-2xl md:text-3xl font-impact tracking-tight text-red-600 uppercase">Order Cancelled</h3>
                         <p className="text-red-500/60 text-[10px] uppercase tracking-[0.3em] font-black mt-2">
-                            This protocol has been terminated. Stock has been restored to inventory.
+                            This order has been cancelled.
                         </p>
                     </div>
                 </div>
             ) : (
                 /* TIMELINE */
                 <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 md:p-14 mb-10 relative overflow-hidden group/timeline shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-                    <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black hidden sm:block">Status Stream active</div>
+                    <div className="absolute top-0 right-0 p-5 opacity-10 uppercase text-[8px] font-black tracking-widest text-black hidden sm:block">Realtime Order Tracking</div>
                     
                     {/* Desktop Horizontal Timeline */}
                     <div className="hidden sm:flex relative justify-between gap-4">
                         <div className="absolute top-[7px] left-0 w-full h-[1px] bg-black/5 -z-0"></div>
                         {order.orderType === 'PICKUP' ? (
-                            ['Placed', 'Processing', 'Ready for Pickup', 'Finalized'].map((step, idx) => {
+                            ['Placed', 'Processing', 'Ready for Pickup', 'Delivered'].map((step, idx) => {
                                 const isComplete = idx < currentIdx;
                                 const isActive = idx === currentIdx;
                                 return (
@@ -159,15 +159,12 @@ const OrderDetails = () => {
                                         <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-purple-500 scale-125 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
                                         <div className="text-center">
                                             <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
-                                            {isActive && (
-                                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping"></div>
-                                            )}
                                         </div>
                                     </div>
                                 );
                             })
                         ) : (
-                            ['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
+                            ['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Delivered'].map((step, idx) => {
                                 const isComplete = idx < currentIdx;
                                 const isActive = idx === currentIdx;
 
@@ -176,9 +173,6 @@ const OrderDetails = () => {
                                         <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-[#f8f9fa] transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
                                         <div className="text-center">
                                             <p className="text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap">{step}</p>
-                                            {isActive && (
-                                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#8b7e6d] rounded-full animate-ping"></div>
-                                            )}
                                         </div>
                                     </div>
                                 );
@@ -189,7 +183,7 @@ const OrderDetails = () => {
                     {/* Mobile Vertical Timeline */}
                     <div className="sm:hidden space-y-8 relative">
                         <div className="absolute left-[7px] top-0 bottom-0 w-[1px] bg-black/5 -z-0"></div>
-                        {['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Finalized'].map((step, idx) => {
+                        {['Placed', 'Processing', 'In Production', 'Ready', 'Shipped', 'Delivered'].map((step, idx) => {
                             const isComplete = idx < currentIdx;
                             const isActive = idx === currentIdx;
 
@@ -198,7 +192,7 @@ const OrderDetails = () => {
                                     <div className={`w-3.5 h-3.5 rounded-full ring-8 ring-white transition-all duration-700 ${isActive ? 'bg-[#8b7e6d] scale-125 shadow-[0_0_15px_rgba(139,126,109,0.5)]' : isComplete ? 'bg-black/40' : 'bg-black/5'}`}></div>
                                     <div className="flex-1">
                                         <p className="text-[10px] font-black uppercase tracking-[0.3em]">{step}</p>
-                                        {isActive && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[#8b7e6d] mt-1">Active Protocol Stage</p>}
+                                        {isActive && <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[#8b7e6d] mt-1">Current order step</p>}
                                     </div>
                                 </div>
                             );
@@ -223,14 +217,14 @@ const OrderDetails = () => {
                                 <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
                                     <span className="material-symbols-outlined text-xl">verified</span>
                                 </div>
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-purple-600">Active Authentication</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-purple-600">Secure Pass</span>
                             </div>
 
                             <h3 className="text-4xl sm:text-5xl font-impact tracking-tight text-black uppercase mb-4 leading-none">
                                 Digital Pickup <span className="text-purple-600">Pass</span>
                             </h3>
                             <p className="text-black/40 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] max-w-xs leading-relaxed mb-8">
-                                Present this encrypted token at the flagship store for priority acquisition.
+                                Present this pass at the store to pick up your order.
                             </p>
 
                             <div className="space-y-4">
@@ -262,7 +256,7 @@ const OrderDetails = () => {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-black/30">Verification Token</p>
+                                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-black/30">Verification Pass</p>
                                     <p className="text-2xl font-impact tracking-widest text-purple-600">#V-{order._id.slice(-6).toUpperCase()}</p>
                                 </div>
 
@@ -271,7 +265,7 @@ const OrderDetails = () => {
                                     className="mt-8 w-full py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-purple-600 transition-all flex items-center justify-center gap-2 group/btn shadow-xl shadow-black/10"
                                 >
                                     <span className="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">print</span>
-                                    Print Credentials
+                                    Print Pass
                                 </button>
                             </div>
                         </div>
@@ -284,7 +278,7 @@ const OrderDetails = () => {
                 <div className="lg:col-span-2 space-y-10">
                     <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden group/list shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
                         <div className="px-6 sm:px-10 py-6 sm:py-8 border-b border-black/[0.03] bg-black/[0.01] flex justify-between items-center">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Acquisition Items ({order.items?.length || 0})</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Order Items ({order.items?.length || 0})</h3>
                         </div>
                         <div className="divide-y divide-black/[0.03]">
                             {order.items?.map((item, idx) => (
@@ -328,13 +322,13 @@ const OrderDetails = () => {
                                                 )}
                                             </div>
                                             <p className="text-[10px] sm:text-[11px] text-black/30 uppercase tracking-[0.3em] font-black mb-4 sm:mb-6">
-                                                {item.size && `Dim: ${item.size}`} {item.color && ` // Chroma: ${item.color}`}
+                                                {item.size && `Size: ${item.size}`} {item.color && ` // Color: ${item.color}`}
                                             </p>
                                             <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.4em] text-[#8b7e6d]">Quantity: {item.quantity}</p>
                                         </div>
                                         <div className="flex justify-between items-center sm:items-end mt-6 sm:mt-8 border-t sm:border-t-0 border-black/[0.03] pt-4 sm:pt-0">
                                             <p className="text-xl sm:text-2xl font-impact tracking-tight text-black">₹{(item.priceAtPurchase || item.price * item.quantity).toLocaleString()}</p>
-                                            <button className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-black/20 hover:text-black transition-colors underline underline-offset-8 decoration-black/10 group-hover/item:decoration-[#8b7e6d]">Feedback Protocol</button>
+                                            <button className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-black/20 hover:text-black transition-colors underline underline-offset-8 decoration-black/10 group-hover/item:decoration-[#8b7e6d]">Leave a Review</button>
                                         </div>
                                     </div>
                                 </div>
@@ -348,24 +342,24 @@ const OrderDetails = () => {
                     {/* ORDER SUMMARY */}
                     <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden group/summary shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
                         <div className="px-6 sm:px-10 py-5 sm:py-6 border-b border-black/[0.03] bg-black/[0.01] flex items-center justify-between">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Statement Summary</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/30">Order Summary</h3>
                             <span className="material-symbols-outlined text-black/10 text-sm">receipt</span>
                         </div>
                         <div className="p-6 sm:p-10 space-y-5 sm:space-y-6">
                             <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] text-black/30">
-                                <span>Sub-Total Log</span>
+                                <span>Subtotal</span>
                                 <span className="text-black/60">₹{order.totalAmount.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] text-black/30">
-                                <span>Logistics Protocol</span>
-                                <span className="text-[#8b7e6d] animate-pulse">Standard Compulsory</span>
+                                <span>Shipping</span>
+                                <span className="text-[#8b7e6d] animate-pulse">Standard Shipping</span>
                             </div>
                             <div className="flex justify-between text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] text-black/30">
-                                <span>Chroma Tax</span>
+                                <span>Tax</span>
                                 <span className="text-black/60">₹0.00</span>
                             </div>
                             <div className="pt-6 sm:pt-8 border-t border-black/[0.03] flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                                <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-[0.4em] text-black">Total Investment</span>
+                                <span className="text-[11px] sm:text-[13px] font-black uppercase tracking-[0.4em] text-black">Total Price</span>
                                 <span className="text-2xl sm:text-3xl font-impact tracking-tight text-[#8b7e6d]">₹{order.totalAmount.toLocaleString()}</span>
                             </div>
                         </div>
@@ -374,7 +368,7 @@ const OrderDetails = () => {
                     {/* DESTINATION / PICKUP INFO */}
                     <div className="bg-white border border-black/[0.03] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden group/address shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
                         <div className="px-6 sm:px-10 py-5 sm:py-6 border-b border-black/[0.03] bg-black/[0.01] flex justify-between items-center text-black/40">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">{order.orderType === 'PICKUP' ? 'Collection Node' : 'Destination Protocol'}</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">{order.orderType === 'PICKUP' ? 'Pickup Location' : 'Shipping Address'}</h3>
                             <span className="material-symbols-outlined text-sm">{order.orderType === 'PICKUP' ? 'storefront' : 'location_on'}</span>
                         </div>
                         <div className="p-6 sm:p-10">
@@ -400,7 +394,7 @@ const OrderDetails = () => {
                                     <p className="text-[10px] sm:text-[11px] text-black/30 font-black uppercase tracking-[0.3em] leading-loose">
                                         {order.shippingAddress?.addressLine},<br />
                                         {order.shippingAddress?.city} // {order.shippingAddress?.state},<br />
-                                        REGION PC: {order.shippingAddress?.pincode}
+                                        Pin Code: {order.shippingAddress?.pincode}
                                     </p>
                                     <div className="mt-8 sm:mt-10 flex items-center gap-4 bg-black/[0.02] p-4 rounded-2xl border border-black/[0.03]">
                                         <span className="material-symbols-outlined text-black/20 text-sm">phone</span>
@@ -414,17 +408,17 @@ const OrderDetails = () => {
                     {/* PAYMENT METHOD */}
                     <div className="bg-white border border-black/[0.03] rounded-[2.5rem] overflow-hidden group/payment shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
                         <div className="px-10 py-6 border-b border-black/[0.03] bg-black/[0.01] flex justify-between items-center text-black/40">
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Funding Source</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Payment Method</h3>
                             <span className="material-symbols-outlined text-sm">payments</span>
                         </div>
                         <div className="p-10">
                             <div className="flex items-center gap-6">
                                 <div className="w-16 h-10 bg-black text-white rounded-xl flex items-center justify-center text-[9px] font-black uppercase tracking-[0.2em] shadow-[0_5px_15px_rgba(0,0,0,0.2)]">
-                                    {order.paymentMethod === 'COD' || order.paymentMethod === 'CASH_ON_PICKUP' ? 'CASH' : 'DPAL'}
+                                    {order.paymentMethod === 'COD' || order.paymentMethod === 'CASH_ON_PICKUP' ? 'CASH' : 'ONLINE'}
                                 </div>
                                 <div>
                                     <p className="text-[11px] font-black uppercase tracking-[0.3em] text-black">
-                                        {['COD', 'CASH_ON_PICKUP'].includes(order.paymentMethod) ? 'Physical Currency' : 'Digital Protocol'}
+                                        {['COD', 'CASH_ON_PICKUP'].includes(order.paymentMethod) ? 'Cash' : 'Online Payment'}
                                     </p>
                                     <p className={`text-[10px] font-black uppercase tracking-[0.4em] mt-3 ${order.paymentStatus?.toLowerCase() === 'paid' ? 'text-emerald-600' : 'text-[#8b7e6d]'}`}>Status: {order.paymentStatus}</p>
                                 </div>
