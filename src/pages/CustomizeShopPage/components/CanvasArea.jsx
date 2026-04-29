@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FiRefreshCw, FiEye } from "react-icons/fi";
 import { useFabric } from "../../../context/FabricContext";
 import { initFabric } from "../fabric/fabricCanvas.js";
-import { clampToPrintArea } from "../../../utils/printAreaClamp.js";
+import { applyPrintAreaClipToCanvas } from "../../../utils/printAreaClip.js";
 import { addBaseImage } from "../fabric/baseImage";
 import { getProductBySlug } from "../../../services/productService";
 import { motion, AnimatePresence } from "framer-motion";
@@ -180,6 +180,7 @@ export default function CanvasArea() {
 
         const { addPrintArea } = await import("../fabric/printAreaResponsive");
         addPrintArea(canvas, isMobileViewport());
+        applyPrintAreaClipToCanvas(canvas);
 
         canvas.renderAll();
         updatePrice(canvas);
@@ -234,6 +235,7 @@ export default function CanvasArea() {
 
             const { addPrintArea } = await import("../fabric/printAreaResponsive");
             addPrintArea(canvas, isMobileViewport());
+            applyPrintAreaClipToCanvas(canvas);
 
             canvas.renderAll();
             updatePrice(canvas);
@@ -266,7 +268,6 @@ export default function CanvasArea() {
             const obj = e.target;
             if (!obj || obj.excludeFromExport) return;
 
-            clampToPrintArea(obj, canvas.printArea);
             obj.setCoords();
             canvas.requestRenderAll();
 
@@ -281,14 +282,12 @@ export default function CanvasArea() {
         canvas.on("object:moving", (e) => {
             const obj = e.target;
             if (!obj || obj.excludeFromExport) return;
-            clampToPrintArea(obj, canvas.printArea);
             canvas.requestRenderAll();
         });
 
         canvas.on("object:scaling", (e) => {
             const obj = e.target;
             if (!obj || obj.excludeFromExport) return;
-            clampToPrintArea(obj, canvas.printArea);
             canvas.requestRenderAll();
         });
 
@@ -360,6 +359,7 @@ export default function CanvasArea() {
             const objectsToRemove = canvas.getObjects().filter(o => o.excludeFromExport && !o.isBaseImage);
             objectsToRemove.forEach(o => canvas.remove(o));
             addPrintArea(canvas, isMobile);
+            applyPrintAreaClipToCanvas(canvas);
 
             canvas.renderAll();
         });

@@ -1,6 +1,7 @@
 // fabricCanvas.js
 import { Canvas } from "fabric";
 import { addPrintArea } from "./printAreaResponsive";
+import { applyPrintAreaClip } from "../../../utils/printAreaClip";
 
 export function initFabric(
     canvasEl,
@@ -25,12 +26,15 @@ export function initFabric(
             cornerColor: '#fcfbf9',
             cornerStrokeColor: '#D4C4B1',
             cornerStyle: 'circle',
-            cornerSize: 8,
+            cornerSize: 10,
+            touchCornerSize: 18,
             transparentCorners: false,
             borderColor: '#D4C4B1',
-            borderScaleFactor: 1.5,
+            borderScaleFactor: 1.2,
             borderDashArray: [4, 4],
-            padding: 8,
+            padding: 2,
+            centeredScaling: false,
+            centeredRotation: true,
             // 🖋️ Premium Render Defaults
             opacity: 0.95,
             shadow: {
@@ -63,6 +67,7 @@ export function initFabric(
         }
         if (obj && !obj.excludeFromExport) {
             configureObjectSelection(obj);
+            applyPrintAreaClip(obj, canvas.printArea);
         }
         syncLayers && syncLayers(canvas);
         canvas.requestRenderAll();

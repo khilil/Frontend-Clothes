@@ -103,6 +103,29 @@ export default function StudioToolbar() {
         saveHistory(fabricCanvas.current);
     };
 
+    const handleScaleChange = (nextPercent) => {
+        if (!fabricCanvas.current || !selectedObject) return;
+
+        const parsed = Number(nextPercent);
+        if (Number.isNaN(parsed)) return;
+
+        const clamped = Math.max(5, Math.min(400, Math.round(parsed)));
+        const nextScale = clamped / 100;
+
+        selectedObject.set({
+            scaleX: nextScale,
+            scaleY: nextScale
+        });
+        selectedObject.setCoords();
+        fabricCanvas.current.requestRenderAll();
+        saveHistory(fabricCanvas.current);
+    };
+
+    const adjustScale = (delta) => {
+        const currentScale = Math.round((selectedObject.scaleX || 1) * 100);
+        handleScaleChange(currentScale + delta);
+    };
+
 
     const handleRotationChange = (delta) => {
         if (!selectedObject) return;
@@ -162,6 +185,23 @@ export default function StudioToolbar() {
                             <span className="text-[9px] uppercase font-black text-[#0A0A0A] tracking-widest font-primary">Color</span>
                         </div>
                     </>
+                )}
+
+                {selectedObject.type !== "textbox" && (
+                    <div className="flex items-center border-r border-black/10 pr-4 mr-1 gap-2 shrink-0">
+                        <span className="text-[9px] uppercase font-black text-[#0A0A0A] tracking-widest font-primary">Scale</span>
+                        <div className="flex items-center bg-black/5 rounded-lg overflow-hidden h-7 border border-black/5">
+                            <button onClick={() => adjustScale(-10)} className="px-2 hover:bg-black/10 text-[10px] font-black leading-none">-</button>
+                            <input
+                                type="number"
+                                value={Math.round((selectedObject.scaleX || 1) * 100)}
+                                onChange={(e) => handleScaleChange(e.target.value)}
+                                className="w-10 text-[10px] bg-transparent text-center font-black outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <span className="text-[9px] font-black text-black/50 pr-1">%</span>
+                            <button onClick={() => adjustScale(10)} className="px-2 hover:bg-black/10 text-[10px] font-black leading-none">+</button>
+                        </div>
+                    </div>
                 )}
 
 
@@ -239,7 +279,17 @@ export default function StudioToolbar() {
                                 )}
                                 <span className="text-[10px] font-black uppercase tracking-widest text-[#0A0A0A]">{selectedObject.type}</span>
                             </div>
-
+                            <div className="flex items-center bg-black/5 rounded-lg overflow-hidden h-7 border border-black/5">
+                                <button onClick={() => adjustScale(-10)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">-</button>
+                                <input
+                                    type="number"
+                                    value={Math.round((selectedObject.scaleX || 1) * 100)}
+                                    onChange={(e) => handleScaleChange(e.target.value)}
+                                    className="w-8 text-[9px] bg-transparent text-center font-black outline-none"
+                                />
+                                <span className="text-[8px] font-black text-black/50 pr-1">%</span>
+                                <button onClick={() => adjustScale(10)} className="px-2 font-black text-xs active:bg-black/10 transition-colors">+</button>
+                            </div>
                         </div>
                     )}
                 </div>

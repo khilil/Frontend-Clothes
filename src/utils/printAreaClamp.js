@@ -3,7 +3,28 @@ export function clampToPrintArea(obj, printArea) {
 
     obj.setCoords();
 
-    const objBounds = obj.getBoundingRect();
+    const coords = obj.getCoords?.() || [];
+    const hasCoords = Array.isArray(coords) && coords.length >= 4;
+
+    const objBounds = hasCoords
+        ? {
+            left: Math.min(...coords.map((point) => point.x)),
+            top: Math.min(...coords.map((point) => point.y)),
+            width: Math.max(...coords.map((point) => point.x)) - Math.min(...coords.map((point) => point.x)),
+            height: Math.max(...coords.map((point) => point.y)) - Math.min(...coords.map((point) => point.y))
+        }
+        : (() => {
+            const rawBounds = obj.getBoundingRect();
+            const padding = Number(obj.padding || 0);
+
+            return {
+                left: rawBounds.left + padding,
+                top: rawBounds.top + padding,
+                width: Math.max(0, rawBounds.width - padding * 2),
+                height: Math.max(0, rawBounds.height - padding * 2)
+            };
+        })();
+
     const areaBounds = printArea.getBoundingRect();
 
     let deltaLeft = 0;
@@ -35,6 +56,42 @@ export function clampToPrintArea(obj, printArea) {
         obj.set({
             left: obj.left + deltaLeft,
             top: obj.top + deltaTop
+        });
+        obj.setCoords();
+    }
+}
+
+export function fitImageScaleToPrintArea(obj, printArea) {
+    if (!obj || !printArea) return;
+
+    const isImageLike = obj.type === "image";
+    if (!isImageLike || !obj.width || !obj.height) return;
+
+    const center = obj.getCenterPoint?.();
+    const areaBounds = printArea.getBoundingRect();
+
+    if (!center) return;
+
+    const maxWidth = 2 * Math.min(
+        center.x - areaBounds.left,
+        areaBounds.left + areaBounds.width - center.x
+    );
+    const maxHeight = 2 * Math.min(
+        center.y - areaBounds.top,
+        areaBounds.top + areaBounds.height - center.y
+    );
+
+    if (maxWidth <= 0 || maxHeight <= 0) return;
+
+    const maxScaleX = maxWidth / obj.width;
+    const maxScaleY = maxHeight / obj.height;
+    const maxUniformScale = Math.max(0.05, Math.min(maxScaleX, maxScaleY));
+    const currentUniformScale = Math.max(obj.scaleX || 1, obj.scaleY || 1);
+
+    if (currentUniformScale > maxUniformScale) {
+        obj.set({
+            scaleX: maxUniformScale,
+            scaleY: maxUniformScale
         });
         obj.setCoords();
     }

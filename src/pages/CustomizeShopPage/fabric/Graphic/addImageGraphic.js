@@ -27,6 +27,9 @@ export const addImageToCanvas = async (
             top: printArea.top + printArea.height / 2,
             originX: "center",
             originY: "center",
+            centeredScaling: false,
+            centeredRotation: true,
+            minScaleLimit: 0.05,
             price: price // Critical for pricing engine
         });
 
