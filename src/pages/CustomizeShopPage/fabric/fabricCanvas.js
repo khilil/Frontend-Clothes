@@ -44,6 +44,17 @@ export function initFabric(
                 offsetY: 2
             }
         });
+
+        const imageLikeTypes = ["image", "group"];
+        if (imageLikeTypes.includes(obj.type) && typeof obj.setControlsVisibility === "function") {
+            obj.setControlsVisibility({
+                mt: false,
+                mb: false,
+                ml: false,
+                mr: false,
+                mtr: false
+            });
+        }
     };
 
     canvas.backgroundColor = "#ffffff";
